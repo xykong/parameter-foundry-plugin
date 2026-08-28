@@ -1,0 +1,8 @@
+{
+  "title": "Multiselect Parameter",
+  "plugin": "multiselect-parameter",
+  "version": "1.8",
+  "status": "Maintained",
+  "accent": "#bf7827",
+  "description": "A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns."
+}

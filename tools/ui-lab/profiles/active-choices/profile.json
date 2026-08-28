@@ -1,0 +1,8 @@
+{
+  "title": "Active Choices",
+  "plugin": "uno-choice",
+  "version": "2.8.10",
+  "status": "Maintained",
+  "accent": "#176b87",
+  "description": "Script-driven single, multi, checkbox, radio, filterable, and reactive parameters."
+}

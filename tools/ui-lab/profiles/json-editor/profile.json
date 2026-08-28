@@ -1,0 +1,8 @@
+{
+  "title": "Json Editor Parameter",
+  "plugin": "json-editor-parameter",
+  "version": "54.v71962f37a_416",
+  "status": "Maintained",
+  "accent": "#5361a8",
+  "description": "A JSON Schema-driven form that serializes a structured object as one parameter value."
+}

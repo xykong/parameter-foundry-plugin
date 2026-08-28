@@ -1,0 +1,8 @@
+{
+  "title": "Custom Checkbox Parameter",
+  "plugin": "custom-checkbox-parameter",
+  "version": "1.76.v08d845691023",
+  "status": "Security warning",
+  "accent": "#bb3d52",
+  "description": "Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support."
+}

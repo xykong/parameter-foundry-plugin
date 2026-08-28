@@ -1,0 +1,8 @@
+{
+  "title": "Validating String Parameter",
+  "plugin": "validating-string-parameter",
+  "version": "345.v0f4330488a_f6",
+  "status": "Maintained",
+  "accent": "#7b4ca0",
+  "description": "A free-form string parameter with regular-expression validation and inline error feedback."
+}

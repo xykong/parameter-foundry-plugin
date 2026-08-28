@@ -1,0 +1,8 @@
+{
+  "title": "Editable Choice",
+  "plugin": "editable-choice",
+  "version": "71.v02a291ebbe45",
+  "status": "Up for adoption",
+  "accent": "#a94f12",
+  "description": "Autocomplete-style editable single choice with optional restriction and filtering."
+}

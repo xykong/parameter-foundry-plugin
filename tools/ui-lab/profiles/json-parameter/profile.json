@@ -1,0 +1,8 @@
+{
+  "title": "JSON Parameter",
+  "plugin": "json-parameter",
+  "version": "120.v3e5546f06794",
+  "status": "Maintained",
+  "accent": "#277f89",
+  "description": "JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices."
+}

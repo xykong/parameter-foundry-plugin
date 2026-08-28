@@ -1,0 +1,8 @@
+{
+  "title": "HTML Parameters",
+  "plugin": "html-parameters",
+  "version": "10.v9a_56672a_96a_5",
+  "status": "Maintained",
+  "accent": "#8a6842",
+  "description": "A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables."
+}

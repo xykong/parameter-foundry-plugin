@@ -1,0 +1,8 @@
+{
+  "title": "Jenkins Core Parameters",
+  "plugin": null,
+  "version": "2.568.2",
+  "status": "Core",
+  "accent": "#2d5f8b",
+  "description": "The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core."
+}

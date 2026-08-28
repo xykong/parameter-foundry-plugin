@@ -1,0 +1,8 @@
+{
+  "title": "Extensible Choice Parameter",
+  "plugin": "extensible-choice-parameter",
+  "version": "255.vfa_41f46828ef",
+  "status": "Up for adoption",
+  "accent": "#82621f",
+  "description": "Single-choice parameter built around pluggable choice list providers and optional editable values."
+}

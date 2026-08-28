@@ -1,0 +1,8 @@
+{
+  "title": "Extended Choice Parameter",
+  "plugin": "extended-choice-parameter",
+  "version": "388.ve7b_d0b_920e10",
+  "status": "Deprecated",
+  "accent": "#cf3f27",
+  "description": "Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings."
+}

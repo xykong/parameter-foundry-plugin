@@ -1,0 +1,8 @@
+{
+  "title": "REST List Parameter",
+  "plugin": "rest-list-parameter",
+  "version": "362.v52147f86a_172",
+  "status": "Maintained",
+  "accent": "#29734f",
+  "description": "Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching."
+}
