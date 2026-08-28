@@ -1,0 +1,1484 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jenkins Parameter Plugin UI Field Guide</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --paper: #f5f0e4;
+      --paper-strong: #fffaf0;
+      --line: #c9c0ad;
+      --blue: #165d7a;
+      --orange: #df642d;
+      --shadow: 0 18px 60px rgba(31, 37, 31, .14);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(23,33,29,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,33,29,.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    .hero {
+      min-height: 58vh;
+      padding: clamp(48px, 8vw, 120px) clamp(24px, 8vw, 128px) 60px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr);
+      gap: 56px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 75% 20%, rgba(223,100,45,.17), transparent 28%),
+        linear-gradient(135deg, rgba(22,93,122,.12), transparent 48%);
+    }
+    .eyebrow, .shot-kicker, dt, .filter-title {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 12px;
+    }
+    h1 {
+      max-width: 900px;
+      margin: 12px 0 18px;
+      font-size: clamp(52px, 8vw, 112px);
+      line-height: .88;
+      letter-spacing: -.055em;
+      font-weight: 700;
+    }
+    .lede {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.35;
+    }
+    .hero-note {
+      padding: 28px;
+      border: 1px solid var(--ink);
+      background: var(--paper-strong);
+      box-shadow: 10px 10px 0 var(--orange);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    .filters {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 18px clamp(20px, 5vw, 72px);
+      background: rgba(245,240,228,.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    button {
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font: 600 13px "SFMono-Regular", Consolas, monospace;
+    }
+    button:hover, button.active { color: var(--paper-strong); background: var(--ink); }
+    .filter-chip span, .shot-kicker span {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--chip, var(--accent));
+    }
+    main {
+      padding: 54px clamp(20px, 5vw, 72px) 110px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 26px;
+    }
+    .shot-card {
+      grid-column: span 6;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--paper-strong);
+      box-shadow: var(--shadow);
+      transition: transform .2s ease;
+    }
+    .shot-card:nth-child(5n + 1) { grid-column: span 8; }
+    .shot-card:nth-child(5n + 2) { grid-column: span 4; }
+    .shot-card:hover { transform: translateY(-4px); }
+    .shot-image {
+      display: block;
+      height: 420px;
+      overflow: auto;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .shot-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .shot-body { padding: 26px; }
+    .shot-kicker { color: #5f665e; }
+    h2 { margin: 12px 0 8px; font-size: 28px; line-height: 1.05; }
+    .shot-body p { min-height: 48px; line-height: 1.5; color: #555e56; }
+    dl { margin: 20px 0 0; display: grid; gap: 8px; }
+    dl div { display: grid; grid-template-columns: 84px 1fr; gap: 12px; }
+    dt { color: #777; }
+    dd { margin: 0; font: 13px "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+    .hidden { display: none; }
+    footer {
+      padding: 30px clamp(20px, 5vw, 72px);
+      border-top: 1px solid var(--line);
+      font: 13px "SFMono-Regular", Consolas, monospace;
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .shot-card, .shot-card:nth-child(5n + 1), .shot-card:nth-child(5n + 2) { grid-column: 1 / -1; }
+      .shot-image { height: 320px; }
+      .filter-title { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Real Jenkins UI · Reproducible visual benchmark</div>
+      <h1>Parameter Plugin Field Guide</h1>
+      <p class="lede">Five real plugins. Five repeatable states each. No mockups—every image comes from Jenkins 2.568.2 running the pinned plugin.</p>
+    </div>
+    <aside class="hero-note">
+      Generated 2026-08-28T10:34:54.734963+00:00.<br>
+      Runtime is isolated, unsecured, localhost-only, and contains no production data.
+    </aside>
+  </header>
+  <nav class="filters" aria-label="Gallery filters">
+    <span class="filter-title">Plugin</span>
+    <button class="active" data-profile="all">All plugins</button>
+    <button class="filter-chip" data-profile="active-choices"><span style="--chip:#176b87"></span>Active Choices</button>
+<button class="filter-chip" data-profile="core"><span style="--chip:#2d5f8b"></span>Jenkins Core Parameters</button>
+<button class="filter-chip" data-profile="custom-checkbox"><span style="--chip:#bb3d52"></span>Custom Checkbox Parameter</button>
+<button class="filter-chip" data-profile="editable-choice"><span style="--chip:#a94f12"></span>Editable Choice</button>
+<button class="filter-chip" data-profile="extended-choice"><span style="--chip:#cf3f27"></span>Extended Choice Parameter</button>
+<button class="filter-chip" data-profile="extensible-choice"><span style="--chip:#82621f"></span>Extensible Choice Parameter</button>
+<button class="filter-chip" data-profile="html-parameters"><span style="--chip:#8a6842"></span>HTML Parameters</button>
+<button class="filter-chip" data-profile="json-editor"><span style="--chip:#5361a8"></span>Json Editor Parameter</button>
+<button class="filter-chip" data-profile="json-parameter"><span style="--chip:#277f89"></span>JSON Parameter</button>
+<button class="filter-chip" data-profile="multiselect"><span style="--chip:#bf7827"></span>Multiselect Parameter</button>
+<button class="filter-chip" data-profile="rest-list"><span style="--chip:#29734f"></span>REST List Parameter</button>
+<button class="filter-chip" data-profile="validating-string"><span style="--chip:#7b4ca0"></span>Validating String Parameter</button>
+    <span class="filter-title filter-break">State</span>
+    <button class="active" data-category="all">All states</button>
+    <button data-category="configuration">Configuration</button>
+    <button data-category="default">Default</button>
+    <button data-category="interaction">Interaction</button>
+    <button data-category="pipeline">Pipeline</button>
+    <button data-category="rebuild">Rebuild</button>
+    <button data-category="validation">Validation</button>
+    <button data-category="reactive">Reactive</button>
+    <button data-category="empty">Empty</button>
+    <button data-category="error">Error</button>
+    <button data-category="loading">Loading</button>
+  </nav>
+  <main>
+    <section class="grid">
+
+            <article class="shot-card"
+              data-profile="active-choices"
+              data-category="configuration">
+              <a class="shot-image" href="images/active-choices/freestyle-config.png" target="_blank">
+                <img src="images/active-choices/freestyle-config.png" alt="Active Choices Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#176b87"></span>
+                  Active Choices
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>uno-choice:2.8.10</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="active-choices"
+              data-category="default">
+              <a class="shot-image" href="images/active-choices/freestyle-default.png" target="_blank">
+                <img src="images/active-choices/freestyle-default.png" alt="Active Choices Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#176b87"></span>
+                  Active Choices
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>uno-choice:2.8.10</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="active-choices"
+              data-category="interaction">
+              <a class="shot-image" href="images/active-choices/freestyle-interaction.png" target="_blank">
+                <img src="images/active-choices/freestyle-interaction.png" alt="Active Choices Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#176b87"></span>
+                  Active Choices
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>uno-choice:2.8.10</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="active-choices"
+              data-category="pipeline">
+              <a class="shot-image" href="images/active-choices/pipeline-default.png" target="_blank">
+                <img src="images/active-choices/pipeline-default.png" alt="Active Choices Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#176b87"></span>
+                  Active Choices
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>uno-choice:2.8.10</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="active-choices"
+              data-category="rebuild">
+              <a class="shot-image" href="images/active-choices/pipeline-rebuild.png" target="_blank">
+                <img src="images/active-choices/pipeline-rebuild.png" alt="Active Choices Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#176b87"></span>
+                  Active Choices
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>uno-choice:2.8.10</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="core"
+              data-category="configuration">
+              <a class="shot-image" href="images/core/freestyle-config.png" target="_blank">
+                <img src="images/core/freestyle-config.png" alt="Jenkins Core Parameters Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#2d5f8b"></span>
+                  Jenkins Core Parameters
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>jenkins-core:2.568.2</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="core"
+              data-category="default">
+              <a class="shot-image" href="images/core/freestyle-default.png" target="_blank">
+                <img src="images/core/freestyle-default.png" alt="Jenkins Core Parameters Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#2d5f8b"></span>
+                  Jenkins Core Parameters
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>jenkins-core:2.568.2</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="core"
+              data-category="interaction">
+              <a class="shot-image" href="images/core/freestyle-interaction.png" target="_blank">
+                <img src="images/core/freestyle-interaction.png" alt="Jenkins Core Parameters Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#2d5f8b"></span>
+                  Jenkins Core Parameters
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>jenkins-core:2.568.2</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="core"
+              data-category="pipeline">
+              <a class="shot-image" href="images/core/pipeline-default.png" target="_blank">
+                <img src="images/core/pipeline-default.png" alt="Jenkins Core Parameters Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#2d5f8b"></span>
+                  Jenkins Core Parameters
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>jenkins-core:2.568.2</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="core"
+              data-category="rebuild">
+              <a class="shot-image" href="images/core/pipeline-rebuild.png" target="_blank">
+                <img src="images/core/pipeline-rebuild.png" alt="Jenkins Core Parameters Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#2d5f8b"></span>
+                  Jenkins Core Parameters
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>jenkins-core:2.568.2</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="custom-checkbox"
+              data-category="configuration">
+              <a class="shot-image" href="images/custom-checkbox/freestyle-config.png" target="_blank">
+                <img src="images/custom-checkbox/freestyle-config.png" alt="Custom Checkbox Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bb3d52"></span>
+                  Custom Checkbox Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>custom-checkbox-parameter:1.76.v08d845691023</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="custom-checkbox"
+              data-category="default">
+              <a class="shot-image" href="images/custom-checkbox/freestyle-default.png" target="_blank">
+                <img src="images/custom-checkbox/freestyle-default.png" alt="Custom Checkbox Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bb3d52"></span>
+                  Custom Checkbox Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>custom-checkbox-parameter:1.76.v08d845691023</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="custom-checkbox"
+              data-category="interaction">
+              <a class="shot-image" href="images/custom-checkbox/freestyle-interaction.png" target="_blank">
+                <img src="images/custom-checkbox/freestyle-interaction.png" alt="Custom Checkbox Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bb3d52"></span>
+                  Custom Checkbox Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>custom-checkbox-parameter:1.76.v08d845691023</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="custom-checkbox"
+              data-category="pipeline">
+              <a class="shot-image" href="images/custom-checkbox/pipeline-default.png" target="_blank">
+                <img src="images/custom-checkbox/pipeline-default.png" alt="Custom Checkbox Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bb3d52"></span>
+                  Custom Checkbox Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>custom-checkbox-parameter:1.76.v08d845691023</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="custom-checkbox"
+              data-category="rebuild">
+              <a class="shot-image" href="images/custom-checkbox/pipeline-rebuild.png" target="_blank">
+                <img src="images/custom-checkbox/pipeline-rebuild.png" alt="Custom Checkbox Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bb3d52"></span>
+                  Custom Checkbox Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>custom-checkbox-parameter:1.76.v08d845691023</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="editable-choice"
+              data-category="configuration">
+              <a class="shot-image" href="images/editable-choice/freestyle-config.png" target="_blank">
+                <img src="images/editable-choice/freestyle-config.png" alt="Editable Choice Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#a94f12"></span>
+                  Editable Choice
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Autocomplete-style editable single choice with optional restriction and filtering.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>editable-choice:71.v02a291ebbe45</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="editable-choice"
+              data-category="default">
+              <a class="shot-image" href="images/editable-choice/freestyle-default.png" target="_blank">
+                <img src="images/editable-choice/freestyle-default.png" alt="Editable Choice Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#a94f12"></span>
+                  Editable Choice
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Autocomplete-style editable single choice with optional restriction and filtering.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>editable-choice:71.v02a291ebbe45</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="editable-choice"
+              data-category="interaction">
+              <a class="shot-image" href="images/editable-choice/freestyle-interaction.png" target="_blank">
+                <img src="images/editable-choice/freestyle-interaction.png" alt="Editable Choice Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#a94f12"></span>
+                  Editable Choice
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Autocomplete-style editable single choice with optional restriction and filtering.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>editable-choice:71.v02a291ebbe45</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="editable-choice"
+              data-category="pipeline">
+              <a class="shot-image" href="images/editable-choice/pipeline-default.png" target="_blank">
+                <img src="images/editable-choice/pipeline-default.png" alt="Editable Choice Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#a94f12"></span>
+                  Editable Choice
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Autocomplete-style editable single choice with optional restriction and filtering.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>editable-choice:71.v02a291ebbe45</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="editable-choice"
+              data-category="rebuild">
+              <a class="shot-image" href="images/editable-choice/pipeline-rebuild.png" target="_blank">
+                <img src="images/editable-choice/pipeline-rebuild.png" alt="Editable Choice Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#a94f12"></span>
+                  Editable Choice
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Autocomplete-style editable single choice with optional restriction and filtering.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>editable-choice:71.v02a291ebbe45</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extended-choice"
+              data-category="configuration">
+              <a class="shot-image" href="images/extended-choice/freestyle-config.png" target="_blank">
+                <img src="images/extended-choice/freestyle-config.png" alt="Extended Choice Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#cf3f27"></span>
+                  Extended Choice Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extended-choice-parameter:388.ve7b_d0b_920e10</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extended-choice"
+              data-category="default">
+              <a class="shot-image" href="images/extended-choice/freestyle-default.png" target="_blank">
+                <img src="images/extended-choice/freestyle-default.png" alt="Extended Choice Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#cf3f27"></span>
+                  Extended Choice Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extended-choice-parameter:388.ve7b_d0b_920e10</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extended-choice"
+              data-category="interaction">
+              <a class="shot-image" href="images/extended-choice/freestyle-interaction.png" target="_blank">
+                <img src="images/extended-choice/freestyle-interaction.png" alt="Extended Choice Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#cf3f27"></span>
+                  Extended Choice Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extended-choice-parameter:388.ve7b_d0b_920e10</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extended-choice"
+              data-category="pipeline">
+              <a class="shot-image" href="images/extended-choice/pipeline-default.png" target="_blank">
+                <img src="images/extended-choice/pipeline-default.png" alt="Extended Choice Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#cf3f27"></span>
+                  Extended Choice Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extended-choice-parameter:388.ve7b_d0b_920e10</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extended-choice"
+              data-category="rebuild">
+              <a class="shot-image" href="images/extended-choice/pipeline-rebuild.png" target="_blank">
+                <img src="images/extended-choice/pipeline-rebuild.png" alt="Extended Choice Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#cf3f27"></span>
+                  Extended Choice Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extended-choice-parameter:388.ve7b_d0b_920e10</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extensible-choice"
+              data-category="configuration">
+              <a class="shot-image" href="images/extensible-choice/freestyle-config.png" target="_blank">
+                <img src="images/extensible-choice/freestyle-config.png" alt="Extensible Choice Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#82621f"></span>
+                  Extensible Choice Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Single-choice parameter built around pluggable choice list providers and optional editable values.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extensible-choice-parameter:255.vfa_41f46828ef</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extensible-choice"
+              data-category="default">
+              <a class="shot-image" href="images/extensible-choice/freestyle-default.png" target="_blank">
+                <img src="images/extensible-choice/freestyle-default.png" alt="Extensible Choice Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#82621f"></span>
+                  Extensible Choice Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Single-choice parameter built around pluggable choice list providers and optional editable values.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extensible-choice-parameter:255.vfa_41f46828ef</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extensible-choice"
+              data-category="interaction">
+              <a class="shot-image" href="images/extensible-choice/freestyle-interaction.png" target="_blank">
+                <img src="images/extensible-choice/freestyle-interaction.png" alt="Extensible Choice Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#82621f"></span>
+                  Extensible Choice Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Single-choice parameter built around pluggable choice list providers and optional editable values.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extensible-choice-parameter:255.vfa_41f46828ef</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extensible-choice"
+              data-category="pipeline">
+              <a class="shot-image" href="images/extensible-choice/pipeline-default.png" target="_blank">
+                <img src="images/extensible-choice/pipeline-default.png" alt="Extensible Choice Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#82621f"></span>
+                  Extensible Choice Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Single-choice parameter built around pluggable choice list providers and optional editable values.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extensible-choice-parameter:255.vfa_41f46828ef</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="extensible-choice"
+              data-category="rebuild">
+              <a class="shot-image" href="images/extensible-choice/pipeline-rebuild.png" target="_blank">
+                <img src="images/extensible-choice/pipeline-rebuild.png" alt="Extensible Choice Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#82621f"></span>
+                  Extensible Choice Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Single-choice parameter built around pluggable choice list providers and optional editable values.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>extensible-choice-parameter:255.vfa_41f46828ef</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="html-parameters"
+              data-category="configuration">
+              <a class="shot-image" href="images/html-parameters/freestyle-config.png" target="_blank">
+                <img src="images/html-parameters/freestyle-config.png" alt="HTML Parameters Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#8a6842"></span>
+                  HTML Parameters
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>html-parameters:10.v9a_56672a_96a_5</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="html-parameters"
+              data-category="default">
+              <a class="shot-image" href="images/html-parameters/freestyle-default.png" target="_blank">
+                <img src="images/html-parameters/freestyle-default.png" alt="HTML Parameters Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#8a6842"></span>
+                  HTML Parameters
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>html-parameters:10.v9a_56672a_96a_5</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="html-parameters"
+              data-category="interaction">
+              <a class="shot-image" href="images/html-parameters/freestyle-interaction.png" target="_blank">
+                <img src="images/html-parameters/freestyle-interaction.png" alt="HTML Parameters Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#8a6842"></span>
+                  HTML Parameters
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>html-parameters:10.v9a_56672a_96a_5</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="html-parameters"
+              data-category="pipeline">
+              <a class="shot-image" href="images/html-parameters/pipeline-default.png" target="_blank">
+                <img src="images/html-parameters/pipeline-default.png" alt="HTML Parameters Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#8a6842"></span>
+                  HTML Parameters
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>html-parameters:10.v9a_56672a_96a_5</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="html-parameters"
+              data-category="rebuild">
+              <a class="shot-image" href="images/html-parameters/pipeline-rebuild.png" target="_blank">
+                <img src="images/html-parameters/pipeline-rebuild.png" alt="HTML Parameters Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#8a6842"></span>
+                  HTML Parameters
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>html-parameters:10.v9a_56672a_96a_5</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-editor"
+              data-category="configuration">
+              <a class="shot-image" href="images/json-editor/freestyle-config.png" target="_blank">
+                <img src="images/json-editor/freestyle-config.png" alt="Json Editor Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#5361a8"></span>
+                  Json Editor Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>A JSON Schema-driven form that serializes a structured object as one parameter value.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-editor-parameter:54.v71962f37a_416</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-editor"
+              data-category="default">
+              <a class="shot-image" href="images/json-editor/freestyle-default.png" target="_blank">
+                <img src="images/json-editor/freestyle-default.png" alt="Json Editor Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#5361a8"></span>
+                  Json Editor Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>A JSON Schema-driven form that serializes a structured object as one parameter value.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-editor-parameter:54.v71962f37a_416</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-editor"
+              data-category="interaction">
+              <a class="shot-image" href="images/json-editor/freestyle-interaction.png" target="_blank">
+                <img src="images/json-editor/freestyle-interaction.png" alt="Json Editor Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#5361a8"></span>
+                  Json Editor Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>A JSON Schema-driven form that serializes a structured object as one parameter value.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-editor-parameter:54.v71962f37a_416</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-editor"
+              data-category="pipeline">
+              <a class="shot-image" href="images/json-editor/pipeline-default.png" target="_blank">
+                <img src="images/json-editor/pipeline-default.png" alt="Json Editor Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#5361a8"></span>
+                  Json Editor Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>A JSON Schema-driven form that serializes a structured object as one parameter value.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-editor-parameter:54.v71962f37a_416</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-editor"
+              data-category="rebuild">
+              <a class="shot-image" href="images/json-editor/pipeline-rebuild.png" target="_blank">
+                <img src="images/json-editor/pipeline-rebuild.png" alt="Json Editor Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#5361a8"></span>
+                  Json Editor Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>A JSON Schema-driven form that serializes a structured object as one parameter value.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-editor-parameter:54.v71962f37a_416</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="configuration">
+              <a class="shot-image" href="images/json-parameter/freestyle-config.png" target="_blank">
+                <img src="images/json-parameter/freestyle-config.png" alt="JSON Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="loading">
+              <a class="shot-image" href="images/json-parameter/reactive-loading.png" target="_blank">
+                <img src="images/json-parameter/reactive-loading.png" alt="JSON Parameter Reactive request in flight" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Reactive request in flight</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>loading</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="default">
+              <a class="shot-image" href="images/json-parameter/freestyle-default.png" target="_blank">
+                <img src="images/json-parameter/freestyle-default.png" alt="JSON Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="reactive">
+              <a class="shot-image" href="images/json-parameter/freestyle-interaction.png" target="_blank">
+                <img src="images/json-parameter/freestyle-interaction.png" alt="JSON Parameter Freestyle reactive update" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Freestyle reactive update</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>reactive</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="pipeline">
+              <a class="shot-image" href="images/json-parameter/pipeline-default.png" target="_blank">
+                <img src="images/json-parameter/pipeline-default.png" alt="JSON Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="json-parameter"
+              data-category="rebuild">
+              <a class="shot-image" href="images/json-parameter/pipeline-rebuild.png" target="_blank">
+                <img src="images/json-parameter/pipeline-rebuild.png" alt="JSON Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#277f89"></span>
+                  JSON Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>json-parameter:120.v3e5546f06794</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="multiselect"
+              data-category="configuration">
+              <a class="shot-image" href="images/multiselect/freestyle-config.png" target="_blank">
+                <img src="images/multiselect/freestyle-config.png" alt="Multiselect Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bf7827"></span>
+                  Multiselect Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>multiselect-parameter:1.8</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="multiselect"
+              data-category="default">
+              <a class="shot-image" href="images/multiselect/freestyle-default.png" target="_blank">
+                <img src="images/multiselect/freestyle-default.png" alt="Multiselect Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bf7827"></span>
+                  Multiselect Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>multiselect-parameter:1.8</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="multiselect"
+              data-category="interaction">
+              <a class="shot-image" href="images/multiselect/freestyle-interaction.png" target="_blank">
+                <img src="images/multiselect/freestyle-interaction.png" alt="Multiselect Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bf7827"></span>
+                  Multiselect Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>multiselect-parameter:1.8</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="multiselect"
+              data-category="pipeline">
+              <a class="shot-image" href="images/multiselect/pipeline-default.png" target="_blank">
+                <img src="images/multiselect/pipeline-default.png" alt="Multiselect Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bf7827"></span>
+                  Multiselect Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>multiselect-parameter:1.8</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="multiselect"
+              data-category="rebuild">
+              <a class="shot-image" href="images/multiselect/pipeline-rebuild.png" target="_blank">
+                <img src="images/multiselect/pipeline-rebuild.png" alt="Multiselect Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#bf7827"></span>
+                  Multiselect Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>multiselect-parameter:1.8</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="configuration">
+              <a class="shot-image" href="images/rest-list/freestyle-config.png" target="_blank">
+                <img src="images/rest-list/freestyle-config.png" alt="REST List Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="default">
+              <a class="shot-image" href="images/rest-list/freestyle-default.png" target="_blank">
+                <img src="images/rest-list/freestyle-default.png" alt="REST List Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="interaction">
+              <a class="shot-image" href="images/rest-list/freestyle-interaction.png" target="_blank">
+                <img src="images/rest-list/freestyle-interaction.png" alt="REST List Parameter Freestyle user interaction" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Freestyle user interaction</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>interaction</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="pipeline">
+              <a class="shot-image" href="images/rest-list/pipeline-default.png" target="_blank">
+                <img src="images/rest-list/pipeline-default.png" alt="REST List Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="rebuild">
+              <a class="shot-image" href="images/rest-list/pipeline-rebuild.png" target="_blank">
+                <img src="images/rest-list/pipeline-rebuild.png" alt="REST List Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="empty">
+              <a class="shot-image" href="images/rest-list/provider-empty.png" target="_blank">
+                <img src="images/rest-list/provider-empty.png" alt="REST List Parameter Provider empty result" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Provider empty result</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>empty</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="rest-list"
+              data-category="error">
+              <a class="shot-image" href="images/rest-list/provider-error.png" target="_blank">
+                <img src="images/rest-list/provider-error.png" alt="REST List Parameter Provider parsing error" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#29734f"></span>
+                  REST List Parameter
+                </div>
+                <h2>Provider parsing error</h2>
+                <p>Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>rest-list-parameter:362.v52147f86a_172</dd></div>
+                  <div><dt>State</dt><dd>error</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="validating-string"
+              data-category="configuration">
+              <a class="shot-image" href="images/validating-string/freestyle-config.png" target="_blank">
+                <img src="images/validating-string/freestyle-config.png" alt="Validating String Parameter Freestyle configuration" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#7b4ca0"></span>
+                  Validating String Parameter
+                </div>
+                <h2>Freestyle configuration</h2>
+                <p>A free-form string parameter with regular-expression validation and inline error feedback.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>validating-string-parameter:345.v0f4330488a_f6</dd></div>
+                  <div><dt>State</dt><dd>configuration</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="validating-string"
+              data-category="default">
+              <a class="shot-image" href="images/validating-string/freestyle-default.png" target="_blank">
+                <img src="images/validating-string/freestyle-default.png" alt="Validating String Parameter Freestyle default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#7b4ca0"></span>
+                  Validating String Parameter
+                </div>
+                <h2>Freestyle default state</h2>
+                <p>A free-form string parameter with regular-expression validation and inline error feedback.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>validating-string-parameter:345.v0f4330488a_f6</dd></div>
+                  <div><dt>State</dt><dd>default</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="validating-string"
+              data-category="validation">
+              <a class="shot-image" href="images/validating-string/freestyle-interaction.png" target="_blank">
+                <img src="images/validating-string/freestyle-interaction.png" alt="Validating String Parameter Freestyle validation error" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#7b4ca0"></span>
+                  Validating String Parameter
+                </div>
+                <h2>Freestyle validation error</h2>
+                <p>A free-form string parameter with regular-expression validation and inline error feedback.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>validating-string-parameter:345.v0f4330488a_f6</dd></div>
+                  <div><dt>State</dt><dd>validation</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="validating-string"
+              data-category="pipeline">
+              <a class="shot-image" href="images/validating-string/pipeline-default.png" target="_blank">
+                <img src="images/validating-string/pipeline-default.png" alt="Validating String Parameter Pipeline default state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#7b4ca0"></span>
+                  Validating String Parameter
+                </div>
+                <h2>Pipeline default state</h2>
+                <p>A free-form string parameter with regular-expression validation and inline error feedback.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>validating-string-parameter:345.v0f4330488a_f6</dd></div>
+                  <div><dt>State</dt><dd>pipeline</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="shot-card"
+              data-profile="validating-string"
+              data-category="rebuild">
+              <a class="shot-image" href="images/validating-string/pipeline-rebuild.png" target="_blank">
+                <img src="images/validating-string/pipeline-rebuild.png" alt="Validating String Parameter Pipeline Rebuild state" loading="lazy">
+              </a>
+              <div class="shot-body">
+                <div class="shot-kicker">
+                  <span style="--accent:#7b4ca0"></span>
+                  Validating String Parameter
+                </div>
+                <h2>Pipeline Rebuild state</h2>
+                <p>A free-form string parameter with regular-expression validation and inline error feedback.</p>
+                <dl>
+                  <div><dt>Plugin</dt><dd>validating-string-parameter:345.v0f4330488a_f6</dd></div>
+                  <div><dt>State</dt><dd>rebuild</dd></div>
+                </dl>
+              </div>
+            </article>
+
+    </section>
+  </main>
+  <footer>Jenkins Parameter Plugin UI Lab · source manifest: manifest.json</footer>
+  <script>
+    const profileButtons = [...document.querySelectorAll('[data-profile]')];
+    const categoryButtons = [...document.querySelectorAll('[data-category]')];
+    const cards = [...document.querySelectorAll('.shot-card')];
+    let selectedProfile = 'all';
+    let selectedCategory = 'all';
+    const applyFilters = () => cards.forEach(card => {
+      const profileMatch = selectedProfile === 'all' || card.dataset.profile === selectedProfile;
+      const categoryMatch = selectedCategory === 'all' || card.dataset.category === selectedCategory;
+      card.classList.toggle('hidden', !profileMatch || !categoryMatch);
+    });
+    profileButtons.forEach(button => button.addEventListener('click', () => {
+      profileButtons.forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+      selectedProfile = button.dataset.profile;
+      applyFilters();
+    }));
+    categoryButtons.forEach(button => button.addEventListener('click', () => {
+      categoryButtons.forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+      selectedCategory = button.dataset.category;
+      applyFilters();
+    }));
+  </script>
+</body>
+</html>

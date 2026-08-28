@@ -9,6 +9,10 @@ work
 *.ipr
 .idea
 
+# Python tooling caches
+__pycache__
+.ruff_cache
+
 # Eclipse project files
 .settings
 .classpath

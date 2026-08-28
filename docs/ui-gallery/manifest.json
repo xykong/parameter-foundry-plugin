@@ -1,0 +1,2946 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T10:34:54.734963+00:00",
+  "generatedCommit": "07559d13b29f6210e07a2282fd24f6d2e3c355e1",
+  "jenkinsCore": "2.568.2",
+  "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "profiles": [
+    {
+      "title": "Active Choices",
+      "plugin": "uno-choice",
+      "version": "2.8.10",
+      "status": "Maintained",
+      "accent": "#176b87",
+      "description": "Script-driven single, multi, checkbox, radio, filterable, and reactive parameters.",
+      "id": "active-choices",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "uno-choice",
+          "version": "2.8.10",
+          "sha256": "3875250959e41c849894eb719b06b8e4a5fee4c6dae15d92a34b8415d9e0d35f"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Jenkins Core Parameters",
+      "plugin": null,
+      "version": "2.568.2",
+      "status": "Core",
+      "accent": "#2d5f8b",
+      "description": "The stable baseline: string, choice, boolean, password, and text parameters built into Jenkins Core.",
+      "id": "core",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Custom Checkbox Parameter",
+      "plugin": "custom-checkbox-parameter",
+      "version": "1.76.v08d845691023",
+      "status": "Security warning",
+      "accent": "#bb3d52",
+      "description": "Checkbox groups loaded from inline, file, or HTTP YAML/JSON with select-all support.",
+      "id": "custom-checkbox",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "apache-httpcomponents-client-4-api",
+          "version": "4.5.14-269.vfa_2321039a_83",
+          "sha256": "cea2f61cc72890b962fd4b767c31778c6cb30015b4a8758b4c26b62e51ca9533"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "custom-checkbox-parameter",
+          "version": "1.76.v08d845691023",
+          "sha256": "d1185b9348785a424bc3b6f45aaea4503fe099d31af60d80af2e5643a10ade0c"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson2-api",
+          "version": "2.22.2-445.vdc613f1d8012",
+          "sha256": "4ad8556964d393cd0f693201cf5b12ed991c3510a58c4499a3759fece1f3be15"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jakarta-activation-api",
+          "version": "2.1.4-1",
+          "sha256": "e62298341742f14b374045387ba641ad8a19376793c76bdafebb4a05b5099712"
+        },
+        {
+          "name": "jakarta-xml-bind-api",
+          "version": "4.0.9-19.v2b_a_5b_44d9a_1c",
+          "sha256": "2f59227936687ec00f7ea62b550e7a6e9c86cda3423f3567ffe66bbdf235ffb5"
+        },
+        {
+          "name": "javax-activation-api",
+          "version": "1.2.0-8",
+          "sha256": "e96e88c52edf07ba00fb45b26cc411a7a95fa3d4491aaa1a5d36637665880560"
+        },
+        {
+          "name": "jaxb",
+          "version": "2.3.9-143.v5979df3304e6",
+          "sha256": "38ddf4cf5db61a591044130c2f7ccb2b7aa9abebc8fcd8a6953f8da550d002ed"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "json-api",
+          "version": "20260814-226.v20f9685d642c",
+          "sha256": "c5ac5ecfddd35c07087b3333ae05ec4167a70abae8bf0ebcb7338b6b54540889"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-api",
+          "version": "2.5-149.v72471e9c6371",
+          "sha256": "80edbeec15b9afbca18d000cf367d9e26456aa83100dcdd09ee0ed6a4b98a9c2"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Editable Choice",
+      "plugin": "editable-choice",
+      "version": "71.v02a291ebbe45",
+      "status": "Up for adoption",
+      "accent": "#a94f12",
+      "description": "Autocomplete-style editable single choice with optional restriction and filtering.",
+      "id": "editable-choice",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "editable-choice",
+          "version": "71.v02a291ebbe45",
+          "sha256": "64488100ddc48bcd10586a1fc8889695bfd745b54c275afcf2eb835a4719957a"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Extended Choice Parameter",
+      "plugin": "extended-choice-parameter",
+      "version": "388.ve7b_d0b_920e10",
+      "status": "Deprecated",
+      "accent": "#cf3f27",
+      "description": "Legacy all-in-one choice parameter with multi-select, checkbox, radio, scripts, files, and unresolved security warnings.",
+      "id": "extended-choice",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "extended-choice-parameter",
+          "version": "388.ve7b_d0b_920e10",
+          "sha256": "29a02cabeb90c1c6d7973b60dbc641cf2b10a319a057259165c8a82c864fe428"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Extensible Choice Parameter",
+      "plugin": "extensible-choice-parameter",
+      "version": "255.vfa_41f46828ef",
+      "status": "Up for adoption",
+      "accent": "#82621f",
+      "description": "Single-choice parameter built around pluggable choice list providers and optional editable values.",
+      "id": "extensible-choice",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "extensible-choice-parameter",
+          "version": "255.vfa_41f46828ef",
+          "sha256": "1327de52012901cb8f81719b446900460c09c7186ef1ff567a5e267ae004cc7b"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "HTML Parameters",
+      "plugin": "html-parameters",
+      "version": "10.v9a_56672a_96a_5",
+      "status": "Maintained",
+      "accent": "#8a6842",
+      "description": "A sanitized HTML/CSS form parameter that maps multiple UI controls to separate build variables.",
+      "id": "html-parameters",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "html-parameters",
+          "version": "10.v9a_56672a_96a_5",
+          "sha256": "8aeda6d75e2ceaa981b16a293606597773cdb1cb5d61d93f74ccb24263085600"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "jsoup",
+          "version": "1.23.2-106.v1161f282b_eb_f",
+          "sha256": "0d7719287a728f539568d905b549535ca3cabf711734b529fdf0b029f308e090"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Json Editor Parameter",
+      "plugin": "json-editor-parameter",
+      "version": "54.v71962f37a_416",
+      "status": "Maintained",
+      "accent": "#5361a8",
+      "description": "A JSON Schema-driven form that serializes a structured object as one parameter value.",
+      "id": "json-editor",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "json-editor-parameter",
+          "version": "54.v71962f37a_416",
+          "sha256": "e3ae5605b32f7df98ec09e321953b58856ddc8887f0ba1cc5afc3c1a21ab04a6"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "JSON Parameter",
+      "plugin": "json-parameter",
+      "version": "120.v3e5546f06794",
+      "status": "Maintained",
+      "accent": "#277f89",
+      "description": "JSONPath-backed dropdowns from config files or HTTP, including a reference parameter for cascading choices.",
+      "id": "json-parameter",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "bouncycastle-api",
+          "version": "2.30.1.84-291.v9f17b_21896e2",
+          "sha256": "a31099c54d9b1ac6f88b1336088a73124831532313bf3280e3eb1610300382e1"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "config-file-provider",
+          "version": "1013.v73c323e52b_1f",
+          "sha256": "82807ddf80599b2b7aaf24dc5c16cd7652fc5a6f83f5237114af01aca0818021"
+        },
+        {
+          "name": "credentials-binding",
+          "version": "728.v902a_273b_8947",
+          "sha256": "bd7d1a187e35c8e2b6619cd50f2f8c5d28aafc4ef8fd9de572fb2cfa464f466d"
+        },
+        {
+          "name": "credentials",
+          "version": "1511.v2e3cb_0008ef0",
+          "sha256": "79c29f779906610aa08ac396674740e411b28cbe400460737eeeaa4a99569acb"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "json-parameter",
+          "version": "120.v3e5546f06794",
+          "sha256": "f8f2ca83017934f9c2afeceaddbc9a77508b230a57fb753abbc304b47952719d"
+        },
+        {
+          "name": "json-path-api",
+          "version": "3.0.0-218.vcd4dd1355de2",
+          "sha256": "c032db1c87e36a57246bce59837f399f8d5f4f53be3483689a69b5c3ac0a0125"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plain-credentials",
+          "version": "199.v9f8e1f741799",
+          "sha256": "b5e5e35cf93ad3b818a983916cbcdf3f7866699410a4df923e6a2968ecc3a448"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "ssh-credentials",
+          "version": "372.va_250881b_08cd",
+          "sha256": "7b4d035b05b331038f3dfa99ddfef0cabbacede8f0ad2a6ca9611fb0844108a9"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "token-macro",
+          "version": "477.vd4f0dc3cb_cf1",
+          "sha256": "ef98e47b467571e7968925ace1c40d1103baefe230f5d4cf44250769b7b6b42b"
+        },
+        {
+          "name": "variant",
+          "version": "70.va_d9f17f859e0",
+          "sha256": "12e214ea694469a4461b55881ecb4074ae5dfb04797dbc0dad390f6f4bc75aaf"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Multiselect Parameter",
+      "plugin": "multiselect-parameter",
+      "version": "1.8",
+      "status": "Maintained",
+      "accent": "#bf7827",
+      "description": "A CSV-defined decision tree rendered as a variable number of dependent single-select dropdowns.",
+      "id": "multiselect",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "multiselect-parameter",
+          "version": "1.8",
+          "sha256": "c8ba41fb06bfafbc710aec765a30562426ba003e9bdebfc5ec83f8c509bcf5c2"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "REST List Parameter",
+      "plugin": "rest-list-parameter",
+      "version": "362.v52147f86a_172",
+      "status": "Maintained",
+      "accent": "#29734f",
+      "description": "Single choice populated from JSON or XML REST endpoints with JSONPath, filtering, validation, and caching.",
+      "id": "rest-list",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "bouncycastle-api",
+          "version": "2.30.1.84-291.v9f17b_21896e2",
+          "sha256": "a31099c54d9b1ac6f88b1336088a73124831532313bf3280e3eb1610300382e1"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "credentials",
+          "version": "1511.v2e3cb_0008ef0",
+          "sha256": "79c29f779906610aa08ac396674740e411b28cbe400460737eeeaa4a99569acb"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "json-api",
+          "version": "20260814-226.v20f9685d642c",
+          "sha256": "c5ac5ecfddd35c07087b3333ae05ec4167a70abae8bf0ebcb7338b6b54540889"
+        },
+        {
+          "name": "json-path-api",
+          "version": "3.0.0-218.vcd4dd1355de2",
+          "sha256": "c032db1c87e36a57246bce59837f399f8d5f4f53be3483689a69b5c3ac0a0125"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "okhttp-api",
+          "version": "5.3.2-200.vedb_720a_cf1f8",
+          "sha256": "22dcd710e2fdf944271123b40aa430435f96f9c83110d48f9239d6712ccdd27d"
+        },
+        {
+          "name": "plain-credentials",
+          "version": "199.v9f8e1f741799",
+          "sha256": "b5e5e35cf93ad3b818a983916cbcdf3f7866699410a4df923e6a2968ecc3a448"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "rest-list-parameter",
+          "version": "362.v52147f86a_172",
+          "sha256": "576783a85192556ba3fb27d4543f5973e332bac33c3c504cd111652a40b7ecb9"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "select2-api",
+          "version": "4.0.13-8",
+          "sha256": "0c7782c535648386afa1cba0bfcbc11e12ee5a210aaf6b8a25ce4c1e519ef9fc"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    },
+    {
+      "title": "Validating String Parameter",
+      "plugin": "validating-string-parameter",
+      "version": "345.v0f4330488a_f6",
+      "status": "Maintained",
+      "accent": "#7b4ca0",
+      "description": "A free-form string parameter with regular-expression validation and inline error feedback.",
+      "id": "validating-string",
+      "inventory": [
+        {
+          "name": "antisamy-markup-formatter",
+          "version": "173.v680e3a_b_69ff3",
+          "sha256": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f"
+        },
+        {
+          "name": "asm-api",
+          "version": "9.10.1-216.va_9256d3b_844b_",
+          "sha256": "292c90d3dfff2e9242f8096707a3fa3d978cb57a6b6a6ce689c69dc21a381be6"
+        },
+        {
+          "name": "bootstrap5-api",
+          "version": "5.3.8-1048.va_c299057e35c",
+          "sha256": "4027b4cecbdb400c4cdf6beed351cb27a2e0ef4c39d27618e342fad76a4490df"
+        },
+        {
+          "name": "caffeine-api",
+          "version": "3.2.4-208.v7e2da_a_7db_82b_",
+          "sha256": "40e254ba2f031a6582044e09529b43c9a031bbaf6563a04c3273e045553aaaf1"
+        },
+        {
+          "name": "checks-api",
+          "version": "415.vf022234a_931d",
+          "sha256": "c48335f0fd17e192e82066be5257f5afe1fe1d40f7b47836ee2d93fc161a2749"
+        },
+        {
+          "name": "commons-lang3-api",
+          "version": "3.20.0-109.ve43756e2d2b_4",
+          "sha256": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052"
+        },
+        {
+          "name": "commons-text-api",
+          "version": "1.15.0-218.va_61573470393",
+          "sha256": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764"
+        },
+        {
+          "name": "display-url-api",
+          "version": "2.217.va_6b_de84cc74b_",
+          "sha256": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca"
+        },
+        {
+          "name": "echarts-api",
+          "version": "6.1.0-1306.vcee1648c16a_4",
+          "sha256": "cf944061e349011873d620898a14f409ae2a1b0e908d0efc0e7bdd5a6df5c997"
+        },
+        {
+          "name": "font-awesome-api",
+          "version": "7.3.1-1013.v0835a_879ec6d",
+          "sha256": "7ee382c678545f5fd5b022e5dbb75d129a97db2b0180fb42f17edcebdfdbbf5a"
+        },
+        {
+          "name": "ionicons-api",
+          "version": "94.vcc3065403257",
+          "sha256": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f"
+        },
+        {
+          "name": "jackson-annotations2-api",
+          "version": "2.22-19.v10a_a_582ea_26e",
+          "sha256": "f13d0a17af6f8c8939a6edd30952006b77dca4760b1f40e0289c363918b7d17d"
+        },
+        {
+          "name": "jackson3-api",
+          "version": "3.2.2-96.v599957900a_1a_",
+          "sha256": "17ce6ccd34d7e874710d0318262b7a88bd24a1cf22527adb17e266ab93edafc9"
+        },
+        {
+          "name": "jquery3-api",
+          "version": "3.7.1-687.v68d468e40b_30",
+          "sha256": "16716d59a3df872a3b8700337de9e8306b2d5104320e6916731aa7185d3de880"
+        },
+        {
+          "name": "junit",
+          "version": "1424.vc64a_edde7777",
+          "sha256": "31d7126e563e4ae6853ac9e81da58dcaf46d2db089a8d0a6d10a0078f88b4448"
+        },
+        {
+          "name": "matrix-project",
+          "version": "917.v22eda_817646e",
+          "sha256": "2c6529eb76186d416f4614109bb2bb3cc7b52d3c7eadc5e6fad6f689581f4ad1"
+        },
+        {
+          "name": "plugin-util-api",
+          "version": "7.1341.v039f146993d9",
+          "sha256": "6ed91e4b73cae55327b41ab919b53c33b39425727115d6c308f45ae7a6e47837"
+        },
+        {
+          "name": "prism-api",
+          "version": "1.30.0-741.v034eb_0b_0a_a_fa_",
+          "sha256": "2b7aa7809e0f656afce98c0b6a0a9b62885af6ae85ad90bed67a4f18f18e8354"
+        },
+        {
+          "name": "rebuild",
+          "version": "338.va_0a_b_50e29397",
+          "sha256": "47c7a5096791c9186546b4b302aeb0bc3b98bbdb9ae0ba9030ceb76732ef9b05"
+        },
+        {
+          "name": "scm-api",
+          "version": "728.vc30dcf7a_0df5",
+          "sha256": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326"
+        },
+        {
+          "name": "script-security",
+          "version": "1412.v7737b_3405f86",
+          "sha256": "5f2fa5222fdfaf09f090418a67c77e0342071630d69442bae7314975b674d288"
+        },
+        {
+          "name": "snakeyaml-engine-api",
+          "version": "3.1.1-12.v4320c7d6f89c",
+          "sha256": "75cb57a5fbf8b2e69bc7b5e1d6ecb5d86969ebe4ff10f65541af2a8353f0a262"
+        },
+        {
+          "name": "structs",
+          "version": "362.va_b_695ef4fdf9",
+          "sha256": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d"
+        },
+        {
+          "name": "validating-string-parameter",
+          "version": "345.v0f4330488a_f6",
+          "sha256": "2534fa32d9b07a943b532fb907a76d9cc6aed212b8f033bb7640bee21a6d0a50"
+        },
+        {
+          "name": "woodstox-core-api",
+          "version": "7.2.2-10.vcb_629759b_2c2",
+          "sha256": "c44a23c45cfb366a5560df7a2f720c8b6d251c860aa018220e59464ba6a33a19"
+        },
+        {
+          "name": "workflow-api",
+          "version": "1413.v2ff1a_5e720fa_",
+          "sha256": "f4adbd6b34a2a0b643a12b898110bd976350142eff6322efda21efacbccb6835"
+        },
+        {
+          "name": "workflow-cps",
+          "version": "4370.v49a_6937566b_6",
+          "sha256": "2e754ea53ee6cfe964ce7e589c33c1e6508446b3ddad252b586cea4f2b8ae8a7"
+        },
+        {
+          "name": "workflow-job",
+          "version": "1595.v0ee1a_de2c0a_3",
+          "sha256": "21641275cdbce7ffced804f64415652e7380489778a0becc3c0b6f28b877c463"
+        },
+        {
+          "name": "workflow-scm-step",
+          "version": "466.va_d69e602552b_",
+          "sha256": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a"
+        },
+        {
+          "name": "workflow-step-api",
+          "version": "724.v538c2362b_dfb_",
+          "sha256": "887491de444174228471993b0b2db958db2e7fb577857c8516c58e9618049896"
+        },
+        {
+          "name": "workflow-support",
+          "version": "1015.v785e5a_b_b_8b_22",
+          "sha256": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "profile": "active-choices",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/active-choices/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "active-choices",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/active-choices/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "active-choices",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/active-choices/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "active-choices",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/active-choices/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "active-choices",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/active-choices/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "core",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/core/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "core",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/core/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "core",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/core/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "core",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/core/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "core",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/core/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "custom-checkbox",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/custom-checkbox/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "custom-checkbox",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/custom-checkbox/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "custom-checkbox",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/custom-checkbox/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "custom-checkbox",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/custom-checkbox/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "custom-checkbox",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/custom-checkbox/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "editable-choice",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/editable-choice/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "editable-choice",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/editable-choice/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "editable-choice",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/editable-choice/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "editable-choice",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/editable-choice/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "editable-choice",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/editable-choice/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extended-choice",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/extended-choice/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extended-choice",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/extended-choice/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extended-choice",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/extended-choice/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extended-choice",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/extended-choice/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extended-choice",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/extended-choice/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extensible-choice",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/extensible-choice/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extensible-choice",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/extensible-choice/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extensible-choice",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/extensible-choice/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extensible-choice",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/extensible-choice/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "extensible-choice",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/extensible-choice/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "html-parameters",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/html-parameters/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "html-parameters",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/html-parameters/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "html-parameters",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/html-parameters/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "html-parameters",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/html-parameters/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "html-parameters",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/html-parameters/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-editor",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/json-editor/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-editor",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/json-editor/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-editor",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/json-editor/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-editor",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/json-editor/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-editor",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/json-editor/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/json-parameter/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "reactive-loading",
+      "title": "Reactive request in flight",
+      "category": "loading",
+      "path": "images/json-parameter/reactive-loading.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/json-parameter/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle reactive update",
+      "category": "reactive",
+      "path": "images/json-parameter/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/json-parameter/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "json-parameter",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/json-parameter/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "multiselect",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/multiselect/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "multiselect",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/multiselect/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "multiselect",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/multiselect/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "multiselect",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/multiselect/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "multiselect",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/multiselect/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/rest-list/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/rest-list/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle user interaction",
+      "category": "interaction",
+      "path": "images/rest-list/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/rest-list/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/rest-list/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "provider-empty",
+      "title": "Provider empty result",
+      "category": "empty",
+      "path": "images/rest-list/provider-empty.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-empty/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "rest-list",
+      "scenario": "provider-error",
+      "title": "Provider parsing error",
+      "category": "error",
+      "path": "images/rest-list/provider-error.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-error/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "validating-string",
+      "scenario": "freestyle-config",
+      "title": "Freestyle configuration",
+      "category": "configuration",
+      "path": "images/validating-string/freestyle-config.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/configure",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "validating-string",
+      "scenario": "freestyle-default",
+      "title": "Freestyle default state",
+      "category": "default",
+      "path": "images/validating-string/freestyle-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "validating-string",
+      "scenario": "freestyle-interaction",
+      "title": "Freestyle validation error",
+      "category": "validation",
+      "path": "images/validating-string/freestyle-interaction.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-freestyle/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "validating-string",
+      "scenario": "pipeline-default",
+      "title": "Pipeline default state",
+      "category": "pipeline",
+      "path": "images/validating-string/pipeline-default.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/build?delay=0sec",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    },
+    {
+      "profile": "validating-string",
+      "scenario": "pipeline-rebuild",
+      "title": "Pipeline Rebuild state",
+      "category": "rebuild",
+      "path": "images/validating-string/pipeline-rebuild.png",
+      "url": "http://127.0.0.1:18080/job/ui-lab-pipeline/1/rebuild/parameterized",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "theme": "light"
+    }
+  ]
+}
