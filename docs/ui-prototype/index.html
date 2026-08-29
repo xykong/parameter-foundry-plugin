@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unified Parameters UI Prototype</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./prototype.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="../README.md" aria-label="Unified Parameters documentation">
+      <span class="brand-mark" aria-hidden="true">UP</span>
+      <span>
+        <strong>Unified Parameters</strong>
+        <small>Interactive 1.0 concept</small>
+      </span>
+    </a>
+    <span class="masthead-status">Static Choice Foundation</span>
+  </header>
+
+  <main>
+    <section class="hero reveal">
+      <p class="eyebrow">Build with Parameters</p>
+      <h1>Release client applications</h1>
+      <p>One canonical value model, whether this build starts here, through REST, or from Pipeline.</p>
+    </section>
+
+    <nav class="view-switch reveal" aria-label="Prototype view">
+      <button type="button" class="view-tab active" data-view="build-view" aria-selected="true">Build form</button>
+      <button type="button" class="view-tab" data-view="config-view" aria-selected="false">Configuration</button>
+    </nav>
+
+    <div class="workspace view-panel" id="build-view">
+      <form class="build-card reveal" id="build-form" novalidate>
+        <input type="hidden" name="__unified_parameters_presence" value="CHANNEL">
+        <input type="hidden" name="__unified_parameters_presence" value="TARGETS">
+        <div class="card-heading">
+          <div>
+            <p class="step-label">01 / Environment</p>
+            <h2>Deployment channel</h2>
+            <p>Choose the environment that receives this release.</p>
+          </div>
+          <span class="required-badge">Required</span>
+        </div>
+
+        <fieldset class="radio-grid">
+          <legend class="sr-only">Deployment channel</legend>
+          <label class="radio-card">
+            <input type="radio" name="channel" value="staging" checked>
+            <span>
+              <strong>Staging</strong>
+              <small>Shared release verification</small>
+            </span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="channel" value="production">
+            <span>
+              <strong>Production</strong>
+              <small>Customer-facing environment</small>
+            </span>
+          </label>
+          <label class="radio-card disabled">
+            <input type="radio" name="channel" value="legacy" disabled>
+            <span>
+              <strong>Legacy</strong>
+              <small>Disabled: environment retired</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="section-rule"></div>
+
+        <div class="card-heading">
+          <div>
+            <p class="step-label">02 / Targets</p>
+            <h2>Client targets</h2>
+            <p>Select at least one target. Filtered batch actions affect only visible enabled options.</p>
+          </div>
+          <output class="count-badge" id="selection-count">2 selected</output>
+        </div>
+
+        <div class="selected-chips" id="selected-chips" aria-label="Selected targets"></div>
+
+        <div class="choice-toolbar">
+          <label class="search-field">
+            <span class="sr-only">Search targets</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+            </svg>
+            <input id="option-search" type="search" placeholder="Search label, value, description, or tag">
+          </label>
+          <div class="batch-actions" aria-label="Selection actions">
+            <button type="button" data-action="select">Select visible</button>
+            <button type="button" data-action="invert">Invert</button>
+            <button type="button" data-action="clear">Clear visible</button>
+            <button type="button" data-action="clear-all">Clear all</button>
+          </div>
+        </div>
+
+        <div class="option-state" id="option-state" role="status" aria-live="polite"></div>
+        <div class="option-groups" id="option-groups"></div>
+        <p class="field-error" id="target-error" role="alert" tabindex="-1"></p>
+
+        <div class="submit-row">
+          <div>
+            <strong>Canonical submission</strong>
+            <p>Values are validated again on the controller before queueing.</p>
+          </div>
+          <button class="primary-action" type="submit">Build now</button>
+        </div>
+        <div class="build-result" id="build-result" role="status" aria-live="polite"></div>
+      </form>
+
+      <aside class="inspector reveal" aria-label="Configuration and output preview">
+        <div class="inspector-heading">
+          <div>
+            <p class="eyebrow">Live contract</p>
+            <h2>Semantic preview</h2>
+          </div>
+          <span class="live-dot">Live</span>
+        </div>
+
+        <label class="control-label" for="state-select">Preview state</label>
+        <select id="state-select">
+          <option value="ready">Ready</option>
+          <option value="empty">Provider empty</option>
+          <option value="error">Provider error</option>
+          <option value="config">Configuration error</option>
+        </select>
+
+        <dl class="contract-list">
+          <div>
+            <dt>Renderer</dt>
+            <dd>Radio + grouped checkboxes/chips</dd>
+          </div>
+          <div>
+            <dt>Default mode</dt>
+            <dd>Explicit</dd>
+          </div>
+          <div>
+            <dt>Duplicate policy</dt>
+            <dd>Reject</dd>
+          </div>
+          <div>
+            <dt>Export</dt>
+            <dd>Delimited with <code>,</code></dd>
+          </div>
+        </dl>
+
+        <section class="code-preview">
+          <div class="preview-title">
+            <span>Typed API value</span>
+            <span class="format-label">JSON</span>
+          </div>
+          <pre id="json-preview"></pre>
+        </section>
+
+        <section class="code-preview">
+          <div class="preview-title">
+            <span>Environment</span>
+            <span class="format-label">ENV</span>
+          </div>
+          <pre id="env-preview"></pre>
+        </section>
+
+        <div class="parity-note">
+          <span aria-hidden="true">=</span>
+          <p><strong>Renderer-independent.</strong> Switching to a list or searchable control keeps the same canonical values.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="workspace view-panel" id="config-view" hidden>
+      <form class="build-card config-card" id="config-form">
+        <div class="card-heading">
+          <div>
+            <p class="step-label">Parameter configuration</p>
+            <h2>Static multi-choice</h2>
+            <p>The public fields below are the same fields used by Pipeline, Job DSL, JCasC, and Job XML.</p>
+          </div>
+          <span class="count-badge">Draft</span>
+        </div>
+
+        <div class="config-grid">
+          <label class="config-field">
+            <span>Parameter name</span>
+            <input id="config-name" value="TARGETS" pattern="[A-Za-z_][A-Za-z0-9_]*" required>
+          </label>
+          <label class="config-field">
+            <span>Renderer</span>
+            <select id="config-renderer">
+              <option value="checkbox">Checkbox group</option>
+              <option value="chips">Searchable chips</option>
+              <option value="list">Multi-select list</option>
+            </select>
+          </label>
+          <label class="config-field">
+            <span>Default mode</span>
+            <select id="config-default-mode">
+              <option value="explicit">Explicit values</option>
+              <option value="none">No default</option>
+              <option value="first">First enabled option</option>
+            </select>
+          </label>
+          <label class="config-field">
+            <span>Minimum selections</span>
+            <input id="config-min" type="number" min="0" value="1">
+          </label>
+          <label class="config-field">
+            <span>Standard API input</span>
+            <select id="config-api-mode">
+              <option value="repeated">Repeated fields</option>
+              <option value="json-array">JSON Array field</option>
+              <option value="delimited">Delimited compatibility</option>
+            </select>
+          </label>
+          <label class="config-field">
+            <span>Environment export</span>
+            <select id="config-export">
+              <option value="delimited">Delimited string</option>
+              <option value="json">JSON Array</option>
+              <option value="none">Do not export</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-rule"></div>
+
+        <div class="editor-heading">
+          <div>
+            <p class="step-label">Inline choices</p>
+            <h2>Option editor</h2>
+          </div>
+          <div class="batch-actions">
+            <button type="button">Import YAML/JSON</button>
+            <button type="button">Add option</button>
+          </div>
+        </div>
+
+        <div class="option-editor" role="table" aria-label="Inline option editor">
+          <div class="editor-row editor-head" role="row">
+            <span role="columnheader">Value</span>
+            <span role="columnheader">Label</span>
+            <span role="columnheader">Group</span>
+            <span role="columnheader">Default</span>
+            <span role="columnheader">Disabled</span>
+          </div>
+          <div class="editor-row config-option" role="row">
+            <input aria-label="Android value" value="android">
+            <input aria-label="Android label" value="Android">
+            <input aria-label="Android group" value="Mobile">
+            <input aria-label="Android default" type="checkbox" checked>
+            <input aria-label="Android disabled" type="checkbox">
+          </div>
+          <div class="editor-row config-option" role="row">
+            <input aria-label="iOS value" value="ios">
+            <input aria-label="iOS label" value="iOS">
+            <input aria-label="iOS group" value="Mobile">
+            <input aria-label="iOS default" type="checkbox" checked>
+            <input aria-label="iOS disabled" type="checkbox">
+          </div>
+          <div class="editor-row config-option" role="row">
+            <input aria-label="Web value" value="web">
+            <input aria-label="Web label" value="Web">
+            <input aria-label="Web group" value="Browser">
+            <input aria-label="Web default" type="checkbox">
+            <input aria-label="Web disabled" type="checkbox">
+          </div>
+        </div>
+
+        <p class="config-validation" id="config-validation" role="status">Configuration is valid. Machine values are unique.</p>
+      </form>
+
+      <aside class="inspector" aria-label="Pipeline and compatibility preview">
+        <div class="inspector-heading">
+          <div>
+            <p class="eyebrow">Same public model</p>
+            <h2>Generated configuration</h2>
+          </div>
+          <span class="live-dot">Live</span>
+        </div>
+
+        <section class="code-preview">
+          <div class="preview-title">
+            <span>Pipeline snippet</span>
+            <span class="format-label">GROOVY</span>
+          </div>
+          <pre id="config-snippet"></pre>
+        </section>
+
+        <dl class="contract-list">
+          <div>
+            <dt>Source</dt>
+            <dd>Static choices</dd>
+          </div>
+          <div>
+            <dt>Canonical type</dt>
+            <dd>Unordered selection set</dd>
+          </div>
+          <div>
+            <dt>Compatibility</dt>
+            <dd id="config-compatibility">Repeated form fields</dd>
+          </div>
+        </dl>
+
+        <div class="parity-note">
+          <span aria-hidden="true">1</span>
+          <p><strong>One persisted shape.</strong> The UI edits the same fields emitted by Pipeline and automation surfaces.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
