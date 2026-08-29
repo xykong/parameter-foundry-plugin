@@ -15,10 +15,10 @@
 | UP-SPIKE-001 binding/persistence | Jenkins Test Harness save/reload/copy/rename and Pipeline Symbol tests | Passed |
 | UP-SPIKE-002 loaded validation | Modified XStream fixture remains loadable, returns configuration error, and does not queue | Passed |
 | UP-SPIKE-003 Pipeline values | Scripted `properties`, `params`, and downstream `build` tests | Passed |
-| UP-SPIKE-004 presence/decoding | Standard REST absent, presence-only empty, repeated value, and browser metadata tests | Passed |
+| UP-SPIKE-004 presence/decoding | Standard REST absent, presence-only empty, repeated/JSON-array/delimited values, and browser metadata tests | Passed |
 | UP-SPIKE-005 standard REST status | Invalid value returns HTTP 400 with unchanged queue on Jenkins `2.528.3` and `2.568.2` | Passed |
-| UP-SPIKE-006 CLI | Jenkins CLI `build -p` accepts a JSON array and records the canonical list | Passed |
-| UP-SPIKE-007 mixed Typed API | Core String/Boolean/Choice plus Unified multi-choice schedules atomically; unsupported Password returns HTTP 409 | Passed |
+| UP-SPIKE-006 CLI | Jenkins CLI `build -p` accepts JSON-array and configured delimited formats and records the canonical list | Passed |
+| UP-SPIKE-007 mixed Typed API | Core String/Boolean/Choice plus Unified String/Array/Object/null shapes validate and schedule atomically; unsupported Password returns HTTP 409 | Passed |
 | UP-SPIKE-008 Rebuild | Rebuild uses the current definition Renderer and historical values | Passed |
 | UP-SPIKE-009 CSP/no-JS | External adjunct only, bounded 200-option fallback, real Chromium enhanced interaction | Passed |
 | UP-SPIKE-010 reactor | Core and source-specific migration adapters build as separate HPIs with one-way dependencies | Passed |
@@ -35,6 +35,9 @@ make verify-container
 - List Git Branches migration suite: 6 tests, 0 failures, 0 errors, 1 generated skip.
 - Additional source migration suite: 6 tests, 0 failures, 0 errors, 1 generated skip.
 - SpotBugs and Spotless: passed for all HPI modules.
+- Format compatibility fixture: 14 tests covering Standard REST, Typed REST,
+  CLI, browser metadata, Provider snapshot/dependency JSON, native multipart,
+  stable errors, and queue invariants.
 
 Target-LTS compatibility was run in a JDK 21 Maven container:
 

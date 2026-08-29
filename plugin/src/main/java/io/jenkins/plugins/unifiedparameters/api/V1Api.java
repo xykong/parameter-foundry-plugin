@@ -92,7 +92,9 @@ public final class V1Api {
                         ErrorCode.UNSUPPORTED_DEFINITION, name, "Only Unified parameter definitions expose options.");
             }
             DefinitionValidationService.requireValid(unified);
-            Map<String, String> dependencies = DependencyValues.fromJson(unified, body.optJSONObject("dependencies"));
+            JSONObject submittedDependencies =
+                    body.containsKey("dependencies") ? requireObject(body, "dependencies") : null;
+            Map<String, String> dependencies = DependencyValues.fromJson(unified, submittedDependencies);
             ProviderResolution resolution =
                     ProviderResolutionService.resolve(job, unified, ProviderOperation.RESOLVE, dependencies);
             ResolvedProviderOptions snapshot = ProviderSnapshotStore.get()
@@ -244,20 +246,14 @@ public final class V1Api {
                     "Unsupported parameter definitions: " + unsupported);
         }
 
-        JSONObject requestValues = body.optJSONObject("values");
-        if (requestValues == null) {
-            requestValues = new JSONObject();
-        }
+        JSONObject requestValues = objectOrEmpty(body, "values");
         for (Object key : requestValues.keySet()) {
             if (!names.contains(String.valueOf(key))) {
                 throw new EvaluationException(
                         ErrorCode.MALFORMED_INPUT, String.valueOf(key), "Unknown parameter name.");
             }
         }
-        JSONObject snapshots = body.optJSONObject("providerSnapshots");
-        if (snapshots == null) {
-            snapshots = new JSONObject();
-        }
+        JSONObject snapshots = objectOrEmpty(body, "providerSnapshots");
         for (Object key : snapshots.keySet()) {
             String name = String.valueOf(key);
             ParameterDefinition definition = property.getParameterDefinition(name);
@@ -277,7 +273,7 @@ public final class V1Api {
                     ? DependencyValues.fromParameterValues(unified, decoded)
                     : Map.of();
             String snapshotId = snapshots.containsKey(definition.getName())
-                    ? snapshots.optString(definition.getName(), null)
+                    ? requireString(snapshots.get(definition.getName()), definition.getName(), "snapshot ID")
                     : null;
             ParameterValue value = TypedParameterAdapterRegistry.decode(
                     job,
@@ -360,9 +356,32 @@ public final class V1Api {
             case REQUEST_TOO_LARGE -> 413;
             case RATE_LIMITED -> 429;
             case PROVIDER_UNAVAILABLE -> 503;
-            case UNSUPPORTED_DEFINITION, CONFIGURATION_INVALID -> 409;
+            case UNSUPPORTED_DEFINITION, CONFIGURATION_INVALID, CONFIGURATION_CHANGED, SNAPSHOT_INVALID -> 409;
             default -> 400;
         };
+    }
+
+    private static JSONObject objectOrEmpty(JSONObject parent, String field) {
+        if (!parent.containsKey(field)) {
+            return new JSONObject();
+        }
+        return requireObject(parent, field);
+    }
+
+    private static JSONObject requireObject(JSONObject parent, String field) {
+        Object value = parent.get(field);
+        if (value instanceof JSONObject object) {
+            return object;
+        }
+        throw new EvaluationException(ErrorCode.INVALID_TYPE, field, "Expected a JSON object.");
+    }
+
+    private static String requireString(Object value, String parameter, String description) {
+        if (value instanceof String stringValue) {
+            return stringValue;
+        }
+        throw new EvaluationException(
+                ErrorCode.INVALID_TYPE, parameter, "Expected a JSON string for " + description + ".");
     }
 
     private static JSONObject ok() {

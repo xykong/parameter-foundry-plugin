@@ -116,7 +116,7 @@ class ReactiveSnapshotIntegrationTest {
         JenkinsRule.JSONWebResponse response =
                 postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
 
-        assertEquals(400, response.getStatusCode());
+        assertEquals(409, response.getStatusCode());
         assertEquals(
                 "UNIFIED_PARAMETER_" + ErrorCode.SNAPSHOT_INVALID.name(),
                 response.getJSONObject().getJSONArray("errors").getJSONObject(0).getString("code"));

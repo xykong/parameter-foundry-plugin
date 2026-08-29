@@ -6,6 +6,9 @@ This document is the executable definition of “every Jenkins entry point.”
 It separates configuration surfaces, submission adapters, and semantic test
 dimensions so release gates do not depend on an ambiguous numeric count.
 
+Transport-specific wire-format cases are defined in
+[`Format Compatibility Test Matrix`](./format-test-matrix.md).
+
 ## 2. Configuration Surfaces
 
 | Surface | `1.0` | Later |
