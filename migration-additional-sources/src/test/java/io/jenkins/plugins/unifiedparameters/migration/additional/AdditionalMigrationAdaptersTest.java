@@ -31,12 +31,12 @@ class AdditionalMigrationAdaptersTest {
                 new SourceCase(new JsonParameterMigrationAdapter(), new JsonParameterDefinition("JSON")),
                 new SourceCase(new RestListMigrationAdapter(), new RestListParameterDefinition("REST")),
                 new SourceCase(
-                        new ValidatingStringMigrationAdapter(),
-                        new ValidatingStringParameterDefinition("VALIDATING")));
+                        new ValidatingStringMigrationAdapter(), new ValidatingStringParameterDefinition("VALIDATING")));
 
         for (SourceCase sourceCase : cases) {
             var plan = sourceCase.adapter.inspect(sourceCase.definition);
-            assertEquals(io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C, plan.getClassification());
+            assertEquals(
+                    io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C, plan.getClassification());
             assertNull(plan.getTarget());
             assertTrue(plan.getTargetSkeleton().contains("TODO"));
             assertTrue(plan.getVerificationFixture().contains("Typed API"));
@@ -54,6 +54,5 @@ class AdditionalMigrationAdaptersTest {
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Provider versus Form")));
     }
 
-    private record SourceCase(
-            AbstractAdditionalMigrationAdapter adapter, StubParameterDefinition definition) {}
+    private record SourceCase(AbstractAdditionalMigrationAdapter adapter, StubParameterDefinition definition) {}
 }

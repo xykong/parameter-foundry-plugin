@@ -50,6 +50,7 @@
 - [Parity test matrix](./testing/parity-test-matrix.md)
 - [Requirement release and test manifest](./testing/requirements.yaml)
 - [Performance and accessibility test plan](./testing/performance-accessibility-plan.md)
+- [Real-service parameter compatibility matrix](./testing/real-service-compatibility-matrix.md)
 - [`0.1` Technical Preview verification report](./testing/technical-preview-report.md)
 - [`1.0` Static Choice Foundation implementation status](./testing/1.0-implementation-status.md)
 - [`1.1` Governed Provider Platform implementation status](./testing/1.1-implementation-status.md)

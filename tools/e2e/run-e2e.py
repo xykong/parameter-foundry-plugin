@@ -124,6 +124,13 @@ def prepare_plugins() -> None:
         / "unified-parameters-migration-list-git-branches.hpi",
         PLUGINS_DIR / "unified-parameters-migration-list-git-branches.jpi",
     )
+    shutil.copy2(
+        ROOT
+        / "migration-additional-sources"
+        / "target"
+        / "unified-parameters-migration-additional-sources.hpi",
+        PLUGINS_DIR / "unified-parameters-migration-additional-sources.jpi",
+    )
 
 
 def start() -> None:

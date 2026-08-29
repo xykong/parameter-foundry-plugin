@@ -18,7 +18,8 @@ abstract class AbstractAdditionalMigrationAdapter extends SourceMigrationAdapter
 
     @Override
     public boolean supports(ParameterDefinition definition) {
-        return definition != null && sourceClassName().equals(definition.getClass().getName());
+        return definition != null
+                && sourceClassName().equals(definition.getClass().getName());
     }
 
     @Override
@@ -28,8 +29,7 @@ abstract class AbstractAdditionalMigrationAdapter extends SourceMigrationAdapter
         }
         return new MigrationPlan(
                 MigrationClassification.C,
-                capabilitySummary()
-                        + " The adapter only inspects the definition class and never executes source code.",
+                capabilitySummary() + " The adapter only inspects the definition class and never executes source code.",
                 null,
                 decisions(definition),
                 targetSkeleton(definition),
@@ -44,8 +44,6 @@ abstract class AbstractAdditionalMigrationAdapter extends SourceMigrationAdapter
     }
 
     protected static String quote(String value) {
-        return "'"
-                + value.replace("\\", "\\\\").replace("'", "\\'")
-                + "'";
+        return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
     }
 }

@@ -1,0 +1,67 @@
+# Real-Service Parameter Compatibility Matrix
+
+Date: August 29, 2026
+
+This matrix records the parameter families observed during a read-only
+inventory of the real Jenkins service and the isolated verification required
+before any production migration. It contains no Job names, Job XML,
+credentials, tokens, option values, or production endpoints.
+
+## Compatibility Policy
+
+- Inventory and behavioral validation are separate activities.
+- Production validation is read-only unless an explicitly approved isolated
+  Job or clone is provided.
+- No source plugin script is executed by the Unified Parameters migration
+  adapters.
+- A mode is not considered migrated until its canonical value, default,
+  empty, invalid, trigger, Rebuild, and failure behavior has a fixture.
+
+## Matrix
+
+| Source family/mode | Real-service inventory | Isolated verification | Unified target | Status |
+|---|---|---|---|---|
+| Jenkins Core String/Text/Boolean/Choice | Observed | Typed API and standard Jenkins parameter semantics | Native Core or Unified equivalent | Passed |
+| Jenkins Core File | Observed | Native definition round-trip; Typed JSON rejection | Native multipart only; Typed API returns `409` | Passed |
+| Stashed File | Observed | Native/plugin-owned transport boundary | Native file companion behavior | Boundary documented |
+| Extended Choice `PT_SINGLE_SELECT` | Observed | Static adapter, default, empty, invalid, Rebuild | Unified single choice | Passed |
+| Extended Choice `PT_RADIO` | Observed | Static adapter and renderer mapping | Unified single choice with radio renderer | Passed |
+| Extended Choice `PT_MULTI_SELECT` | Observed | Order, null/empty, stale default, delimiter, Rebuild | Unified multiple choice with explicit decision | Passed with decision |
+| Extended Choice `PT_CHECKBOX` | Observed | Checkbox, empty, duplicate, disabled, Rebuild | Unified multiple choice with checkbox renderer | Passed with decision |
+| Active Choices `ChoiceParameter` | Observed | Non-executing Provider skeleton | Governed Provider or static Unified choice | Skeleton ready |
+| Active Choices `CascadeChoiceParameter` | Observed | Dependency extraction and cycle fixture | Governed Provider with `dependsOn` | Skeleton ready |
+| Active Choices `DynamicReferenceParameter` | Observed | HTML-to-Form decision fixture | Unified Form or reviewed Renderer companion | Skeleton ready |
+| List Git Branches `PT_BRANCH` | Observed | Ref/provider, credential, deleted-ref, Rebuild fixture | Governed Git refs Provider | Skeleton ready |
+| List Git Branches `ORG_BRANCH` | Observed | Organization-specific mode remains an explicit mapping decision | Governed Git refs Provider | Skeleton ready |
+
+## Executed Evidence
+
+The following repository-owned checks have been executed:
+
+- Core mixed-parameter, native File, Provider, Reactive, Snapshot, Form, and
+  migration tests in `plugin`.
+- Extended Choice adapter and migration coordinator tests.
+- Active Choices adapter tests for Choice, Cascade, and formatted Reference.
+- List Git Branches adapter tests for `PT_BRANCH` and `ORG_BRANCH`.
+- Additional source adapter tests for Editable, Extensible, Custom Checkbox,
+  Multiselect, JSON Editor, HTML Parameters, JSON Parameter, REST List, and
+  Validating String.
+- Real-browser E2E for Core-compatible parameters, governed Provider,
+  Reactive refresh, Snapshot replacement, Unified Form, migration controls,
+  and retirement reporting.
+
+## Remaining Production Gate
+
+The matrix does not authorize production Job modification. Before migration,
+an administrator must approve an isolated canary or clone and provide the
+expected business behavior for:
+
+- the eight legacy no-default multi-choice cases;
+- stale prompt-like defaults;
+- generated Pipeline/Job DSL sources;
+- Webhook, Upstream, Remote, CLI, and Rebuild clients;
+- File and Stashed File transport requirements.
+
+After the canary, scan active configurations, generated sources, queues,
+running builds, and historical records independently. Only then can source
+plugin disable/uninstall be considered.

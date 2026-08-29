@@ -6,6 +6,7 @@
   - `migration-extended-choice/target/unified-parameters-migration-extended-choice.hpi`
   - `migration-active-choices/target/unified-parameters-migration-active-choices.hpi`
   - `migration-list-git-branches/target/unified-parameters-migration-list-git-branches.hpi`
+  - `migration-additional-sources/target/unified-parameters-migration-additional-sources.hpi`
 
 ## Gate Results
 
