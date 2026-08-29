@@ -10,8 +10,7 @@ import java.util.List;
 @Extension
 public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
 
-    private static final String SOURCE_CLASS =
-            "io.jenkins.plugins.file_parameters.StashedFileParameterDefinition";
+    private static final String SOURCE_CLASS = "io.jenkins.plugins.file_parameters.StashedFileParameterDefinition";
 
     @Override
     public String getSourcePluginId() {
