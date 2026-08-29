@@ -1,0 +1,118 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+  <l:layout title="Unified Parameters Migration">
+    <st:adjunct includes="io.jenkins.plugins.unifiedparameters.migration-preview"/>
+    <l:main-panel>
+      <div class="up-migration-page">
+        <header class="up-migration-hero">
+          <div>
+            <p class="up-migration-eyebrow">Business-requirement migration</p>
+            <h1>Unified Parameters Migration Preview</h1>
+            <p>
+              Review equivalent target behavior, explicit semantic decisions, and
+              verification cases. This preview does not modify the Job.
+            </p>
+          </div>
+        </header>
+        <j:set var="previews" value="${it.migrationPreviews}"/>
+        <j:choose>
+          <j:when test="${empty(previews)}">
+            <div class="jenkins-alert jenkins-alert-info">
+              No installed migration adapter recognizes this Job's current parameter definitions.
+            </div>
+          </j:when>
+          <j:otherwise>
+            <div class="up-migration-grid">
+              <j:forEach var="preview" items="${previews}">
+                <article class="up-migration-card">
+                  <div class="up-migration-card-heading">
+                    <div>
+                      <p class="up-migration-eyebrow">${preview.sourcePluginId}</p>
+                      <h2>${preview.parameterName}</h2>
+                    </div>
+                    <span class="up-migration-class up-migration-class-${preview.classification}">
+                      Class ${preview.classification}
+                    </span>
+                  </div>
+                  <p>${preview.reason}</p>
+                  <dl class="up-migration-facts">
+                    <div><dt>Target</dt><dd>${preview.targetType}</dd></div>
+                    <div><dt>Behavior</dt><dd>${preview.targetSummary}</dd></div>
+                  </dl>
+                  <j:if test="${!empty(preview.decisions)}">
+                    <h3>Decisions before migration</h3>
+                    <ul>
+                      <j:forEach var="decision" items="${preview.decisions}">
+                        <li>${decision}</li>
+                      </j:forEach>
+                    </ul>
+                  </j:if>
+                  <h3>Generated Pipeline definition</h3>
+                  <pre class="up-migration-code">${preview.pipelineSnippet}</pre>
+                  <h3>Verification fixture</h3>
+                  <ul>
+                    <j:forEach var="verification" items="${preview.verificationCases}">
+                      <li>${verification}</li>
+                    </j:forEach>
+                  </ul>
+                  <j:if test="${preview.automaticallyApplicable}">
+                    <div class="up-migration-actions">
+                      <f:form method="post" action="cloneMigration">
+                        <input type="hidden" name="parameterName" value="${preview.parameterName}" />
+                        <label>
+                          <span>Clone name</span>
+                          <input class="jenkins-input" name="cloneName"
+                                 value="${it.job.name}-${preview.parameterName}-unified" />
+                        </label>
+                        <j:if test="${!empty(preview.decisions)}">
+                          <label>
+                            <input type="checkbox" name="acceptDecisions" value="true" />
+                            <span>I accept the semantic decisions shown above.</span>
+                          </label>
+                        </j:if>
+                        <button class="jenkins-button jenkins-button--primary" type="submit">
+                          Clone and apply
+                        </button>
+                      </f:form>
+                      <f:form method="post" action="applyMigration">
+                        <input type="hidden" name="parameterName" value="${preview.parameterName}" />
+                        <j:if test="${!empty(preview.decisions)}">
+                          <label>
+                            <input type="checkbox" name="acceptDecisions" value="true" />
+                            <span>I accept the semantic decisions shown above.</span>
+                          </label>
+                        </j:if>
+                        <button class="jenkins-button jenkins-button--danger" type="submit">
+                          Apply in place
+                        </button>
+                      </f:form>
+                    </div>
+                  </j:if>
+                </article>
+              </j:forEach>
+            </div>
+          </j:otherwise>
+        </j:choose>
+        <j:if test="${!empty(it.migrationRecords)}">
+          <section class="up-migration-records">
+            <h2>Migration records</h2>
+            <j:forEach var="record" items="${it.migrationRecords}">
+              <article class="up-migration-record">
+                <div>
+                  <strong>${record.parameterName}</strong>
+                  <span>${record.status} · ${record.createdAt} · ${record.actor}</span>
+                </div>
+                <j:if test="${record.status == 'APPLIED'}">
+                  <f:form method="post" action="rollbackMigration">
+                    <input type="hidden" name="recordId" value="${record.id}" />
+                    <button class="jenkins-button" type="submit">Rollback</button>
+                  </f:form>
+                </j:if>
+              </article>
+            </j:forEach>
+          </section>
+        </j:if>
+      </div>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.jenkins.plugins</groupId>
+    <artifactId>unified-parameters-parent</artifactId>
+    <version>${revision}${changelist}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>unified-parameters</artifactId>
+  <packaging>hpi</packaging>
+
+  <name>Unified Parameters</name>
+  <description>One parameter model for every Jenkins entry point.</description>
+  <url>https://github.com/jenkinsci/unified-parameters-plugin</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>snakeyaml-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>config-file-provider</artifactId>
+      <version>${config-file-provider.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>credentials</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>job-dsl</artifactId>
+      <version>${job-dsl.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sonyericsson.hudson.plugins.rebuild</groupId>
+      <artifactId>rebuild</artifactId>
+      <version>${rebuild.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.configuration-as-code</groupId>
+      <artifactId>test-harness</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-build-step</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-basic-steps</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-multibranch</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-api</artifactId>
+      <version>${pipeline-model-definition.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-definition</artifactId>
+      <version>${pipeline-model-definition.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-extensions</artifactId>
+      <version>${pipeline-model-definition.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-stage-tags-metadata</artifactId>
+      <version>${pipeline-model-definition.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

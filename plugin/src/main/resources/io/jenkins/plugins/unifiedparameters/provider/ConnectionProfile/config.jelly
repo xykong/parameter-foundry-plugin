@@ -1,0 +1,48 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Profile ID" field="id">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Display name" field="displayName">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Base URL" field="baseUrl">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Allowed path prefixes" field="allowedPathPrefixesText">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="Allowed query parameter names" field="allowedQueryParametersText">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="Credential ID" field="credentialId">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Fixed non-secret headers" field="headers">
+    <f:repeatableProperty field="headers" add="Add header" header="Header" />
+  </f:entry>
+  <f:entry title="Available to nested Folders" field="usableByChildren">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Allow private addresses" field="allowPrivateAddresses">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Follow redirects" field="followRedirects">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Use Jenkins proxy" field="useJenkinsProxy">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Connect timeout seconds" field="connectTimeoutSeconds">
+    <f:number min="1" max="30" />
+  </f:entry>
+  <f:entry title="Read timeout seconds" field="readTimeoutSeconds">
+    <f:number min="1" max="30" />
+  </f:entry>
+  <f:entry title="Total timeout seconds" field="totalTimeoutSeconds">
+    <f:number min="1" max="30" />
+  </f:entry>
+  <f:entry title="Maximum response bytes" field="maximumResponseBytes">
+    <f:number min="1024" max="10485760" />
+  </f:entry>
+</j:jelly>

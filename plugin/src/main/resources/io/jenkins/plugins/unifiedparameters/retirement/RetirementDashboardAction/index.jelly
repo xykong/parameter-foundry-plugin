@@ -1,0 +1,60 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+  <l:layout title="Unified Parameters Retirement">
+    <st:adjunct includes="io.jenkins.plugins.unifiedparameters.retirement"/>
+    <l:main-panel>
+      <div class="up-retirement">
+        <header>
+          <p class="up-retirement-eyebrow">Source-plugin retirement</p>
+          <h1>Unified Parameters Retirement Dashboard</h1>
+          <p>
+            Active configuration, generated sources, queued/running work, and historical
+            build records are reported independently. Functional migration does not by
+            itself authorize plugin uninstall.
+          </p>
+        </header>
+        <j:choose>
+          <j:when test="${empty(it.findings)}">
+            <div class="jenkins-alert jenkins-alert-success">
+              No non-core source parameter classes were detected.
+            </div>
+          </j:when>
+          <j:otherwise>
+            <div class="up-retirement-grid">
+              <j:forEach var="finding" items="${it.findings}">
+                <article class="up-retirement-card">
+                  <div>
+                    <p class="up-retirement-eyebrow">${finding.sourcePluginId}</p>
+                    <h2>${finding.sourceClass}</h2>
+                  </div>
+                  <dl>
+                    <div><dt>Active Jobs</dt><dd>${finding.activeJobs.size()}</dd></div>
+                    <div><dt>Generated sources</dt><dd>${finding.generatedSources.size()}</dd></div>
+                    <div><dt>Queued builds</dt><dd>${finding.queuedBuilds}</dd></div>
+                    <div><dt>Running builds</dt><dd>${finding.runningBuilds}</dd></div>
+                    <div><dt>Historical builds</dt><dd>${finding.historicalBuilds}</dd></div>
+                    <div><dt>Migration adapter</dt><dd>${finding.adapterInstalled ? 'Installed' : 'Missing'}</dd></div>
+                  </dl>
+                  <j:choose>
+                    <j:when test="${finding.safeToUninstall}">
+                      <div class="jenkins-alert jenkins-alert-success">No detected references block uninstall.</div>
+                    </j:when>
+                    <j:otherwise>
+                      <div class="jenkins-alert jenkins-alert-warning">
+                        Retain the source plugin or make an explicit historical-data decision.
+                      </div>
+                    </j:otherwise>
+                  </j:choose>
+                  <j:if test="${!empty(finding.activeJobs)}">
+                    <h3>Active Jobs</h3>
+                    <ul><j:forEach var="job" items="${finding.activeJobs}"><li>${job}</li></j:forEach></ul>
+                  </j:if>
+                </article>
+              </j:forEach>
+            </div>
+          </j:otherwise>
+        </j:choose>
+      </div>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

@@ -1,0 +1,76 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.ui"/>
+  <j:set var="escapeEntryTitleAndDescription" value="false"/>
+  <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+    <div name="parameter" class="unified-parameters-field" data-unified-parameter="true"
+         data-parameter-name="${it.name}" data-renderer="${it.renderer}"
+         data-multiple="true" data-required="${it.required}" data-option-count="${it.optionCount}"
+         data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}">
+      <input type="hidden" name="name" value="${it.name}" />
+      <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
+      <input type="hidden" name="snapshotId" data-up-snapshot-id="true" value="" />
+      <input type="hidden" name="dependenciesJson" data-up-dependencies-json="true" value="{}" />
+      <div data-up-fallback="true">
+        <j:if test="${it.providerBacked}">
+          <div class="unified-parameters-fallback-warning">
+            This parameter uses shared Provider ${it.providerId}. JavaScript or the
+            Typed API is required to resolve its governed option set.
+          </div>
+        </j:if>
+        <j:forEach var="defaultValue" items="${it.defaultParameterValue.value}">
+          <input type="hidden" name="value" data-up-fallback-json-value="true"
+                 value="${defaultValue}" />
+        </j:forEach>
+        <j:if test="${it.fallbackTruncated}">
+          <div class="unified-parameters-fallback-warning">
+            This parameter has ${it.optionCount} options. Without JavaScript, the first
+            ${it.NO_JAVASCRIPT_OPTION_LIMIT} options are available. Use search or the Typed API
+            to access the complete set.
+          </div>
+        </j:if>
+        <j:choose>
+          <j:when test="${it.renderer == 'list'}">
+            <div class="jenkins-select">
+              <select class="jenkins-select__input" name="${it.name}"
+                      data-up-native-value="true" multiple="multiple">
+                <j:forEach var="option" items="${it.fallbackChoices}">
+                  <option value="${option.value}"
+                          selected="${it.isDefault(option.value) ? 'selected' : null}"
+                          disabled="${option.disabled ? 'disabled' : null}">${option.label}</option>
+                </j:forEach>
+              </select>
+            </div>
+          </j:when>
+          <j:otherwise>
+            <j:forEach var="option" items="${it.fallbackChoices}">
+              <label>
+                <input type="checkbox" name="${it.name}" data-up-native-value="true"
+                       value="${option.value}"
+                       checked="${it.isDefault(option.value) ? 'checked' : null}"
+                       disabled="${option.disabled ? 'disabled' : null}" />
+                <span>${option.label}</span>
+                <j:if test="${option.disabled and option.disabledReason != null}">
+                  <span> — ${option.disabledReason}</span>
+                </j:if>
+              </label>
+            </j:forEach>
+          </j:otherwise>
+        </j:choose>
+      </div>
+      <j:if test="${it.noJavaScriptSubmitOwner}">
+        <noscript>
+          <div class="up-no-javascript-submit">
+            <input type="hidden" name="${h.getCrumbRequestField()}"
+                   value="${h.getCrumb(request2)}" />
+            <button type="submit" formmethod="post"
+                    formaction="buildWithParameters?delay=0sec"
+                    class="jenkins-button jenkins-button--primary">
+              Build without JavaScript
+            </button>
+          </div>
+        </noscript>
+      </j:if>
+    </div>
+  </f:entry>
+</j:jelly>

@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.form-ui"/>
+  <j:set var="escapeEntryTitleAndDescription" value="false"/>
+  <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+    <div name="parameter" class="up-form" data-up-form="true"
+         data-parameter-name="${it.name}" data-renderer="${it.renderer}">
+      <input type="hidden" name="name" value="${it.name}" />
+      <textarea data-up-form-schema="true" hidden="hidden">${it.schemaJson}</textarea>
+      <div data-up-form-fallback="true">
+        <label>
+          <span>JSON object</span>
+          <textarea class="jenkins-input" name="value" rows="8">${it.defaultJson}</textarea>
+        </label>
+      </div>
+      <div data-up-form-enhanced="true"></div>
+      <div class="up-form-status" role="status" aria-live="polite"></div>
+    </div>
+  </f:entry>
+</j:jelly>

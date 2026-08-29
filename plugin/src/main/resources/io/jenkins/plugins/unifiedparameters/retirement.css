@@ -1,0 +1,65 @@
+.up-retirement {
+  --up-retirement-accent: #b45309;
+  display: grid;
+  gap: 1.25rem;
+  max-width: 90rem;
+}
+
+.up-retirement header {
+  padding: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--up-retirement-accent) 35%, transparent);
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--up-retirement-accent) 12%, transparent), transparent 62%),
+    repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, currentColor 4%, transparent) 12px 13px);
+}
+
+.up-retirement-eyebrow {
+  margin: 0;
+  color: var(--up-retirement-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.up-retirement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+  gap: 1rem;
+}
+
+.up-retirement-card {
+  padding: 1rem;
+  border: 1px solid var(--input-border, #c8ccc5);
+  border-radius: 0.75rem;
+  background: var(--card-background, var(--background));
+}
+
+.up-retirement-card h2 {
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+}
+
+.up-retirement-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.up-retirement-card dl div {
+  padding: 0.65rem;
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--input-border, #c8ccc5) 14%, transparent);
+}
+
+.up-retirement-card dt {
+  color: var(--text-color-secondary, #59645e);
+  font-size: 0.75rem;
+}
+
+.up-retirement-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 750;
+}

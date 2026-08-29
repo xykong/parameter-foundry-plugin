@@ -1,0 +1,133 @@
+.up-migration-page {
+  --up-migration-accent: var(--focus-input-border, #176b58);
+  --up-migration-border: var(--input-border, #c7cbc7);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.up-migration-hero {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid var(--up-migration-border);
+  border-radius: 0.75rem;
+  background:
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--up-migration-accent) 18%, transparent), transparent 32%),
+    var(--background);
+}
+
+.up-migration-hero h1,
+.up-migration-card h2,
+.up-migration-card h3 {
+  margin-block-start: 0;
+}
+
+.up-migration-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--text-color-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.up-migration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr));
+  gap: 1rem;
+}
+
+.up-migration-card {
+  padding: 1.25rem;
+  border: 1px solid var(--up-migration-border);
+  border-radius: 0.75rem;
+  background: var(--background);
+}
+
+.up-migration-card-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.up-migration-class {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.up-migration-class-A {
+  color: var(--success-color, #18794e);
+}
+
+.up-migration-class-B {
+  color: var(--warning-color, #9a6700);
+}
+
+.up-migration-class-C,
+.up-migration-class-D {
+  color: var(--danger-color, #cf222e);
+}
+
+.up-migration-facts {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.up-migration-facts div {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.75rem;
+}
+
+.up-migration-facts dt {
+  color: var(--text-color-secondary);
+  font-weight: 700;
+}
+
+.up-migration-facts dd {
+  margin: 0;
+}
+
+.up-migration-code {
+  max-width: 100%;
+  padding: 0.85rem;
+  overflow: auto;
+  border: 1px solid var(--up-migration-border);
+  border-radius: 0.5rem;
+  background: var(--input-background, var(--background));
+}
+
+.up-migration-actions,
+.up-migration-records {
+  display: grid;
+  gap: 0.75rem;
+  margin-block-start: 1rem;
+}
+
+.up-migration-actions form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: end;
+}
+
+.up-migration-actions label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.up-migration-record {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid var(--up-migration-border);
+  border-radius: 0.5rem;
+}
+
+.up-migration-record div {
+  display: grid;
+}

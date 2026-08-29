@@ -1,0 +1,37 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Operation" field="operation">
+    <f:select>
+      <f:option value="map">Map field</f:option>
+      <f:option value="filter">Filter</f:option>
+      <f:option value="sort">Sort</f:option>
+      <f:option value="distinct">Distinct</f:option>
+      <f:option value="limit">Limit</f:option>
+      <f:option value="group">Assign group</f:option>
+      <f:option value="mark-disabled">Mark disabled</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Field" field="field">
+    <f:select>
+      <f:option value="value">Machine value</f:option>
+      <f:option value="label">Label</f:option>
+      <f:option value="description">Description</f:option>
+      <f:option value="group">Group</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Pattern" field="pattern">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Replacement or reason" field="replacement">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Limit" field="limit">
+    <f:number min="0" max="10000" />
+  </f:entry>
+  <f:entry title="Descending" field="descending">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="">
+    <div align="right"><f:repeatableDeleteButton /></div>
+  </f:entry>
+</j:jelly>

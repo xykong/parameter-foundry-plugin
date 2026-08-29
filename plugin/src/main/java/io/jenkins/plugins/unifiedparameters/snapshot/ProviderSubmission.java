@@ -1,0 +1,132 @@
+package io.jenkins.plugins.unifiedparameters.snapshot;
+
+import hudson.cli.BuildCommand;
+import hudson.cli.CLICommand;
+import hudson.model.Job;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.evaluation.DependencyValues;
+import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
+import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
+import java.util.Map;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest2;
+
+public final class ProviderSubmission {
+
+    private ProviderSubmission() {}
+
+    public static ResolvedProviderOptions resolve(
+            Job<?, ?> job,
+            AbstractUnifiedParameterDefinition definition,
+            ProviderOperation operation,
+            StaplerRequest2 request,
+            JSONObject submitted) {
+        JSONObject dependencyObject = submitted == null
+                ? dependenciesFromRequest(definition, request)
+                : DependencyValues.parseJsonObject(definition, submitted.optString("dependenciesJson", null));
+        if (dependencyObject == null) {
+            dependencyObject = dependenciesFromRequest(definition, request);
+        }
+        Map<String, String> dependencies = DependencyValues.fromJson(definition, dependencyObject);
+        String snapshotId = submitted == null
+                ? request.getParameter(snapshotRequestField(definition))
+                : submitted.optString("snapshotId", null);
+        return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
+    }
+
+    public static ResolvedProviderOptions resolveWithoutSubmission(
+            Job<?, ?> job, AbstractUnifiedParameterDefinition definition, ProviderOperation operation) {
+        if (!definition.getDependsOn().isEmpty()) {
+            throw new EvaluationException(
+                    ErrorCode.DEPENDENCY_INVALID,
+                    definition.getName(),
+                    "Reactive parameter requires canonical dependency values: " + definition.getDependsOn());
+        }
+        return ProviderSnapshotStore.get().resolveForBuild(job, definition, Map.of(), null, operation);
+    }
+
+    public static ResolvedProviderOptions resolveForCli(
+            Job<?, ?> job,
+            AbstractUnifiedParameterDefinition definition,
+            ProviderOperation operation,
+            CLICommand command)
+            throws java.io.IOException, InterruptedException {
+        if (definition.getDependsOn().isEmpty()) {
+            return ProviderSnapshotStore.get().resolveForBuild(job, definition, Map.of(), null, operation);
+        }
+        if (!(command instanceof BuildCommand buildCommand)) {
+            throw new EvaluationException(
+                    ErrorCode.DEPENDENCY_INVALID,
+                    definition.getName(),
+                    "Reactive CLI evaluation requires the Jenkins build command.");
+        }
+        ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        if (property == null) {
+            throw new EvaluationException(
+                    ErrorCode.CONFIGURATION_INVALID, job.getFullName(), "Job is not parameterized.");
+        }
+        io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult validation =
+                io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService.validateJobDefinitions(
+                        property.getParameterDefinitions());
+        if (!validation.isValid()) {
+            throw new EvaluationException(ErrorCode.CONFIGURATION_INVALID, job.getFullName(), validation.summarize());
+        }
+        Map<String, ParameterValue> values = new java.util.LinkedHashMap<>();
+        for (String dependency : definition.getDependsOn()) {
+            ParameterDefinition dependencyDefinition = property.getParameterDefinition(dependency);
+            if (dependencyDefinition == null) {
+                throw new EvaluationException(
+                        ErrorCode.DEPENDENCY_INVALID, definition.getName(), "Unknown dependency: " + dependency);
+            }
+            String raw = buildCommand.parameters == null ? null : buildCommand.parameters.get(dependency);
+            ParameterValue value = raw == null
+                    ? dependencyDefinition.getDefaultParameterValue()
+                    : dependencyDefinition.createValue(command, raw);
+            if (value == null) {
+                throw new EvaluationException(
+                        ErrorCode.DEPENDENCY_INVALID,
+                        definition.getName(),
+                        "Dependency has no canonical value: " + dependency);
+            }
+            values.put(dependency, value);
+        }
+        Map<String, String> dependencies = DependencyValues.fromParameterValues(definition, values);
+        return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, null, operation);
+    }
+
+    public static String snapshotRequestField(AbstractUnifiedParameterDefinition definition) {
+        return "__up_snapshot_" + definition.getName();
+    }
+
+    private static JSONObject dependenciesFromRequest(
+            AbstractUnifiedParameterDefinition definition, StaplerRequest2 request) {
+        JSONObject dependencies = new JSONObject();
+        for (String dependency : definition.getDependsOn()) {
+            String[] values = request.getParameterValues(dependency);
+            if (values == null) {
+                throw new EvaluationException(
+                        ErrorCode.DEPENDENCY_INVALID, definition.getName(), "Missing dependency: " + dependency);
+            }
+            if (values.length == 1) {
+                dependencies.put(dependency, values[0]);
+            } else {
+                dependencies.put(dependency, JSONArray.fromObject(values));
+            }
+        }
+        return dependencies;
+    }
+
+    public static Job<?, ?> requireOwningJob(AbstractUnifiedParameterDefinition definition) {
+        return ProviderResolutionService.findOwningJob(definition)
+                .orElseThrow(() -> new EvaluationException(
+                        ErrorCode.CONFIGURATION_INVALID,
+                        definition.getName(),
+                        "Provider-backed parameter is not attached to a Job."));
+    }
+}

@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Providers" field="providers">
+    <f:repeatableHeteroProperty field="providers"
+                                hasHeader="true"
+                                addCaption="Add Provider" />
+  </f:entry>
+  <f:entry title="Connection Profiles" field="connectionProfiles">
+    <f:repeatableProperty field="connectionProfiles"
+                          add="Add Connection Profile"
+                          header="Connection Profile" />
+  </f:entry>
+</j:jelly>

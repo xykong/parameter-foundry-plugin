@@ -1,0 +1,93 @@
+package io.jenkins.plugins.unifiedparameters.provider;
+
+import hudson.model.Job;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+import jenkins.model.Jenkins;
+
+public final class ProviderResolutionService {
+
+    private ProviderResolutionService() {}
+
+    public static ProviderResolution resolve(
+            Job<?, ?> job,
+            AbstractUnifiedParameterDefinition definition,
+            ProviderOperation operation,
+            Map<String, String> dependencies) {
+        if (!definition.isProviderBacked()) {
+            Instant generated = Instant.now();
+            return new ProviderResolution(
+                    definition.getChoices(),
+                    Digests.sha256("inline\u0000" + definition.getName()),
+                    Digests.options(definition.getChoices()),
+                    generated,
+                    Instant.MAX,
+                    true,
+                    false,
+                    null,
+                    "job/" + job.getFullName() + "/inline/" + definition.getName());
+        }
+        ProviderRegistry.LocatedProvider located = requireProvider(job, definition);
+        ProviderResolution resolution = ProviderRuntime.get()
+                .resolve(
+                        job,
+                        located,
+                        operation,
+                        dependencies,
+                        Jenkins.getAuthentication2().getName());
+        if (definition.isRequired() && resolution.options().isEmpty()) {
+            throw new ProviderException(
+                    ErrorCode.PROVIDER_UNAVAILABLE,
+                    definition.getProviderId(),
+                    "Required parameter Provider returned no options.");
+        }
+        return resolution;
+    }
+
+    public static String currentProviderDigest(Job<?, ?> job, AbstractUnifiedParameterDefinition definition) {
+        if (!definition.isProviderBacked()) {
+            return Digests.sha256("inline\u0000" + definition.getName());
+        }
+        ProviderRegistry.LocatedProvider located = requireProvider(job, definition);
+        SharedProviderDefinition provider = located.provider();
+        if (provider instanceof ConnectionProfileConsumer consumer) {
+            ConnectionProfile profile = ProviderRegistry.findConnectionProfile(job, consumer.getConnectionProfileId())
+                    .map(ProviderRegistry.LocatedProfile::profile)
+                    .orElseThrow(() -> new ProviderException(
+                            ErrorCode.PROVIDER_UNAVAILABLE,
+                            provider.getId(),
+                            "Connection Profile is not visible to this Job."));
+            return Digests.sha256(provider.configurationDigest() + '\u0000' + profile.configurationDigest());
+        }
+        return provider.configurationDigest();
+    }
+
+    public static Optional<Job<?, ?>> findOwningJob(ParameterDefinition definition) {
+        for (Job<?, ?> job : Jenkins.get().getAllItems(Job.class)) {
+            ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+            if (property == null) {
+                continue;
+            }
+            for (ParameterDefinition candidate : property.getParameterDefinitions()) {
+                if (candidate == definition) {
+                    return Optional.of(job);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static ProviderRegistry.LocatedProvider requireProvider(
+            Job<?, ?> job, AbstractUnifiedParameterDefinition definition) {
+        return ProviderRegistry.findProvider(job, definition.getProviderId())
+                .orElseThrow(() -> new ProviderException(
+                        ErrorCode.PROVIDER_UNAVAILABLE,
+                        definition.getProviderId(),
+                        "Provider is not visible to this Job."));
+    }
+}

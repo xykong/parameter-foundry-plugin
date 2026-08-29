@@ -1,0 +1,32 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Name" help="/help/parameter/name.html">
+    <f:textbox name="parameter.name" value="${instance.name}" />
+  </f:entry>
+  <f:entry title="Fields" field="fields">
+    <f:repeatableProperty field="fields" add="Add field" header="Typed field" />
+  </f:entry>
+  <f:entry title="Layouts" field="layouts">
+    <f:repeatableProperty field="layouts" add="Add layout" header="Layout" />
+  </f:entry>
+  <f:entry title="Pipeline output">
+    <select class="jenkins-select__input" name="parameter.outputMode">
+      <option value="map" selected="${instance.outputMode == 'map'}">Map</option>
+      <option value="json" selected="${instance.outputMode == 'json'}">JSON string</option>
+    </select>
+  </f:entry>
+  <f:entry title="Environment export">
+    <select class="jenkins-select__input" name="parameter.environmentExport">
+      <option value="json" selected="${instance.environmentExport == 'json'}">Complete JSON</option>
+      <option value="none" selected="${instance.environmentExport == 'none'}">No complete-form export</option>
+    </select>
+  </f:entry>
+  <f:entry title="Renderer">
+    <select class="jenkins-select__input" name="parameter.renderer">
+      <option value="schema" selected="${instance.renderer == 'schema'}">Built-in schema form</option>
+    </select>
+  </f:entry>
+  <f:entry title="Description" help="/help/parameter/description.html">
+    <f:textarea name="parameter.description" value="${instance.description}" />
+  </f:entry>
+</j:jelly>

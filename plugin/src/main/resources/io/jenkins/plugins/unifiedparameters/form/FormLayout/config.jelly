@@ -1,0 +1,23 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="ID" field="id"><f:textbox /></f:entry>
+  <f:entry title="Type" field="type">
+    <f:select />
+  </f:entry>
+  <f:entry title="Title" field="title"><f:textbox /></f:entry>
+  <f:entry title="Columns" field="columns"><f:number min="1" max="12" /></f:entry>
+  <f:entry title="Collapsed" field="collapsed"><f:checkbox /></f:entry>
+  <f:entry title="Field names" field="fieldNamesText"
+           description="Comma- or line-separated top-level field names.">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="Visible when field" field="visibleWhenField"><f:textbox /></f:entry>
+  <f:entry title="Visible when value" field="visibleWhenValue"><f:textbox /></f:entry>
+  <f:entry title="Child layouts">
+    <div class="jenkins-alert jenkins-alert-info">
+      Configure nested layout trees through Pipeline, Job DSL, or JCasC.
+      The browser editor intentionally avoids an unbounded recursive form.
+    </div>
+  </f:entry>
+  <f:entry title=""><div align="right"><f:repeatableDeleteButton /></div></f:entry>
+</j:jelly>

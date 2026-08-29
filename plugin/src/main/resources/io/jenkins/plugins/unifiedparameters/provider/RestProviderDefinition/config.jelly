@@ -1,0 +1,73 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Provider ID" field="id">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Display name" field="displayName">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Connection Profile ID" field="connectionProfileId">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Relative path" field="relativePath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Query parameters" field="queryParameters">
+    <f:repeatableProperty field="queryParameters"
+                          add="Add query parameter"
+                          header="Query parameter" />
+  </f:entry>
+  <f:entry title="Format" field="format">
+    <f:select>
+      <f:option value="auto">From Content-Type</f:option>
+      <f:option value="json">JSON</f:option>
+      <f:option value="xml">XML</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Root JSONPath/XPath" field="rootPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Value path" field="valuePath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Label path" field="labelPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Description path" field="descriptionPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Group path" field="groupPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Disabled path" field="disabledPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Disabled reason path" field="disabledReasonPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Tags path" field="tagsPath">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Available to nested Folders" field="usableByChildren">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Transforms" field="transforms">
+    <f:repeatableProperty field="transforms" add="Add transform" header="Transform" />
+  </f:entry>
+  <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
+    <f:number min="0" max="86400" />
+  </f:entry>
+  <f:entry title="Timeout seconds" field="timeoutSeconds">
+    <f:number min="1" max="30" />
+  </f:entry>
+  <f:entry title="Failure policy" field="failurePolicy">
+    <f:select>
+      <f:option value="fail-closed">Fail closed</f:option>
+      <f:option value="last-known-good">Last known good</f:option>
+      <f:option value="empty">Empty result</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
+    <f:number min="0" max="604800" />
+  </f:entry>
+</j:jelly>

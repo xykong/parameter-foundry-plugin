@@ -1,0 +1,72 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.config-import"/>
+  <div class="up-parameter-config">
+  <f:entry title="Name" help="/help/parameter/name.html">
+    <f:textbox name="parameter.name" value="${instance.name}" />
+  </f:entry>
+  <f:entry title="Shared Provider ID"
+           description="Leave empty to use the Inline choices below.">
+    <f:textbox name="parameter.providerId" value="${instance.providerId}" />
+  </f:entry>
+  <f:entry title="Depends on"
+           description="Comma- or line-separated parameter names. Reactive dependencies require a shared Provider.">
+    <f:textarea name="parameter.dependsOnText" value="${instance.dependsOnText}" />
+  </f:entry>
+  <f:entry title="Choices" field="choices">
+    <div class="up-option-editor">
+      <f:repeatableProperty field="choices" add="Add option" header="Option" />
+    </div>
+  </f:entry>
+  <f:entry title="Import YAML or JSON">
+    <div class="up-import-panel" data-up-import-panel="true" data-parameter-kind="single"
+         data-endpoint="${rootURL}/descriptorByName/io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition/previewImport">
+      <f:textarea class="up-import-source" />
+      <div class="up-import-actions">
+        <button type="button" class="jenkins-button" data-up-import-preview-button="true">Preview import</button>
+        <button type="button" class="jenkins-button" data-up-import-apply-button="true" disabled="disabled">Apply import</button>
+      </div>
+      <div class="up-import-preview">
+        <p class="up-import-status" data-up-import-status="true" role="status" aria-live="polite">
+          Paste YAML or JSON, then preview it before changing the option editor.
+        </p>
+        <div data-up-import-rows="true"></div>
+        <pre class="up-import-generated" data-up-import-generated="true"></pre>
+      </div>
+    </div>
+  </f:entry>
+  <f:entry title="Renderer">
+    <select class="jenkins-select__input" name="parameter.renderer">
+      <option value="select" selected="${instance.renderer == 'select'}">Select</option>
+      <option value="searchable" selected="${instance.renderer == 'searchable'}">Searchable</option>
+      <option value="radio" selected="${instance.renderer == 'radio'}">Radio</option>
+    </select>
+  </f:entry>
+  <f:entry title="Default mode">
+    <select class="jenkins-select__input" name="parameter.defaultMode">
+      <option value="none" selected="${instance.defaultMode == 'none'}">None</option>
+      <option value="first" selected="${instance.defaultMode == 'first'}">First enabled option</option>
+      <option value="explicit" selected="${instance.defaultMode == 'explicit'}">Explicit value</option>
+    </select>
+  </f:entry>
+  <f:entry title="Default value">
+    <f:textbox name="parameter.defaultValue" value="${instance.defaultValue}" />
+  </f:entry>
+  <f:entry title="Required">
+    <f:checkbox name="parameter.required" checked="${instance.required}" />
+  </f:entry>
+  <f:entry title="Allow custom value">
+    <f:checkbox name="parameter.allowCustomValue" checked="${instance.allowCustomValue}" />
+  </f:entry>
+  <f:entry title="Custom value regex">
+    <f:textbox name="parameter.customValuePattern" value="${instance.customValuePattern}" />
+  </f:entry>
+  <f:entry title="Custom value maximum length">
+    <f:number name="parameter.customValueMaxLength"
+              value="${instance.customValueMaxLength}" min="1" max="4096" />
+  </f:entry>
+  <f:entry title="Description" help="/help/parameter/description.html">
+    <f:textarea name="parameter.description" value="${instance.description}" />
+  </f:entry>
+  </div>
+</j:jelly>

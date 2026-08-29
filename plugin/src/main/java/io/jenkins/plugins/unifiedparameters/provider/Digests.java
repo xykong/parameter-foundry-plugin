@@ -1,0 +1,55 @@
+package io.jenkins.plugins.unifiedparameters.provider;
+
+import io.jenkins.plugins.unifiedparameters.model.Option;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Map;
+
+public final class Digests {
+
+    private Digests() {}
+
+    public static String sha256(String value) {
+        try {
+            return "sha256:"
+                    + HexFormat.of()
+                            .formatHex(MessageDigest.getInstance("SHA-256")
+                                    .digest(value.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException(exception);
+        }
+    }
+
+    public static String dependencies(Map<String, String> values) {
+        StringBuilder encoded = new StringBuilder();
+        values.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> encoded.append(entry.getKey())
+                .append('\u0000')
+                .append(entry.getValue())
+                .append('\u0001'));
+        return sha256(encoded.toString());
+    }
+
+    public static String options(List<Option> options) {
+        StringBuilder encoded = new StringBuilder();
+        for (Option option : options) {
+            encoded.append(option.getValue())
+                    .append('\u0000')
+                    .append(option.getLabel())
+                    .append('\u0000')
+                    .append(option.getDescription())
+                    .append('\u0000')
+                    .append(option.getGroup())
+                    .append('\u0000')
+                    .append(option.isDisabled())
+                    .append('\u0000')
+                    .append(option.getDisabledReason())
+                    .append('\u0000')
+                    .append(option.getTags())
+                    .append('\u0001');
+        }
+        return sha256(encoded.toString());
+    }
+}

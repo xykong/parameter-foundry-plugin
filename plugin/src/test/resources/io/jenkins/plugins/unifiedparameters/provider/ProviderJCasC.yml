@@ -1,0 +1,21 @@
+unclassified:
+  unifiedParameters:
+    providers:
+      - unifiedStaticProvider:
+          id: "shared-releases"
+          displayName: "Shared Releases"
+          usableByChildren: true
+          options:
+            - value: "android"
+              label: "Android"
+            - value: "ios"
+              label: "iOS"
+    connectionProfiles:
+      - id: "release-service"
+        displayName: "Release Service"
+        baseUrl: "https://releases.example.test/api/"
+        credentialId: "service-credential"
+        allowedPathPrefixes:
+          - "/api/options/"
+        allowedQueryParameters:
+          - "environment"
