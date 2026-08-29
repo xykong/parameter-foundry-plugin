@@ -9,8 +9,8 @@
          data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}">
       <input type="hidden" name="name" value="${it.name}" />
       <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
-      <input type="hidden" name="snapshotId" data-up-snapshot-id="true" value="" />
-      <input type="hidden" name="dependenciesJson" data-up-dependencies-json="true" value="{}" />
+      <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />
+      <input type="hidden" name="__up_dependencies_${it.name}" data-up-dependencies-json="true" value="{}" />
       <div data-up-fallback="true">
         <j:if test="${it.providerBacked}">
           <div class="unified-parameters-fallback-warning">

@@ -30,6 +30,14 @@ public final class DefinitionValidationService {
     public static DefinitionValidationResult validateStoredDefinition(ParameterDefinition definition) {
         List<String> errors = new ArrayList<>();
         if (definition instanceof UnifiedFormParameterDefinition form) {
+            if (form.getName() == null
+                    || form.getName().isEmpty()
+                    || AbstractUnifiedParameterDefinition.PRESENCE_FIELD.equals(form.getName())) {
+                errors.add("Form parameter name is required and cannot be reserved");
+            }
+            if (form.getModelVersion() != 1) {
+                errors.add("Unsupported form model version: " + form.getModelVersion());
+            }
             errors.addAll(FormEvaluationService.validateDefinition(form));
             return new DefinitionValidationResult(errors);
         }

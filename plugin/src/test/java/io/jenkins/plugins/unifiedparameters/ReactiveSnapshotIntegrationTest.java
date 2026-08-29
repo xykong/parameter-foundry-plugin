@@ -19,6 +19,7 @@ import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
 import io.jenkins.plugins.unifiedparameters.provider.SharedProviderDefinition;
 import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotStore;
+import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSubmission;
 import io.jenkins.plugins.unifiedparameters.snapshot.SnapshotAudience;
 import java.net.URL;
 import java.util.List;
@@ -32,6 +33,14 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
 class ReactiveSnapshotIntegrationTest {
+
+    @Test
+    void standardFormContextUsesParameterScopedSnapshotFields() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("ARTIFACT");
+
+        assertEquals("__up_snapshot_ARTIFACT", ProviderSubmission.snapshotRequestField(definition));
+        assertEquals("__up_dependencies_ARTIFACT", ProviderSubmission.dependenciesRequestField(definition));
+    }
 
     @Test
     void typedResolveAndBuildShareDependencyBoundSnapshot(JenkinsRule jenkins) throws Exception {

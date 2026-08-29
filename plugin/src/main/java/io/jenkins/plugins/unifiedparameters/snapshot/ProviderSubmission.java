@@ -34,9 +34,10 @@ public final class ProviderSubmission {
             dependencyObject = dependenciesFromRequest(definition, request);
         }
         Map<String, String> dependencies = DependencyValues.fromJson(definition, dependencyObject);
-        String snapshotId = submitted == null
-                ? request.getParameter(snapshotRequestField(definition))
-                : submitted.optString("snapshotId", null);
+        String snapshotId = submitted == null ? null : submitted.optString("snapshotId", null);
+        if (snapshotId == null || snapshotId.isBlank()) {
+            snapshotId = request.getParameter(snapshotRequestField(definition));
+        }
         return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
     }
 
@@ -104,8 +105,19 @@ public final class ProviderSubmission {
         return "__up_snapshot_" + definition.getName();
     }
 
+    public static String dependenciesRequestField(AbstractUnifiedParameterDefinition definition) {
+        return "__up_dependencies_" + definition.getName();
+    }
+
     private static JSONObject dependenciesFromRequest(
             AbstractUnifiedParameterDefinition definition, StaplerRequest2 request) {
+        String encoded = request.getParameter(dependenciesRequestField(definition));
+        if (encoded != null && !encoded.isBlank()) {
+            JSONObject submitted = DependencyValues.parseJsonObject(definition, encoded);
+            if (submitted != null) {
+                return submitted;
+            }
+        }
         JSONObject dependencies = new JSONObject();
         for (String dependency : definition.getDependsOn()) {
             String[] values = request.getParameterValues(dependency);

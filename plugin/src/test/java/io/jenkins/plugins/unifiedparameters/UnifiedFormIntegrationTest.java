@@ -124,6 +124,17 @@ class UnifiedFormIntegrationTest {
         assertTrue(errors.stream().anyMatch(error -> error.contains("unknown field")));
     }
 
+    @Test
+    void definitionValidationRejectsReservedName() {
+        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("__unified_parameters_presence");
+        List<String> errors =
+                io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService.validateStoredDefinition(
+                                definition)
+                        .getErrors();
+
+        assertTrue(errors.stream().anyMatch(error -> error.contains("reserved")));
+    }
+
     private static FreeStyleProject formJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
         UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("DEPLOYMENT");
