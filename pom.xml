@@ -30,6 +30,7 @@
     <module>migration-extended-choice</module>
     <module>migration-active-choices</module>
     <module>migration-list-git-branches</module>
+    <module>migration-additional-sources</module>
   </modules>
 
   <scm>
