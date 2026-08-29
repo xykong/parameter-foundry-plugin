@@ -101,8 +101,7 @@ external errors and still fails on any Unified Parameters script error.
 
 ## Decision
 
-All repository-owned implementation gates through the documented `2.0`
-roadmap are automated and passing. Community release review, manual
-screen-reader sign-off, Jenkins security review, Plugin Compatibility Tester,
-and real-organization migration pilots remain release/process gates rather
-than missing product design or implementation.
+All repository-owned checks for the implemented `2.0` foundation are passing.
+The final product release gates remain open: complete source-specific A/B
+fixtures, companion-plugin security review, manual screen-reader sign-off,
+Plugin Compatibility Tester coverage, and real-organization migration pilots.

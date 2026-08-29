@@ -7,12 +7,12 @@ provide one secure, typed, extensible parameter model across the Jenkins UI,
 Pipeline, REST API, CLI, webhooks, upstream builds, remote triggers, and
 Rebuild.
 
-The current development branch implements the roadmap through `2.0`: static
-and governed dynamic choices, reactive dependencies and Provider snapshots,
-typed Unified Forms, migration execution and rollback, trusted companion
-extension contracts, and source-plugin retirement reporting. The artifact
-version remains `0.1-SNAPSHOT` until the release and community review gates are
-completed.
+The current development branch implements the roadmap through the `2.0`
+foundation: static and governed dynamic choices, reactive dependencies and
+Provider snapshots, typed Unified Forms, migration execution and rollback,
+trusted companion extension contracts, source migration boundaries, and
+retirement reporting. The artifact version remains `0.1-SNAPSHOT` until the
+release and community review gates are completed.
 
 Product and technical design documents are under [`docs/`](./docs/).
 The reproducible competitor UI benchmark is under
