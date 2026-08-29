@@ -12,6 +12,7 @@ work
 # Python tooling caches
 __pycache__
 .ruff_cache
+tools/e2e/.cache
 
 # Eclipse project files
 .settings

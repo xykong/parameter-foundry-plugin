@@ -1,5 +1,0 @@
-<?jelly escape-by-default='true'?>
-<div>
-    Unified Parameters provides one secure and consistent parameter model
-    across Jenkins user interfaces and automation entry points.
-</div>
