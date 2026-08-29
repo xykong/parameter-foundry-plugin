@@ -108,7 +108,7 @@ still passes.
 
 ## 7. Current `1.0` Evidence
 
-The August 28, 2026 reproducible run is stored in:
+The August 29, 2026 reproducible run is stored in:
 
 - [`results/1.0-e2e-benchmark.json`](./results/1.0-e2e-benchmark.json);
 - [`results/1.0-accessibility.json`](./results/1.0-accessibility.json);
