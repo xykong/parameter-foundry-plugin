@@ -1,0 +1,71 @@
+schemaVersion: 1
+fixture: extended-choice-static-order-sensitive
+
+source:
+  plugin: extended-choice-parameter
+  pluginVersion: 388.ve7b_d0b_920e10
+  synthetic: true
+  parameter:
+    name: DEPLOY_STEPS
+    type: PT_CHECKBOX
+    value: database,backend,frontend
+    defaultValue: database,backend,frontend
+    multiSelectDelimiter: ","
+    orderSemantics: unknown
+
+normalizedIntent:
+  family: choice
+  cardinality: multiple
+  options:
+    - value: database
+      label: database
+    - value: backend
+      label: backend
+    - value: frontend
+      label: frontend
+  renderer: checkbox
+  defaults:
+    mode: explicit
+    values: [database, backend, frontend]
+  export:
+    mode: delimited
+    delimiter: ","
+
+classification:
+  level: B
+  reason: The source exports a delimited list whose order may control deployment sequencing
+  userDecisions:
+    - id: confirm-order-semantics
+      question: Is selection order part of the business requirement?
+      choices:
+        - value: unordered
+          result: Generate unifiedMultiChoice and verify membership only
+        - value: ordered
+          result: Do not generate a 1.0 target; redesign with an ordered Form field
+
+targetWhenUnordered:
+  symbol: unifiedMultiChoice
+  arguments:
+    name: DEPLOY_STEPS
+    choices:
+      - value: database
+        label: database
+      - value: backend
+        label: backend
+      - value: frontend
+        label: frontend
+    defaultMode: explicit
+    defaultValues: [database, backend, frontend]
+    renderer: checkbox
+    standardApiInputMode: delimited
+
+verificationWhenUnordered:
+  - case: submitted-different-order
+    input: [frontend, database]
+    expectedMembership: [database, frontend]
+    orderCompared: false
+
+notes:
+  - The adapter must not infer that order is irrelevant from the source UI.
+  - Selecting ordered keeps the migration blocked until an ordered target type exists.
+  - The decision and verification result are stored in the migration record.

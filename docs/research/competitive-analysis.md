@@ -4,14 +4,14 @@
 
 | 决策项 | 结论 |
 |--------|------|
-| 文档状态 | 第一阶段完成：功能调研和产品目标 |
+| 文档状态 | 第二阶段完成：功能调研、产品目标和核心设计基线 |
 | 产品定位 | 面向 Jenkins 社区的通用现代参数插件，不是 sample-project 内部专用插件 |
 | 正式名称 | `Unified Parameters` |
 | Plugin short name | `unified-parameters` |
 | 核心判断 | 现有插件各自解决了部分问题，但没有一个同时做到现代 UI、类型安全、API 一致、安全数据源和优雅 Pipeline DSL |
 | 建议方向 | 建立统一的“参数模型 + 选项数据源 + 渲染器 + 验证器”体系 |
 | 第一版本重点 | 静态单选、多选、Radio、Checkbox；Freestyle/Pipeline/API/Rebuild 一致；无脚本迁移 |
-| 是否开始编码 | 否；下一步先完成数据模型、扩展点、兼容语义和交互原型设计 |
+| 是否开始编码 | 开始 `0.1 Technical Preview`；只有全部 integration gate 通过后才冻结 `1.0` 模型/API |
 
 详细产品规格和编号验收目标见：
 
@@ -28,6 +28,10 @@
 > 为 Jenkins 提供一个安全、类型明确、可扩展、Pipeline-first、API 一致并符合现代交互习惯的
 > 参数平台，使同一个参数定义在人工页面、REST/CLI、Webhook、Upstream 和 Rebuild 中具有
 > 相同语义。
+
+产品承诺是用户业务需求可以 1:1 或更好地迁移，不是旧 Java class、XML、Pipeline `$class`
+或历史 Build 的无缝兼容。见
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)。
 
 现有插件中值得继承的能力包括：
 
@@ -103,24 +107,25 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 | `—` | 不支持或不属于该插件定位 |
 | `?` | 官方文档没有明确说明，不能当作稳定契约 |
 
-## 3. 当前 Update Center 基线
+## 3. Update Center 和 UI Lab 基线
 
-以下版本来自 2026-08-27 生产 Jenkins `2.568.2` 所连接的 Update Center：
+以下版本是 2026-08-27 保存的公开 Update Center/UI Lab 调研快照。UI Lab 的实际插件版本固定在
+各 profile 的 `plugins.txt` 中：
 
-| 插件 | Short name | 当前版本 | 最低 Core | 线上已安装 |
-|------|------------|----------|-----------|------------|
-| Extended Choice Parameter | `extended-choice-parameter` | `388.ve7b_d0b_920e10` | `2.479.1` | 是 |
-| Active Choices | `uno-choice` | `2.8.10` | `2.504.3` | 是 |
-| Json Editor Parameter | `json-editor-parameter` | `54.v71962f37a_416` | `2.426.3` | 否 |
-| Extensible Choice Parameter | `extensible-choice-parameter` | `255.vfa_41f46828ef` | `2.479.1` | 否 |
-| Editable Choice | `editable-choice` | `71.v02a291ebbe45` | `2.361.4` | 否 |
-| Custom Checkbox Parameter | `custom-checkbox-parameter` | `1.76.v08d845691023` | `2.541.3` | 否 |
-| Multiselect Parameter | `multiselect-parameter` | `1.8` | `2.375.4` | 否 |
-| Validating String Parameter | `validating-string-parameter` | `345.v0f4330488a_f6` | `2.528.3` | 否 |
-| HTML Parameters | `html-parameters` | `10.v9a_56672a_96a_5` | `2.528.3` | 否 |
-| JSON Parameter | `json-parameter` | `120.v3e5546f06794` | `2.555.3` | 否 |
-| REST List Parameter | `rest-list-parameter` | `362.v52147f86a_172` | `2.479.1` | 否 |
-| Scriptler | `scriptler` | `463.v52c7c5f7a_5e7` | `2.516.3` | 否 |
+| 插件 | Short name | 调研版本 | 最低 Core |
+|------|------------|----------|-----------|
+| Extended Choice Parameter | `extended-choice-parameter` | `388.ve7b_d0b_920e10` | `2.479.1` |
+| Active Choices | `uno-choice` | `2.8.10` | `2.504.3` |
+| Json Editor Parameter | `json-editor-parameter` | `54.v71962f37a_416` | `2.426.3` |
+| Extensible Choice Parameter | `extensible-choice-parameter` | `255.vfa_41f46828ef` | `2.479.1` |
+| Editable Choice | `editable-choice` | `71.v02a291ebbe45` | `2.361.4` |
+| Custom Checkbox Parameter | `custom-checkbox-parameter` | `1.76.v08d845691023` | `2.541.3` |
+| Multiselect Parameter | `multiselect-parameter` | `1.8` | `2.375.4` |
+| Validating String Parameter | `validating-string-parameter` | `345.v0f4330488a_f6` | `2.528.3` |
+| HTML Parameters | `html-parameters` | `10.v9a_56672a_96a_5` | `2.528.3` |
+| JSON Parameter | `json-parameter` | `120.v3e5546f06794` | `2.555.3` |
+| REST List Parameter | `rest-list-parameter` | `362.v52147f86a_172` | `2.479.1` |
+| Scriptler | `scriptler` | `463.v52c7c5f7a_5e7` | `2.516.3` |
 
 版本只代表当前观察快照，不作为新插件设计依赖。
 
@@ -218,7 +223,7 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 
 ### 6.1 Active Choices 专项验证
 
-生产 Jenkins `2.568.2`、Active Choices `2.8.10` 的隔离验证已经证明：
+隔离 Jenkins `2.568.2`、Active Choices `2.8.10` 的验证观察到：
 
 - 参数页面多选、Checkbox、Radio 和单选通过。
 - 单个逗号分隔字符串 API 通过。
@@ -229,7 +234,7 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 
 完整证据见：
 
-`upgrade-remediations/2026-08-27-extended-choice-parameter-validation.md`。
+[`active-choices-compatibility-summary.md`](./active-choices-compatibility-summary.md)。
 
 该结果说明 Active Choices 可以作为迁移候选，但不能被视为所有入口均有官方兼容承诺的
 统一参数平台。
@@ -503,7 +508,8 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 - 自动生成迁移预览。
 - 默认值和空值差异报告。
 - 回滚快照。
-- 旧 class 引用归零检查。
+- 活动 Job、生成源和队列中的旧 class 引用归零检查。
+- 历史 Build 来源 class 报告和管理员退役决策。
 
 ## 10. 新插件的产品愿景
 
@@ -701,12 +707,21 @@ emptySubmission:
 parameters {
     unifiedChoice(
         name: 'CHANNEL',
-        choices: ['prod', 'test'],
+        choices: [
+            [value: 'prod', label: 'Production'],
+            [value: 'test', label: 'Testing']
+        ],
+        defaultMode: 'explicit',
         defaultValue: 'test'
     )
     unifiedMultiChoice(
         name: 'TARGETS',
-        choices: ['android', 'ios', 'ohos'],
+        choices: [
+            [value: 'android', label: 'Android'],
+            [value: 'ios', label: 'iOS'],
+            [value: 'ohos', label: 'HarmonyOS']
+        ],
+        defaultMode: 'explicit',
         defaultValues: ['android', 'ios'],
         renderer: 'chips',
         minSelections: 1
@@ -714,13 +729,14 @@ parameters {
 }
 ```
 
-最终 DSL 名称取决于 Jenkins Symbol 和 Declarative Pipeline 扩展可行性评审。
+`1.0` Symbol 已固定为 `unifiedChoice` 和 `unifiedMultiChoice`；实现前仍须通过 Declarative
+Pipeline 和嵌套 Describable 技术 spike。
 
 ### 11.9 REST Provider 安全
 
 必须统一实现：
 
-- Jenkins Credentials 引用。
+- 受治理 Connection Profile；Job 不组合任意 URL 和 Credentials。
 - Secret 脱敏。
 - 连接和读取超时。
 - 最大响应体。
@@ -733,6 +749,9 @@ parameters {
 - JSON/XML 安全解析。
 - 缓存、最大 TTL、手工刷新和 last-known-good。
 - Provider 权限和审计日志。
+
+规范方案见
+[`ADR 0010`](../decisions/0010-governed-connection-profiles.md)。
 
 ### 11.10 可观测性
 
@@ -800,6 +819,10 @@ parameters {
 - 完整单元测试、集成测试和兼容测试。
 - 不执行 Groovy，不渲染任意 HTML，不访问任意文件或网络。
 
+`1.0` 不包含 Editable/custom value、Global/Folder Provider、REST Provider、Reactive、
+Cascade、Unified Form 或生产 Job in-place migration。完整路线见
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)。
+
 ### 13.2 `1.x` 增强
 
 - 全局和 Folder Provider。
@@ -836,20 +859,10 @@ parameters {
 
 ### 15.1 行为一致性
 
-每种参数类型必须使用同一组契约测试覆盖：
-
-1. 参数页面。
-2. `buildWithParameters`。
-3. CLI。
-4. Pipeline Upstream。
-5. RemoteCause。
-6. Rebuild。
-7. 默认值。
-8. 空值。
-9. 非法值。
-10. 禁用值。
-
-同一输入必须产生相同 `ParameterValue`。
+每种参数类型必须执行
+[`Parity Test Matrix`](../testing/parity-test-matrix.md)
+中全部适用的配置 surface、submission adapter 和 semantic dimension。同一输入必须产生相同
+canonical value、`ParameterValue`、环境变量、构建记录和稳定 error code。
 
 ### 15.2 UI
 
@@ -871,29 +884,37 @@ parameters {
 ### 15.4 Jenkins 社区质量
 
 - 使用受支持的 Jenkins plugin parent 和 BOM。
-- 支持至少当前 Jenkins LTS 基线和最新 LTS。
+- 发布时记录 `pom.xml` 最低 Jenkins 基线、发布时受支持 LTS 和集成插件版本矩阵。
 - Jenkins Plugin Compatibility Tester 通过。
 - SpotBugs、静态检查和依赖安全检查通过。
 - Pipeline、Freestyle 和 Rebuild 有自动化集成测试。
 - 文档包含示例、迁移、威胁模型和兼容性承诺。
 - 公开 issue、贡献指南、发布和安全响应流程。
 
-## 16. 下一阶段需要回答的问题
+## 16. 设计问题关闭状态
 
-下一阶段是“技术架构和交互原型”，需要先回答：
+| 原问题 | 决策 |
+|--------|------|
+| 单一还是拆分公开类型 | `1.0` 拆分 `UnifiedChoiceParameterDefinition` 和 `UnifiedMultiChoiceParameterDefinition` |
+| Declarative Pipeline Symbol 和字段 | ADR 0009 固定 flat static DSL 和 nested dynamic Provider，由技术 spike 验证 Jenkins binding |
+| Rebuild 集成和历史兼容 | ADR 0008 |
+| Provider API 校验和快照 | ADR 0007 |
+| absent/empty/canonical value | ADR 0005 |
+| Renderer 前端架构 | Core Architecture + UI Interaction Specification |
+| Reactive 权限和隔离 | ADR 0006、ADR 0007、Threat Model |
+| REST SSRF 管理边界 | ADR 0010 Connection Profile；Job 不组合任意 URL 和 Credential |
+| Migration Assistant 形态 | ADR 0011：同仓库 Maven reactor，core HPI + source-specific adapter HPI |
+| 名称和 short name | ADR 0001；社区托管前执行最终检查 |
 
-1. 使用一个统一 `ModernChoiceParameterDefinition`，还是按单选/多选拆分公开类型？
-2. Declarative Pipeline 能否提供简洁 symbol，而不要求嵌套 `$class`？
-3. Rebuild 插件需要贡献扩展点、上游修改还是插件内适配？
-4. 动态 Provider 如何在 API 触发时进行合法值校验和缓存快照？
-5. `absent`、空字符串和空列表如何映射到 Jenkins 现有 `ParameterValue`？
-6. Renderer 使用 Jenkins 原生 Web Components、Design Library 组件还是独立前端 bundle？
-7. Reactive endpoint 如何避免 DOM 依赖，同时支持 Folder、Multibranch 和权限隔离？
-8. REST Provider 的 SSRF allowlist 应由全局、Folder 还是 Job 管理？
-9. Migration Assistant 作为插件功能、CLI 还是独立工具实现？
-10. 正式插件名称、short name 和 Jenkins 社区已有命名冲突如何处理？
+新增门禁：
 
-这些问题关闭前，不进入生产级插件实现。
+- ADR 0012 定义 mixed Core/Unified Typed API。
+- ADR 0013 定义 XStream 后 authoritative configuration validation。
+- ADR 0014 将 Pipeline、standard REST 4xx/no-queue、CLI、Rebuild 等先放入 `0.1` 可执行验证。
+
+在全面实现前仍须完成
+[`Core Architecture`](../architecture/core-architecture.md)
+列出的 Jenkins 技术 spike。这些 spike 验证集成可行性，不再重新定义业务语义。
 
 ## 17. 参考资料
 

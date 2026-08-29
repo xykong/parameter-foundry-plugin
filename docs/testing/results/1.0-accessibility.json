@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-28T22:35:03.668832+00:00",
+  "automatedChecks": {
+    "duplicateIds": [],
+    "unnamed": [],
+    "missingDescriptions": [],
+    "contrast": []
+  },
+  "keyboardFlows": [
+    "chip removal with Backspace",
+    "checkbox ArrowDown navigation",
+    "group collapse/expand",
+    "group selection with disabled skip announcement",
+    "details disclosure and visible focus"
+  ],
+  "themes": [
+    "light",
+    "dark",
+    "forced-colors high contrast"
+  ],
+  "viewport": "390x844 verified without horizontal overflow",
+  "knownExternalWarnings": [
+    "Extended Choice legacy global scripts fail without their bundled jQuery assumptions.",
+    "Jenkins 2.568.2 breadcrumb overflow menu can call xmlEscape with an undefined label during responsive or large-layout transitions."
+  ]
+}

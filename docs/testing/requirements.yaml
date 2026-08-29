@@ -1,0 +1,438 @@
+schemaVersion: 1
+sourceOfTruth:
+  roadmap: ../decisions/0004-release-scope-and-migration-promise.md
+  semantics: ../decisions/0005-canonical-value-and-serialization.md
+  matrix: parity-test-matrix.md
+
+requirements:
+  - id: UP-SPIKE-001
+    release: "0.1"
+    summary: Public data binding and persistence
+    plannedTests: [preview-binding-save-reload-copy-rename]
+  - id: UP-SPIKE-002
+    release: "0.1"
+    summary: Malformed loaded definition validation
+    plannedTests: [preview-xstream-invalid-load-no-build]
+  - id: UP-SPIKE-003
+    release: "0.1"
+    summary: Pipeline and downstream value behavior
+    plannedTests: [preview-declarative-scripted-params-downstream]
+  - id: UP-SPIKE-004
+    release: "0.1"
+    summary: Browser presence and standard form decoding
+    plannedTests: [preview-presence-repeated-explicit-empty]
+  - id: UP-SPIKE-005
+    release: "0.1"
+    summary: Standard REST HTTP 4xx and no queue
+    plannedTests: [preview-standard-rest-baseline-lts-status-queue]
+  - id: UP-SPIKE-006
+    release: "0.1"
+    summary: CLI multi-value integration
+    plannedTests: [preview-cli-values-errors]
+  - id: UP-SPIKE-007
+    release: "0.1"
+    summary: Mixed Core and Unified Typed API
+    plannedTests: [preview-typed-mixed-job-unsupported-definition]
+  - id: UP-SPIKE-008
+    release: "0.1"
+    summary: Rebuild integration
+    plannedTests: [preview-rebuild-renderer-current-validation]
+  - id: UP-SPIKE-009
+    release: "0.1"
+    summary: CSP and bounded no-JavaScript fallback
+    plannedTests: [preview-csp-no-js]
+  - id: UP-SPIKE-010
+    release: "0.1"
+    summary: Migration Maven reactor packaging
+    plannedTests: [preview-core-adapter-hpi-dependency-direction]
+
+  - id: UP-TYPE-001
+    release: "1.0"
+    summary: Static single choice
+    plannedTests: [single-select-ui, searchable-single-ui, single-entry-parity]
+  - id: UP-TYPE-002
+    release: "1.0"
+    summary: Static multiple choice
+    plannedTests: [multi-list-ui, chips-ui, multi-entry-parity]
+  - id: UP-TYPE-003
+    release: "1.0"
+    summary: Radio renderer
+    plannedTests: [radio-renderer-parity]
+  - id: UP-TYPE-004
+    release: "1.0"
+    summary: Checkbox-group renderer
+    plannedTests: [checkbox-renderer-parity]
+  - id: UP-TYPE-005
+    release: "1.1"
+    summary: Editable single choice
+    plannedTests: [custom-value-policy, custom-value-entry-parity]
+  - id: UP-TYPE-006
+    release: "1.0"
+    summary: Disabled option
+    plannedTests: [disabled-option-all-entry-rejection]
+
+  - id: UP-PROV-001
+    release: "1.0"
+    summary: Inline option editor
+    plannedTests: [inline-option-binding, inline-option-preview]
+  - id: UP-PROV-002
+    release: "1.0"
+    summary: Pipeline List/Map configuration
+    plannedTests: [declarative-symbol, scripted-properties]
+  - id: UP-PROV-003
+    release: "1.0"
+    summary: YAML/JSON import preview
+    plannedTests: [inline-import-preview, inline-import-redaction]
+  - id: UP-PROV-004
+    release: "1.0"
+    summary: Duplicate machine-value detection
+    plannedTests: [duplicate-option-save-rejection]
+
+  - id: UP-SOURCE-001
+    release: "1.1"
+    summary: Global Provider registry
+    plannedTests: [global-provider-jcasc, global-provider-permissions]
+  - id: UP-SOURCE-002
+    release: "1.1"
+    summary: Folder Provider registry
+    plannedTests: [folder-provider-inheritance, folder-provider-sibling-isolation]
+  - id: UP-SOURCE-003
+    release: "1.1"
+    summary: Managed Config Provider
+    plannedTests: [managed-config-api-only, managed-config-reload]
+  - id: UP-SOURCE-004
+    release: "1.1"
+    summary: REST JSON and XML Provider
+    plannedTests: [rest-json-mapping, rest-xml-secure-parser]
+  - id: UP-SOURCE-005
+    release: "1.1"
+    summary: Governed Connection Profile
+    plannedTests: [connection-profile-scope, connection-profile-url-construction]
+  - id: UP-SOURCE-006
+    release: "1.1"
+    summary: Transform Chain
+    plannedTests: [transform-preview, transform-error-location]
+  - id: UP-SOURCE-007
+    release: "1.1"
+    summary: Provider cache health and fallback
+    plannedTests: [provider-cache-health, provider-fallback-policy]
+
+  - id: UP-SEM-001
+    release: "1.0"
+    summary: No default
+    plannedTests: [no-default-absent, no-default-explicit-empty]
+  - id: UP-SEM-002
+    release: "1.0"
+    summary: Explicit first-option default mode
+    plannedTests: [first-enabled-default]
+  - id: UP-SEM-003
+    release: "1.0"
+    summary: Explicit default
+    plannedTests: [explicit-default-order, disabled-default-rejection]
+  - id: UP-SEM-004
+    release: "1.0"
+    summary: Absent and explicit-empty distinction
+    plannedTests: [absence-empty-contract-all-entry]
+  - id: UP-SEM-005
+    release: "1.0"
+    summary: Stale default
+    plannedTests: [inline-stale-default-save-rejection]
+  - id: UP-SEM-006
+    release: "1.0"
+    summary: Multiple-choice unordered membership semantics
+    plannedTests: [multi-membership-equality, multi-string-compareto-serialization, rebuild-stable-lexical-order]
+  - id: UP-SEM-007
+    release: "1.0"
+    summary: Reserved form presence marker
+    plannedTests: [presence-marker-selected-empty-absent, optional-single-blank-sentinel, presence-marker-conflict-malformed]
+
+  - id: UP-VAL-001
+    release: "1.0"
+    summary: Required validation
+    plannedTests: [required-all-entry]
+  - id: UP-VAL-002
+    release: "1.0"
+    summary: Minimum and maximum selections
+    plannedTests: [selection-range-all-entry]
+  - id: UP-VAL-003
+    release: "1.1"
+    summary: Custom-value policy
+    plannedTests: [custom-value-disabled-by-default]
+  - id: UP-VAL-004
+    release: "1.1"
+    summary: Custom-value regex and length
+    plannedTests: [custom-value-regex-length]
+  - id: UP-VAL-005
+    release: "1.0"
+    summary: Disabled-value rejection
+    plannedTests: [disabled-value-all-entry]
+  - id: UP-VAL-006
+    release: "1.0"
+    summary: Unknown-value 4xx
+    plannedTests: [unknown-value-no-build-no-500]
+  - id: UP-VAL-007
+    release: "1.0"
+    summary: Duplicate submitted value
+    plannedTests: [duplicate-reject, duplicate-deduplicate]
+
+  - id: UP-CONFIG-001
+    release: "1.0"
+    summary: Authoritative loaded-definition validation
+    plannedTests: [xstream-bypass-setter-validation, invalid-definition-all-entry-no-build]
+
+  - id: UP-INT-001
+    release: "1.0"
+    summary: Freestyle integration
+    plannedTests: [freestyle-config-build]
+  - id: UP-INT-002
+    release: "1.0"
+    summary: Declarative Pipeline
+    plannedTests: [declarative-symbol]
+  - id: UP-INT-003
+    release: "1.0"
+    summary: Scripted Pipeline
+    plannedTests: [scripted-properties]
+  - id: UP-INT-004
+    release: "1.0"
+    summary: Standard buildWithParameters
+    plannedTests: [standard-rest-decoding]
+  - id: UP-INT-005
+    release: "1.0"
+    summary: Jenkins CLI
+    plannedTests: [cli-decoding-parity]
+  - id: UP-INT-006
+    release: "1.0"
+    summary: Pipeline build step
+    plannedTests: [downstream-build-parity]
+  - id: UP-INT-007
+    release: "1.0"
+    summary: Webhook and remote trigger compatibility
+    plannedTests: [webhook-profile, remote-trigger-profile]
+  - id: UP-INT-008
+    release: "1.0"
+    summary: Rebuild
+    plannedTests: [rebuild-renderer, rebuild-revalidation]
+  - id: UP-INT-009
+    release: "1.0"
+    summary: Job copy rename and reload
+    plannedTests: [job-lifecycle-roundtrip]
+  - id: UP-INT-010
+    release: "1.0"
+    summary: Typed JSON API
+    plannedTests: [typed-api-value-types, typed-api-errors]
+  - id: UP-INT-011
+    release: "1.0"
+    summary: Schema resolve and validate API
+    plannedTests: [schema-api, inline-resolve-api, validate-api]
+  - id: UP-INT-012
+    release: "1.2"
+    summary: Provider snapshot
+    plannedTests: [snapshot-binding, snapshot-audience, snapshot-permission-recheck, snapshot-expiry, snapshot-replay]
+  - id: UP-INT-013
+    release: "1.0"
+    summary: Parity guarantee
+    plannedTests: [parity-manifest-completeness]
+  - id: UP-INT-014
+    release: "1.0"
+    summary: Mixed Core and Unified Typed API
+    plannedTests: [typed-core-string-text-boolean-choice, typed-unsupported-definition-409]
+
+  - id: UP-UX-001
+    release: "1.0"
+    summary: Search
+    plannedTests: [search-fields, search-performance]
+  - id: UP-UX-002
+    release: "1.0"
+    summary: Multiple-choice chips
+    plannedTests: [chips-keyboard, chips-clear-count]
+  - id: UP-UX-003
+    release: "1.0"
+    summary: Batch actions
+    plannedTests: [select-visible, clear-visible, invert-visible, clear-all]
+  - id: UP-UX-004
+    release: "1.0"
+    summary: Grouping
+    plannedTests: [group-collapse, group-selection]
+  - id: UP-UX-005
+    release: "1.0"
+    summary: Option details
+    plannedTests: [description-disabled-reason]
+  - id: UP-UX-006
+    release: "1.0"
+    summary: Shared state model
+    plannedTests: [empty-error-configuration-state]
+  - id: UP-UX-007
+    release: "1.0"
+    summary: Large-list virtualization
+    plannedTests: [ten-thousand-options]
+  - id: UP-UX-008
+    release: "1.0"
+    summary: WCAG 2.2 AA
+    plannedTests: [keyboard-screen-reader-contrast]
+  - id: UP-UX-009
+    release: "1.0"
+    summary: Responsive layout
+    plannedTests: [viewport-390]
+  - id: UP-UX-010
+    release: "1.0"
+    summary: Jenkins themes
+    plannedTests: [light-dark-high-contrast]
+  - id: UP-UX-011
+    release: "1.0"
+    summary: No-JavaScript fallback
+    plannedTests: [no-js-static-submit]
+
+  - id: UP-REACT-001
+    release: "1.2"
+    summary: Declared dependencies
+    plannedTests: [dependency-definition]
+  - id: UP-REACT-002
+    release: "1.2"
+    summary: Dependency graph and cycle detection
+    plannedTests: [dependency-cycle]
+  - id: UP-REACT-003
+    release: "1.2"
+    summary: Asynchronous refresh
+    plannedTests: [debounce-cancel-version]
+  - id: UP-REACT-004
+    release: "1.2"
+    summary: Dynamic UI states
+    plannedTests: [loading-empty-error-fallback]
+  - id: UP-REACT-005
+    release: "1.2"
+    summary: Non-UI reactive validation
+    plannedTests: [reactive-api-parity]
+  - id: UP-REACT-006
+    release: "1.2"
+    summary: Snapshot provenance
+    plannedTests: [build-snapshot-metadata]
+
+  - id: UP-PARITY-001
+    release: "1.0"
+    summary: UI uses evaluation service
+    plannedTests: [browser-service-contract]
+  - id: UP-PARITY-002
+    release: "1.0"
+    summary: Standard REST canonicalization
+    plannedTests: [standard-rest-parity]
+  - id: UP-PARITY-003
+    release: "1.0"
+    summary: Typed REST lossless conversion
+    plannedTests: [typed-rest-parity]
+  - id: UP-PARITY-004
+    release: "1.0"
+    summary: CLI upstream and remote adapters
+    plannedTests: [cli-upstream-remote-parity]
+  - id: UP-PARITY-005
+    release: "1.0"
+    summary: Rebuild parity
+    plannedTests: [rebuild-parity]
+  - id: UP-PARITY-006
+    release: "1.2"
+    summary: Provider snapshot parity
+    plannedTests: [snapshot-ui-api-parity]
+  - id: UP-PARITY-007
+    release: "1.2"
+    summary: Reactive dependency parity
+    plannedTests: [reactive-dependency-parity]
+  - id: UP-PARITY-008
+    release: "1.0"
+    summary: Stable error codes
+    plannedTests: [error-code-all-entry]
+  - id: UP-PARITY-009
+    release: "1.0"
+    summary: Default parity
+    plannedTests: [default-all-entry]
+  - id: UP-PARITY-010
+    release: "1.0"
+    summary: Build-record canonical value
+    plannedTests: [build-record-parity]
+
+  - id: UP-AUTO-001
+    release: "1.1"
+    summary: Job DSL public-model integration
+    plannedTests: [job-dsl-roundtrip]
+  - id: UP-AUTO-002
+    release: "1.1"
+    summary: JCasC shared Provider and Connection Profile integration
+    plannedTests: [jcasc-import-export-redaction]
+
+  - id: UP-MIG-001
+    release: "1.0"
+    summary: Extended Choice static discovery preview and target generation
+    plannedTests: [extended-choice-a-fixture, extended-choice-b-decision]
+  - id: UP-MIG-002
+    release: "1.1"
+    summary: Static migration apply clone and rollback
+    plannedTests: [migration-compare-before-write, migration-rollback-conflict]
+  - id: UP-MIG-003
+    release: "1.2"
+    summary: Dynamic Provider and Cascade migration adapters
+    plannedTests: [dynamic-adapter-skeleton, dynamic-adapter-verification]
+  - id: UP-MIG-004
+    release: "2.0"
+    summary: Source-plugin retirement dashboard
+    plannedTests: [retirement-active-reference-scan, retirement-history-report]
+  - id: UP-MIG-005
+    release: "2.0"
+    summary: Active Choices non-executing migration adapter
+    plannedTests: [active-choices-provider-skeleton, active-choices-cascade-dependencies, active-choices-form-skeleton]
+  - id: UP-MIG-006
+    release: "2.0"
+    summary: List Git Branches governed Provider migration adapter
+    plannedTests: [git-ref-provider-skeleton, git-ref-secret-redaction]
+
+  - id: UP-FORM-001
+    release: "2.0"
+    summary: Typed Field Schema
+    plannedTests: [form-field-schema-validation]
+  - id: UP-FORM-002
+    release: "2.0"
+    summary: Layout Schema
+    plannedTests: [form-layout-accessibility, form-condition-server-contract]
+  - id: UP-FORM-003
+    release: "2.0"
+    summary: Structured Output
+    plannedTests: [form-map-json-export-parity]
+  - id: UP-FORM-004
+    release: "2.0"
+    summary: Trusted Form Rendering
+    plannedTests: [form-renderer-csp-xss]
+
+  - id: UP-EXT-001
+    release: "2.0"
+    summary: Script Provider companion
+    plannedTests: [script-provider-permission-audit, script-provider-schema]
+  - id: UP-EXT-002
+    release: "2.0"
+    summary: Renderer companion SPI
+    plannedTests: [renderer-spi-version, renderer-spi-security]
+  - id: UP-INT-015
+    release: "2.0"
+    summary: Native file-parameter interoperability
+    plannedTests: [native-file-definition-roundtrip, typed-file-explicit-409]
+
+  - id: UP-SEC-001
+    release: "1.0"
+    summary: Endpoint permission and CSRF
+    plannedTests: [endpoint-permission-matrix, endpoint-csrf]
+  - id: UP-SEC-002
+    release: "1.0"
+    summary: Server validation and output escaping
+    plannedTests: [server-validation-all-entry, option-output-xss]
+  - id: UP-SEC-003
+    release: "1.1"
+    summary: Credential and target binding
+    plannedTests: [credential-profile-binding, job-cannot-override-connection]
+  - id: UP-SEC-004
+    release: "1.1"
+    summary: SSRF and network policy
+    plannedTests: [ssrf-address-matrix, redirect-proxy-policy]
+  - id: UP-SEC-005
+    release: "1.2"
+    summary: Snapshot and cache isolation
+    plannedTests: [snapshot-cross-scope, snapshot-diagnostic-cannot-build, cache-cross-scope]
+  - id: UP-SEC-006
+    release: "1.1"
+    summary: Provider concurrency and rate budgets
+    plannedTests: [provider-budget-unique-dependencies, provider-429-retry-after, provider-build-reserved-capacity]

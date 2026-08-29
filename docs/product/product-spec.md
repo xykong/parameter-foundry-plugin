@@ -14,7 +14,7 @@
 | 产品标语 | **One parameter model. Every Jenkins entry point.** |
 | UI/API 一致性 | 强保证；不一致视为发布阻断 |
 | 规格日期 | 2026-08-28 |
-| 当前阶段 | 独立开发仓库已初始化；尚未开始功能实现 |
+| 当前阶段 | 核心设计基线完成；下一里程碑为 `0.1 Technical Preview` |
 
 **Unified Parameters** 不只是一个新的 Choice 控件，而是 Jenkins 的统一现代参数平台。
 
@@ -26,6 +26,11 @@
 详细的竞品全覆盖、功能 Epic、安全替代和迁移设计见：
 
 [`functional-design.md`](./functional-design.md)。
+
+版本范围和迁移承诺以
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)
+为准。这里的“替代”和“1:1”均指用户业务需求与可观察行为可以迁移到更安全、优雅、高效的
+实现，不表示旧 Java class、XML、Pipeline 配置或历史构建记录无缝兼容。
 
 ### 1.1 四项最高目标
 
@@ -40,6 +45,9 @@
 - 原样保存旧 XML。
 - 继续支持任意 Groovy、JavaScript、HTML 或 Controller 文件读取。
 - 复制旧插件的隐式默认值、弱验证或 UI/API 不一致行为。
+
+目标状态是：用户原有功能需求都能 1:1 或更好地表达，迁移助手可以说明目标配置、差异和验证
+方法；用户不需要继续采用旧插件的不安全实现方式。
 
 ## 2. 名称决策
 
@@ -102,7 +110,7 @@
 3. **现代交互**：搜索、chips、分组、虚拟化、键盘、移动端和主题适配。
 4. **安全默认**：核心插件不执行任意 Groovy、JavaScript 或 HTML。
 5. **受控扩展**：Provider、Renderer、Validator 可以扩展，但必须遵循统一契约。
-6. **可迁移**：扫描、预览、批次、回滚和旧 class 归零是正式能力。
+6. **可迁移**：扫描、预览、批次、回滚和活动配置旧 class 归零是正式能力；历史 Build 单独报告。
 
 ## 4. 统一概念模型
 
@@ -146,15 +154,19 @@ metadata: {}
 
 - `value` 是稳定机器值。
 - `label` 是展示值，可本地化。
-- 默认、禁用和分组使用结构化字段，不编码成 `:selected` 字符串。
+- `selected` 只作为导入或 Provider 默认候选提示；运行时默认值由参数级 `DefaultSpec` 唯一决定。
+- 默认候选、禁用和分组使用结构化字段，不编码成 `:selected` 字符串。
 - 所有 Provider 输出统一转换为 Option。
+
+精确的空值、默认值、重复值、顺序和序列化语义见
+[`ADR 0005`](../decisions/0005-canonical-value-and-serialization.md)。
 
 ### 4.3 Value
 
 | 参数 | Pipeline `params` | 默认环境变量 |
 |------|-------------------|----------------|
 | single | `String` | 原字符串 |
-| multiple | 不可变 `List<String>` | 逗号分隔字符串 |
+| multiple | 无序选择集合的确定性 `List<String>` 视图 | 逗号分隔字符串 |
 | form | 不可变结构化 Map | JSON 字符串 |
 
 多选环境变量可配置：
@@ -163,11 +175,34 @@ metadata: {}
 - `json`：JSON Array。
 - `none`：不导出环境变量。
 
+多选顺序不是 `unifiedMultiChoice` 的业务语义；List/环境变量顺序在一个 Provider snapshot 内
+确定，动态快照变化后可能变化。顺序敏感需求使用后续 ordered collection/Form 类型。
+
 如果选项值包含 delimiter，保存配置时必须报错，或要求切换为 JSON 输出。
 
-## 5. `1.0` 功能目标
+## 5. `0.1 Technical Preview`
 
-### 5.1 参数类型
+`0.1` 是不承诺配置/API 兼容性的工程验证版本，不作为稳定 Update Center 版本发布。
+
+| ID | 验证目标 | 退出条件 |
+|----|----------|----------|
+| UP-SPIKE-001 | Public binding/persistence | flat static/nested dynamic binding，save/reload/copy/rename 通过 |
+| UP-SPIKE-002 | Loaded definition validation | XStream 绕过 setter 的非法 fixture 可加载、可诊断、不可构建 |
+| UP-SPIKE-003 | Pipeline values | Declarative/Scripted、`params` 和 downstream `build` 通过 |
+| UP-SPIKE-004 | Form presence/decoding | presence marker、repeated 和 explicit-empty 语义通过 |
+| UP-SPIKE-005 | Standard REST status | 最低基线和目标 LTS 上 invalid input 返回 4xx 且 queue 不变 |
+| UP-SPIKE-006 | CLI | multi-value 和稳定错误契约通过 |
+| UP-SPIKE-007 | Mixed Typed API | Core String/Text/Boolean/Choice + Unified Job 原子调度通过 |
+| UP-SPIKE-008 | Rebuild | 保持 Renderer 并按当前 definition 重验证 |
+| UP-SPIKE-009 | CSP/No-JS | CSP-safe enhancement 和 bounded fallback 通过 |
+| UP-SPIKE-010 | Migration reactor | core HPI 与 Extended Choice adapter HPI 单向依赖通过 |
+
+详细门禁见
+[`ADR 0014`](../decisions/0014-technical-preview-and-ga-gates.md)。
+
+## 6. `1.0` 功能目标
+
+### 6.1 参数类型
 
 | ID | 需求 | 验收标准 |
 |----|------|----------|
@@ -175,10 +210,9 @@ metadata: {}
 | UP-TYPE-002 | 静态多选 | listbox、chips 和 Checkbox |
 | UP-TYPE-003 | Radio | 使用与单选相同的数据和验证模型 |
 | UP-TYPE-004 | Checkbox group | 使用与多选相同的数据和验证模型 |
-| UP-TYPE-005 | Editable single choice | 可显式允许列表外值 |
 | UP-TYPE-006 | Read-only/disabled option | 页面、API 和 Rebuild 均拒绝禁用值 |
 
-### 5.2 Inline Provider
+### 6.2 Inline Provider
 
 | ID | 需求 | 验收标准 |
 |----|------|----------|
@@ -187,45 +221,46 @@ metadata: {}
 | UP-PROV-003 | YAML/JSON 导入导出 | 导入前预览差异 |
 | UP-PROV-004 | 重复值检测 | 保存前阻止重复机器值 |
 
-### 5.3 默认值和空值
+### 6.3 默认值和空值
 
 | ID | 需求 | 验收标准 |
 |----|------|----------|
 | UP-SEM-001 | `none` | 不隐式选择第一项 |
 | UP-SEM-002 | `first` | 只有显式配置后才选第一项 |
 | UP-SEM-003 | `explicit` | 默认值必须存在且可用 |
-| UP-SEM-004 | absent/empty-string/empty-list | UI、API、CLI 和 Rebuild 结果一致 |
-| UP-SEM-005 | stale default | 默认阻止保存，可显式配置兼容策略 |
+| UP-SEM-004 | absent/explicit-empty | form 使用 reserved presence marker，其他入口结构化表达；所有入口结果一致 |
+| UP-SEM-005 | stale default | `1.0` Inline stale default 始终阻止保存；动态策略在后续版本显式配置 |
+| UP-SEM-006 | multi-choice order | 业务值为无序集合；所有输出按机器值 `String.compareTo` 稳定排序 |
+| UP-SEM-007 | form presence marker | `__unified_parameters_presence` 不进入值列表，冲突/重复/未知 marker 拒绝 |
 
-### 5.4 验证
+### 6.4 验证
 
 | ID | 需求 | 验收标准 |
 |----|------|----------|
 | UP-VAL-001 | required | 空值返回参数级错误 |
 | UP-VAL-002 | min/max selections | 页面和服务端同时校验 |
-| UP-VAL-003 | allow custom value | 默认关闭 |
-| UP-VAL-004 | regex/length | 自定义值可配置 |
 | UP-VAL-005 | disabled value | 所有入口拒绝 |
 | UP-VAL-006 | unknown value | 返回 HTTP 4xx，不返回 HTTP 500 |
 | UP-VAL-007 | duplicate submitted value | 可配置拒绝或去重，默认拒绝 |
+| UP-CONFIG-001 | loaded definition validation | 所有入口在 Provider/排队前运行同一 authoritative validator |
 
-### 5.5 Jenkins 入口一致性
+### 6.5 Jenkins 入口一致性
 
 | ID | 入口 | 目标 |
 |----|------|------|
 | UP-INT-001 | Freestyle | 原生配置和构建页面 |
 | UP-INT-002 | Declarative Pipeline | 简洁 Symbol |
 | UP-INT-003 | Scripted Pipeline | 完整支持 |
-| UP-INT-004 | `buildWithParameters` | 支持单值、重复字段和 JSON Array |
-| UP-INT-005 | Jenkins CLI | 与 REST 使用同一解析器 |
+| UP-INT-004 | `buildWithParameters` | 按参数显式 `standardApiInputMode` 解码 single/repeated/json-array/delimited，不猜测 |
+| UP-INT-005 | Jenkins CLI | 使用 CLI 专用 transport decoder，并调用同一 Evaluation Service |
 | UP-INT-006 | Pipeline `build` | 支持 typed value 和字符串兼容输入 |
 | UP-INT-007 | Webhook/Remote Trigger | 标准 ParameterDefinition 契约 |
 | UP-INT-008 | Rebuild | 保持原 Renderer、Option 和验证规则 |
 | UP-INT-009 | Job copy/rename/reload | 行为和配置不漂移 |
 | UP-INT-010 | Typed JSON API | 原生 String、Array、Boolean 和 Object |
 | UP-INT-011 | Schema/Resolve/Validate API | 非 UI 客户端可完整发现和求值 |
-| UP-INT-012 | Provider snapshot | UI/API 可使用同一选项快照 |
 | UP-INT-013 | Parity guarantee | 同一输入产生同一 canonical value/error code |
+| UP-INT-014 | Mixed Job Typed API | 内置适配 Core String/Text/Boolean/Choice；unsupported definition 整体 409 |
 
 所有入口必须调用同一个：
 
@@ -235,10 +270,17 @@ metadata: {}
 
 不得为页面和 API 分别实现独立规则。
 
+Typed API 是完整 Job 调度契约，不忽略 unsupported definition；详细适配边界见
+[`ADR 0012`](../decisions/0012-typed-api-parameter-adapters.md)。
+
+XStream 可能绕过 setter，所有入口在 Provider 和排队前必须运行
+[`ADR 0013`](../decisions/0013-definition-validation-lifecycle.md)
+定义的 authoritative validation。
+
 视觉 Renderer 可以只存在于页面，但其可选值、默认值、验证和输出必须与 API 完全一致。
 每个功能只有通过 UI/API Parity Test Matrix 后才能发布。
 
-### 5.6 Pipeline DSL
+### 6.6 Pipeline DSL
 
 目标语法：
 
@@ -246,7 +288,12 @@ metadata: {}
 parameters {
     unifiedChoice(
         name: 'CHANNEL',
-        choices: ['production', 'staging', 'testing'],
+        choices: [
+            [value: 'production'],
+            [value: 'staging', label: 'Staging'],
+            [value: 'testing']
+        ],
+        defaultMode: 'explicit',
         defaultValue: 'staging',
         renderer: 'searchable'
     )
@@ -258,9 +305,11 @@ parameters {
             [value: 'ios', label: 'iOS', group: 'Mobile'],
             [value: 'web', label: 'Web', group: 'Browser']
         ],
+        defaultMode: 'explicit',
         defaultValues: ['android', 'ios'],
         renderer: 'chips',
-        minSelections: 1
+        minSelections: 1,
+        standardApiInputMode: 'repeated'
     )
 }
 ```
@@ -273,10 +322,13 @@ parameters {
 - Snippet Generator 不输出未修改的默认字段。
 - 配置序列化稳定，新增可选字段不破坏旧 Job。
 
+公开字段、互斥规则和 Snippet Generator 形态见
+[`ADR 0009`](../decisions/0009-public-model-and-pipeline-data-binding.md)。
+
 Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和唯一 `Symbol`，
 本插件必须遵循。
 
-### 5.7 现代 UI
+### 6.7 现代 UI
 
 | ID | 能力 | 目标 |
 |----|------|------|
@@ -290,9 +342,9 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 | UP-UX-008 | Accessibility | WCAG 2.2 AA，完整键盘和屏幕阅读器语义 |
 | UP-UX-009 | Responsive | 390px 宽度可操作 |
 | UP-UX-010 | Theme | Jenkins 浅色、深色和高对比主题 |
-| UP-UX-011 | No-JS fallback | 基础静态参数仍可提交 |
+| UP-UX-011 | No-JS fallback | 不超过 200 个 Option 的基础静态参数可完整提交；更大列表安全降级并给出 API 方式 |
 
-### 5.8 配置体验
+### 6.8 配置体验
 
 - 参数预览。
 - 默认值预览。
@@ -303,9 +355,13 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - 配置 diff。
 - Option 数量、重复值和不可达默认值摘要。
 
-### 5.9 迁移助手
+### 6.9 迁移助手
 
-`1.0` 首先支持 Extended Choice 静态参数：
+`1.0` 首先支持 Extended Choice 静态参数的发现、分类、预览、目标配置生成和验证 fixture：
+
+| ID | 需求 | 验收标准 |
+|----|------|----------|
+| UP-MIG-001 | Extended Choice 静态迁移设计 | 支持版本范围内生成 Normalized Intent、目标配置和验证 fixture；不静默部分转换 |
 
 | 等级 | 条件 | 动作 |
 |------|------|------|
@@ -319,22 +375,29 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - dry-run。
 - Job/参数清单。
 - before/after 结构 diff。
-- 备份和回滚。
-- 批次执行。
-- 旧 class 引用归零检查。
+- Pipeline/Job 目标配置和验证 fixture。
+- 不直接修改 SCM、Multibranch 子 Job 或生产 Job。
 
-## 6. `1.1` Provider 平台
+## 7. `1.1` Provider 平台
 
-### 6.1 内置 Provider
+### 7.1 内置 Provider
 
-- Global Provider。
-- Folder Provider。
-- REST JSON/XML Provider。
-- Jenkins Config File Provider。
-- JSONPath/XPath。
+| ID | 需求 | 验收标准 |
+|----|------|----------|
+| UP-SOURCE-001 | Global Provider | 稳定 ID、UI/JCasC、权限和使用范围明确 |
+| UP-SOURCE-002 | Folder Provider | 继承、覆盖、移动和 sibling 隔离明确 |
+| UP-SOURCE-003 | Managed Config Provider | 只通过 managed-config API，不接受 Controller 路径 |
+| UP-SOURCE-004 | REST JSON/XML Provider | 通过 Connection Profile、JSONPath/XPath 映射为 Option |
+| UP-SOURCE-005 | Connection Profile | 绑定目标、Credentials、Header、TLS、Proxy 和允许路径 |
+| UP-SOURCE-006 | Transform Chain | map/filter/sort/distinct/limit/group 可预览、可测试 |
+| UP-SOURCE-007 | Cache/Health/Fallback | 缓存隔离、健康、超时和 last-known-good 可观测 |
+
+同时加入：
+
+- Editable/custom single choice。
 - 展示值和机器值分离。
 
-### 6.2 Provider 运行契约
+### 7.2 Provider 运行契约
 
 每个 Provider 必须提供：
 
@@ -346,10 +409,16 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - Option schema validation。
 - 权限要求。
 - 可安全记录的诊断摘要。
+- principal/Job/Profile/global budget identity。
 
-### 6.3 REST 安全
+运行、缓存和失败策略见
+[`ADR 0007`](../decisions/0007-provider-snapshots-cache-and-failure.md)。
+限流、bounded queue 和 HTTP 429 契约见
+[`ADR 0006`](../decisions/0006-api-input-errors-and-permissions.md)。
 
-- Jenkins Credentials ID，不存储 Secret。
+### 7.3 REST 安全
+
+- Job 只引用 Connection Profile；URL authority、Credentials 和 Secret Header 不进入 Job 配置。
 - TLS 校验。
 - 连接/读取超时。
 - 响应大小上限。
@@ -360,7 +429,29 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - JSON/XML 安全解析。
 - 日志不输出 Authorization Header 或敏感值。
 
-## 7. `1.2` Reactive 和级联
+Connection Profile 的权限、URL 构造和凭据绑定见
+[`ADR 0010`](../decisions/0010-governed-connection-profiles.md)。
+
+完整信任边界和安全测试见
+[`Threat Model`](../security/threat-model.md)。
+
+### 7.4 Custom Value 验证
+
+| ID | 需求 | 验收标准 |
+|----|------|----------|
+| UP-TYPE-005 | Editable single choice | 明确区分选择已有值和创建自定义值 |
+| UP-VAL-003 | allow custom value | 默认关闭 |
+| UP-VAL-004 | regex/length | 页面和服务端使用同一策略 |
+
+### 7.5 自动化和静态迁移执行
+
+| ID | 需求 | 验收标准 |
+|----|------|----------|
+| UP-AUTO-001 | Job DSL | 使用与 Pipeline/UI 相同的公开字段并稳定 round-trip |
+| UP-AUTO-002 | JCasC | Connection Profile 和共享 Provider 可导入导出且不泄露 Secret |
+| UP-MIG-002 | 静态迁移 apply/clone/rollback | compare-before-write、备份、审计和并发冲突保护 |
+
+## 8. `1.2` Reactive 和级联
 
 | ID | 需求 | 验收标准 |
 |----|------|----------|
@@ -370,8 +461,10 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 | UP-REACT-004 | 状态展示 | loading、empty、error、fallback 明确 |
 | UP-REACT-005 | 非 UI 入口 | 可直接提交并执行同一服务端验证 |
 | UP-REACT-006 | 缓存快照 | 构建记录使用的 Provider 版本可追溯 |
+| UP-INT-012 | Provider snapshot | UI/API 可使用同一选项快照 |
+| UP-MIG-003 | Dynamic migration adapters | 生成 Provider/Cascade 重构骨架和验证 fixture |
 
-## 8. `2.0` Unified Form
+## 9. `2.0` Unified Form
 
 `unifiedForm` 用于结构化组合参数：
 
@@ -385,9 +478,22 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 
 它不是 `1.0` 阻塞项，也不应拖慢 Choice 核心质量。
 
-## 9. 非功能目标
+| ID | 需求 | 验收标准 |
+|----|------|----------|
+| UP-FORM-001 | Typed Field Schema | string、number、boolean、choice、array 和 object 服务端验证 |
+| UP-FORM-002 | Layout Schema | section、grid、tabs 和条件显示不依赖任意 JavaScript |
+| UP-FORM-003 | Structured Output | Map/JSON、字段映射和环境导出有稳定 canonical contract |
+| UP-FORM-004 | Trusted Rendering | 只允许内置或已审查 Renderer 输出安全 UI |
+| UP-EXT-001 | Script Provider companion | 独立权限、审计、Schema 输出和安装边界 |
+| UP-EXT-002 | Renderer companion SPI | CSP、XSS、兼容版本和受信任插件边界明确 |
+| UP-MIG-004 | Retirement Dashboard | 活动配置、生成源、队列和历史 Build 分别报告 |
+| UP-MIG-005 | Active Choices adapter | 不执行来源脚本，生成 Provider/Cascade/Form 骨架和验证 fixture |
+| UP-MIG-006 | List Git Branches adapter | 不复制 URL/Credential，生成受治理 Git refs Provider 骨架 |
+| UP-INT-015 | File interoperability | 原生文件参数继续走 Jenkins multipart；Typed JSON 明确 409，不静默丢文件 |
 
-### 9.1 性能
+## 10. 非功能目标
+
+### 10.1 性能
 
 - 1,000 个静态 Option 的页面可交互时间不超过 500ms（本地基准环境）。
 - 10,000 个 Option 搜索响应不超过 100ms p95。
@@ -395,21 +501,25 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - Provider 默认 timeout 5 秒，管理员最大可配置 30 秒。
 - Reactive 请求支持取消，不允许旧响应覆盖新状态。
 
-### 9.2 可用性
+### 10.2 可用性
 
 - Provider 失败不能导致 Jenkins 页面 HTTP 500。
 - 错误必须显示用户可行动的信息。
 - 可配置 fail-closed、empty 或 last-known-good。
 - Jenkins 重启后缓存和配置行为明确。
 
-### 9.3 兼容性
+### 10.3 兼容性
 
 - 发布时支持当前 Jenkins LTS 和前一个受支持 LTS 基线。
+- 实际发布矩阵必须记录 `pom.xml` 最低基线、发布时受支持 LTS 和集成插件版本。
 - Freestyle、Pipeline、Multibranch、Folder 和 Rebuild 自动化测试。
 - Plugin Compatibility Tester 通过。
 - 配置升级提供 `readResolve` 或迁移器，不静默改变语义。
 
-## 10. 安全目标
+配置兼容规则见
+[`Configuration and Compatibility Lifecycle`](../architecture/configuration-lifecycle.md)。
+
+## 11. 安全目标
 
 核心插件：
 
@@ -423,8 +533,19 @@ Jenkins 官方建议 Pipeline 插件使用短构造器、`DataBoundSetter` 和�
 - 管理员配置和普通 Build 权限分离。
 
 Script Provider、Git Provider、Registry Provider 等高风险或领域能力放入独立 companion plugin。
+Endpoint 权限和 API 行为见
+[`ADR 0006`](../decisions/0006-api-input-errors-and-permissions.md)。
 
-## 11. 可观测性
+| ID | Release | 需求 | 验收标准 |
+|----|---------|------|----------|
+| UP-SEC-001 | `1.0` | Endpoint permission/CSRF | 每个 GET/POST 有权限矩阵和负向测试 |
+| UP-SEC-002 | `1.0` | Server validation/output escaping | 所有入口服务端校验，所有 Option 文本安全输出 |
+| UP-SEC-003 | `1.1` | Credential/target binding | Credentialed REST 只能引用受治理 Connection Profile |
+| UP-SEC-004 | `1.1` | SSRF/network policy | DNS、redirect、proxy、IPv4/IPv6 和 metadata 测试通过 |
+| UP-SEC-005 | `1.2` | Snapshot/cache isolation | cross-Job、cross-Folder 和 replay 测试通过 |
+| UP-SEC-006 | `1.1` | Provider budgets | principal/Job/Profile/global 限流、bounded queue、429/Retry-After |
+
+## 12. 可观测性
 
 管理员可以查看：
 
@@ -437,11 +558,20 @@ Script Provider、Git Provider、Registry Provider 等高风险或领域能力�
 
 默认不采集参数实际值。任何 telemetry 必须匿名、聚合并遵循 Jenkins telemetry 规范。
 
-## 12. `1.0` 发布门禁
+## 13. 发布门禁
 
-- [ ] 所有 UP-TYPE、UP-SEM、UP-VAL、UP-INT、UP-UX `1.0` 项完成。
-- [ ] 所有 UP-PARITY 项完成。
-- [ ] 10 种入口/语义契约测试通过。
+### 13.1 `0.1 Technical Preview`
+
+- [ ] 所有 UP-SPIKE 项完成。
+- [ ] 最低 Jenkins baseline 和目标 LTS 的测试报告完成。
+- [ ] Standard REST 4xx/no-queue、mixed Typed API、CLI、Rebuild 和 XStream validation 均有可执行 fixture。
+- [ ] `modelVersion: 1`、API `/v1` 和稳定 Symbol 尚未冻结。
+
+### 13.2 `1.0 GA`
+
+- [ ] `0.1 Technical Preview` 全部门禁通过并关闭设计反馈。
+- [ ] 需求追踪清单中所有标记为 `1.0` 的需求完成。
+- [ ] Parity Test Matrix 中所有适用入口和语义维度通过。
 - [ ] 真实 UI Gallery 包含默认、交互、Rebuild、validation、empty 和 error。
 - [ ] 浅色、深色、移动端和键盘测试通过。
 - [ ] 10,000 Option 性能门禁通过。
@@ -450,10 +580,17 @@ Script Provider、Git Provider、Registry Provider 等高风险或领域能力�
 - [ ] 威胁模型、兼容性承诺、迁移和回滚文档完成。
 - [ ] Jenkins 社区 hosting、名称和安全评审完成。
 
+可执行门禁定义见：
+
+- [`Requirement Release and Test Manifest`](../testing/requirements.yaml)。
+- [`Parity Test Matrix`](../testing/parity-test-matrix.md)。
+- [`Performance and Accessibility Test Plan`](../testing/performance-accessibility-plan.md)。
+- [`UI Interaction Specification`](./ui-interaction-spec.md)。
+
 任何入口仍依赖页面 DOM、任何静态列表仍必须写脚本、或 Rebuild 退化为无验证文本框时，
 不得发布 `1.0`。
 
-## 13. 明确非目标
+## 14. 明确非目标
 
 - 复刻旧插件的任意脚本、文件和 HTML 能力。
 - 成为通用低代码平台。
@@ -462,14 +599,13 @@ Script Provider、Git Provider、Registry Provider 等高风险或领域能力�
 - 仅靠客户端 JavaScript 校验。
 - 为了兼容历史行为而保留隐式第一项默认值。
 
-## 14. 下一步
+## 15. 下一步
 
-名称和产品目标确定后，下一阶段输出：
+设计基线已经补齐。下一步执行：
 
-1. Java 类和扩展点架构。
-2. 参数值与环境变量序列化 ADR。
-3. REST/API 输入格式 ADR。
-4. Rebuild 集成方案。
-5. UI 信息架构和可交互原型。
-6. Jenkins Plugin Archetype 项目骨架。
-7. 社区 RFC 和仓库托管申请材料。
+1. 实现 `0.1 Technical Preview` 和全部 UP-SPIKE fixture。
+2. 根据 spike 结果修订 ADR；通过后再冻结 `modelVersion: 1` 和 API `/v1`。
+3. 建立 `1.0` Jenkins Test Harness parity fixture。
+4. 实现真实插件 UI 并生成目标 Gallery。
+5. 建立 Extended Choice 静态迁移 adapter HPI。
+6. 准备社区 RFC、hosting 和名称最终检查材料。

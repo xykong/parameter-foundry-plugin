@@ -1,0 +1,90 @@
+schemaVersion: 1
+fixture: extended-choice-static-multiple
+
+source:
+  plugin: extended-choice-parameter
+  pluginVersion: 388.ve7b_d0b_920e10
+  synthetic: true
+  parameter:
+    name: TARGETS
+    type: PT_CHECKBOX
+    value: android,ios,web
+    defaultValue: android,ios
+    multiSelectDelimiter: ","
+    quoteValue: false
+    visibleItemCount: 5
+    orderSemantics: unordered
+    acceptedStandardApiInput: delimited
+
+normalizedIntent:
+  family: choice
+  cardinality: multiple
+  options:
+    - value: android
+      label: android
+    - value: ios
+      label: ios
+    - value: web
+      label: web
+  renderer: checkbox
+  defaults:
+    mode: explicit
+    values: [android, ios]
+  validation:
+    required: false
+    duplicatePolicy: reject
+  orderSemantics: unordered
+  export:
+    mode: delimited
+    delimiter: ","
+
+classification:
+  level: A
+  reason: Static values, valid explicit defaults, and non-conflicting delimiter
+  userDecisions: []
+
+target:
+  symbol: unifiedMultiChoice
+  arguments:
+    name: TARGETS
+    choices:
+      - value: android
+        label: android
+      - value: ios
+        label: ios
+      - value: web
+        label: web
+    renderer: checkbox
+    defaultValues: [android, ios]
+    duplicatePolicy: reject
+    environmentExport:
+      mode: delimited
+      delimiter: ","
+    standardApiInputMode: delimited
+
+verification:
+  - case: absent
+    expectedCanonical: [android, ios]
+    expectedEnvironment: android,ios
+  - case: explicit-empty
+    input: []
+    expectedCanonical: []
+    expectedEnvironment: ""
+  - case: explicit-values
+    input: [web, android]
+    expectedCanonical: [android, web]
+    expectedEnvironment: android,web
+  - case: duplicate
+    input: [android, android]
+    expectedError: UNIFIED_PARAMETER_DUPLICATE_VALUE
+  - case: unknown
+    input: [desktop]
+    expectedError: UNIFIED_PARAMETER_UNKNOWN_VALUE
+
+notes:
+  - Source order is explicitly declared non-semantic, so stable machine-value lexical serialization remains A class.
+  - A source with order-sensitive output would be B or C.
+  - Labels are preserved exactly; visual label improvements require a B-class decision.
+  - Delimited standard API input is enabled because this synthetic source fixture declares that accepted contract.
+  - The source implementation format is not retained.
+  - The fixture verifies business behavior rather than Java-object equality.

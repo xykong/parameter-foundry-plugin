@@ -7,8 +7,12 @@ provide one secure, typed, extensible parameter model across the Jenkins UI,
 Pipeline, REST API, CLI, webhooks, upstream builds, remote triggers, and
 Rebuild.
 
-The project is in the design and bootstrap phase. Implementation has not
-started yet.
+The current development branch implements the roadmap through `2.0`: static
+and governed dynamic choices, reactive dependencies and Provider snapshots,
+typed Unified Forms, migration execution and rollback, trusted companion
+extension contracts, and source-plugin retirement reporting. The artifact
+version remains `0.1-SNAPSHOT` until the release and community review gates are
+completed.
 
 Product and technical design documents are under [`docs/`](./docs/).
 The reproducible competitor UI benchmark is under
@@ -19,14 +23,14 @@ The reproducible competitor UI benchmark is under
 
 Requirements:
 
-- Java 17
+- JDK 21 for the build; the plugin emits Java 17 bytecode
 - Maven 3.9+
 - Docker and Google Chrome for the UI Lab
 
-Verify the plugin scaffold:
+Run the complete verification in the pinned JDK 21 container:
 
 ```bash
-make verify
+make verify-container
 ```
 
 Run a local Jenkins development instance:
@@ -39,6 +43,12 @@ Regenerate the competitor UI Gallery:
 
 ```bash
 make gallery
+```
+
+Run the real-browser Unified Parameters E2E suite:
+
+```bash
+make e2e
 ```
 
 ## Issues

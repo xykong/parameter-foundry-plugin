@@ -18,16 +18,23 @@ Unified Parameters 的最终目标不是“比 Active Choices 更好”，而是
 > 使用一个统一平台，替代 Jenkins Core 基础参数之外所有通用参数插件，并让旧插件用户在功能、
 > 安全、UI、自动化和维护成本上获得足够明显的收益。
 
+这里的“替代”指用户业务需求和可观察行为可以 1:1 或更好地迁移，不指旧插件 Java class、
+XML、Pipeline `$class` 或历史构建记录的无缝兼容。规范定义见
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)。
+
 ## 2. “100% 替代”的定义
 
 ### 2.1 必须达到
 
 - 每个已调研插件的有效使用场景都有目标实现。
 - 每类来源配置都有自动迁移或明确的辅助重构流程。
-- 迁移后不需要保留原插件即可读取、编辑、构建和 Rebuild。
+- 完成功能迁移后，活动 Job 可以只使用 Unified Parameters 进行配置、构建、自动触发和 Rebuild。
 - Freestyle、Pipeline、API、CLI、Webhook、Upstream 和 Rebuild 行为一致。
 - 对无法自动等价转换的配置，提供可执行决策而不是简单标记“不支持”。
 - 所有迁移路径都有测试样本和回滚方式。
+
+历史 Build 中已经序列化的来源插件对象属于独立的退役决策，不属于业务需求迁移门槛，见
+[`ADR 0008`](../decisions/0008-rebuild-and-historical-compatibility.md)。
 
 ### 2.2 明确不追求
 
@@ -59,7 +66,7 @@ Unified Parameters 的最终目标不是“比 Active Choices 更好”，而是
 
 统一覆盖：
 
-1. Jenkins Core String、Text、Boolean 和 Choice。
+1. Jenkins Core String、Text、Boolean、Choice 和 File interoperability。
 2. Extended Choice Parameter。
 3. Active Choices。
 4. Json Editor Parameter。
@@ -75,7 +82,7 @@ Unified Parameters 的最终目标不是“比 Active Choices 更好”，而是
 
 专用领域插件不直接并入核心，但通过 Provider SPI 支持：
 
-- Git refs。
+- Git refs，包括 List Git Branches migration adapter。
 - Artifact repository。
 - Container registry。
 - Cloud resource。
@@ -93,6 +100,7 @@ Unified Parameters 的最终目标不是“比 Active Choices 更好”，而是
 | Choice | `unifiedChoice` | Direct |
 | 首项隐式默认 | 显式 `defaultMode: first` | Semantic |
 | API/CLI | 统一 Value Parser | Direct |
+| File upload | 保留 Jenkins multipart 原生参数；Typed JSON 显式不支持 | Interoperate |
 
 Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core 参数，但必须提供一致且更丰富的替代。
 
@@ -224,7 +232,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 |----------|---------------------------|----------|
 | Config File source | Managed Config Provider | Direct |
 | HTTP source | REST JSON Provider | Direct |
-| Credentials | Jenkins Credentials | Direct |
+| Credentials | Connection Profile 绑定 Jenkins Credentials | Direct |
 | JSONPath | JSON Query | Direct |
 | default/placeholder | Default + Empty State | Direct |
 | parameter reference | Dependency Graph | Semantic |
@@ -235,8 +243,8 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | 来源能力 | Unified Parameters 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | JSON/XML REST | REST Provider | Direct |
-| Credentials | Jenkins Credentials | Direct |
-| custom headers | Secret-aware Header config | Direct |
+| Credentials | Connection Profile 绑定 Jenkins Credentials | Direct |
+| custom headers | Profile-owned Secret Header / allowlisted non-secret Header | Direct |
 | JSONPath/XPath | Query Engine | Direct |
 | display/value separation | Option label/value | Direct |
 | filter/sort | Provider transform chain | Direct |
@@ -254,6 +262,25 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | permissions | Provider-specific permission | Direct |
 | parameters/bindings | Typed Provider Context | Semantic |
 | arbitrary return | Option/Form schema output | Semantic |
+
+### 4.14 List Git Branches
+
+| 来源能力 | Unified Parameters 目标 | 替代方式 |
+|----------|---------------------------|----------|
+| branch/tag/ref discovery | governed REST or Git refs companion Provider | Extension |
+| repository URL | administrator-owned Connection Profile | Refactor |
+| credentials | credential ID in the governed profile | Direct |
+| branch type/filter/sort | typed Provider configuration and transform chain | Semantic |
+| default and deleted ref | explicit default/stale validation | Semantic |
+
+Migration adapter 只读取类型和公开配置元数据，生成 Provider 骨架，不复制 URL、Credential
+或 Secret。
+
+### 4.15 File Parameters
+
+文件上传是 multipart transport，不是 Option Provider。Core File 和 reviewed file companion
+参数可继续与 Unified Parameters 共存。标准 Jenkins 页面和 endpoint 保持原行为；JSON Typed
+API 对包含文件定义的 Job 原子返回 unsupported，不把“未上传”伪装成成功。
 
 ## 5. 功能架构
 
@@ -285,6 +312,11 @@ Parameter Definition
 
 内部尽量复用统一模型，但公开 Symbol 保持用途清晰。
 
+`1.0` 只发布 `unifiedChoice` 和 `unifiedMultiChoice`。Editable/custom、Text、Boolean、
+Cascade 和 Form 按
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)
+的路线进入后续版本。
+
 ### 5.3 Renderer
 
 - Select。
@@ -301,7 +333,7 @@ Renderer 不负责数据获取和合法值判断。
 
 ### 5.4 Provider
 
-核心 Provider：
+最终第一方核心 Provider：
 
 - Inline。
 - Global。
@@ -335,6 +367,9 @@ Provider 输出后支持声明式变换：
 
 变换过程必须可预览、可测试并记录错误所在步骤。
 
+核心 Java 类型、包结构和 SPI 见
+[`Core Architecture`](../architecture/core-architecture.md)。
+
 ## 6. Reactive 和依赖
 
 ### 6.1 依赖声明
@@ -367,7 +402,11 @@ dependsOn:
 
 - 调用方可以直接提交最终值。
 - 服务端根据同一 Provider 快照验证。
-- 可配置 `validate-current`、`validate-cached` 或 `trust-signed-input`。
+- 默认执行 `fresh-or-resolve`，快照不可用时原子重新解析并验证。
+- 可显式使用有最大时效的 last-known-good；核心 `1.x` 不支持 `trust-signed-input`。
+
+精确策略见
+[`ADR 0007`](../decisions/0007-provider-snapshots-cache-and-failure.md)。
 
 ## 7. Unified Form
 
@@ -536,14 +575,17 @@ Content-Type: application/x-www-form-urlencoded
 支持输入：
 
 - 单值字段。
-- 多选重复字段。
-- 兼容 delimiter 字符串。
+- 多选按参数显式配置的 `repeated`、`json-array` 或 `delimited` 模式。
+- form 入口用 repeated `__unified_parameters_presence` marker 区分 absent 和 explicit empty。
 - Unified Form JSON 字符串。
+
+标准 API 不根据 Option 内容猜测编码。Transport decoder 在 Provider 解析前完成，Provider
+解析后只负责合法值和 canonical value 验证。
 
 #### Unified Typed API
 
 ```text
-POST /job/<job>/unified-parameters/build
+POST /job/<job>/unified-parameters/api/v1/build
 Content-Type: application/json
 ```
 
@@ -567,13 +609,18 @@ Content-Type: application/json
 
 Typed API 不使用 delimiter 猜测。
 
+Typed API 是 supported-definition Job 的完整调度入口：内置适配 Jenkins Core
+String/Text/Boolean/Choice 和 Unified Parameters；存在 unsupported/重复名称 definition 时整体
+返回 HTTP 409，不静默套用默认值。Password、Credentials、File 和未适配第三方 definition
+不进入核心 Typed API。
+
 #### Discovery API
 
 ```text
-GET  /job/<job>/unified-parameters/schema
-POST /job/<job>/unified-parameters/resolve
-POST /job/<job>/unified-parameters/validate
-GET  /job/<job>/unified-parameters/providers/health
+GET  /job/<job>/unified-parameters/api/v1/schema
+POST /job/<job>/unified-parameters/api/v1/resolve
+POST /job/<job>/unified-parameters/api/v1/validate
+GET  /job/<job>/unified-parameters/api/v1/providers/health
 ```
 
 用途：
@@ -584,6 +631,9 @@ GET  /job/<job>/unified-parameters/providers/health
 - 构建前验证。
 - 查看 Provider 状态。
 
+请求限制、权限、CSRF、队列响应、错误 family 和版本兼容规则见
+[`ADR 0006`](../decisions/0006-api-input-errors-and-permissions.md)。
+
 ### 9.5 Canonical Value
 
 不同输入必须归一为相同值：
@@ -591,16 +641,19 @@ GET  /job/<job>/unified-parameters/providers/health
 | 参数 | 页面输入 | 标准 API | Typed API | Canonical |
 |------|----------|----------|-----------|-----------|
 | single | select | String | String | String |
-| multiple | Checkbox/list | repeated/String | Array | `List<String>` |
+| multiple | Checkbox/list | configured form mode | Array | unordered selection exposed as deterministic `List<String>` |
 | boolean | Checkbox | `true/false` | Boolean | Boolean |
 | form | fields | JSON String | Object | immutable Map |
 
 对同一 canonical value：
 
-- `ParameterValue.equals` 等价。
+- `ParameterValue.equals` 业务等价；多选忽略 serialized order。
 - Pipeline `params` 等价。
 - 环境变量等价。
-- 构建记录等价。
+- 构建记录 canonical value 等价；snapshot、配置 digest 和 provenance 可以不同。
+
+多选确定性序列化统一使用机器值 `String.compareTo` 顺序，不使用 Provider 顺序、点击顺序或
+历史提交顺序。
 
 ### 9.6 默认值和 UI 个性化
 
@@ -621,10 +674,15 @@ GET  /job/<job>/unified-parameters/providers/health
 - 页面提交时携带 `snapshotId`。
 - API 可以先 resolve 再 build，也可以直接 build。
 - 直接 build 在服务端原子地 resolve、parse 和 validate。
-- 快照过期返回明确错误，或按 Job 策略重新解析。
+- 快照有效时使用；过期时按默认 `fresh-or-resolve` 原子重新解析并验证。
 - 构建记录保存实际使用的 Provider snapshot metadata。
 
 不得记录 Credentials 或完整敏感响应。
+
+Snapshot 绑定、缓存 key、失败和 Jenkins 重启行为见
+[`ADR 0007`](../decisions/0007-provider-snapshots-cache-and-failure.md)。
+Build-value snapshot 可在同一 Job/definition/dependency 下跨 resolve、validate、build 使用；
+diagnostic snapshot 不可用于构建。核心 snapshot 不绑定最初调用用户，但每次使用重新检查权限。
 
 ### 9.8 Reactive API
 
@@ -725,18 +783,9 @@ GET  /job/<job>/unified-parameters/providers/health
 
 ### 9.11 发布保证
 
-每个参数类型和 Provider 必须运行 Parity Test Matrix：
-
-```text
-UI
-Standard REST
-Typed REST
-CLI
-Pipeline build
-Webhook
-RemoteCause
-Rebuild
-```
+每个参数类型和 Provider 必须运行
+[`Parity Test Matrix`](../testing/parity-test-matrix.md)
+中全部适用的配置 surface、submission adapter 和 semantic dimension。
 
 测试维度：
 
@@ -829,6 +878,10 @@ Discover
 - 提供单 Job 和批次回滚。
 - 不自动卸载来源插件。
 
+`1.0` 只提供发现、预览、目标配置和验证 fixture；clone、in-place、batch、备份和回滚从
+`1.1` 开始。完整架构和并发保护见
+[`Migration Assistant Architecture`](../architecture/migration-assistant.md)。
+
 ### 10.7 Validate
 
 自动生成测试：
@@ -878,7 +931,8 @@ Source Inspector
 7. Json Editor/HTML Parameters。
 8. Scriptler。
 
-Adapter 必须可独立发布更新，以跟进来源插件配置变化。
+Adapter 作为可选 source-specific companion plugin 独立发布更新，以跟进来源插件配置变化。
+Adapter 只生成 Normalized Intent，不直接修改 Job 或调度构建。
 
 ## 12. 让用户迁移的明确理由
 
@@ -937,51 +991,73 @@ Adapter 必须可独立发布更新，以跟进来源插件配置变化。
 | 可维护性 | 静态场景零脚本 |
 | 迁移 | A/B 类自动化，C/D 类有可执行计划 |
 | 运维 | Provider 健康、缓存和审计可见 |
-| 下线 | 旧 class 和依赖归零可验证 |
+| 下线 | 活动配置和生成源的旧 class 归零可验证；历史 Build 有明确退役决策 |
 
 ## 14. Epic 和版本路线
 
-### 14.1 `1.0 Static Foundation`
+路线以
+[`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)
+为唯一来源。
+
+### 14.1 `0.1 Technical Preview`
+
+- UP-E00 Persistence、Pipeline、REST、CLI、Typed API、Rebuild、CSP 和迁移 reactor spike。
+- 不冻结 persisted model、API 或兼容性承诺。
+
+### 14.2 `1.0 Static Choice Foundation`
 
 - UP-E01 Core Model。
-- UP-E02 Text/Boolean/Choice/Multi-choice。
+- UP-E02 Choice/Multi-choice。
 - UP-E03 Renderer。
 - UP-E04 Defaults/Validation。
 - UP-E05 全入口一致。
-- UP-E06 Inline/Global/Folder Provider。
-- UP-E07 Extended Choice 静态迁移。
+- UP-E06 Inline Provider。
+- UP-E07 Extended Choice 静态迁移发现、预览和目标生成。
 
 可替代：
 
-- Core Choice/String/Text/Boolean 的增强场景。
+- Core Choice 的增强场景。
 - Extended Choice 静态模式。
-- Editable Choice。
 - Custom Checkbox 静态模式。
-- Validating String。
 
-### 14.2 `1.5 Dynamic Platform`
+### 14.3 `1.1 Governed Provider Platform`
 
-- UP-E08 REST/JSON/XML/Managed Config Provider。
+- UP-E08 Global/Folder/REST/JSON/XML/Managed Config Provider 和 Connection Profile。
 - UP-E09 Provider Cache/Health/Security。
-- UP-E10 Reactive Dependency Graph。
-- UP-E11 Cascade。
-- UP-E12 Dynamic migration adapters。
+- UP-E10 Editable/custom values。
+- UP-E11 Job DSL/JCasC。
+- UP-E12 静态迁移 apply/clone/rollback。
+
+可替代：
+
+- Extensible Choice。
+- Editable Choice。
+- JSON Parameter 的非 Reactive 场景。
+- REST List Parameter 的非 Reactive 场景。
+- Validating String 的 choice/custom-value 场景。
+
+### 14.4 `1.2 Reactive and Cascade`
+
+- UP-E13 Reactive Dependency Graph。
+- UP-E14 Provider Snapshot。
+- UP-E15 Cascade/Tree。
+- UP-E16 Dynamic migration adapters。
 
 可替代：
 
 - Active Choices 常见场景。
-- Extensible Choice。
-- JSON Parameter。
-- REST List Parameter。
 - Multiselect Parameter。
 
-### 14.3 `2.0 Complete Replacement`
+### 14.5 `2.0 Complete Requirement Coverage`
 
-- UP-E13 Unified Form。
-- UP-E14 Script Provider companion。
-- UP-E15 Renderer extension。
-- UP-E16 全来源 Migration Assistant。
-- UP-E17 完整退役 Dashboard。
+- UP-E17 Unified Form。
+- UP-E18 Script Provider companion。
+- UP-E19 Renderer extension。
+- UP-E20 全来源 Migration Assistant。
+- UP-E21 完整退役 Dashboard。
+- UP-MIG-005 Active Choices 非执行式 adapter。
+- UP-MIG-006 List Git Branches governed Provider adapter。
+- UP-INT-015 native File parameter interoperability。
 
 可替代：
 
@@ -994,12 +1070,13 @@ Adapter 必须可独立发布更新，以跟进来源插件配置变化。
 
 - [ ] 覆盖矩阵每行都有实现或安全替代。
 - [ ] 每个来源插件至少包含一套真实迁移 fixture。
-- [ ] A 类参数自动迁移成功率 100%。
+- [ ] Adapter 声明支持的版本范围和 A 类 fixture 自动迁移成功率 100%，范围外确定性报告 unsupported。
 - [ ] B 类参数全部产生明确用户决策。
 - [ ] C/D 类全部产生目标骨架和验证步骤。
 - [ ] UI、API、CLI、Webhook、Upstream、Remote 和 Rebuild 契约测试通过。
 - [ ] Gallery 覆盖所有目标 Renderer 和状态。
-- [ ] 旧插件 class 归零扫描通过。
+- [ ] 活动 Job、生成源和队列中的旧插件 class 引用归零扫描通过。
+- [ ] 历史 Build 来源 class 已报告并完成保留、归档或降级展示决策。
 - [ ] 安全威胁模型和 Jenkins Security Review 通过。
 - [ ] 性能、无障碍、主题和移动端门禁通过。
 - [ ] 至少完成两个不同组织的真实迁移试点。
@@ -1013,14 +1090,20 @@ Adapter 必须可独立发布更新，以跟进来源插件配置变化。
 - 不承诺自动迁移无法判断业务意图的脚本。
 - 不为了“兼容”而保留已知不正确语义。
 
-这些边界不减少业务使用场景覆盖；它们要求把旧的实现方式迁移为可治理的新能力。
+这些边界不减少业务使用场景覆盖；它们要求把旧的实现方式迁移为可治理的新能力。用户需求
+应当能够 1:1 或更好地实现，但配置格式、实现代码和历史序列化对象可以不同。
 
 ## 17. 下一阶段输出
 
-1. Unified Parameter Value ADR。
-2. Provider/Renderer/Validator SPI。
-3. REST 输入和多选序列化 ADR。
-4. Reactive 协议。
-5. Migration Adapter API。
-6. 1.0 UI 信息架构和交互原型。
-7. Jenkins 插件项目骨架和社区 RFC。
+设计基线已经形成：
+
+1. Canonical Value 和序列化：ADR 0005。
+2. Provider/Renderer/Validator SPI：Core Architecture。
+3. REST、错误和权限：ADR 0006。
+4. Provider snapshot/cache：ADR 0007。
+5. Rebuild 与历史边界：ADR 0008。
+6. Migration Adapter：Migration Assistant Architecture。
+7. `1.0` UI：UI Interaction Specification。
+8. 测试和性能：Parity Test Matrix、Performance and Accessibility Plan。
+
+下一阶段是完成技术 spike、persisted model review、真实插件 UI 原型和契约测试骨架。
