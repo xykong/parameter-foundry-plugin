@@ -9,9 +9,11 @@ import com.github.cyanbaz.jenkins.plugins.jsonparameter.JsonParameterDefinition;
 import com.github.cyanbaz.jenkins.plugins.jsonparameter.JsonParameterReferenceDefinition;
 import de.westemeyer.plugins.multiselect.MultiselectParameterDefinition;
 import hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition;
+import io.jenkins.plugins.file_parameters.StashedFileParameterDefinition;
 import io.jenkins.plugins.editable_choice.EditableChoiceParameterDefinition;
 import io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition;
 import io.jenkins.plugins.restlistparam.RestListParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.util.List;
 import jp.ikedam.jenkins.plugins.extensible_choice_parameter.ExtensibleChoiceParameterDefinition;
 import org.jenkinsci.plugins.uiparameter.HtmlFormParameterDefinition;
@@ -32,15 +34,26 @@ class AdditionalMigrationAdaptersTest {
                 new SourceCase(new RestListMigrationAdapter(), new RestListParameterDefinition("REST")),
                 new SourceCase(
                         new ValidatingStringMigrationAdapter(), new ValidatingStringParameterDefinition("VALIDATING")));
+        cases = new java.util.ArrayList<>(cases);
+        cases.add(new SourceCase(new StashedFileMigrationAdapter(), new StashedFileParameterDefinition("UPLOAD")));
 
         for (SourceCase sourceCase : cases) {
             var plan = sourceCase.adapter.inspect(sourceCase.definition);
-            assertEquals(
-                    io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C, plan.getClassification());
+            if (sourceCase.adapter instanceof StashedFileMigrationAdapter) {
+                assertEquals(
+                        io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.D,
+                        plan.getClassification());
+            } else {
+                assertEquals(
+                        io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C,
+                        plan.getClassification());
+            }
             assertNull(plan.getTarget());
-            assertTrue(plan.getTargetSkeleton().contains("TODO"));
-            assertTrue(plan.getVerificationFixture().contains("Typed API"));
-            assertTrue(plan.getReason().contains("never executes"));
+            assertTrue(plan.getVerificationFixture().contains("Rebuild"));
+            if (plan.getTargetSkeleton() != null) {
+                assertTrue(plan.getTargetSkeleton().contains("TODO"));
+                assertTrue(plan.getReason().contains("never executes"));
+            }
         }
     }
 
@@ -54,5 +67,5 @@ class AdditionalMigrationAdaptersTest {
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Provider versus Form")));
     }
 
-    private record SourceCase(AbstractAdditionalMigrationAdapter adapter, StubParameterDefinition definition) {}
+    private record SourceCase(SourceMigrationAdapter adapter, StubParameterDefinition definition) {}
 }

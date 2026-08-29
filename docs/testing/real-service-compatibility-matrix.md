@@ -23,7 +23,7 @@ credentials, tokens, option values, or production endpoints.
 |---|---|---|---|---|
 | Jenkins Core String/Text/Boolean/Choice | Observed | Typed API and standard Jenkins parameter semantics | Native Core or Unified equivalent | Passed |
 | Jenkins Core File | Observed | Native definition round-trip; Typed JSON rejection | Native multipart only; Typed API returns `409` | Passed |
-| Stashed File | Observed | Native/plugin-owned transport boundary | Native file companion behavior | Boundary documented |
+| Stashed File | Observed | Native/plugin-owned transport boundary adapter | Native file companion behavior | Boundary adapter ready |
 | Extended Choice `PT_SINGLE_SELECT` | Observed | Static adapter, default, empty, invalid, Rebuild | Unified single choice | Passed |
 | Extended Choice `PT_RADIO` | Observed | Static adapter and renderer mapping | Unified single choice with radio renderer | Passed |
 | Extended Choice `PT_MULTI_SELECT` | Observed | Order, null/empty, stale default, delimiter, Rebuild | Unified multiple choice with explicit decision | Passed with decision |
