@@ -43,5 +43,8 @@ changes, and organization-specific Job data do not belong in this repository.
 ## Git
 
 - Keep commits task-scoped.
+- Commit completed, coherent work promptly after each logical milestone and
+  relevant verification; do not accumulate a long development session into one
+  large uncommitted change.
 - Do not push without explicit user authorization.
 - Do not rewrite or amend commits unless explicitly requested.
