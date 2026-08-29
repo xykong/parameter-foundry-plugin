@@ -1,0 +1,5 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Adds a reviewed migration adapter for supported Extended Choice Parameter
+  configurations. It does not execute source Groovy, JavaScript, or file inputs.
+</div>
