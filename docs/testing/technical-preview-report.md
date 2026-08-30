@@ -1,6 +1,6 @@
 # `0.1 Technical Preview` Verification Report
 
-- Verification date: August 29, 2026
+- Verification date: August 30, 2026
 - Core artifact: `plugin/target/unified-parameters.hpi`
 - Migration artifacts:
   - `migration-extended-choice/target/unified-parameters-migration-extended-choice.hpi`
@@ -29,7 +29,7 @@
 make verify-container
 ```
 
-- Core/test-harness suite: 106 tests, 0 failures, 0 errors, 1 generated skip.
+- Core/test-harness suite: 120 tests, 0 failures, 0 errors, 1 generated skip.
 - Extended Choice migration suite: 11 tests, 0 failures, 0 errors, 1 generated skip.
 - Active Choices migration suite: 7 tests, 0 failures, 0 errors, 1 generated skip.
 - List Git Branches migration suite: 6 tests, 0 failures, 0 errors, 1 generated skip.
@@ -48,7 +48,7 @@ mvn -B -ntp test \
   -Dmaven.compiler.testRelease=21
 ```
 
-All 136 core, integration, and migration tests passed on Jenkins `2.568.2`.
+All 150 core, integration, and migration tests passed on Jenkins `2.568.2`.
 The compatibility run uses Java 21 bytecode because that Jenkins line requires
 Java 21; the baseline build continues to emit Java 17 bytecode for Jenkins
 `2.528.3`.
