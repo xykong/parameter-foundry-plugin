@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: verify verify-container test format run e2e gallery gallery-prepare gallery-clean
+.PHONY: verify verify-container test format run e2e source-canary gallery gallery-prepare gallery-clean
 
 verify:
 	mvn -B -ntp verify
@@ -24,6 +24,9 @@ run:
 
 e2e:
 	uv run tools/e2e/run-e2e.py
+
+source-canary:
+	python3 tools/source-canary/run-source-canary.py
 
 gallery:
 	$(MAKE) -C tools/ui-lab capture

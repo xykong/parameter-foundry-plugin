@@ -2,9 +2,33 @@
 
 - Verification date: August 30, 2026
 - Jenkins: `jenkins/jenkins:2.568.2-lts-jdk21`
-- Target commit: `1886b4d`
+- Target plugin commit: `7f7098a`
 - Scope: synthetic source definitions only; no production Job, credential, or
   source-plugin configuration was used
+
+The repeatable canary command is documented in
+[`Source Plugin Docker Canary`](../../tools/source-canary/README.md).
+
+## Repeatable Canary Result
+
+The repeatable canary was run successfully with:
+
+```bash
+python3 tools/source-canary/run-source-canary.py
+```
+
+The report is
+[`source-plugin-canary-2026-08-30.json`](./results/source-plugin-canary-2026-08-30.json).
+It records:
+
+- all required source, core, and migration HPI files active;
+- Extended Choice Class B clone/apply and audit record;
+- Standard REST delimited build;
+- Typed REST array validate/build;
+- Jenkins CLI JSON-array build;
+- Rebuild page parameter rendering;
+- native Stashed File multipart build;
+- zero unexpected Controller `SEVERE` or init/plugin-load errors.
 
 ## Source Plugin UI Smoke
 

@@ -57,6 +57,9 @@ The following repository-owned checks have been executed:
   `76.v7a_a_7a_5065278` and File Parameters `425.v3fa_801681b_5e`, including
   Class C/D migration boundaries and a successful native Stashed File
   multipart build.
+- Repeatable source-plugin Docker canary covering real HPI loading, migration
+  clone/apply, Standard REST, Typed REST, CLI, Rebuild, and native multipart;
+  see [`source-plugin-canary-2026-08-30.json`](./results/source-plugin-canary-2026-08-30.json).
 
 ## Remaining Production Gate
 

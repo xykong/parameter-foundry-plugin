@@ -97,6 +97,22 @@ Generated evidence:
 - `docs/testing/results/1.0-e2e-benchmark.json`
 - `docs/testing/results/1.0-accessibility.json`
 
+## Source Plugin Docker Canary
+
+The disposable source-plugin canary ran against real HPI files on Jenkins
+`2.568.2-lts-jdk21` and passed:
+
+- real HPI loading for Extended Choice, Active Choices, List Git Branches, and
+  File Parameters;
+- Extended Choice migration preview, clone/apply, audit record, and Standard
+  REST/Typed REST/CLI/Rebuild checks;
+- Active Choices and List Git Branches governed migration boundaries;
+- native Stashed File multipart submission;
+- no unexpected Controller plugin-load, init-script, or `SEVERE` errors.
+
+Detailed redacted evidence is in
+[`source-plugin-canary-2026-08-30.json`](./results/source-plugin-canary-2026-08-30.json).
+
 The source Extended Choice plugin emits known legacy browser warnings in the
 isolated migration environment. Jenkins `2.568.2` also has a breadcrumb
 overflow-menu `xmlEscape` defect during responsive or large-layout
