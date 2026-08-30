@@ -23,15 +23,15 @@ credentials, tokens, option values, or production endpoints.
 |---|---|---|---|---|
 | Jenkins Core String/Text/Boolean/Choice | Observed | Typed API and standard Jenkins parameter semantics | Native Core or Unified equivalent | Passed |
 | Jenkins Core File | Observed | Native definition round-trip; Typed JSON rejection | Native multipart only; Typed API returns `409` | Passed |
-| Stashed File | Observed | Native/plugin-owned transport boundary adapter | Native file companion behavior | Boundary adapter ready |
+| Stashed File | Observed | Real HPI Class D preview and native multipart smoke | Native file companion behavior | Boundary verified; lifecycle gate remains |
 | Extended Choice `PT_SINGLE_SELECT` | Observed | Static adapter, default, empty, invalid, Rebuild | Unified single choice | Passed |
 | Extended Choice `PT_RADIO` | Observed | Static adapter and renderer mapping | Unified single choice with radio renderer | Passed |
 | Extended Choice `PT_MULTI_SELECT` | Observed | Order, null/empty, stale default, delimiter, Rebuild | Unified multiple choice with explicit decision | Passed with decision |
 | Extended Choice `PT_CHECKBOX` | Observed | Checkbox, empty, duplicate, disabled, Rebuild | Unified multiple choice with checkbox renderer | Passed with decision |
-| Active Choices `ChoiceParameter` | Observed | Non-executing Provider skeleton | Governed Provider or static Unified choice | Skeleton ready |
-| Active Choices `CascadeChoiceParameter` | Observed | Dependency extraction and cycle fixture | Governed Provider with `dependsOn` | Skeleton ready |
+| Active Choices `ChoiceParameter` | Observed | Real HPI UI smoke and non-executing Provider skeleton | Governed Provider or static Unified choice | Skeleton ready; HPI smoke passed |
+| Active Choices `CascadeChoiceParameter` | Observed | Real HPI class loading, dependency extraction, and cycle fixture | Governed Provider with `dependsOn` | Skeleton ready; HPI smoke passed |
 | Active Choices `DynamicReferenceParameter` | Observed | HTML-to-Form decision fixture | Unified Form or reviewed Renderer companion | Skeleton ready |
-| List Git Branches `PT_BRANCH` | Observed | Ref/provider, credential, deleted-ref, Rebuild fixture | Governed Git refs Provider | Skeleton ready |
+| List Git Branches `PT_BRANCH` | Observed | Real HPI Class C preview and redacted Git-ref Provider skeleton | Governed Git refs Provider | Skeleton ready; HPI smoke passed |
 | List Git Branches `ORG_BRANCH` | Observed | Organization-specific mode remains an explicit mapping decision | Governed Git refs Provider | Skeleton ready |
 
 ## Executed Evidence
@@ -53,6 +53,10 @@ The following repository-owned checks have been executed:
   Choice `388.ve7b_d0b_920e10`, including synthetic UI builds and disposable
   Extended Choice clone/apply/rollback verification; see
   [`Source Plugin Docker Smoke Verification`](./source-plugin-docker-smoke-2026-08-30.md).
+- Real source-plugin Docker smoke for List Git Branches
+  `76.v7a_a_7a_5065278` and File Parameters `425.v3fa_801681b_5e`, including
+  Class C/D migration boundaries and a successful native Stashed File
+  multipart build.
 
 ## Remaining Production Gate
 
