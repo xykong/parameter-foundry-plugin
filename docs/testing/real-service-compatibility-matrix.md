@@ -1,6 +1,6 @@
 # Real-Service Parameter Compatibility Matrix
 
-Date: August 29, 2026
+Date: August 30, 2026
 
 This matrix records the parameter families observed during a read-only
 inventory of the real Jenkins service and the isolated verification required
@@ -49,6 +49,10 @@ The following repository-owned checks have been executed:
 - Real-browser E2E for Core-compatible parameters, governed Provider,
   Reactive refresh, Snapshot replacement, Unified Form, migration controls,
   and retirement reporting.
+- Real source-plugin Docker smoke for Active Choices `2.8.10` and Extended
+  Choice `388.ve7b_d0b_920e10`, including synthetic UI builds and disposable
+  Extended Choice clone/apply/rollback verification; see
+  [`Source Plugin Docker Smoke Verification`](./source-plugin-docker-smoke-2026-08-30.md).
 
 ## Remaining Production Gate
 
