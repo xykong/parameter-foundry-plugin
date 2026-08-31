@@ -121,6 +121,11 @@ def install_local_reactor(
     core: str,
     log_file: Path,
 ) -> None:
+    compiler_properties = (
+        ["-Dmaven.compiler.release=21", "-Dmaven.compiler.testRelease=21"]
+        if core == "2.568.2"
+        else []
+    )
     docker_maven(
         [
             (repository, "/work/repo", "rw"),
@@ -136,6 +141,7 @@ def install_local_reactor(
             "-Dspotbugs.skip=true",
             "-Dspotless.check.skip=true",
             f"-Djenkins.version={core}",
+            *compiler_properties,
         ],
         log_file,
     )
