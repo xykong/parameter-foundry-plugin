@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-08-31T11:13:14.402180+08:00",
+  "targetCommit": "826d2e74ebd78d66b1f7e474e33688a9eb701c2d",
+  "pctRepository": "https://github.com/jenkinsci/plugin-compat-tester.git",
+  "pctCommit": "8a4e8125284289f5af87a91c717ada7f022b2daf",
+  "mavenImage": "maven:3.9.11-eclipse-temurin-21",
+  "scope": "local pre-release PCT in Docker",
+  "versions": [
+    {
+      "jenkinsCore": "2.528.3",
+      "javaRelease": "17",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 120,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-active-choices": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-additional-sources": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-extended-choice": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-list-git-branches": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        }
+      }
+    },
+    {
+      "jenkinsCore": "2.568.2",
+      "javaRelease": "21",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 120,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-active-choices": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-additional-sources": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-extended-choice": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-list-git-branches": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        }
+      }
+    }
+  ],
+  "result": "passed"
+}
