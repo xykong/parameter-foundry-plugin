@@ -281,11 +281,11 @@ def main() -> int:
         clone_repository(repository)
 
         for core in SUPPORTED_CORES:
-                version: dict[str, Any] = {
-                    "jenkinsCore": core,
-                    "javaRelease": CORE_JAVA_RELEASES[core],
-                    "result": "failed",
-                }
+            version: dict[str, Any] = {
+                "jenkinsCore": core,
+                "javaRelease": CORE_JAVA_RELEASES[core],
+                "result": "failed",
+            }
             version_dir = temporary_path / core
             version_dir.mkdir()
             try:
