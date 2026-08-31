@@ -190,7 +190,10 @@ def run_pct(
             "--include-plugins",
             ",".join(PLUGIN_IDS),
             "--maven-args",
-            f"-Dmaven.compiler.release={java_release},-Dmaven.compiler.testRelease={java_release}",
+            (
+                f"--define,maven.compiler.release={java_release},"
+                f"--define,maven.compiler.testRelease={java_release}"
+            ),
             "--working-dir",
             "/work/pct-work",
             "--fail-fast=false",
