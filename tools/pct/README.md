@@ -28,10 +28,11 @@ runs PCT with the Jenkins WAR generated for each supported Core version.
 PCT itself runs on Java 21. The local Unified Parameters artifacts are compiled
 to the bytecode level required by each Core entry: Java 17 for Jenkins
 `2.528.3` and Java 21 for Jenkins `2.568.2`. The same compiler properties are
-passed to PCT's original-POM build, which prevents a local snapshot compiled
-for one Java level from being consumed by a build targeting another level.
-The reactor is cleaned before each install so the result does not depend on
-stale `target/` output.
+and Core version are passed to PCT's original-POM build, which prevents a
+local snapshot compiled for one Java level or Core baseline from being
+consumed by a build targeting another level or baseline. The reactor is
+cleaned before each install so the result does not depend on stale `target/`
+output.
 
 If a matrix entry fails, the JSON report includes the failing module's test
 summary and the first Maven compilation or build diagnostic when available.

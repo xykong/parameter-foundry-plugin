@@ -191,6 +191,7 @@ def run_pct(
             ",".join(PLUGIN_IDS),
             "--maven-args",
             (
+                f"--define,jenkins.version={core},"
                 f"--define,maven.compiler.release={java_release},"
                 f"--define,maven.compiler.testRelease={java_release}"
             ),
