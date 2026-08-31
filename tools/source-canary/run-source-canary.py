@@ -7,6 +7,7 @@ import argparse
 import http.cookiejar
 import json
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -16,6 +17,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -39,6 +41,7 @@ PLUGIN_LINES = (
     "workflow-job:1595.v0ee1a_de2c0a_3",
     "workflow-cps:4370.v49a_6937566b_6",
     "workflow-basic-steps:1098.v808b_fd7f8cf4",
+    "pipeline-build-step:584.vdb_a_2cc3a_d07a_",
     "rebuild:338.va_0a_b_50e29397",
     "extended-choice-parameter:388.ve7b_d0b_920e10",
     "uno-choice:2.8.10",
@@ -96,7 +99,7 @@ def activeTargets = new ChoiceParameter(
     'ACTIVE_TARGETS',
     'Synthetic Active Choices static source',
     'active-targets-canary',
-    script("return ['android', 'ios', 'web']"),
+    script("throw new RuntimeException('SOURCE_SCRIPT_MUST_NOT_EXECUTE')"),
     'PT_MULTI_SELECT',
     true,
     5,
@@ -259,8 +262,9 @@ class Canary:
         method: str = "GET",
         body: bytes | None = None,
         content_type: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> tuple[int, bytes, dict[str, str]]:
-        headers: dict[str, str] = {}
+        headers = dict(extra_headers or {})
         if content_type:
             headers["Content-Type"] = content_type
         if method != "GET":
@@ -293,13 +297,20 @@ class Canary:
             raise RuntimeError(f"GET {path} returned HTTP {status}")
         return body.decode(errors="replace")
 
-    def post_form(self, path: str, values: dict[str, str]) -> tuple[int, bytes]:
+    def post_form(
+        self,
+        path: str,
+        values: dict[str, str],
+        *,
+        extra_headers: dict[str, str] | None = None,
+    ) -> tuple[int, bytes]:
         body = urllib.parse.urlencode(values).encode()
         status, response, _ = self.request(
             path,
             method="POST",
             body=body,
             content_type="application/x-www-form-urlencoded",
+            extra_headers=extra_headers,
         )
         return status, response
 
@@ -341,6 +352,20 @@ class Canary:
         if status != 200:
             return {}
         return json.loads(body)
+
+    def queue_length(self) -> int:
+        status, body, _ = self.request("/queue/api/json?tree=items[id]")
+        if status != 200:
+            raise RuntimeError(f"queue API returned HTTP {status}")
+        return len(json.loads(body).get("items", []))
+
+    def run_script(self, script: str) -> None:
+        status, response = self.post_form("/scriptText", {"script": script})
+        if status != 200:
+            raise RuntimeError(
+                f"scriptText returned HTTP {status}: "
+                f"{response.decode(errors='replace')[:1000]}"
+            )
 
     def wait_for_build(self, job: str, previous_number: int = 0) -> dict[str, Any]:
         deadline = time.monotonic() + TIMEOUT_SECONDS
@@ -442,14 +467,15 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=ROOT / "docs/testing/results/source-plugin-canary-2026-08-30.json",
+        default=ROOT
+        / f"docs/testing/results/source-plugin-canary-{time.strftime('%Y-%m-%d')}.json",
     )
     args = parser.parse_args()
 
     container = f"{CONTAINER_PREFIX}-{os.getpid()}"
     port = free_port()
     report: dict[str, Any] = {
-        "generatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "generatedAt": datetime.now().astimezone().isoformat(),
         "jenkinsImage": JENKINS_IMAGE,
         "targetCommit": git_commit(),
         "scope": "synthetic Docker canary only",
@@ -579,6 +605,28 @@ def main() -> int:
                 "passed": True,
             }
 
+            previous = canary.last_build(clone_name).get("number", 0)
+            webhook_status, _ = canary.post_form(
+                f"/job/{clone_name}/buildWithParameters?delay=0sec",
+                {
+                    "__unified_parameters_presence": "LEGACY_TARGETS",
+                    "LEGACY_TARGETS": "ios,web",
+                },
+                extra_headers={"User-Agent": "Synthetic-Webhook/1.0"},
+            )
+            webhook_build = canary.wait_for_build(clone_name, previous)
+            if webhook_status != 201 or webhook_build.get("result") != "SUCCESS":
+                raise RuntimeError(
+                    f"webhook-style build failed: HTTP {webhook_status}, "
+                    f"build={webhook_build}"
+                )
+            report["checks"]["webhookStyleStandardRest"] = {
+                "status": webhook_status,
+                "build": webhook_build,
+                "canonicalValue": ["ios", "web"],
+                "passed": True,
+            }
+
             validate_status, validate_body = canary.post_json(
                 f"/job/{clone_name}/unified-parameters/api/v1/validate",
                 {"values": {"LEGACY_TARGETS": ["web", "android"]}},
@@ -631,6 +679,111 @@ def main() -> int:
                 "passed": True,
             }
 
+            upstream_name = "source-canary-upstream"
+            upstream_script = f"""
+import jenkins.model.Jenkins
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
+import org.jenkinsci.plugins.workflow.job.WorkflowJob
+def job = Jenkins.get().createProject(WorkflowJob, '{upstream_name}')
+job.setDefinition(new CpsFlowDefinition(\"\"\"
+build job: '{clone_name}', wait: true, parameters: [[
+  \\$class: 'UnifiedMultiChoiceParameterValue',
+  name: 'LEGACY_TARGETS',
+  value: ['web', 'android']
+]]
+\"\"\", true))
+job.save()
+"""
+            canary.run_script(upstream_script)
+            downstream_previous = canary.last_build(clone_name).get("number", 0)
+            upstream_status, _ = canary.post_form(
+                f"/job/{upstream_name}/build?delay=0sec", {}
+            )
+            upstream_build = canary.wait_for_build(upstream_name)
+            downstream_build = canary.wait_for_build(clone_name, downstream_previous)
+            if (
+                upstream_status != 201
+                or upstream_build.get("result") != "SUCCESS"
+                or downstream_build.get("result") != "SUCCESS"
+            ):
+                raise RuntimeError(
+                    f"upstream canary failed: HTTP {upstream_status}, "
+                    f"upstream={upstream_build}, downstream={downstream_build}"
+                )
+            report["checks"]["pipelineUpstream"] = {
+                "status": upstream_status,
+                "upstreamBuild": upstream_build,
+                "downstreamBuild": downstream_build,
+                "canonicalValue": ["android", "web"],
+                "passed": True,
+            }
+
+            before_invalid_build = canary.last_build(clone_name).get("number", 0)
+            before_invalid_queue = canary.queue_length()
+            invalid_status, invalid_body = canary.post_json(
+                f"/job/{clone_name}/unified-parameters/api/v1/build",
+                {"values": {"LEGACY_TARGETS": ["unknown"]}},
+            )
+            after_invalid_build = canary.last_build(clone_name).get("number", 0)
+            after_invalid_queue = canary.queue_length()
+            invalid_code = (
+                invalid_body.get("errors", [{}])[0].get("code")
+                if invalid_body.get("errors")
+                else None
+            )
+            if (
+                invalid_status != 400
+                or invalid_code != "UNIFIED_PARAMETER_UNKNOWN_VALUE"
+                or after_invalid_build != before_invalid_build
+                or after_invalid_queue != before_invalid_queue
+            ):
+                raise RuntimeError(
+                    f"typed no-queue canary failed: HTTP {invalid_status}, "
+                    f"code={invalid_code}, builds={before_invalid_build}/"
+                    f"{after_invalid_build}, queue={before_invalid_queue}/"
+                    f"{after_invalid_queue}"
+                )
+            report["checks"]["typedInvalidNoQueue"] = {
+                "status": invalid_status,
+                "code": invalid_code,
+                "buildNumberUnchanged": True,
+                "queueLengthUnchanged": True,
+                "passed": True,
+            }
+
+            before_webhook_build = canary.last_build(clone_name).get("number", 0)
+            before_webhook_queue = canary.queue_length()
+            invalid_webhook_status, invalid_webhook_body = canary.post_form(
+                f"/job/{clone_name}/buildWithParameters?delay=0sec",
+                {
+                    "__unified_parameters_presence": "LEGACY_TARGETS",
+                    "LEGACY_TARGETS": "unknown",
+                },
+                extra_headers={"User-Agent": "Synthetic-Webhook/1.0"},
+            )
+            after_webhook_build = canary.last_build(clone_name).get("number", 0)
+            after_webhook_queue = canary.queue_length()
+            invalid_webhook_text = invalid_webhook_body.decode(errors="replace")
+            if (
+                invalid_webhook_status != 400
+                or "UNIFIED_PARAMETER_UNKNOWN_VALUE" not in invalid_webhook_text
+                or after_webhook_build != before_webhook_build
+                or after_webhook_queue != before_webhook_queue
+            ):
+                raise RuntimeError(
+                    f"webhook no-queue canary failed: HTTP "
+                    f"{invalid_webhook_status}, builds={before_webhook_build}/"
+                    f"{after_webhook_build}, queue={before_webhook_queue}/"
+                    f"{after_webhook_queue}"
+                )
+            report["checks"]["webhookInvalidNoQueue"] = {
+                "status": invalid_webhook_status,
+                "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+                "buildNumberUnchanged": True,
+                "queueLengthUnchanged": True,
+                "passed": True,
+            }
+
             latest = canary.last_build(clone_name)
             rebuild_status, rebuild_body, _ = canary.request(
                 f"/job/{clone_name}/{latest['number']}/rebuild/parameterized"
@@ -660,6 +813,36 @@ def main() -> int:
                 "status": multipart_status,
                 "build": stash_build,
                 "nativeTransport": True,
+                "passed": True,
+            }
+
+            clone_page = canary.get_text(f"/job/{clone_name}/unified-parameters/")
+            record_match = re.search(
+                r'name="recordId"[^>]*value="([^"]+)"', clone_page
+            )
+            if record_match is None:
+                raise RuntimeError("migration record did not expose a rollback ID")
+            rollback_status, _ = canary.post_form(
+                f"/job/{clone_name}/unified-parameters/rollbackMigration",
+                {"recordId": record_match.group(1)},
+            )
+            rolled_back_config = canary.get_text(f"/job/{clone_name}/config.xml")
+            rolled_back_page = canary.get_text(
+                f"/job/{clone_name}/unified-parameters/"
+            )
+            if (
+                rollback_status not in {200, 302}
+                or "ExtendedChoiceParameterDefinition" not in rolled_back_config
+                or "UnifiedMultiChoiceParameterDefinition" in rolled_back_config
+                or "ROLLED_BACK" not in rolled_back_page
+            ):
+                raise RuntimeError(
+                    f"rollback canary failed: HTTP {rollback_status}"
+                )
+            report["checks"]["migrationRollback"] = {
+                "status": rollback_status,
+                "sourceDefinitionRestored": True,
+                "recordRolledBack": True,
                 "passed": True,
             }
 
