@@ -17,7 +17,10 @@ MAVEN_IMAGE = "maven:3.9.11-eclipse-temurin-21"
 PCT_REPOSITORY = "https://github.com/jenkinsci/plugin-compat-tester.git"
 PCT_REF = "8a4e8125284289f5af87a91c717ada7f022b2daf"
 SUPPORTED_CORES = ("2.528.3", "2.568.2")
-PLUGIN_JAVA_RELEASE = "17"
+CORE_JAVA_RELEASES = {
+    "2.528.3": "17",
+    "2.568.2": "21",
+}
 PLUGIN_IDS = (
     "unified-parameters",
     "unified-parameters-migration-extended-choice",
@@ -133,6 +136,7 @@ def install_local_reactor(
     core: str,
     log_file: Path,
 ) -> None:
+    java_release = CORE_JAVA_RELEASES[core]
     docker_maven(
         [
             (repository, "/work/repo", "rw"),
@@ -149,8 +153,8 @@ def install_local_reactor(
             "-Dspotbugs.skip=true",
             "-Dspotless.check.skip=true",
             f"-Djenkins.version={core}",
-            f"-Dmaven.compiler.release={PLUGIN_JAVA_RELEASE}",
-            f"-Dmaven.compiler.testRelease={PLUGIN_JAVA_RELEASE}",
+            f"-Dmaven.compiler.release={java_release}",
+            f"-Dmaven.compiler.testRelease={java_release}",
         ],
         log_file,
     )
@@ -165,6 +169,7 @@ def run_pct(
     log_file: Path,
 ) -> subprocess.CompletedProcess[str]:
     workdir.mkdir(parents=True, exist_ok=True)
+    java_release = CORE_JAVA_RELEASES[core]
     return docker_maven(
         [
             (pct_source, "/work/pct", "rw"),
@@ -184,6 +189,8 @@ def run_pct(
             "/work/repo",
             "--include-plugins",
             ",".join(PLUGIN_IDS),
+            "--maven-args",
+            f"-Dmaven.compiler.release={java_release},-Dmaven.compiler.testRelease={java_release}",
             "--working-dir",
             "/work/pct-work",
             "--fail-fast=false",
@@ -274,10 +281,11 @@ def main() -> int:
         clone_repository(repository)
 
         for core in SUPPORTED_CORES:
-            version: dict[str, Any] = {
-                "jenkinsCore": core,
-                "result": "failed",
-            }
+                version: dict[str, Any] = {
+                    "jenkinsCore": core,
+                    "javaRelease": CORE_JAVA_RELEASES[core],
+                    "result": "failed",
+                }
             version_dir = temporary_path / core
             version_dir.mkdir()
             try:
@@ -303,9 +311,11 @@ def main() -> int:
                 )
                 version["exitStatus"] = pct_result.returncode
                 version["plugins"] = summarize_logs(version_dir / "pct-work")
-                version["diagnostic"] = extract_failure_diagnostic(
+                diagnostic = extract_failure_diagnostic(
                     (version_dir / "pct-run.log").read_text(errors="replace")
                 )
+                if diagnostic is not None:
+                    version["diagnostic"] = diagnostic
                 version["result"] = (
                     "passed"
                     if pct_result.returncode == 0
