@@ -1,0 +1,29 @@
+# Docker PCT Verification
+
+This tool runs the official Jenkins Plugin Compatibility Tester (PCT) in
+Docker against the repository's supported Jenkins Core versions.
+
+The repository is cloned into a disposable local checkout so PCT may run its
+Maven compatibility build without modifying the working tree. Maven caches are
+isolated in a temporary directory. No production credentials, Jenkins data, or
+source-plugin configuration are used.
+
+Run:
+
+```bash
+make pct
+```
+
+The report is written to:
+
+```text
+docs/testing/results/pct-YYYY-MM-DD.json
+```
+
+The check covers the Core plugin and all four migration adapter modules. It
+first installs the local reactor snapshot into the Docker Maven cache, then
+runs PCT with the Jenkins WAR generated for each supported Core version.
+
+PCT is a compatibility build/test gate. It does not replace browser E2E,
+source-plugin Docker Canary, production-like ingress/authentication tests,
+manual screen-reader verification, or organization migration pilots.
