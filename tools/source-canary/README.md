@@ -22,10 +22,11 @@ python3 tools/source-canary/run-source-canary.py
 The default report is written to:
 
 ```text
-docs/testing/results/source-plugin-canary-2026-08-30.json
+docs/testing/results/source-plugin-canary-YYYY-MM-DD.json
 ```
 
 The tool verifies real HPI loading, migration previews, Extended Choice
-clone/apply, standard REST delimited input, Typed REST arrays, Jenkins CLI JSON
-arrays, Rebuild rendering, Active Choices/List Git Branches migration
-boundaries, and native Stashed File multipart submission.
+clone/apply/rollback, standard REST and webhook-style delimited input, Typed
+REST arrays, Jenkins CLI JSON arrays, Pipeline upstream/downstream execution,
+invalid-input no-queue behavior, Rebuild rendering, Active Choices/List Git
+Branches migration boundaries, and native Stashed File multipart submission.

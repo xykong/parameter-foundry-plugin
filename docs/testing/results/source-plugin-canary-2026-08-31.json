@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-08-31T09:47:25.234370+08:00",
+  "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
+  "targetCommit": "b4501751701422537964b40de8508ea7a058d6ab",
+  "scope": "synthetic Docker canary only",
+  "checks": {
+    "pluginLoad": {
+      "requiredActive": [
+        "extended-choice-parameter",
+        "file-parameters",
+        "list-git-branches-parameter",
+        "unified-parameters",
+        "unified-parameters-migration-active-choices",
+        "unified-parameters-migration-additional-sources",
+        "unified-parameters-migration-extended-choice",
+        "unified-parameters-migration-list-git-branches",
+        "uno-choice"
+      ],
+      "passed": true
+    },
+    "migrationPreviews": {
+      "extendedChoiceClassB": true,
+      "activeChoicesClassC": true,
+      "activeChoicesCascadeDependency": true,
+      "listGitBranchesClassC": true,
+      "stashedFileClassD": true,
+      "sensitiveSourceRedacted": true,
+      "passed": true
+    },
+    "extendedChoiceClone": {
+      "status": 200,
+      "targetPersisted": true,
+      "auditRecord": true,
+      "passed": true
+    },
+    "standardRestDelimited": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "webhookStyleStandardRest": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 2,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "ios",
+        "web"
+      ],
+      "passed": true
+    },
+    "typedRestArray": {
+      "validateStatus": 200,
+      "buildStatus": 201,
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 3,
+        "result": "SUCCESS"
+      },
+      "passed": true
+    },
+    "cliJsonArray": {
+      "returnCode": 0,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 4,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "pipelineUpstream": {
+      "status": 201,
+      "upstreamBuild": {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "downstreamBuild": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 5,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "typedInvalidNoQueue": {
+      "status": 400,
+      "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+      "buildNumberUnchanged": true,
+      "queueLengthUnchanged": true,
+      "passed": true
+    },
+    "webhookInvalidNoQueue": {
+      "status": 400,
+      "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+      "buildNumberUnchanged": true,
+      "queueLengthUnchanged": true,
+      "passed": true
+    },
+    "rebuild": {
+      "status": 200,
+      "parameterPresent": true,
+      "passed": true
+    },
+    "stashedFileMultipart": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "nativeTransport": true,
+      "passed": true
+    },
+    "migrationRollback": {
+      "status": 200,
+      "sourceDefinitionRestored": true,
+      "recordRolledBack": true,
+      "passed": true
+    },
+    "controllerLogs": {
+      "unexpectedSevereErrors": 0,
+      "passed": true
+    }
+  },
+  "result": "passed"
+}

@@ -1,6 +1,6 @@
 # `0.1 Technical Preview` Verification Report
 
-- Verification date: August 30, 2026
+- Verification date: August 31, 2026
 - Core artifact: `plugin/target/unified-parameters.hpi`
 - Migration artifacts:
   - `migration-extended-choice/target/unified-parameters-migration-extended-choice.hpi`
@@ -104,14 +104,15 @@ The disposable source-plugin canary ran against real HPI files on Jenkins
 
 - real HPI loading for Extended Choice, Active Choices, List Git Branches, and
   File Parameters;
-- Extended Choice migration preview, clone/apply, audit record, and Standard
-  REST/Typed REST/CLI/Rebuild checks;
+- Extended Choice migration preview, clone/apply, audit record, Standard REST,
+  webhook-style REST, Typed REST, CLI, Pipeline upstream/downstream, invalid
+  input no-queue, Rebuild, and rollback checks;
 - Active Choices and List Git Branches governed migration boundaries;
 - native Stashed File multipart submission;
 - no unexpected Controller plugin-load, init-script, or `SEVERE` errors.
 
 Detailed redacted evidence is in
-[`source-plugin-canary-2026-08-30.json`](./results/source-plugin-canary-2026-08-30.json).
+[`source-plugin-canary-2026-08-31.json`](./results/source-plugin-canary-2026-08-31.json).
 
 The source Extended Choice plugin emits known legacy browser warnings in the
 isolated migration environment. Jenkins `2.568.2` also has a breadcrumb

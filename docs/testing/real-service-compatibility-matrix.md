@@ -1,6 +1,6 @@
 # Real-Service Parameter Compatibility Matrix
 
-Date: August 30, 2026
+Date: August 31, 2026
 
 This matrix records the parameter families observed during a read-only
 inventory of the real Jenkins service and the isolated verification required
@@ -58,8 +58,10 @@ The following repository-owned checks have been executed:
   Class C/D migration boundaries and a successful native Stashed File
   multipart build.
 - Repeatable source-plugin Docker canary covering real HPI loading, migration
-  clone/apply, Standard REST, Typed REST, CLI, Rebuild, and native multipart;
-  see [`source-plugin-canary-2026-08-30.json`](./results/source-plugin-canary-2026-08-30.json).
+  clone/apply/rollback, Standard REST, webhook-style REST, Typed REST, CLI,
+  Pipeline upstream/downstream, invalid-input no-queue, Rebuild, and native
+  multipart; see
+  [`source-plugin-canary-2026-08-31.json`](./results/source-plugin-canary-2026-08-31.json).
 
 ## Remaining Production Gate
 
