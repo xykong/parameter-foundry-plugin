@@ -227,8 +227,7 @@ def main() -> int:
         temporary_path = Path(temporary)
         pct_source = temporary_path / "pct"
         repository = temporary_path / "repository"
-        maven_cache = temporary_path / "m2"
-        maven_cache.mkdir()
+        maven_cache = Path.home() / ".m2"
         clone_pct(pct_source)
         clone_repository(repository)
 

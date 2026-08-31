@@ -4,8 +4,9 @@ This tool runs the official Jenkins Plugin Compatibility Tester (PCT) in
 Docker against the repository's supported Jenkins Core versions.
 
 The repository is cloned into a disposable local checkout so PCT may run its
-Maven compatibility build without modifying the working tree. Maven caches are
-isolated in a temporary directory. No production credentials, Jenkins data, or
+Maven compatibility build without modifying the working tree. The Docker
+container reuses the user's Maven cache for dependency downloads and local
+SNAPSHOT installation. No production credentials, Jenkins data, or
 source-plugin configuration are used.
 
 Run:
