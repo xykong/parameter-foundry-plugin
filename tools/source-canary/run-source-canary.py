@@ -60,6 +60,12 @@ import org.biouno.unochoice.CascadeChoiceParameter
 import org.biouno.unochoice.ChoiceParameter
 import org.biouno.unochoice.model.GroovyScript
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript
+import io.jenkins.plugins.unifiedparameters.companion.renderer.AccessibleChoiceGridRenderer
+import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry
+import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition
+import io.jenkins.plugins.unifiedparameters.provider.ScriptProviderDefinition
+import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration
 
 def jenkins = Jenkins.get()
 def location = JenkinsLocationConfiguration.get()
@@ -148,6 +154,26 @@ def stashJob = jenkins.createProject(FreeStyleProject, 'source-stashed-file')
 stashJob.addProperty(new ParametersDefinitionProperty(stashDefinition))
 stashJob.buildersList.add(new Shell('test -n "$UPLOAD" || true'))
 stashJob.save()
+
+def companionScript = new SecureGroovyScript(
+    "return ['release-a', [value: 'release-b', label: 'Release B']]",
+    true,
+    []
+)
+ScriptProviderCatalog.get().setEntries([new ScriptCatalogEntry('releases', companionScript)])
+def companionProvider = new ScriptProviderDefinition(
+    'companion-options',
+    'sandbox-groovy',
+    'catalog:releases'
+)
+UnifiedParametersGlobalConfiguration.get().setProviders([companionProvider])
+def companionParameter = new UnifiedChoiceParameterDefinition('COMPANION')
+companionParameter.setProviderId('companion-options')
+companionParameter.setRenderer('accessible-choice-grid')
+def companionJob = jenkins.createProject(FreeStyleProject, 'source-companion')
+companionJob.addProperty(new ParametersDefinitionProperty(companionParameter))
+companionJob.buildersList.add(new Shell('test -n "$COMPANION"'))
+companionJob.save()
 """
 
 
@@ -184,6 +210,10 @@ def artifact_paths() -> list[Path]:
         / "unified-parameters-migration-list-git-branches.hpi",
         ROOT / "migration-additional-sources" / "target"
         / "unified-parameters-migration-additional-sources.hpi",
+        ROOT / "companion-renderer" / "target"
+        / "unified-parameters-companion-renderer.hpi",
+        ROOT / "companion-script-provider" / "target"
+        / "unified-parameters-companion-script-provider.hpi",
     ]
 
 
@@ -514,6 +544,8 @@ def main() -> int:
                 "unified-parameters-migration-active-choices",
                 "unified-parameters-migration-list-git-branches",
                 "unified-parameters-migration-additional-sources",
+                "unified-parameters-companion-renderer",
+                "unified-parameters-companion-script-provider",
             }
             active_plugins = {
                 item["shortName"]
@@ -530,6 +562,40 @@ def main() -> int:
                 raise RuntimeError(f"required plugins are not active: {missing_plugins}")
             report["checks"]["pluginLoad"] = {
                 "requiredActive": sorted(required_plugins),
+                "passed": True,
+            }
+
+            companion_page = canary.get_text("/job/source-companion/build")
+            if "accessible-choice-grid" not in companion_page:
+                raise RuntimeError("companion renderer was not exposed on the build form")
+            resolve_status, resolve_body = canary.post_json(
+                "/job/source-companion/unified-parameters/api/v1/resolve",
+                {"parameter": "COMPANION", "dependencies": {}},
+            )
+            option_values = [item.get("value") for item in resolve_body.get("options", [])]
+            if resolve_status != 200 or option_values != ["release-a", "release-b"]:
+                raise RuntimeError(
+                    f"script Provider resolve failed: HTTP {resolve_status}, body={resolve_body}"
+                )
+            previous = canary.last_build("source-companion").get("number", 0)
+            build_status, build_body = canary.post_json(
+                "/job/source-companion/unified-parameters/api/v1/build",
+                {"values": {"COMPANION": "release-a"}},
+            )
+            companion_build = canary.wait_for_build("source-companion", previous)
+            if build_status not in {201, 303} or companion_build.get("result") != "SUCCESS":
+                raise RuntimeError(
+                    "companion build failed: "
+                    f"HTTP {build_status}, body={build_body}, build={companion_build}"
+                )
+            report["checks"]["companions"] = {
+                "rendererId": "accessible-choice-grid",
+                "rendererExposed": True,
+                "scriptEngineId": "sandbox-groovy",
+                "resolvedOptions": option_values,
+                "resolveStatus": resolve_status,
+                "buildStatus": build_status,
+                "build": companion_build,
                 "passed": True,
             }
 
