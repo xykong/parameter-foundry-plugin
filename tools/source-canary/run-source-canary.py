@@ -565,7 +565,7 @@ def main() -> int:
                 "passed": True,
             }
 
-            companion_page = canary.get_text("/job/source-companion/build")
+            companion_page = canary.get_text("/job/source-companion/parameters/")
             if "accessible-choice-grid" not in companion_page:
                 raise RuntimeError("companion renderer was not exposed on the build form")
             resolve_status, resolve_body = canary.post_json(
