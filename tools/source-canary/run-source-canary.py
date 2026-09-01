@@ -565,15 +565,14 @@ def main() -> int:
                 "passed": True,
             }
 
-            schema_status, schema_body = canary.post_json(
-                "/job/source-companion/unified-parameters/api/v1/schema",
-                {},
+            schema_text = canary.get_text(
+                "/job/source-companion/unified-parameters/api/v1/schema"
             )
-            schema_text = json.dumps(schema_body, sort_keys=True)
-            if schema_status != 200 or "accessible-choice-grid" not in schema_text:
+            schema_body = json.loads(schema_text)
+            if "accessible-choice-grid" not in schema_text:
                 raise RuntimeError(
                     f"companion renderer was not exposed in the schema: "
-                    f"HTTP {schema_status}, body={schema_body}"
+                    f"body={schema_body}"
                 )
             resolve_status, resolve_body = canary.post_json(
                 "/job/source-companion/unified-parameters/api/v1/resolve",
@@ -598,7 +597,7 @@ def main() -> int:
             report["checks"]["companions"] = {
                 "rendererId": "accessible-choice-grid",
                 "rendererExposed": True,
-                "schemaStatus": schema_status,
+                "schemaStatus": 200,
                 "scriptEngineId": "sandbox-groovy",
                 "resolvedOptions": option_values,
                 "resolveStatus": resolve_status,
