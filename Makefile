@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: verify verify-container test format run e2e source-canary pct gallery gallery-prepare gallery-clean
+.PHONY: verify verify-container test format run e2e source-canary pct migration-fixtures gallery gallery-prepare gallery-clean
 
 verify:
 	mvn -B -ntp verify
@@ -30,6 +30,9 @@ source-canary:
 
 pct:
 	python3 tools/pct/run-pct.py
+
+migration-fixtures:
+	python3 tools/migration/validate-fixtures.py
 
 gallery:
 	$(MAKE) -C tools/ui-lab capture

@@ -1,0 +1,45 @@
+schemaVersion: 1
+fixture: list-git-branches-organization-branch-c
+
+source:
+  plugin: list-git-branches-parameter
+  sourceClass: com.syhuang.hudson.plugins.listgitbranchesparameter.ListGitBranchesParameterDefinition
+  synthetic: true
+  mode: ORG_BRANCH
+  organizationSource: unresolved
+
+normalizedIntent:
+  family: choice
+  cardinality: single
+  options:
+    source: governed-git-refs-provider
+  renderer: searchable
+
+classification:
+  level: C
+  reason: Organization-specific discovery semantics require an explicit provider mapping.
+  userDecisions:
+    - id: organization-authority
+      question: Which organization or SCM authority provides the repository list?
+    - id: repository-selection
+      question: Is the target selecting a repository, a ref, or a repository/ref pair?
+    - id: credential-and-retention
+      question: Which administrator-owned credential and cache/fallback policy apply?
+
+targetSkeleton:
+  symbol: unifiedChoice
+  arguments:
+    name: BRANCH
+    providerId: <governed-organization-git-provider>
+    renderer: searchable
+
+verification:
+  - organization-empty
+  - repository-discovery
+  - ref-discovery
+  - unavailable-authority
+  - browser-typed-api-cli-parity
+  - upstream-webhook-and-rebuild
+
+notes:
+  - ORG_BRANCH remains a mapping decision until the organization behavior is specified.

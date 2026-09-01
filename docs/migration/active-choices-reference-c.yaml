@@ -1,0 +1,45 @@
+schemaVersion: 1
+fixture: active-choices-reference-c
+
+source:
+  plugin: uno-choice
+  sourceClass: org.biouno.unochoice.DynamicReferenceParameter
+  synthetic: true
+  output: formatted-reference
+  scriptExecution: forbidden
+
+normalizedIntent:
+  family: form-or-content
+  fields:
+    source: reviewed-field-mapping
+  renderer: schema-or-reviewed-companion
+
+classification:
+  level: C
+  reason: Formatted HTML is presentation and executable behavior, not a portable typed parameter schema.
+  userDecisions:
+    - id: business-fields
+      question: Which controls are actual build inputs and which are presentation-only?
+    - id: output-shape
+      question: Should the target emit a Map, JSON string, or individual fields?
+    - id: renderer
+      question: Can the built-in schema renderer satisfy the requirement, or is a reviewed Renderer companion required?
+
+targetSkeleton:
+  symbol: unifiedForm
+  arguments:
+    name: DETAILS
+    fields: <reviewed-typed-fields>
+    renderer: schema
+
+verification:
+  - typed-field-validation
+  - conditional-layout
+  - no-javascript-fallback
+  - standard-rest-build
+  - typed-api-build
+  - cli-build
+  - rebuild
+
+notes:
+  - Arbitrary HTML, CSS, and JavaScript are never copied into the target Job.

@@ -1,0 +1,46 @@
+schemaVersion: 1
+fixture: active-choices-cascade-c
+
+source:
+  plugin: uno-choice
+  sourceClass: org.biouno.unochoice.CascadeChoiceParameter
+  synthetic: true
+  referencedParameters: [ENVIRONMENT, REGION]
+  scriptExecution: forbidden
+
+normalizedIntent:
+  family: choice
+  cardinality: single
+  dependsOn: [ENVIRONMENT, REGION]
+  options:
+    source: governed-provider
+  renderer: searchable
+
+classification:
+  level: C
+  reason: Declared dependencies are portable, but executable source logic still requires a governed Provider refactor.
+  userDecisions:
+    - id: provider-authority
+      question: Which Provider and Connection Profile supply the options?
+    - id: dependency-contract
+      question: What exact canonical values do ENVIRONMENT and REGION contribute?
+    - id: failure-policy
+      question: Should an unavailable Provider fail closed, return empty, or use last-known-good?
+
+targetSkeleton:
+  symbol: unifiedChoice
+  arguments:
+    name: ARTIFACT
+    providerId: <administrator-selected-provider>
+    dependsOn: [ENVIRONMENT, REGION]
+    renderer: searchable
+
+verification:
+  - dependency-graph-cycle-rejection
+  - browser-debounce-and-cancellation
+  - typed-api-dependency-resolution
+  - standard-rest-build
+  - cli-build
+  - upstream-and-webhook-build
+  - rebuild
+  - stale-snapshot-rejection

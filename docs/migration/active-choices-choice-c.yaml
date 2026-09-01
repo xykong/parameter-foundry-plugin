@@ -1,0 +1,47 @@
+schemaVersion: 1
+fixture: active-choices-choice-c
+
+source:
+  plugin: uno-choice
+  sourceClass: org.biouno.unochoice.ChoiceParameter
+  synthetic: true
+  mode: ChoiceParameter
+  scriptExecution: forbidden
+
+normalizedIntent:
+  family: choice
+  cardinality: single
+  options:
+    source: governed-provider
+  renderer: searchable
+  defaults:
+    mode: explicit-decision
+
+classification:
+  level: C
+  reason: The option source is executable script logic whose business intent cannot be inferred safely.
+  userDecisions:
+    - id: provider-authority
+      question: Which governed Provider owns the option source?
+    - id: option-semantics
+      question: What are the default, empty, unavailable, and stale-result behaviors?
+
+targetSkeleton:
+  symbol: unifiedChoice
+  arguments:
+    name: CHANNEL
+    providerId: <administrator-selected-provider>
+    renderer: searchable
+
+verification:
+  - browser-resolve
+  - typed-api-resolve
+  - standard-rest-build
+  - cli-build
+  - upstream-and-webhook-build
+  - rebuild
+  - provider-error-and-last-known-good
+
+notes:
+  - The adapter never copies or executes the source script.
+  - A selected Provider must expose bounded Option values and a declared dependency map.

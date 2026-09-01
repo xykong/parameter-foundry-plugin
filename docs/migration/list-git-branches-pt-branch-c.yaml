@@ -1,0 +1,47 @@
+schemaVersion: 1
+fixture: list-git-branches-pt-branch-c
+
+source:
+  plugin: list-git-branches-parameter
+  sourceClass: com.syhuang.hudson.plugins.listgitbranchesparameter.ListGitBranchesParameterDefinition
+  synthetic: true
+  mode: PT_BRANCH
+  repository: redacted
+  credential: redacted
+
+normalizedIntent:
+  family: choice
+  cardinality: single
+  options:
+    source: governed-git-refs-provider
+  renderer: searchable
+
+classification:
+  level: C
+  reason: Git discovery is a domain capability and repository authority must remain administrator-owned.
+  userDecisions:
+    - id: connection-profile
+      question: Which Connection Profile and credential authorize the repository?
+    - id: ref-policy
+      question: Which branch/tag/ref filters, sorting, and stale-ref policy apply?
+    - id: failure-policy
+      question: What should happen when Git is unavailable or the default ref was deleted?
+
+targetSkeleton:
+  symbol: unifiedChoice
+  arguments:
+    name: BRANCH
+    providerId: <governed-git-refs-provider>
+    renderer: searchable
+
+verification:
+  - empty-repository
+  - one-ref
+  - many-refs
+  - renamed-or-deleted-default
+  - credential-failure
+  - browser-typed-api-cli-parity
+  - upstream-webhook-and-rebuild
+
+notes:
+  - Repository URLs and credentials are not copied into the target Job or fixture.
