@@ -19,15 +19,13 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
     public ScriptCatalogEntry(String id, SecureGroovyScript script) throws Descriptor.FormException {
         if (id == null || !id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
             throw new Descriptor.FormException(
-                    "Script ID must be 1-128 characters using letters, digits, dot, underscore, or hyphen.",
-                    "id");
+                    "Script ID must be 1-128 characters using letters, digits, dot, underscore, or hyphen.", "id");
         }
         if (script == null) {
             throw new Descriptor.FormException("A sandboxed script is required.", "script");
         }
         if (!script.isSandbox()) {
-            throw new Descriptor.FormException(
-                    "Non-sandboxed scripts are not supported by this companion.", "script");
+            throw new Descriptor.FormException("Non-sandboxed scripts are not supported by this companion.", "script");
         }
         this.id = id;
         this.script = script;

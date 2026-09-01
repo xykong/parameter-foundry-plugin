@@ -4,8 +4,8 @@ import groovy.lang.Binding;
 import hudson.Extension;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
+import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
 import io.jenkins.plugins.unifiedparameters.provider.extension.ScriptProviderExtension;
 import io.jenkins.plugins.unifiedparameters.provider.extension.ScriptProviderSecurityContract;
 import java.util.ArrayList;
@@ -33,15 +33,7 @@ public final class SandboxedScriptProviderExtension extends ScriptProviderExtens
 
     @Override
     public ScriptProviderSecurityContract getSecurityContract() {
-        return new ScriptProviderSecurityContract(
-                1,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                Set.of("catalog"));
+        return new ScriptProviderSecurityContract(1, true, true, true, true, true, true, Set.of("catalog"));
     }
 
     @Override
@@ -60,11 +52,11 @@ public final class SandboxedScriptProviderExtension extends ScriptProviderExtens
         ScriptCatalogEntry entry = ScriptProviderCatalog.get()
                 .findEntry(governedSourceReference)
                 .orElseThrow(() -> unavailable(
-                        context,
-                        "Governed script reference is not present in the Script Provider catalog."));
+                        context, "Governed script reference is not present in the Script Provider catalog."));
         context.checkCancelled();
         try {
-            SecureGroovyScript configured = entry.getScript().configuring(approvalContext(context, governedSourceReference));
+            SecureGroovyScript configured =
+                    entry.getScript().configuring(approvalContext(context, governedSourceReference));
             Binding binding = new Binding();
             binding.setVariable("dependencies", context.request().dependencyValues());
             binding.setVariable("operation", context.request().operation().name());
@@ -91,18 +83,15 @@ public final class SandboxedScriptProviderExtension extends ScriptProviderExtens
 
     private static ApprovalContext approvalContext(ProviderLoadContext context, String sourceReference) {
         String principal = context.request().principal();
-        ApprovalContext approval = ApprovalContext.create()
-                .withItemAsKey(context.request().job())
-                .withKey(sourceReference);
+        ApprovalContext approval =
+                ApprovalContext.create().withItemAsKey(context.request().job()).withKey(sourceReference);
         return principal == null || principal.isBlank() ? approval : approval.withUser(principal);
     }
 
     private static List<Option> normalize(Object raw, String providerId) {
         if (!(raw instanceof List<?> values)) {
             throw new ProviderException(
-                    ErrorCode.PROVIDER_UNAVAILABLE,
-                    providerId,
-                    "Sandboxed Script Provider must return a list.");
+                    ErrorCode.PROVIDER_UNAVAILABLE, providerId, "Sandboxed Script Provider must return a list.");
         }
         if (values.size() > MAX_OPTIONS) {
             throw new ProviderException(
@@ -170,10 +159,9 @@ public final class SandboxedScriptProviderExtension extends ScriptProviderExtens
         return unavailable(context, message, null);
     }
 
-    private static ProviderException unavailable(
-            ProviderLoadContext context, String message, Throwable cause) {
-        ProviderException exception =
-                new ProviderException(ErrorCode.PROVIDER_UNAVAILABLE, context.request().providerId(), message);
+    private static ProviderException unavailable(ProviderLoadContext context, String message, Throwable cause) {
+        ProviderException exception = new ProviderException(
+                ErrorCode.PROVIDER_UNAVAILABLE, context.request().providerId(), message);
         if (cause != null) {
             exception.initCause(cause);
         }

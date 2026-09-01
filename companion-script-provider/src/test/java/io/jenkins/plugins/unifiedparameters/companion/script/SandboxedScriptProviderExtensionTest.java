@@ -24,15 +24,19 @@ class SandboxedScriptProviderExtensionTest {
 
     @Test
     void evaluatesOnlyCatalogScriptsAndNormalizesBoundedOptions(JenkinsRule jenkins) throws Exception {
-        ScriptProviderCatalog.get().setEntries(List.of(new ScriptCatalogEntry(
-                "releases",
-                new SecureGroovyScript(
-                        "return ['release-1', [value: 'release-2', label: 'Release 2', disabled: true]]", true))));
+        ScriptProviderCatalog.get()
+                .setEntries(List.of(new ScriptCatalogEntry(
+                        "releases",
+                        new SecureGroovyScript(
+                                "return ['release-1', [value: 'release-2', label: 'Release 2', disabled: true]]",
+                                true))));
         ProviderLoadContext context = context(jenkins, "release-provider");
 
         var options = new SandboxedScriptProviderExtension().evaluate(context, "catalog:releases");
 
-        assertEquals(List.of("release-1", "release-2"), options.stream().map(option -> option.getValue()).toList());
+        assertEquals(
+                List.of("release-1", "release-2"),
+                options.stream().map(option -> option.getValue()).toList());
         assertEquals("Release 2", options.get(1).getLabel());
         assertTrue(options.get(1).isDisabled());
     }
@@ -41,27 +45,23 @@ class SandboxedScriptProviderExtensionTest {
     void rejectsNonSandboxedCatalogEntries(JenkinsRule jenkins) throws Exception {
         SecureGroovyScript script = new SecureGroovyScript("return []", false);
 
-        assertThrows(
-                Descriptor.FormException.class,
-                () -> new ScriptCatalogEntry("unsafe", script));
+        assertThrows(Descriptor.FormException.class, () -> new ScriptCatalogEntry("unsafe", script));
     }
 
     @Test
     void rejectsUnknownReferencesAndUnsupportedOutput(JenkinsRule jenkins) throws Exception {
-        ScriptProviderCatalog.get().setEntries(List.of(new ScriptCatalogEntry(
-                "scalar",
-                new SecureGroovyScript("return 'not-a-list'", true))));
+        ScriptProviderCatalog.get()
+                .setEntries(
+                        List.of(new ScriptCatalogEntry("scalar", new SecureGroovyScript("return 'not-a-list'", true))));
         SandboxedScriptProviderExtension extension = new SandboxedScriptProviderExtension();
         ProviderLoadContext context = context(jenkins, "provider");
 
-        ProviderException missing = assertThrows(
-                ProviderException.class,
-                () -> extension.evaluate(context, "catalog:missing"));
+        ProviderException missing =
+                assertThrows(ProviderException.class, () -> extension.evaluate(context, "catalog:missing"));
         assertEquals(ErrorCode.PROVIDER_UNAVAILABLE, missing.getCode());
 
-        ProviderException scalar = assertThrows(
-                ProviderException.class,
-                () -> extension.evaluate(context, "catalog:scalar"));
+        ProviderException scalar =
+                assertThrows(ProviderException.class, () -> extension.evaluate(context, "catalog:scalar"));
         assertEquals(ErrorCode.PROVIDER_UNAVAILABLE, scalar.getCode());
     }
 
