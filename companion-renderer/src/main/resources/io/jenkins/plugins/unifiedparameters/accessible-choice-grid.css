@@ -1,0 +1,19 @@
+.up-accessible-choice-grid__options {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.up-accessible-choice-grid__options .unified-parameters-option {
+  min-height: 100%;
+}
+
+.up-accessible-choice-grid__select {
+  min-height: 8rem;
+}
+
+@media (max-width: 45rem) {
+  .up-accessible-choice-grid__options {
+    grid-template-columns: 1fr;
+  }
+}

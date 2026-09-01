@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.renderer;
 
 import hudson.PluginWrapper;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import jenkins.model.Jenkins;
@@ -42,6 +43,39 @@ public final class TrustedRendererRegistry {
             }
         }
         return false;
+    }
+
+    public static List<String> externalRendererIds(String family) {
+        return UnifiedParameterRenderer.all().stream()
+                .filter(renderer -> renderer.getSupportedFamilies().contains(family))
+                .filter(renderer -> renderer.getSecurityContract().isTrustedV1())
+                .filter(renderer -> {
+                    PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
+                    return owner != null && !"unified-parameters".equals(owner.getShortName());
+                })
+                .map(UnifiedParameterRenderer::getId)
+                .filter(id -> id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}"))
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    public static List<String> trustedAdjuncts(String rendererId, String family) {
+        if (!isTrusted(rendererId, family) || BUILT_INS.containsKey(rendererId)) {
+            return List.of();
+        }
+        return UnifiedParameterRenderer.all().stream()
+                .filter(renderer -> rendererId.equals(renderer.getId()))
+                .filter(renderer -> renderer.getSupportedFamilies().contains(family))
+                .filter(renderer -> renderer.getSecurityContract().isTrustedV1())
+                .filter(renderer -> {
+                    PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
+                    return owner != null && !"unified-parameters".equals(owner.getShortName());
+                })
+                .flatMap(renderer -> renderer.getSecurityContract().adjuncts().stream())
+                .distinct()
+                .sorted()
+                .toList();
     }
 
     public static String validationError(String rendererId, String family) {

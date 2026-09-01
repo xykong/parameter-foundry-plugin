@@ -40,6 +40,9 @@
       <option value="checkbox" selected="${instance.renderer == 'checkbox'}">Checkbox group</option>
       <option value="list" selected="${instance.renderer == 'list'}">Multi-select list</option>
       <option value="chips" selected="${instance.renderer == 'chips'}">Chips</option>
+      <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
+        <option value="${rendererId}" selected="${instance.renderer == rendererId}">${rendererId}</option>
+      </j:forEach>
     </select>
   </f:entry>
   <f:entry title="Default mode">

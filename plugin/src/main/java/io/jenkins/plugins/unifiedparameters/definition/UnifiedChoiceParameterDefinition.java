@@ -173,6 +173,11 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     }
 
     @Override
+    protected String getRendererFamily() {
+        return io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_SINGLE_CHOICE;
+    }
+
+    @Override
     protected String getDefaultEnvironmentExport() {
         return "string";
     }

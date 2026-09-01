@@ -200,6 +200,11 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     @Override
+    protected String getRendererFamily() {
+        return io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_MULTI_CHOICE;
+    }
+
+    @Override
     protected String getDefaultEnvironmentExport() {
         return "delimited";
     }

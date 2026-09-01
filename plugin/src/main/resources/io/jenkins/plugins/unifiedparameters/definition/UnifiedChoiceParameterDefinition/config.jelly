@@ -40,6 +40,9 @@
       <option value="select" selected="${instance.renderer == 'select'}">Select</option>
       <option value="searchable" selected="${instance.renderer == 'searchable'}">Searchable</option>
       <option value="radio" selected="${instance.renderer == 'radio'}">Radio</option>
+      <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
+        <option value="${rendererId}" selected="${instance.renderer == rendererId}">${rendererId}</option>
+      </j:forEach>
     </select>
   </f:entry>
   <f:entry title="Default mode">

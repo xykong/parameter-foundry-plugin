@@ -31,6 +31,8 @@
     <module>migration-active-choices</module>
     <module>migration-list-git-branches</module>
     <module>migration-additional-sources</module>
+    <module>companion-renderer</module>
+    <module>companion-script-provider</module>
   </modules>
 
   <scm>

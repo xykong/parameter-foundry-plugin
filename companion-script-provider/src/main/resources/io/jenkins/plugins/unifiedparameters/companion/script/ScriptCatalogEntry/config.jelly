@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Catalog ID">
+    <f:textbox field="id" />
+  </f:entry>
+  <f:entry title="Sandboxed Groovy">
+    <f:property field="script" />
+  </f:entry>
+</j:jelly>

@@ -7,6 +7,7 @@ import hudson.model.Descriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -108,6 +109,14 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         } catch (EvaluationException exception) {
             return "{}";
         }
+    }
+
+    public List<String> getAvailableExternalRenderers() {
+        return TrustedRendererRegistry.externalRendererIds(TrustedRendererRegistry.FAMILY_FORM);
+    }
+
+    public List<String> getRendererAdjuncts() {
+        return TrustedRendererRegistry.trustedAdjuncts(renderer, TrustedRendererRegistry.FAMILY_FORM);
     }
 
     @Override

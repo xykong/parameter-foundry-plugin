@@ -4,6 +4,7 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -159,6 +160,14 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return choices.size();
     }
 
+    public List<String> getAvailableExternalRenderers() {
+        return TrustedRendererRegistry.externalRendererIds(getRendererFamily());
+    }
+
+    public List<String> getRendererAdjuncts() {
+        return TrustedRendererRegistry.trustedAdjuncts(getRenderer(), getRendererFamily());
+    }
+
     public boolean isFallbackTruncated() {
         return choices.size() > NO_JAVASCRIPT_OPTION_LIMIT;
     }
@@ -202,6 +211,8 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     protected abstract String getDefaultRenderer();
+
+    protected abstract String getRendererFamily();
 
     protected abstract String getDefaultEnvironmentExport();
 
