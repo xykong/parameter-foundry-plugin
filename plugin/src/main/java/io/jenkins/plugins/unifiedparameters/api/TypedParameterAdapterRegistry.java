@@ -67,9 +67,15 @@ final class TypedParameterAdapterRegistry {
             schema.put("customValueMaxLength", single.getCustomValueMaxLength());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
+            schema.put("renderer", single.getRenderer());
+            schema.put("availableExternalRenderers", JSONArray.fromObject(single.getAvailableExternalRenderers()));
         } else if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
             schema.put("providerBacked", multiple.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(multiple.getDependsOn()));
+            schema.put("renderer", multiple.getRenderer());
+            schema.put(
+                    "availableExternalRenderers",
+                    JSONArray.fromObject(multiple.getAvailableExternalRenderers()));
         } else if (definition instanceof UnifiedFormParameterDefinition form) {
             schema.put("outputMode", form.getOutputMode());
             schema.put("renderer", form.getRenderer());
