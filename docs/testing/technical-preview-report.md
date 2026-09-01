@@ -143,6 +143,8 @@ external errors and still fails on any Unified Parameters script error.
 ## Decision
 
 All repository-owned checks for the implemented `2.0` foundation are passing.
-The final product release gates remain open: complete source-specific A/B
-fixtures, companion-plugin security review, manual screen-reader sign-off, and
-real-organization migration pilots.
+The final product release gates remain open: production-safe source-specific A/B
+fixtures, companion-plugin security review, manual screen-reader sign-off,
+Jenkins release review, and real-organization migration pilots. The follow-up
+September 1 verification closed the repository-owned companion integration,
+migration fixture coverage, and expanded PCT gates.
