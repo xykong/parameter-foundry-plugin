@@ -12,6 +12,8 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private static final int MAX_SCRIPT_LENGTH = 64 * 1024;
+
     private final String id;
     private final SecureGroovyScript script;
 
@@ -26,6 +28,9 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
         }
         if (!script.isSandbox()) {
             throw new Descriptor.FormException("Non-sandboxed scripts are not supported by this companion.", "script");
+        }
+        if (script.getScript() == null || script.getScript().length() > MAX_SCRIPT_LENGTH) {
+            throw new Descriptor.FormException("Script source must be at most 65536 characters.", "script");
         }
         this.id = id;
         this.script = script;

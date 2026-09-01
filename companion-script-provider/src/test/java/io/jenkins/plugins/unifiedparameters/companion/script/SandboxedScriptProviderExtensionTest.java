@@ -65,6 +65,21 @@ class SandboxedScriptProviderExtensionTest {
         assertEquals(ErrorCode.PROVIDER_UNAVAILABLE, scalar.getCode());
     }
 
+    @Test
+    void rejectsDuplicateCatalogIdsAndOversizedOutput(JenkinsRule jenkins) throws Exception {
+        ScriptProviderCatalog catalog = ScriptProviderCatalog.get();
+        var entry = new ScriptCatalogEntry("duplicate", new SecureGroovyScript("return []", true));
+        catalog.setEntries(List.of(entry));
+
+        assertThrows(IllegalArgumentException.class, () -> catalog.setEntries(List.of(entry, entry)));
+
+        catalog.setEntries(List.of(new ScriptCatalogEntry(
+                "oversized", new SecureGroovyScript("return [[value: 'x', description: 'a' * 4097]]", true))));
+        ProviderException exception = assertThrows(ProviderException.class, () -> new SandboxedScriptProviderExtension()
+                .evaluate(context(jenkins, "oversized-provider"), "catalog:oversized"));
+        assertEquals(ErrorCode.PROVIDER_UNAVAILABLE, exception.getCode());
+    }
+
     private static ProviderLoadContext context(JenkinsRule jenkins, String providerId) throws Exception {
         var job = jenkins.createFreeStyleProject(providerId);
         return new ProviderLoadContext(

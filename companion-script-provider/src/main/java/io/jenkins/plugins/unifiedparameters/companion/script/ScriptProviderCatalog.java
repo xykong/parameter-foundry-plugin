@@ -2,8 +2,10 @@ package io.jenkins.plugins.unifiedparameters.companion.script;
 
 import hudson.Extension;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -13,6 +15,7 @@ import org.kohsuke.stapler.verb.POST;
 @Extension
 public final class ScriptProviderCatalog extends GlobalConfiguration {
 
+    private static final int MAX_ENTRIES = 256;
     private List<ScriptCatalogEntry> entries = List.of();
 
     public ScriptProviderCatalog() {
@@ -29,7 +32,17 @@ public final class ScriptProviderCatalog extends GlobalConfiguration {
 
     @DataBoundSetter
     public void setEntries(List<ScriptCatalogEntry> entries) {
-        this.entries = entries == null ? List.of() : List.copyOf(new ArrayList<>(entries));
+        List<ScriptCatalogEntry> candidate = entries == null ? List.of() : List.copyOf(new ArrayList<>(entries));
+        if (candidate.size() > MAX_ENTRIES) {
+            throw new IllegalArgumentException("Script Provider catalog cannot contain more than 256 entries.");
+        }
+        Set<String> ids = new HashSet<>();
+        for (ScriptCatalogEntry entry : candidate) {
+            if (!ids.add(entry.getId())) {
+                throw new IllegalArgumentException("Duplicate Script Provider catalog ID: " + entry.getId());
+            }
+        }
+        this.entries = candidate;
     }
 
     public Optional<ScriptCatalogEntry> findEntry(String sourceReference) {
