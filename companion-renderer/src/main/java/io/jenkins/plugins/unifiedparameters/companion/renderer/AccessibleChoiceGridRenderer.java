@@ -19,19 +19,11 @@ public final class AccessibleChoiceGridRenderer extends UnifiedParameterRenderer
 
     @Override
     public Set<String> getSupportedFamilies() {
-        return Set.of(
-                TrustedRendererRegistry.FAMILY_SINGLE_CHOICE,
-                TrustedRendererRegistry.FAMILY_MULTI_CHOICE);
+        return Set.of(TrustedRendererRegistry.FAMILY_SINGLE_CHOICE, TrustedRendererRegistry.FAMILY_MULTI_CHOICE);
     }
 
     @Override
     public RendererSecurityContract getSecurityContract() {
-        return new RendererSecurityContract(
-                1,
-                true,
-                true,
-                false,
-                false,
-                Set.of(ADJUNCT));
+        return new RendererSecurityContract(1, true, true, false, false, Set.of(ADJUNCT));
     }
 }

@@ -21,8 +21,6 @@ class AccessibleChoiceGridRendererTest {
         assertTrue(contract.isTrustedV1());
         assertFalse(contract.usesInlineScript());
         assertFalse(contract.acceptsJobHtml());
-        assertEquals(
-                java.util.Set.of(AccessibleChoiceGridRenderer.ADJUNCT),
-                contract.adjuncts());
+        assertEquals(java.util.Set.of(AccessibleChoiceGridRenderer.ADJUNCT), contract.adjuncts());
     }
 }
