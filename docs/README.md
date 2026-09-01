@@ -52,6 +52,7 @@
 - [Performance and accessibility test plan](./testing/performance-accessibility-plan.md)
 - [Real-service parameter compatibility matrix](./testing/real-service-compatibility-matrix.md)
 - [`0.1` Technical Preview verification report](./testing/technical-preview-report.md)
+- [September 1 source and companion Docker canary](./testing/source-plugin-docker-canary-2026-09-01.md)
 - [`1.0` Static Choice Foundation implementation status](./testing/1.0-implementation-status.md)
 - [`1.1` Governed Provider Platform implementation status](./testing/1.1-implementation-status.md)
 - [`1.2` Reactive and Cascade implementation status](./testing/1.2-implementation-status.md)

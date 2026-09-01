@@ -128,6 +128,12 @@ The disposable source-plugin canary ran against real HPI files on Jenkins
 Detailed redacted evidence is in
 [`source-plugin-canary-2026-08-31.json`](./results/source-plugin-canary-2026-08-31.json).
 
+The reference Renderer and sandboxed Script Provider companions were added to
+the follow-up canary on September 1, 2026. The companion-backed parameter
+resolved and built successfully, and the Renderer ID was exposed through the
+typed schema. Detailed evidence is in
+[`source-plugin-canary-2026-09-01.json`](./results/source-plugin-canary-2026-09-01.json).
+
 The source Extended Choice plugin emits known legacy browser warnings in the
 isolated migration environment. Jenkins `2.568.2` also has a breadcrumb
 overflow-menu `xmlEscape` defect during responsive or large-layout
