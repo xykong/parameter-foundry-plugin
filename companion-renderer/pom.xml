@@ -29,5 +29,10 @@
       <type>hpi</type>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.configuration-as-code</groupId>
+      <artifactId>test-harness</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

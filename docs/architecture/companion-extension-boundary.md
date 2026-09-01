@@ -59,6 +59,22 @@ loaded optimistically. Companion plugins must publish Jenkins and Unified
 Parameters version ranges, upgrade fixtures, and their own threat-model
 extension.
 
+This repository includes two reference companions:
+
+- `unified-parameters-companion-renderer` provides the trusted
+  `accessible-choice-grid` renderer. It contributes only packaged CSS/JavaScript
+  adjuncts and is loaded by the core renderer registry only when the companion
+  is installed.
+- `unified-parameters-companion-script-provider` provides the
+  `sandbox-groovy` engine. It executes only administrator-managed catalog
+  entries through Jenkins Script Security, requires sandbox mode, exposes only
+  immutable dependency values and operation metadata, and normalizes bounded
+  option output before it reaches the core Provider runtime.
+
+These are reference implementations, not a substitute for Jenkins community
+security review. Non-sandboxed scripts, unregistered references, unsupported
+output shapes, and invalid option values fail closed.
+
 ## Domain Provider Migration
 
 Source-specific adapters may inspect a definition through stable class names

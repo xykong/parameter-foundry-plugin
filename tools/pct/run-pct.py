@@ -27,6 +27,8 @@ PLUGIN_IDS = (
     "unified-parameters-migration-active-choices",
     "unified-parameters-migration-list-git-branches",
     "unified-parameters-migration-additional-sources",
+    "unified-parameters-companion-renderer",
+    "unified-parameters-companion-script-provider",
 )
 TEST_SUMMARY = re.compile(
     r"Tests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)"

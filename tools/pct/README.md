@@ -21,9 +21,10 @@ The report is written to:
 docs/testing/results/pct-YYYY-MM-DD.json
 ```
 
-The check covers the Core plugin and all four migration adapter modules. It
-first installs the local reactor snapshot into the Docker Maven cache, then
-runs PCT with the Jenkins WAR generated for each supported Core version.
+The check covers the Core plugin, all four migration adapter modules, and the
+reference Renderer and Script Provider companion modules. It first installs
+the local reactor snapshot into the Docker Maven cache, then runs PCT with the
+Jenkins WAR generated for each supported Core version.
 
 PCT itself runs on Java 21. The local Unified Parameters artifacts are compiled
 to the bytecode level required by each Core entry: Java 17 for Jenkins
