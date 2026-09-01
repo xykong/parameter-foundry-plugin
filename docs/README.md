@@ -40,6 +40,7 @@
 ## Security
 
 - [Threat model](./security/threat-model.md)
+- [Companion plugin review checklist](./security/companion-review-checklist.md)
 
 ## Migration
 
