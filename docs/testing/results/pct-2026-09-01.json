@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T16:58:25.226874+08:00",
-  "targetCommit": "0e6db5ced3a0ed96a156b39c94fb196b05c114a5",
+  "generatedAt": "2026-09-01T17:52:16.713301+08:00",
+  "targetCommit": "f82a5edf83f10d27123bc10b078e4c1f1ad47349",
   "pctRepository": "https://github.com/jenkinsci/plugin-compat-tester.git",
   "pctCommit": "8a4e8125284289f5af87a91c717ada7f022b2daf",
   "mavenImage": "maven:3.9.11-eclipse-temurin-21",
@@ -27,7 +27,7 @@
           "buildSuccess": true
         },
         "unified-parameters-companion-script-provider": {
-          "tests": 9,
+          "tests": 10,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
@@ -84,7 +84,7 @@
           "buildSuccess": true
         },
         "unified-parameters-companion-script-provider": {
-          "tests": 9,
+          "tests": 10,
           "failures": 0,
           "errors": 0,
           "skipped": 0,

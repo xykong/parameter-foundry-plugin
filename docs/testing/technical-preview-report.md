@@ -62,7 +62,7 @@ make pct
 The official PCT checkout at
 `8a4e8125284289f5af87a91c717ada7f022b2daf` tested the core plugin, all four
 migration adapters, and both reference companions against both supported Core
-entries. Each entry ran 164 tests with 0 failures and 0 errors; 5 generated
+entries. Each entry ran 165 tests with 0 failures and 0 errors; 6 generated
 harness tests were skipped per entry. The Docker runner uses Java 17 bytecode
 for Core `2.528.3` and Java 21 bytecode for Core `2.568.2`, and records the
 latest result in

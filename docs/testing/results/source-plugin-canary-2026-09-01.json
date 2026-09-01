@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-01T16:56:18.458058+08:00",
+  "generatedAt": "2026-09-01T18:15:33.560950+08:00",
   "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
-  "targetCommit": "500d582e2a09353ec46c2e2a4872611f3c29451e",
+  "targetCommit": "f82a5edf83f10d27123bc10b078e4c1f1ad47349",
   "scope": "synthetic Docker canary only",
   "checks": {
     "pluginLoad": {

@@ -12,8 +12,8 @@ Provider companion.
 
 | Jenkins Core | Modules | Tests | Failures | Errors | Skips |
 |---|---:|---:|---:|---:|---:|
-| `2.528.3` | 7 | 164 | 0 | 0 | 5 |
-| `2.568.2` | 7 | 164 | 0 | 0 | 5 |
+| `2.528.3` | 7 | 165 | 0 | 0 | 6 |
+| `2.568.2` | 7 | 165 | 0 | 0 | 6 |
 
 The local reactor is compiled to Java 17 bytecode for Core `2.528.3` and Java
 21 bytecode for Core `2.568.2`. The same Core and compiler properties are
