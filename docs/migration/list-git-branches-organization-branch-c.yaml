@@ -13,25 +13,39 @@ normalizedIntent:
   cardinality: single
   options:
     source: governed-git-refs-provider
+  candidateRefType: branch
+  canonicalValue: one-branch-string
   renderer: searchable
 
 classification:
   level: C
-  reason: Organization-specific discovery semantics require an explicit provider mapping.
+  reason: ORG_BRANCH is organization-specific and is treated only as a branch candidate; the output contract must be confirmed before implementation.
   userDecisions:
     - id: organization-authority
       question: Which organization or SCM authority provides the repository list?
     - id: repository-selection
-      question: Is the target selecting a repository, a ref, or a repository/ref pair?
+      question: Is the target selecting a repository, one branch, or a repository/ref pair?
+    - id: output-contract
+      question: Does the build receive exactly one branch string, and what happens when the selected organization or repository changes?
     - id: credential-and-retention
       question: Which administrator-owned credential and cache/fallback policy apply?
 
 targetSkeleton:
-  symbol: unifiedChoice
-  arguments:
-    name: BRANCH
-    providerId: <governed-organization-git-provider>
-    renderer: searchable
+  candidate:
+    provider:
+      symbol: unifiedGitRefProvider
+      arguments:
+        id: git-refs-provider
+        connectionProfileId: <administrator-selected-connection-profile>
+        refType: branch
+        includePattern: <reviewed-branch-regex>
+        maximumRefs: 1000
+    parameter:
+      symbol: unifiedChoice
+      arguments:
+        name: BRANCH
+        providerId: git-refs-provider
+        renderer: searchable
 
 verification:
   - organization-empty
@@ -39,7 +53,10 @@ verification:
   - ref-discovery
   - unavailable-authority
   - browser-typed-api-cli-parity
-  - upstream-webhook-and-rebuild
+  - upstream-webhook-remote-and-rebuild
+  - one-branch-string-assertion
 
 notes:
-  - ORG_BRANCH remains a mapping decision until the organization behavior is specified.
+  - ORG_BRANCH is not defined by the official List Git Branches modes; do not infer its fork-specific organization behavior.
+  - The branch candidate is blocked unless the selected value is confirmed to be one branch string rather than an organization/repository/ref composite.
+  - The organization authority and repository list remain outside the Job definition and must be represented by a reviewed Provider or Connection Profile contract.

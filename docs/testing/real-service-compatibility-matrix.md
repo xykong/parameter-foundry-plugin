@@ -30,9 +30,9 @@ credentials, tokens, option values, or production endpoints.
 | Extended Choice `PT_CHECKBOX` | Observed | Checkbox, empty, duplicate, disabled, Rebuild | Unified multiple choice with checkbox renderer | Passed with decision |
 | Active Choices `ChoiceParameter` | Observed | Real HPI UI smoke and non-executing Provider skeleton | Governed Provider or static Unified choice | Skeleton ready; HPI smoke passed |
 | Active Choices `CascadeChoiceParameter` | Observed | Real HPI class loading, dependency extraction, and cycle fixture | Governed Provider with `dependsOn` | Skeleton ready; HPI smoke passed |
-| Active Choices `DynamicReferenceParameter` | Observed | HTML-to-Form decision fixture | Unified Form or reviewed Renderer companion | Skeleton ready |
-| List Git Branches `PT_BRANCH` | Observed | Real HPI Class C preview and redacted Git-ref Provider skeleton | Governed Git refs Provider | Skeleton ready; HPI smoke passed |
-| List Git Branches `ORG_BRANCH` | Observed | Organization-specific mode remains an explicit mapping decision | Governed Git refs Provider | Skeleton ready |
+| Active Choices `DynamicReferenceParameter` | Observed | Five-mode, omit-value, dependency, and HTML-to-Form decision fixtures | Unified Form/content or reviewed Renderer companion | Mode semantics implemented; real HPI canary pending refresh |
+| List Git Branches `PT_BRANCH`/`PT_TAG`/`PT_BRANCH_TAG` | Observed | Mode-specific redacted `unifiedGitRefProvider` skeleton | Governed Git refs companion | Adapter and companion implemented; canary pending refresh |
+| List Git Branches `ORG_BRANCH` | Observed | One-branch-string and organization-authority decisions | Branch candidate through governed Git refs companion | Semantics resolved; business confirmation remains |
 
 ## Executed Evidence
 
@@ -41,8 +41,12 @@ The following repository-owned checks have been executed:
 - Core mixed-parameter, native File, Provider, Reactive, Snapshot, Form, and
   migration tests in `plugin`.
 - Extended Choice adapter and migration coordinator tests.
-- Active Choices adapter tests for Choice, Cascade, and formatted Reference.
-- List Git Branches adapter tests for `PT_BRANCH` and `ORG_BRANCH`.
+- Active Choices adapter tests for Choice, Cascade, all five Dynamic Reference
+  modes, omit-value state, and dependencies.
+- List Git Branches adapter tests for `PT_BRANCH`, `PT_TAG`,
+  `PT_BRANCH_TAG`, `ORG_BRANCH`, and unknown modes.
+- Git refs companion tests for filtering, canonical values, output limits,
+  redirect/header policy, and metadata-address rejection.
 - Additional source adapter tests for Editable, Extensible, Custom Checkbox,
   Multiselect, JSON Editor, HTML Parameters, JSON Parameter, REST List, and
   Validating String.

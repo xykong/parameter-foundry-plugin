@@ -136,7 +136,11 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | filterable | Searchable renderer | Direct |
 | `:selected` | Option.selected/defaults | Semantic |
 | `:disabled` | Option.disabled | Semantic |
-| formatted HTML | Structured Content/Unified Form | Reject-and-redesign |
+| `ET_TEXT_BOX` | Unified Form string field | Semantic |
+| `ET_ORDERED_LIST`/`ET_UNORDERED_LIST` | Read-only Content or explicit typed choice | Semantic |
+| `ET_FORMATTED_HTML` | Structured Content/Unified Form or reviewed Renderer | Reject-and-redesign |
+| `ET_FORMATTED_HIDDEN_HTML` | Retain or explicit business-field redesign | Manual/Class D |
+| `omitValueField` | Explicit presentation-only/output decision | Semantic |
 | DOM 参数查找 | 服务端依赖图 | Semantic |
 
 ### 4.4 Json Editor Parameter
@@ -270,11 +274,16 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | branch/tag/ref discovery | governed REST or Git refs companion Provider | Extension |
 | repository URL | administrator-owned Connection Profile | Refactor |
 | credentials | credential ID in the governed profile | Direct |
-| branch type/filter/sort | typed Provider configuration and transform chain | Semantic |
+| `PT_BRANCH` | Git refs companion `branch` mode | Semantic |
+| `PT_TAG` | Git refs companion `tag` mode | Semantic |
+| `PT_BRANCH_TAG` | Git refs companion full `ref` mode | Semantic |
+| `ORG_BRANCH` | Branch candidate after organization output confirmation | Manual/Class C |
+| branch/tag filter/sort | typed Provider configuration and transform chain | Semantic |
 | default and deleted ref | explicit default/stale validation | Semantic |
 
 Migration adapter 只读取类型和公开配置元数据，生成 Provider 骨架，不复制 URL、Credential
-或 Secret。
+或 Secret。`ORG_BRANCH` 不是官方模式；只有确认输出是单个 branch string，而不是
+organization/repository/ref 组合后，才能使用 branch candidate。
 
 ### 4.15 File Parameters
 

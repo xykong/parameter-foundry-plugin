@@ -22,7 +22,7 @@ docs/testing/results/pct-YYYY-MM-DD.json
 ```
 
 The check covers the Core plugin, all four migration adapter modules, and the
-reference Renderer and Script Provider companion modules. It first installs
+reference Renderer, Script Provider, and Git refs companion modules. It first installs
 the local reactor snapshot into the Docker Maven cache, then runs PCT with the
 Jenkins WAR generated for each supported Core version.
 

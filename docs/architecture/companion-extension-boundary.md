@@ -59,7 +59,7 @@ loaded optimistically. Companion plugins must publish Jenkins and Unified
 Parameters version ranges, upgrade fixtures, and their own threat-model
 extension.
 
-This repository includes two reference companions:
+This repository includes three reference companions:
 
 - `unified-parameters-companion-renderer` provides the trusted
   `accessible-choice-grid` renderer. It contributes only packaged CSS/JavaScript
@@ -70,6 +70,12 @@ This repository includes two reference companions:
   entries through Jenkins Script Security, requires sandbox mode, exposes only
   immutable dependency values and operation metadata, and normalizes bounded
   option output before it reaches the core Provider runtime.
+- `unified-parameters-companion-git-refs` provides the
+  `unifiedGitRefProvider`. It resolves branch, tag, or full-ref values through
+  the Jenkins Git Client plugin, takes repository authority only from a
+  governed Connection Profile, rejects redirects and custom headers, reuses
+  core SSRF policy, and never persists repository URLs or credentials in a Job
+  parameter definition.
 
 These are reference implementations, not a substitute for Jenkins community
 security review. Non-sandboxed scripts, unregistered references, unsupported
@@ -79,10 +85,17 @@ output shapes, and invalid option values fail closed.
 
 Source-specific adapters may inspect a definition through stable class names
 and read-only getters, but never execute source scripts or copy credentials.
-The Active Choices adapter emits Provider/Cascade or Unified Form skeletons.
-The List Git Branches adapter emits a governed Git-ref Provider skeleton whose
-repository authority and credential remain in an administrator-owned
-Connection Profile or reviewed companion.
+The Active Choices adapter reads Dynamic Reference mode, omit-value state, and
+declared dependencies. It emits mode-specific typed Form/content skeletons,
+classifies formatted hidden HTML as class D without an explicit field mapping,
+and never copies source HTML, JavaScript, or script text.
+
+The List Git Branches adapter maps `PT_BRANCH`, `PT_TAG`, and `PT_BRANCH_TAG`
+to Git companion `branch`, `tag`, and full `ref` modes. Organization-specific
+`ORG_BRANCH` is only a branch candidate until the build output is confirmed
+to be one branch string rather than an organization/repository/ref composite.
+Repository authority and credentials remain in an administrator-owned
+Connection Profile.
 
 File upload parameters are transport capabilities rather than option
 Providers. Native Jenkins multipart behavior remains available in mixed Jobs.

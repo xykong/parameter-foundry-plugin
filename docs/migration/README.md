@@ -24,10 +24,13 @@ Current fixture:
 
 Additional companion adapters cover:
 
-- Active Choices `ChoiceParameter`, `CascadeChoiceParameter`, and formatted
-  reference parameters through non-executing Provider/Form skeletons.
-- List Git Branches through a governed Git-ref Provider skeleton without
-  copying repository URLs or credentials.
+- Active Choices `ChoiceParameter`, `CascadeChoiceParameter`, and all five
+  Dynamic Reference element modes through non-executing Provider/Form/content
+  skeletons.
+- List Git Branches `PT_BRANCH`, `PT_TAG`, and `PT_BRANCH_TAG` through the
+  governed Git refs companion; organization-specific `ORG_BRANCH` remains a
+  confirmed branch candidate. Repository URLs and credentials are never
+  copied.
 
 Future source adapters must add at least one A, B, C, and D fixture where the
 source plugin supports those classifications.

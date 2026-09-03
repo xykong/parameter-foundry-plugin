@@ -14,25 +14,39 @@ normalizedIntent:
   cardinality: single
   options:
     source: governed-git-refs-provider
+  canonicalValue: branch-name
   renderer: searchable
 
 classification:
   level: C
-  reason: Git discovery is a domain capability and repository authority must remain administrator-owned.
+  reason: PT_BRANCH maps to the governed Git refs companion with a branch-name canonical value; repository authority remains administrator-owned.
   userDecisions:
     - id: connection-profile
       question: Which Connection Profile and credential authorize the repository?
     - id: ref-policy
       question: Which branch/tag/ref filters, sorting, and stale-ref policy apply?
+    - id: default-policy
+      question: Does the source default an explicit branch or the first sorted branch, and what happens when it is deleted?
     - id: failure-policy
       question: What should happen when Git is unavailable or the default ref was deleted?
 
 targetSkeleton:
-  symbol: unifiedChoice
-  arguments:
-    name: BRANCH
-    providerId: <governed-git-refs-provider>
-    renderer: searchable
+  provider:
+    symbol: unifiedGitRefProvider
+    arguments:
+      id: git-refs-provider
+      connectionProfileId: <administrator-selected-connection-profile>
+      refType: branch
+      includePattern: <reviewed-branch-regex>
+      excludePattern: <reviewed-exclusions>
+      sortOrder: <reviewed-source-sort-order>
+      maximumRefs: 1000
+  parameter:
+    symbol: unifiedChoice
+    arguments:
+      name: BRANCH
+      providerId: git-refs-provider
+      renderer: searchable
 
 verification:
   - empty-repository
@@ -41,7 +55,9 @@ verification:
   - renamed-or-deleted-default
   - credential-failure
   - browser-typed-api-cli-parity
-  - upstream-webhook-and-rebuild
+  - upstream-webhook-remote-and-rebuild
 
 notes:
+  - PT_BRANCH exposes a shortened branch name; the Git companion uses refs/heads/ as its authority and returns the corresponding branch name.
+  - The companion supports HTTP(S) and username/password credentials; SSH or certificate-backed sources require an equivalent reviewed transport.
   - Repository URLs and credentials are not copied into the target Job or fixture.

@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Extension
 public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter {
@@ -16,6 +17,13 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
     private static final String CHOICE = "org.biouno.unochoice.ChoiceParameter";
     private static final String CASCADE = "org.biouno.unochoice.CascadeChoiceParameter";
     private static final String REFERENCE = "org.biouno.unochoice.DynamicReferenceParameter";
+    private static final String TEXT_BOX = "ET_TEXT_BOX";
+    private static final String ORDERED_LIST = "ET_ORDERED_LIST";
+    private static final String UNORDERED_LIST = "ET_UNORDERED_LIST";
+    private static final String FORMATTED_HTML = "ET_FORMATTED_HTML";
+    private static final String FORMATTED_HIDDEN_HTML = "ET_FORMATTED_HIDDEN_HTML";
+    private static final Set<String> REFERENCE_TYPES =
+            Set.of(TEXT_BOX, ORDERED_LIST, UNORDERED_LIST, FORMATTED_HTML, FORMATTED_HIDDEN_HTML);
 
     @Override
     public String getSourcePluginId() {
@@ -35,25 +43,34 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
             throw new IllegalArgumentException("Unsupported source definition");
         }
         String className = definition.getClass().getName();
-        List<String> dependencies = CASCADE.equals(className)
+        List<String> dependencies = (CASCADE.equals(className) || REFERENCE.equals(className))
                 ? parseDependencies(readString(definition, "getReferencedParameters"))
                 : List.of();
-        boolean form = REFERENCE.equals(className);
-        String skeleton = form ? formSkeleton(definition) : choiceSkeleton(definition, dependencies);
-        List<String> decisions = form
-                ? List.of(
-                        "Replace formatted HTML with typed Unified Form fields or a reviewed Renderer companion.",
-                        "Choose which source values are business outputs rather than presentation-only content.")
-                : List.of(
-                        "Choose a reviewed Script, REST, Managed Config, or domain Provider without executing the source script during migration.",
-                        "Confirm default, empty, fallback, and error behavior for the normalized option schema.");
+        if (REFERENCE.equals(className)) {
+            String choiceType = firstNonEmpty(readString(definition, "getChoiceType"), FORMATTED_HTML);
+            boolean omitValueField = readBoolean(definition, "getOmitValueField", false);
+            ReferenceSemantics semantics = referenceSemantics(choiceType);
+            return new MigrationPlan(
+                    semantics.classification(),
+                    semantics.reason(),
+                    null,
+                    referenceDecisions(semantics, omitValueField, dependencies),
+                    semantics.classification() == MigrationClassification.D
+                            ? null
+                            : referenceSkeleton(definition, semantics, dependencies),
+                    verificationFixture(definition, dependencies, true));
+        }
+        String skeleton = choiceSkeleton(definition, dependencies);
+        List<String> decisions = List.of(
+                "Choose a reviewed Script, REST, Managed Config, or domain Provider without executing the source script during migration.",
+                "Confirm default, empty, fallback, and error behavior for the normalized option schema.");
         return new MigrationPlan(
                 MigrationClassification.C,
                 "Active Choices script intent requires a governed Provider/Form refactor; source code was not executed.",
                 null,
                 decisions,
                 skeleton,
-                verificationFixture(definition, dependencies, form));
+                verificationFixture(definition, dependencies, false));
     }
 
     private static String choiceSkeleton(ParameterDefinition definition, List<String> dependencies) {
@@ -75,14 +92,85 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 + ")";
     }
 
-    private static String formSkeleton(ParameterDefinition definition) {
+    private static String referenceSkeleton(
+            ParameterDefinition definition, ReferenceSemantics semantics, List<String> dependencies) {
+        String dependencyComment = dependencies.isEmpty()
+                ? ""
+                : "    // Preserve source dependencies as field visibility or Provider inputs: "
+                        + dependencies.stream()
+                                .map(ActiveChoicesMigrationAdapter::quote)
+                                .reduce((left, right) -> left + ", " + right)
+                                .orElse("")
+                        + "\n";
+        String fields =
+                switch (semantics.type()) {
+                    case TEXT_BOX -> "field(" + quote(definition.getName()) + ", 'string')";
+                    case ORDERED_LIST, UNORDERED_LIST -> "field(" + quote(definition.getName()) + ", 'content')";
+                    case FORMATTED_HTML, FORMATTED_HIDDEN_HTML -> "/* TODO reviewed typed fields */";
+                    default -> "/* TODO reviewed typed fields */";
+                };
         return "unifiedForm(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"
-                + "    fields: [/* TODO typed fields replacing formatted HTML */],\n"
+                + dependencyComment
+                + "    fields: ["
+                + fields
+                + "],\n"
+                + "    output: 'map',\n"
                 + "    renderer: 'schema'\n"
                 + ")";
+    }
+
+    private static List<String> referenceDecisions(
+            ReferenceSemantics semantics, boolean omitValueField, List<String> dependencies) {
+        String dependencyDecision = dependencies.isEmpty()
+                ? "Confirm that the Dynamic Reference has no source parameter dependencies."
+                : "Preserve Dynamic Reference dependencies "
+                        + dependencies
+                        + " as typed field visibility or governed Provider inputs; do not execute the source script.";
+        String valueDecision =
+                switch (semantics.type()) {
+                    case TEXT_BOX ->
+                        "Confirm the string default, required/empty behavior, and whether the build receives a raw string or a named form field.";
+                    case ORDERED_LIST, UNORDERED_LIST ->
+                        "Confirm whether the rendered list is presentation-only; if it is a build input, map it explicitly to a typed choice or multi-choice field.";
+                    case FORMATTED_HTML ->
+                        "Identify business fields in the formatted HTML and replace them with typed Unified Form fields or a reviewed Renderer companion.";
+                    case FORMATTED_HIDDEN_HTML ->
+                        "Confirm whether the hidden HTML carries a real build value; without an explicit field mapping it remains a manual class D redesign.";
+                    default ->
+                        "Confirm the business output and renderer mapping for the unsupported source element type.";
+                };
+        String omitDecision = omitValueField
+                ? "The source omits its value field; do not infer a build value from the rendered markup."
+                : "Confirm whether the source value field is a business input; do not copy generated markup as a value.";
+        return List.of(
+                "Source Dynamic Reference mode: " + semantics.type() + ".",
+                dependencyDecision,
+                valueDecision,
+                omitDecision,
+                "Verify the canonical output across browser, Typed API, standard build, CLI, remote triggers, and Rebuild.");
+    }
+
+    private static ReferenceSemantics referenceSemantics(String choiceType) {
+        String normalized = firstNonEmpty(choiceType, FORMATTED_HTML);
+        if (!REFERENCE_TYPES.contains(normalized)) {
+            return new ReferenceSemantics(
+                    normalized,
+                    MigrationClassification.D,
+                    "Unknown Active Choices Dynamic Reference element type has no proven typed contract; retain it or document an explicit business-field redesign.");
+        }
+        if (FORMATTED_HIDDEN_HTML.equals(normalized)) {
+            return new ReferenceSemantics(
+                    normalized,
+                    MigrationClassification.D,
+                    "Formatted hidden HTML has no portable typed value contract; retain it or redesign it with an explicit business-field mapping.");
+        }
+        return new ReferenceSemantics(
+                normalized,
+                MigrationClassification.C,
+                "Active Choices Dynamic Reference presentation requires a governed typed Form refactor; source HTML, JavaScript, and scripts were not copied.");
     }
 
     private static String verificationFixture(ParameterDefinition definition, List<String> dependencies, boolean form) {
@@ -116,7 +204,30 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 .toList();
     }
 
+    private static boolean readBoolean(Object source, String methodName, boolean defaultValue) {
+        try {
+            Method method = source.getClass().getMethod(methodName);
+            Object value = method.invoke(source);
+            return value instanceof Boolean booleanValue ? booleanValue : defaultValue;
+        } catch (NoSuchMethodException exception) {
+            return defaultValue;
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            return defaultValue;
+        }
+    }
+
+    private static String firstNonEmpty(String... values) {
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return "";
+    }
+
     private static String quote(String value) {
         return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
     }
+
+    private record ReferenceSemantics(String type, MigrationClassification classification, String reason) {}
 }

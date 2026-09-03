@@ -5,18 +5,40 @@ source:
   plugin: uno-choice
   sourceClass: org.biouno.unochoice.DynamicReferenceParameter
   synthetic: true
-  output: formatted-reference
+  mode: ET_FORMATTED_HTML
+  omitValueField: false
+  referencedParameters: [ENVIRONMENT]
   scriptExecution: forbidden
 
 normalizedIntent:
   family: form-or-content
-  fields:
-    source: reviewed-field-mapping
-  renderer: schema-or-reviewed-companion
+  dependencies: [ENVIRONMENT]
+  modePolicy:
+    ET_TEXT_BOX:
+      classification: C
+      target: typed-string-field
+      output: explicit-string-decision
+    ET_ORDERED_LIST:
+      classification: C
+      target: read-only-content-or-explicit-multi-choice
+      output: presentation-only-unless-business-input
+    ET_UNORDERED_LIST:
+      classification: C
+      target: read-only-content-or-explicit-multi-choice
+      output: presentation-only-unless-business-input
+    ET_FORMATTED_HTML:
+      classification: C
+      target: typed-form-or-reviewed-renderer
+      output: reviewed-field-mapping
+    ET_FORMATTED_HIDDEN_HTML:
+      classification: D
+      target: retain-or-manual-redesign
+      output: no-inferred-value
+  renderer: schema
 
 classification:
   level: C
-  reason: Formatted HTML is presentation and executable behavior, not a portable typed parameter schema.
+  reason: Formatted HTML is presentation and executable behavior, not a portable typed parameter schema; only reviewed business fields may become typed output.
   userDecisions:
     - id: business-fields
       question: Which controls are actual build inputs and which are presentation-only?
@@ -24,22 +46,35 @@ classification:
       question: Should the target emit a Map, JSON string, or individual fields?
     - id: renderer
       question: Can the built-in schema renderer satisfy the requirement, or is a reviewed Renderer companion required?
+    - id: dependency-mapping
+      question: Should referenced parameters control field visibility or Provider inputs, and what are their canonical values?
+    - id: omit-value-field
+      question: If omitValueField is true, is the reference strictly presentation-only?
 
 targetSkeleton:
   symbol: unifiedForm
   arguments:
     name: DETAILS
+    dependencies: [ENVIRONMENT]
     fields: <reviewed-typed-fields>
+    output: map
     renderer: schema
 
 verification:
+  - mode-matrix
+  - dependency-graph-and-cycle-rejection
   - typed-field-validation
   - conditional-layout
   - no-javascript-fallback
   - standard-rest-build
   - typed-api-build
   - cli-build
+  - remote-trigger
   - rebuild
 
 notes:
+  - ET_TEXT_BOX may map to a typed string field only after raw string/default/empty semantics are confirmed.
+  - ET_ORDERED_LIST and ET_UNORDERED_LIST do not imply a build value; map to multi-choice only when the business input is proven.
+  - ET_FORMATTED_HIDDEN_HTML is class D unless an explicit business-field mapping is supplied.
+  - Dynamic Reference dependencies are read from getReferencedParameters and are never executed.
   - Arbitrary HTML, CSS, and JavaScript are never copied into the target Job.

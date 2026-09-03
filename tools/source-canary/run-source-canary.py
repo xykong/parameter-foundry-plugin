@@ -35,6 +35,7 @@ PLUGIN_LINES = (
     "credentials-binding:728.v902a_273b_8947",
     "plain-credentials:199.v9f8e1f741799",
     "ssh-credentials:372.va_250881b_08cd",
+    "git-client:6.6.1",
     "token-macro:477.vd4f0dc3cb_cf1",
     "script-security:1412.v7737b_3405f86",
     "config-file-provider:1006.vc7366c201f57",
@@ -214,6 +215,8 @@ def artifact_paths() -> list[Path]:
         / "unified-parameters-companion-renderer.hpi",
         ROOT / "companion-script-provider" / "target"
         / "unified-parameters-companion-script-provider.hpi",
+        ROOT / "companion-git-refs" / "target"
+        / "unified-parameters-companion-git-refs.hpi",
     ]
 
 
@@ -546,6 +549,7 @@ def main() -> int:
                 "unified-parameters-migration-additional-sources",
                 "unified-parameters-companion-renderer",
                 "unified-parameters-companion-script-provider",
+                "unified-parameters-companion-git-refs",
             }
             active_plugins = {
                 item["shortName"]
@@ -624,7 +628,8 @@ def main() -> int:
             assert "TODO-governed-provider" in active_preview
             assert "ACTIVE_BASE" in active_preview
             assert "Class C" in git_preview
-            assert "TODO-governed-git-refs-provider" in git_preview
+            assert "unifiedGitRefProvider" in git_preview
+            assert "refType: 'branch'" in git_preview
             assert "example.test" not in git_preview
             assert "Class D" in stash_preview
             assert "multipart/file transport" in stash_preview
@@ -633,6 +638,7 @@ def main() -> int:
                 "activeChoicesClassC": True,
                 "activeChoicesCascadeDependency": True,
                 "listGitBranchesClassC": True,
+                "listGitBranchesGitRefMapping": True,
                 "stashedFileClassD": True,
                 "sensitiveSourceRedacted": True,
                 "passed": True,

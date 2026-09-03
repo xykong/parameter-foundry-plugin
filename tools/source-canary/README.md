@@ -29,4 +29,5 @@ The tool verifies real HPI loading, migration previews, Extended Choice
 clone/apply/rollback, standard REST and webhook-style delimited input, Typed
 REST arrays, Jenkins CLI JSON arrays, Pipeline upstream/downstream execution,
 invalid-input no-queue behavior, Rebuild rendering, Active Choices/List Git
-Branches migration boundaries, and native Stashed File multipart submission.
+Branches migration boundaries, Git refs companion loading, and native Stashed
+File multipart submission. The canary pins Git Client `6.6.1`.

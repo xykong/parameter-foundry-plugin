@@ -37,6 +37,20 @@ do not approve the larger attack surface of an installed companion.
 - [ ] The plugin cannot register a Renderer owned by the core plugin or bypass
   the trust registry.
 
+## Git Refs Provider
+
+- [ ] Repository authority and credentials come only from a governed
+  Connection Profile; Job definitions contain only a Provider ID.
+- [ ] Only HTTP(S) targets are accepted, redirects and custom headers are
+  rejected, and core SSRF/private-address policy is enforced before Git runs.
+- [ ] Credential lookup is scoped to the requesting Job and repository URI.
+- [ ] Branch, tag, and full-ref canonical values, filters, sorting, duplicate
+  handling, and maximum output are bounded and verified.
+- [ ] Temporary Git data uses plugin-owned Jenkins storage and is deleted after
+  success, failure, interruption, and cancellation.
+- [ ] The exact Git Client release is checked against current Jenkins security
+  advisories before release.
+
 ## Release Evidence
 
 - [ ] PCT passes for the declared Jenkins Core matrix.

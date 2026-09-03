@@ -32,10 +32,52 @@ class ActiveChoicesMigrationAdapterTest {
     }
 
     @Test
-    void referenceProducesUnifiedFormSkeleton() {
-        var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS"));
+    void textBoxReferenceProducesTypedStringFieldAndPreservesDependencies() {
+        var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS", "ENVIRONMENT", "ET_TEXT_BOX", false));
 
         assertTrue(plan.getTargetSkeleton().contains("unifiedForm"));
+        assertTrue(plan.getTargetSkeleton().contains("field('DETAILS', 'string')"));
+        assertTrue(plan.getTargetSkeleton().contains("ENVIRONMENT"));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("raw string")));
+    }
+
+    @Test
+    void listReferenceMakesPresentationOnlySemanticsExplicit() {
+        var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS", "", "ET_ORDERED_LIST", true));
+
+        assertEquals(MigrationClassification.C, plan.getClassification());
+        assertTrue(plan.getTargetSkeleton().contains("field('DETAILS', 'content')"));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("presentation-only")));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("omits its value field")));
+    }
+
+    @Test
+    void formattedReferenceProducesTypedFormSkeletonWithoutMarkup() {
+        var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS"));
+
+        assertEquals(MigrationClassification.C, plan.getClassification());
+        assertTrue(plan.getTargetSkeleton().contains("unifiedForm"));
+        assertTrue(plan.getTargetSkeleton().contains("TODO reviewed typed fields"));
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("formatted HTML")));
+    }
+
+    @Test
+    void hiddenFormattedReferenceRequiresManualClassDDecision() {
+        var plan = adapter.inspect(
+                new DynamicReferenceParameter("DETAILS", "ENVIRONMENT", "ET_FORMATTED_HIDDEN_HTML", true));
+
+        assertEquals(MigrationClassification.D, plan.getClassification());
+        assertTrue(plan.getReason().contains("no portable typed value contract"));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("manual class D")));
+        assertNull(plan.getTargetSkeleton());
+    }
+
+    @Test
+    void unknownReferenceModeDoesNotGuessAFormContract() {
+        var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS", "", "ET_CUSTOM", false));
+
+        assertEquals(MigrationClassification.D, plan.getClassification());
+        assertNull(plan.getTargetSkeleton());
+        assertTrue(plan.getReason().contains("no proven typed contract"));
     }
 }
