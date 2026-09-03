@@ -33,6 +33,7 @@
     <module>migration-additional-sources</module>
     <module>companion-renderer</module>
     <module>companion-script-provider</module>
+    <module>companion-git-refs</module>
   </modules>
 
   <scm>
@@ -60,6 +61,7 @@
     <job-dsl.version>3732.v9a_c49a_61a_313</job-dsl.version>
     <pipeline-model-definition.version>2.2293.v6e7193cec599</pipeline-model-definition.version>
     <rebuild.version>338.va_0a_b_50e29397</rebuild.version>
+    <git-client.version>6.6.1</git-client.version>
   </properties>
 
   <dependencyManagement>

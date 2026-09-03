@@ -1,0 +1,59 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Provider ID" field="id">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Display name" field="displayName">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Connection Profile ID" field="connectionProfileId"
+           description="The profile base URL is the exact HTTPS Git repository. Redirects and custom headers are rejected.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Reference type" field="refType">
+    <f:select>
+      <f:option value="branch">Branches</f:option>
+      <f:option value="tag">Tags</f:option>
+      <f:option value="ref">Full refs</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Include regex" field="includePattern"
+           description="Optional full-match regular expression applied to the normalized branch, tag, or ref value.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Exclude regex" field="excludePattern"
+           description="Optional full-match regular expression applied after the include rule.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Sort order" field="sortOrder">
+    <f:select>
+      <f:option value="ascending">Ascending</f:option>
+      <f:option value="descending">Descending</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Maximum refs" field="maximumRefs">
+    <f:number min="1" max="10000" />
+  </f:entry>
+  <f:entry title="Available to nested Folders" field="usableByChildren">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Transforms" field="transforms">
+    <f:repeatableProperty field="transforms" add="Add transform" header="Transform" />
+  </f:entry>
+  <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
+    <f:number min="0" max="86400" />
+  </f:entry>
+  <f:entry title="Timeout seconds" field="timeoutSeconds">
+    <f:number min="1" max="30" />
+  </f:entry>
+  <f:entry title="Failure policy" field="failurePolicy">
+    <f:select>
+      <f:option value="fail-closed">Fail closed</f:option>
+      <f:option value="last-known-good">Last known good</f:option>
+      <f:option value="empty">Empty result</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
+    <f:number min="0" max="604800" />
+  </f:entry>
+</j:jelly>

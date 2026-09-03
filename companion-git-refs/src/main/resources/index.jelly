@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <p>Governed Git References Provider companion is installed.</p>
+</j:jelly>

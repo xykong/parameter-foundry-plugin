@@ -233,6 +233,24 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
         return encodedQuery.isEmpty() ? resolved : URI.create(resolved.toASCIIString() + "?" + encodedQuery);
     }
 
+    public URI getBaseUri() {
+        return URI.create(baseUrl);
+    }
+
+    public void requireAllowedTarget(URI target) {
+        try {
+            validateResolvedUri(target);
+            new NetworkPolicy().requireAllowed(target, allowPrivateAddresses);
+        } catch (ProviderException exception) {
+            throw exception;
+        } catch (IllegalArgumentException exception) {
+            throw new ProviderException(
+                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    id,
+                    "Connection Profile target is not allowed.");
+        }
+    }
+
     void validateResolvedUri(URI resolved) {
         URI base = URI.create(baseUrl);
         if (!sameAuthority(base, resolved)

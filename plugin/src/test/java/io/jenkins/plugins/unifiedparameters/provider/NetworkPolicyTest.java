@@ -36,6 +36,14 @@ class NetworkPolicyTest {
                 () -> policy.requireAllowed(URI.create("https://service.example/options"), false));
     }
 
+    @Test
+    void connectionProfileExposesTheSameTargetPolicyToCompanions() {
+        ConnectionProfile profile = new ConnectionProfile("git", "https://169.254.169.254/repository.git");
+        profile.setAllowPrivateAddresses(true);
+
+        assertThrows(ProviderException.class, () -> profile.requireAllowedTarget(profile.getBaseUri()));
+    }
+
     private static void assertBlocked(String address, boolean allowPrivate) throws Exception {
         NetworkPolicy policy = new NetworkPolicy(host -> List.of(InetAddress.getByName(address)));
         assertThrows(
