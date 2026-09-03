@@ -29,6 +29,7 @@
 - [0012: Typed API parameter adapters](./decisions/0012-typed-api-parameter-adapters.md)
 - [0013: Definition validation lifecycle](./decisions/0013-definition-validation-lifecycle.md)
 - [0014: Technical preview and GA gates](./decisions/0014-technical-preview-and-ga-gates.md)
+- [0015: Native file transport boundary](./decisions/0015-native-file-transport-boundary.md)
 
 ## Architecture
 

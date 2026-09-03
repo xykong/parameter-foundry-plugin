@@ -43,6 +43,8 @@ class AdditionalMigrationAdaptersTest {
                 assertEquals(
                         io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.D,
                         plan.getClassification());
+                assertTrue(plan.getReason().contains("ADR 0015"));
+                assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Do not disable")));
             } else {
                 assertEquals(
                         io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C,

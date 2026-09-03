@@ -23,7 +23,7 @@ credentials, tokens, option values, or production endpoints.
 |---|---|---|---|---|
 | Jenkins Core String/Text/Boolean/Choice | Observed | Typed API and standard Jenkins parameter semantics | Native Core or Unified equivalent | Passed |
 | Jenkins Core File | Observed | Native definition round-trip; Typed JSON rejection | Native multipart only; Typed API returns `409` | Passed |
-| Stashed File | Observed | Real HPI Class D preview and native multipart smoke | Native file companion behavior | Boundary verified; lifecycle gate remains |
+| Stashed File | Observed | Real HPI Class D preview and native multipart smoke | Retain native Stashed File transport | Passed with native-retention decision |
 | Extended Choice `PT_SINGLE_SELECT` | Observed | Static adapter, default, empty, invalid, Rebuild | Unified single choice | Passed |
 | Extended Choice `PT_RADIO` | Observed | Static adapter and renderer mapping | Unified single choice with radio renderer | Passed |
 | Extended Choice `PT_MULTI_SELECT` | Observed | Order, null/empty, stale default, delimiter, Rebuild | Unified multiple choice with explicit decision | Passed with decision |
@@ -73,7 +73,8 @@ expected business behavior for:
 - stale prompt-like defaults;
 - generated Pipeline/Job DSL sources;
 - Webhook, Upstream, Remote, CLI, and Rebuild clients;
-- File and Stashed File transport requirements.
+- File and Stashed File transport requirements, using the native-retention
+  decision in [ADR 0015](../decisions/0015-native-file-transport-boundary.md).
 
 After the canary, scan active configurations, generated sources, queues,
 running builds, and historical records independently. Only then can source

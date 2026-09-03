@@ -31,11 +31,12 @@ public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
         }
         return new MigrationPlan(
                 MigrationClassification.D,
-                "Stashed File is a multipart/file transport capability, not an option parameter; it must remain native or use a reviewed file companion.",
+                "Stashed File is a multipart/file transport capability, not an option parameter; ADR 0015 requires retaining its native transport.",
                 null,
                 List.of(
                         "Keep the native Stashed File parameter if the business requirement is uploading a file.",
-                        "If the requirement is selecting a file-like option, redesign it as a governed Provider/Form field.",
+                        "Do not disable the File Parameters plugin while this Job or its generated source still requires Stashed File.",
+                        "If the requirement is selecting a file-like option rather than uploading content, redesign it as a governed Provider/Form field.",
                         "Verify stash name, workspace/file retention, credentials, remote triggers, and Rebuild behavior separately."),
                 null,
                 verificationFixture(definition));

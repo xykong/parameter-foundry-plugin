@@ -278,7 +278,7 @@ Migration adapter 只读取类型和公开配置元数据，生成 Provider 骨�
 
 ### 4.15 File Parameters
 
-文件上传是 multipart transport，不是 Option Provider。Core File 和 reviewed file companion
+文件上传是 multipart transport，不是 Option Provider。Core File 和原生 Stashed File
 参数可继续与 Unified Parameters 共存。标准 Jenkins 页面和 endpoint 保持原行为；JSON Typed
 API 对包含文件定义的 Job 原子返回 unsupported，不把“未上传”伪装成成功。
 

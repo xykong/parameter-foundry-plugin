@@ -75,7 +75,7 @@ are presentation metadata and never become machine values.
 
 ## File Boundary
 
-Core and reviewed file companion parameters remain on Jenkins native multipart
+Core File and native Stashed File parameters remain on Jenkins native multipart
 transport. They are not converted into Provider options or JSON arrays. The
 Typed REST API must reject a Job containing an unsupported file definition
 atomically rather than silently dropping the uploaded content.
