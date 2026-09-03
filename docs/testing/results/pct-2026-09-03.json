@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-09-03T16:35:32.088613+00:00",
+  "targetCommit": "83722177b727628f0a62fab70ef217a4e380afb8",
+  "pctRepository": "https://github.com/jenkinsci/plugin-compat-tester.git",
+  "pctCommit": "8a4e8125284289f5af87a91c717ada7f022b2daf",
+  "mavenImage": "maven:3.9.11-eclipse-temurin-21",
+  "scope": "local pre-release PCT in Docker",
+  "versions": [
+    {
+      "jenkinsCore": "2.528.3",
+      "javaRelease": "17",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 121,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-git-refs": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-renderer": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-script-provider": {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-active-choices": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-additional-sources": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-extended-choice": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-list-git-branches": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        }
+      }
+    },
+    {
+      "jenkinsCore": "2.568.2",
+      "javaRelease": "21",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 121,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-git-refs": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-renderer": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-companion-script-provider": {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-active-choices": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-additional-sources": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-extended-choice": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        },
+        "unified-parameters-migration-list-git-branches": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1,
+          "buildSuccess": true
+        }
+      }
+    }
+  ],
+  "result": "passed"
+}

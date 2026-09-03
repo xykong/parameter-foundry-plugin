@@ -60,6 +60,6 @@ do not approve the larger attack surface of an installed companion.
 - [ ] Upgrade, removal, and fail-closed behavior are documented.
 
 The current reference companion artifacts have automated and Docker evidence in
-[`pct-verification-2026-09-01.md`](../testing/pct-verification-2026-09-01.md)
+[`pct-verification-2026-09-03.md`](../testing/pct-verification-2026-09-03.md)
 and
-[`source-plugin-docker-canary-2026-09-01.md`](../testing/source-plugin-docker-canary-2026-09-01.md).
+[`source-plugin-docker-canary-2026-09-03.md`](../testing/source-plugin-docker-canary-2026-09-03.md).

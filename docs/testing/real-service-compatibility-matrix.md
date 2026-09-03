@@ -30,8 +30,8 @@ credentials, tokens, option values, or production endpoints.
 | Extended Choice `PT_CHECKBOX` | Observed | Checkbox, empty, duplicate, disabled, Rebuild | Unified multiple choice with checkbox renderer | Passed with decision |
 | Active Choices `ChoiceParameter` | Observed | Real HPI UI smoke and non-executing Provider skeleton | Governed Provider or static Unified choice | Skeleton ready; HPI smoke passed |
 | Active Choices `CascadeChoiceParameter` | Observed | Real HPI class loading, dependency extraction, and cycle fixture | Governed Provider with `dependsOn` | Skeleton ready; HPI smoke passed |
-| Active Choices `DynamicReferenceParameter` | Observed | Five-mode, omit-value, dependency, and HTML-to-Form decision fixtures | Unified Form/content or reviewed Renderer companion | Mode semantics implemented; real HPI canary pending refresh |
-| List Git Branches `PT_BRANCH`/`PT_TAG`/`PT_BRANCH_TAG` | Observed | Mode-specific redacted `unifiedGitRefProvider` skeleton | Governed Git refs companion | Adapter and companion implemented; canary pending refresh |
+| Active Choices `DynamicReferenceParameter` | Observed | Five-mode, omit-value, dependency, and HTML-to-Form decision fixtures | Unified Form/content or reviewed Renderer companion | Mode semantics implemented; Docker canary passed |
+| List Git Branches `PT_BRANCH`/`PT_TAG`/`PT_BRANCH_TAG` | Observed | Mode-specific redacted `unifiedGitRefProvider` skeleton | Governed Git refs companion | Adapter and companion implemented; Docker canary passed |
 | List Git Branches `ORG_BRANCH` | Observed | One-branch-string and organization-authority decisions | Branch candidate through governed Git refs companion | Semantics resolved; business confirmation remains |
 
 ## Executed Evidence
@@ -61,6 +61,11 @@ The following repository-owned checks have been executed:
   `76.v7a_a_7a_5065278` and File Parameters `425.v3fa_801681b_5e`, including
   Class C/D migration boundaries and a successful native Stashed File
   multipart build.
+- Latest Docker canary with the Git refs companion and refreshed migration
+  semantics; see
+  [`Source Plugin Docker Canary`](./source-plugin-docker-canary-2026-09-03.md).
+- Latest PCT matrix with eight modules and the Git refs companion; see
+  [`PCT Verification`](./pct-verification-2026-09-03.md).
 - Repeatable source-plugin Docker canary covering real HPI loading, migration
   clone/apply/rollback, Standard REST, webhook-style REST, Typed REST, CLI,
   Pipeline upstream/downstream, invalid-input no-queue, Rebuild, and native
