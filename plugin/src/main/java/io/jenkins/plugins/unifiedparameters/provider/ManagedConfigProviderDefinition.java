@@ -44,7 +44,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getFormat() {
-        return format;
+        return format == null || format.isBlank() ? "auto" : format;
     }
 
     @DataBoundSetter
@@ -56,7 +56,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getRootPath() {
-        return rootPath;
+        return rootPath == null || rootPath.isBlank() ? "$" : rootPath;
     }
 
     @DataBoundSetter
@@ -65,7 +65,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getValuePath() {
-        return valuePath;
+        return valuePath == null || valuePath.isBlank() ? "value" : valuePath;
     }
 
     @DataBoundSetter
@@ -74,7 +74,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getLabelPath() {
-        return labelPath;
+        return labelPath == null || labelPath.isBlank() ? "label" : labelPath;
     }
 
     @DataBoundSetter
@@ -83,7 +83,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getDescriptionPath() {
-        return descriptionPath;
+        return descriptionPath == null || descriptionPath.isBlank() ? "description" : descriptionPath;
     }
 
     @DataBoundSetter
@@ -92,7 +92,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getGroupPath() {
-        return groupPath;
+        return groupPath == null || groupPath.isBlank() ? "group" : groupPath;
     }
 
     @DataBoundSetter
@@ -101,7 +101,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getDisabledPath() {
-        return disabledPath;
+        return disabledPath == null || disabledPath.isBlank() ? "disabled" : disabledPath;
     }
 
     @DataBoundSetter
@@ -110,7 +110,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getDisabledReasonPath() {
-        return disabledReasonPath;
+        return disabledReasonPath == null || disabledReasonPath.isBlank() ? "disabledReason" : disabledReasonPath;
     }
 
     @DataBoundSetter
@@ -119,7 +119,7 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     public String getTagsPath() {
-        return tagsPath;
+        return tagsPath == null || tagsPath.isBlank() ? "tags" : tagsPath;
     }
 
     @DataBoundSetter
@@ -143,14 +143,14 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
         return StructuredOptionParser.parse(
                 content.getBytes(StandardCharsets.UTF_8),
                 resolvedFormat,
-                rootPath,
-                valuePath,
-                labelPath,
-                descriptionPath,
-                groupPath,
-                disabledPath,
-                disabledReasonPath,
-                tagsPath,
+                getRootPath(),
+                getValuePath(),
+                getLabelPath(),
+                getDescriptionPath(),
+                getGroupPath(),
+                getDisabledPath(),
+                getDisabledReasonPath(),
+                getTagsPath(),
                 getId());
     }
 
@@ -159,20 +159,20 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
         return String.join(
                 "\u0000",
                 configId,
-                format,
-                rootPath,
-                valuePath,
-                labelPath,
-                descriptionPath,
-                groupPath,
-                disabledPath,
-                disabledReasonPath,
-                tagsPath);
+                getFormat(),
+                getRootPath(),
+                getValuePath(),
+                getLabelPath(),
+                getDescriptionPath(),
+                getGroupPath(),
+                getDisabledPath(),
+                getDisabledReasonPath(),
+                getTagsPath());
     }
 
     private String resolveFormat(String content) {
-        if (!"auto".equals(format)) {
-            return format;
+        if (!"auto".equals(getFormat())) {
+            return getFormat();
         }
         String trimmed = content == null ? "" : content.stripLeading();
         if (trimmed.startsWith("<")) {

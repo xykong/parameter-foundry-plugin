@@ -81,7 +81,7 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
     }
 
     public List<ProfileHeader> getHeaders() {
-        return headers;
+        return headers == null ? List.of() : headers;
     }
 
     @DataBoundSetter
@@ -90,11 +90,11 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
     }
 
     public List<String> getAllowedPathPrefixes() {
-        return allowedPathPrefixes;
+        return allowedPathPrefixes == null ? List.of("/") : allowedPathPrefixes;
     }
 
     public String getAllowedPathPrefixesText() {
-        return String.join("\n", allowedPathPrefixes);
+        return String.join("\n", getAllowedPathPrefixes());
     }
 
     @DataBoundSetter
@@ -115,11 +115,11 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
     }
 
     public List<String> getAllowedQueryParameters() {
-        return allowedQueryParameters;
+        return allowedQueryParameters == null ? List.of() : allowedQueryParameters;
     }
 
     public String getAllowedQueryParametersText() {
-        return String.join("\n", allowedQueryParameters);
+        return String.join("\n", getAllowedQueryParameters());
     }
 
     @DataBoundSetter
@@ -222,7 +222,7 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
         validateResolvedUri(resolved);
         StringBuilder encodedQuery = new StringBuilder();
         for (java.util.Map.Entry<String, String> entry : query.entrySet()) {
-            if (!allowedQueryParameters.contains(entry.getKey())) {
+            if (!getAllowedQueryParameters().contains(entry.getKey())) {
                 throw new IllegalArgumentException("Query parameter is not allowed: " + entry.getKey());
             }
             if (!encodedQuery.isEmpty()) {
@@ -258,7 +258,7 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
                 || !resolved.getPath().startsWith(base.getPath())) {
             throw new IllegalArgumentException("Provider path escapes the Connection Profile.");
         }
-        boolean allowed = allowedPathPrefixes.stream()
+        boolean allowed = getAllowedPathPrefixes().stream()
                 .anyMatch(prefix -> resolved.getPath().startsWith(prefix));
         if (!allowed) {
             throw new IllegalArgumentException("Provider path is not allowed by the Connection Profile.");
@@ -267,7 +267,7 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
             for (String pair : resolved.getRawQuery().split("&")) {
                 String name = pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair;
                 String decoded = java.net.URLDecoder.decode(name, java.nio.charset.StandardCharsets.UTF_8);
-                if (!allowedQueryParameters.contains(decoded)) {
+                if (!getAllowedQueryParameters().contains(decoded)) {
                     throw new IllegalArgumentException("Query parameter is not allowed: " + decoded);
                 }
             }
@@ -281,15 +281,15 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
                 + '\u0000'
                 + credentialId
                 + '\u0000'
-                + allowedPathPrefixes
+                + getAllowedPathPrefixes()
                 + '\u0000'
-                + allowedQueryParameters
+                + getAllowedQueryParameters()
                 + '\u0000'
                 + allowPrivateAddresses
                 + '\u0000'
                 + followRedirects
                 + '\u0000'
-                + headers.stream()
+                + getHeaders().stream()
                         .map(header -> header.getName() + ":" + header.getValue())
                         .toList());
     }

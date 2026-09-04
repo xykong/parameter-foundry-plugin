@@ -33,7 +33,7 @@ public final class UnifiedParametersGlobalConfiguration extends GlobalConfigurat
     }
 
     public List<SharedProviderDefinition> getProviders() {
-        return providers;
+        return providers == null ? List.of() : providers;
     }
 
     @DataBoundSetter
@@ -45,7 +45,7 @@ public final class UnifiedParametersGlobalConfiguration extends GlobalConfigurat
     }
 
     public List<ConnectionProfile> getConnectionProfiles() {
-        return connectionProfiles;
+        return connectionProfiles == null ? List.of() : connectionProfiles;
     }
 
     @DataBoundSetter

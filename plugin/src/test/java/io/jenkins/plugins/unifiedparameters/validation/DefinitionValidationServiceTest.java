@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.form.FormLayout;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -74,5 +75,16 @@ class DefinitionValidationServiceTest {
 
         assertTrue(result.isValid());
         assertTrue(definition.getDependsOn().isEmpty());
+        assertDoesNotThrow(definition::getDependsOnText);
+    }
+
+    @Test
+    void blankOptionalLayoutConditionIsTreatedAsAbsentAfterLoad() throws Exception {
+        FormLayout layout = new FormLayout("main", "grid");
+        Field visibleWhenField = FormLayout.class.getDeclaredField("visibleWhenField");
+        visibleWhenField.setAccessible(true);
+        visibleWhenField.set(layout, "");
+
+        assertTrue(layout.getVisibleWhenField() == null);
     }
 }

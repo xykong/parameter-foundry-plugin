@@ -73,7 +73,9 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
     }
 
     public String getFieldNamesText() {
-        return String.join(",", fieldNames);
+        return getFieldNames().stream()
+                .map(value -> value == null ? "" : value)
+                .collect(java.util.stream.Collectors.joining(","));
     }
 
     @DataBoundSetter
@@ -101,7 +103,7 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
     }
 
     public String getVisibleWhenField() {
-        return visibleWhenField;
+        return visibleWhenField == null || visibleWhenField.isBlank() ? null : visibleWhenField;
     }
 
     @DataBoundSetter

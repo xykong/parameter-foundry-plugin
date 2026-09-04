@@ -76,7 +76,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     public String getDuplicatePolicy() {
-        return duplicatePolicy;
+        return duplicatePolicy == null || duplicatePolicy.isBlank() ? "reject" : duplicatePolicy;
     }
 
     @DataBoundSetter
@@ -85,7 +85,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     public String getStandardApiInputMode() {
-        return standardApiInputMode;
+        return standardApiInputMode == null || standardApiInputMode.isBlank() ? "repeated" : standardApiInputMode;
     }
 
     @DataBoundSetter
@@ -94,7 +94,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     public String getDelimiter() {
-        return delimiter;
+        return delimiter == null || delimiter.isEmpty() ? "," : delimiter;
     }
 
     @DataBoundSetter
@@ -200,7 +200,9 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     public String getDefaultValuesText() {
-        return String.join("\n", defaultValues);
+        return getDefaultValues().stream()
+                .map(value -> value == null ? "" : value)
+                .collect(java.util.stream.Collectors.joining("\n"));
     }
 
     @Override

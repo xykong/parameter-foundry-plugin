@@ -45,7 +45,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public String getRenderer() {
-        return renderer == null ? getDefaultRenderer() : renderer;
+        return renderer == null || renderer.isBlank() ? getDefaultRenderer() : renderer;
     }
 
     @DataBoundSetter
@@ -54,7 +54,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public String getProviderId() {
-        return providerId;
+        return providerId == null || providerId.isBlank() ? null : providerId;
     }
 
     @DataBoundSetter
@@ -63,7 +63,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public boolean isProviderBacked() {
-        return providerId != null;
+        return getProviderId() != null;
     }
 
     public List<String> getDependsOn() {
@@ -76,11 +76,13 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public String getDependsOnText() {
-        return String.join(",", dependsOn);
+        return getDependsOn().stream()
+                .map(value -> value == null ? "" : value)
+                .collect(java.util.stream.Collectors.joining(","));
     }
 
     public String getDefaultMode() {
-        return defaultMode == null ? "none" : defaultMode;
+        return defaultMode == null || defaultMode.isBlank() ? "none" : defaultMode;
     }
 
     @DataBoundSetter
@@ -98,7 +100,9 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public String getEnvironmentExport() {
-        return environmentExport == null ? getDefaultEnvironmentExport() : environmentExport;
+        return environmentExport == null || environmentExport.isBlank()
+                ? getDefaultEnvironmentExport()
+                : environmentExport;
     }
 
     @DataBoundSetter
@@ -170,7 +174,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public boolean isFallbackTruncated() {
-        return choices.size() > NO_JAVASCRIPT_OPTION_LIMIT;
+        return getChoices().size() > NO_JAVASCRIPT_OPTION_LIMIT;
     }
 
     public boolean hasPresenceMarker(String[] markers) {

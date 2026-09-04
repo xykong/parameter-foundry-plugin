@@ -19,7 +19,7 @@ public final class UnifiedParametersFolderProperty extends AbstractFolderPropert
     public UnifiedParametersFolderProperty() {}
 
     public List<SharedProviderDefinition> getProviders() {
-        return providers;
+        return providers == null ? List.of() : providers;
     }
 
     @DataBoundSetter
@@ -30,7 +30,7 @@ public final class UnifiedParametersFolderProperty extends AbstractFolderPropert
     }
 
     public List<ConnectionProfile> getConnectionProfiles() {
-        return connectionProfiles;
+        return connectionProfiles == null ? List.of() : connectionProfiles;
     }
 
     @DataBoundSetter

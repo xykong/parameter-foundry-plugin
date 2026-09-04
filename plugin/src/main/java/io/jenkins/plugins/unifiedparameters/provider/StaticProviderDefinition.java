@@ -34,12 +34,12 @@ public final class StaticProviderDefinition extends SharedProviderDefinition {
     @Override
     public List<Option> load(ProviderLoadContext context) {
         context.checkCancelled();
-        return options;
+        return getOptions();
     }
 
     @Override
     protected String providerFingerprint() {
-        return Digests.options(options);
+        return Digests.options(getOptions());
     }
 
     @Extension

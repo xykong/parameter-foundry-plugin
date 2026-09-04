@@ -53,7 +53,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public List<RestQueryParameter> getQueryParameters() {
-        return queryParameters;
+        return queryParameters == null ? List.of() : queryParameters;
     }
 
     @DataBoundSetter
@@ -62,7 +62,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getFormat() {
-        return format;
+        return format == null || format.isBlank() ? "auto" : format;
     }
 
     @DataBoundSetter
@@ -74,7 +74,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getRootPath() {
-        return rootPath;
+        return rootPath == null || rootPath.isBlank() ? "$" : rootPath;
     }
 
     @DataBoundSetter
@@ -83,7 +83,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getValuePath() {
-        return valuePath;
+        return valuePath == null || valuePath.isBlank() ? "value" : valuePath;
     }
 
     @DataBoundSetter
@@ -92,7 +92,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getLabelPath() {
-        return labelPath;
+        return labelPath == null || labelPath.isBlank() ? "label" : labelPath;
     }
 
     @DataBoundSetter
@@ -101,7 +101,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getDescriptionPath() {
-        return descriptionPath;
+        return descriptionPath == null || descriptionPath.isBlank() ? "description" : descriptionPath;
     }
 
     @DataBoundSetter
@@ -110,7 +110,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getGroupPath() {
-        return groupPath;
+        return groupPath == null || groupPath.isBlank() ? "group" : groupPath;
     }
 
     @DataBoundSetter
@@ -119,7 +119,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getDisabledPath() {
-        return disabledPath;
+        return disabledPath == null || disabledPath.isBlank() ? "disabled" : disabledPath;
     }
 
     @DataBoundSetter
@@ -128,7 +128,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getDisabledReasonPath() {
-        return disabledReasonPath;
+        return disabledReasonPath == null || disabledReasonPath.isBlank() ? "disabledReason" : disabledReasonPath;
     }
 
     @DataBoundSetter
@@ -137,7 +137,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public String getTagsPath() {
-        return tagsPath;
+        return tagsPath == null || tagsPath.isBlank() ? "tags" : tagsPath;
     }
 
     @DataBoundSetter
@@ -153,7 +153,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                         getId(),
                         "Connection Profile is unavailable."));
         Map<String, String> query = new LinkedHashMap<>();
-        for (RestQueryParameter parameter : queryParameters) {
+        for (RestQueryParameter parameter : getQueryParameters()) {
             if (query.put(parameter.getName(), parameter.resolveValue(context.request())) != null) {
                 throw new ProviderException(
                         io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
@@ -163,7 +163,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         }
         java.net.URI uri = profile.buildUri(relativePath, query);
         RestProviderClient.Response response = new RestProviderClient().get(profile, context.request(), uri);
-        String responseFormat = "auto".equals(format) ? response.format() : format;
+        String responseFormat = "auto".equals(getFormat()) ? response.format() : getFormat();
         if (!responseFormat.equals(response.format())) {
             throw new ProviderException(
                     io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
@@ -173,14 +173,14 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         return StructuredOptionParser.parse(
                 response.body(),
                 responseFormat,
-                rootPath,
-                valuePath,
-                labelPath,
-                descriptionPath,
-                groupPath,
-                disabledPath,
-                disabledReasonPath,
-                tagsPath,
+                getRootPath(),
+                getValuePath(),
+                getLabelPath(),
+                getDescriptionPath(),
+                getGroupPath(),
+                getDisabledPath(),
+                getDisabledReasonPath(),
+                getTagsPath(),
                 getId());
     }
 
@@ -190,7 +190,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                 + '\u0000'
                 + relativePath
                 + '\u0000'
-                + queryParameters.stream()
+                + getQueryParameters().stream()
                         .map(parameter -> parameter.getName()
                                 + "="
                                 + parameter.getValue()
@@ -198,23 +198,23 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                                 + parameter.getDependencyParameter())
                         .toList()
                 + '\u0000'
-                + format
+                + getFormat()
                 + '\u0000'
-                + rootPath
+                + getRootPath()
                 + '\u0000'
-                + valuePath
+                + getValuePath()
                 + '\u0000'
-                + labelPath
+                + getLabelPath()
                 + '\u0000'
-                + descriptionPath
+                + getDescriptionPath()
                 + '\u0000'
-                + groupPath
+                + getGroupPath()
                 + '\u0000'
-                + disabledPath
+                + getDisabledPath()
                 + '\u0000'
-                + disabledReasonPath
+                + getDisabledReasonPath()
                 + '\u0000'
-                + tagsPath;
+                + getTagsPath();
     }
 
     @Extension

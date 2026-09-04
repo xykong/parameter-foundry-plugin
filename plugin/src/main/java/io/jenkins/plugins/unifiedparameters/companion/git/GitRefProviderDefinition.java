@@ -57,7 +57,7 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
     }
 
     public String getRefType() {
-        return refType;
+        return refType == null || refType.isBlank() ? "branch" : refType;
     }
 
     @DataBoundSetter
@@ -87,7 +87,7 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
     }
 
     public String getSortOrder() {
-        return sortOrder;
+        return sortOrder == null || sortOrder.isBlank() ? "ascending" : sortOrder;
     }
 
     @DataBoundSetter
@@ -99,7 +99,7 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
     }
 
     public int getMaximumRefs() {
-        return maximumRefs;
+        return maximumRefs < 1 ? 1_000 : maximumRefs;
     }
 
     @DataBoundSetter
@@ -118,11 +118,11 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
         return normalize(
                 sourceOrDefault().fetch(context),
                 context.request().providerId(),
-                refType,
+                getRefType(),
                 includePattern,
                 excludePattern,
-                sortOrder,
-                maximumRefs);
+                getSortOrder(),
+                getMaximumRefs());
     }
 
     static List<Option> normalize(
@@ -217,15 +217,15 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
     protected String providerFingerprint() {
         return connectionProfileId
                 + '\u0000'
-                + refType
+                + getRefType()
                 + '\u0000'
                 + includePattern
                 + '\u0000'
                 + excludePattern
                 + '\u0000'
-                + sortOrder
+                + getSortOrder()
                 + '\u0000'
-                + maximumRefs;
+                + getMaximumRefs();
     }
 
     @Extension

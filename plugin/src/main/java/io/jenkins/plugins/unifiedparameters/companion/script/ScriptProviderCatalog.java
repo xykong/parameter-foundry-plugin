@@ -27,7 +27,7 @@ public final class ScriptProviderCatalog extends GlobalConfiguration {
     }
 
     public List<ScriptCatalogEntry> getEntries() {
-        return entries;
+        return entries == null ? List.of() : entries;
     }
 
     @DataBoundSetter
@@ -53,7 +53,7 @@ public final class ScriptProviderCatalog extends GlobalConfiguration {
         if (!id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
             return Optional.empty();
         }
-        return entries.stream().filter(entry -> id.equals(entry.getId())).findFirst();
+        return getEntries().stream().filter(entry -> id.equals(entry.getId())).findFirst();
     }
 
     @POST

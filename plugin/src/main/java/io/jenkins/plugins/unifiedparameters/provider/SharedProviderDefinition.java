@@ -61,7 +61,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
     }
 
     public String getFailurePolicy() {
-        return failurePolicy;
+        return failurePolicy == null || failurePolicy.isBlank() ? "fail-closed" : failurePolicy;
     }
 
     @DataBoundSetter
@@ -85,7 +85,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
     }
 
     public int getTimeoutSeconds() {
-        return timeoutSeconds;
+        return timeoutSeconds < 1 ? 5 : timeoutSeconds;
     }
 
     @DataBoundSetter
@@ -118,7 +118,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
                 + '\u0000'
                 + maximumStalenessSeconds
                 + '\u0000'
-                + TransformChain.digest(transforms)
+                + TransformChain.digest(getTransforms())
                 + '\u0000'
                 + providerFingerprint());
     }

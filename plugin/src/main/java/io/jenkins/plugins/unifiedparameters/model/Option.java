@@ -89,7 +89,7 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
     }
 
     public String getTagsText() {
-        return String.join(", ", tags);
+        return String.join(", ", getTags());
     }
 
     @DataBoundSetter

@@ -58,7 +58,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public String getOutputMode() {
-        return outputMode;
+        return outputMode == null || outputMode.isBlank() ? "map" : outputMode;
     }
 
     @DataBoundSetter
@@ -67,7 +67,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public String getEnvironmentExport() {
-        return environmentExport;
+        return environmentExport == null || environmentExport.isBlank() ? "json" : environmentExport;
     }
 
     @DataBoundSetter
@@ -76,7 +76,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public String getRenderer() {
-        return renderer;
+        return renderer == null || renderer.isBlank() ? "schema" : renderer;
     }
 
     @DataBoundSetter
@@ -91,16 +91,16 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     public String getSchemaJson() {
         JSONObject schema = new JSONObject();
         net.sf.json.JSONArray encodedFields = new net.sf.json.JSONArray();
-        for (FormField field : fields) {
+        for (FormField field : getFields()) {
             encodedFields.add(encodeField(field));
         }
         net.sf.json.JSONArray encodedLayouts = new net.sf.json.JSONArray();
-        for (FormLayout layout : layouts) {
+        for (FormLayout layout : getLayouts()) {
             encodedLayouts.add(encodeLayout(layout));
         }
         schema.put("fields", encodedFields);
         schema.put("layouts", encodedLayouts);
-        schema.put("renderer", renderer);
+        schema.put("renderer", getRenderer());
         return schema.toString();
     }
 
@@ -120,7 +120,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public List<String> getRendererAdjuncts() {
-        return TrustedRendererRegistry.trustedAdjuncts(renderer, TrustedRendererRegistry.FAMILY_FORM);
+        return TrustedRendererRegistry.trustedAdjuncts(getRenderer(), TrustedRendererRegistry.FAMILY_FORM);
     }
 
     @Override
@@ -208,13 +208,13 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
 
     private UnifiedFormParameterValue toValue(Map<String, Object> value) {
         Map<String, String> environmentVariables = new LinkedHashMap<>();
-        for (FormField field : fields) {
+        for (FormField field : getFields()) {
             if (!field.isSecret() && field.getEnvironmentVariable() != null) {
                 environmentVariables.put(field.getName(), field.getEnvironmentVariable());
             }
         }
         return new UnifiedFormParameterValue(
-                getName(), value, getDescription(), outputMode, environmentExport, environmentVariables);
+                getName(), value, getDescription(), getOutputMode(), getEnvironmentExport(), environmentVariables);
     }
 
     private static JSONObject encodeField(FormField field) {
