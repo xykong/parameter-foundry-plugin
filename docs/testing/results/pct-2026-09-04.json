@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-09-04T19:04:37.092349+08:00",
+  "targetCommit": "db6e3b2847d1a510123d0a1a4007d69f5960c02c",
+  "pctRepository": "https://github.com/jenkinsci/plugin-compat-tester.git",
+  "pctCommit": "8a4e8125284289f5af87a91c717ada7f022b2daf",
+  "mavenImage": "maven:3.9.11-eclipse-temurin-21",
+  "scope": "local pre-release PCT in Docker",
+  "versions": [
+    {
+      "jenkinsCore": "2.528.3",
+      "javaRelease": "17",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 157,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "buildSuccess": true
+        }
+      }
+    },
+    {
+      "jenkinsCore": "2.568.2",
+      "javaRelease": "21",
+      "result": "passed",
+      "exitStatus": 0,
+      "plugins": {
+        "unified-parameters": {
+          "tests": 157,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "buildSuccess": true
+        }
+      }
+    }
+  ],
+  "result": "passed"
+}
