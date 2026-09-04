@@ -75,10 +75,11 @@ public final class ProviderRuntime {
         } else {
             connectionProfile = Optional.empty();
         }
-        String providerDigest = connectionProfile
-                .map(profile ->
-                        Digests.sha256(provider.configurationDigest() + '\u0000' + profile.configurationDigest()))
-                .orElseGet(provider::configurationDigest);
+        String providerDigest = provider.runtimeConfigurationDigest(job);
+        if (connectionProfile.isPresent()) {
+            providerDigest = Digests.sha256(
+                    providerDigest + '\u0000' + connectionProfile.orElseThrow().configurationDigest());
+        }
         ProviderRequest request = new ProviderRequest(
                 job,
                 provider.getId(),

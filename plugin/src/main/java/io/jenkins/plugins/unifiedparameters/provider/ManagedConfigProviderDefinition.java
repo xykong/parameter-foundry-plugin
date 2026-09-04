@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.Job;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.model.OptionImportService;
@@ -168,6 +169,13 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
                 getDisabledPath(),
                 getDisabledReasonPath(),
                 getTagsPath());
+    }
+
+    @Override
+    String runtimeConfigurationDigest(Job<?, ?> job) {
+        Config config = ConfigFiles.getByIdOrNull(job, configId);
+        String content = config == null || config.content == null ? "missing" : config.content;
+        return Digests.sha256(configurationDigest() + '\u0000' + Digests.sha256(content));
     }
 
     private String resolveFormat(String content) {

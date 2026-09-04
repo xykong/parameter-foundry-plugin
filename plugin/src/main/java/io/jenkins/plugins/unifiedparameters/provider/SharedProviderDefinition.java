@@ -123,6 +123,10 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
                 + providerFingerprint());
     }
 
+    String runtimeConfigurationDigest(hudson.model.Job<?, ?> job) {
+        return configurationDigest();
+    }
+
     public abstract List<io.jenkins.plugins.unifiedparameters.model.Option> load(ProviderLoadContext context);
 
     protected abstract String providerFingerprint();

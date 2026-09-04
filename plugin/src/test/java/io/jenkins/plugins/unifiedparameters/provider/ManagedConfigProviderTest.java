@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
@@ -36,8 +37,16 @@ class ManagedConfigProviderTest {
         assertEquals("team", provider.load(context(teamJob, provider)).get(0).getValue());
         assertEquals("global", provider.load(context(rootJob, provider)).get(0).getValue());
 
+        String beforeUpdate = provider.runtimeConfigurationDigest(teamJob);
         jenkins.jenkins.save();
         assertEquals("team", provider.load(context(teamJob, provider)).get(0).getValue());
+
+        team.getProperties()
+                .get(FolderConfigFileProperty.class)
+                .save(new JsonConfig("release-options", "Team releases", "", "[{\"value\":\"updated\"}]"));
+        jenkins.jenkins.save();
+        assertEquals("updated", provider.load(context(teamJob, provider)).get(0).getValue());
+        assertNotEquals(beforeUpdate, provider.runtimeConfigurationDigest(teamJob));
     }
 
     @Test

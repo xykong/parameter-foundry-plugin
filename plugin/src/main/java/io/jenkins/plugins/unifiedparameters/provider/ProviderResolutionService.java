@@ -62,9 +62,9 @@ public final class ProviderResolutionService {
                             ErrorCode.PROVIDER_UNAVAILABLE,
                             provider.getId(),
                             "Connection Profile is not visible to this Job."));
-            return Digests.sha256(provider.configurationDigest() + '\u0000' + profile.configurationDigest());
+            return Digests.sha256(provider.runtimeConfigurationDigest(job) + '\u0000' + profile.configurationDigest());
         }
-        return provider.configurationDigest();
+        return provider.runtimeConfigurationDigest(job);
     }
 
     public static Optional<Job<?, ?>> findOwningJob(ParameterDefinition definition) {
