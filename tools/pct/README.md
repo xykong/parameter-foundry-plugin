@@ -21,8 +21,9 @@ The report is written to:
 docs/testing/results/pct-YYYY-MM-DD.json
 ```
 
-The check covers the Core plugin, all four migration adapter modules, and the
-reference Renderer, Script Provider, and Git refs companion modules. It first installs
+The check covers the single Unified Parameters HPI, which now contains the
+core, migration adapters, Renderer, Script Provider, and Git refs Provider.
+It first installs
 the local reactor snapshot into the Docker Maven cache, then runs PCT with the
 Jenkins WAR generated for each supported Core version.
 

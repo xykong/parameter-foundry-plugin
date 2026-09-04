@@ -11,10 +11,12 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * A persisted reference to a reviewed companion engine and governed source.
+ * A persisted reference to a reviewed Script Provider engine and governed
+ * source.
  *
- * <p>The core plugin stores no source text and never evaluates it. The
- * companion owns execution, permissions, auditing, and sandbox behavior.</p>
+ * <p>The plugin stores no source text and never evaluates arbitrary Job input.
+ * A first-party or external reviewed implementation owns execution,
+ * permissions, auditing, and sandbox behavior.</p>
  */
 public final class ScriptProviderDefinition extends SharedProviderDefinition {
 
@@ -41,6 +43,10 @@ public final class ScriptProviderDefinition extends SharedProviderDefinition {
 
     @Override
     public List<io.jenkins.plugins.unifiedparameters.model.Option> load(ProviderLoadContext context) {
+        if (!UnifiedParametersGlobalConfiguration.scriptProviderFeatureEnabled()) {
+            throw new ProviderException(
+                    ErrorCode.PROVIDER_UNAVAILABLE, getId(), "The sandboxed Script Provider is disabled.");
+        }
         ScriptProviderExtension extension = CompanionProviderRegistry.findReviewedScriptEngine(engineId)
                 .orElseThrow(() -> new ProviderException(
                         ErrorCode.PROVIDER_UNAVAILABLE, getId(), "Reviewed Script Provider companion is unavailable."));

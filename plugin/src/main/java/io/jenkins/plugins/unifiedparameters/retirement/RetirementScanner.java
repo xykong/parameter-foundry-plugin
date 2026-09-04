@@ -132,7 +132,8 @@ public final class RetirementScanner {
         PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(type);
         String pluginId = owner == null ? "unknown-external" : owner.getShortName();
         boolean adapterInstalled = SourceMigrationAdapter.all().stream()
-                .anyMatch(adapter -> adapter.getSourcePluginId().equals(pluginId));
+                .anyMatch(adapter ->
+                        adapter.isEnabled() && adapter.getSourcePluginId().equals(pluginId));
         return new Source(pluginId, name, adapterInstalled);
     }
 

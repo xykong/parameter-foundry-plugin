@@ -103,34 +103,6 @@ def prepare_plugins() -> None:
         ROOT / "plugin" / "target" / "unified-parameters.hpi",
         PLUGINS_DIR / "unified-parameters.jpi",
     )
-    shutil.copy2(
-        ROOT
-        / "migration-extended-choice"
-        / "target"
-        / "unified-parameters-migration-extended-choice.hpi",
-        PLUGINS_DIR / "unified-parameters-migration-extended-choice.jpi",
-    )
-    shutil.copy2(
-        ROOT
-        / "migration-active-choices"
-        / "target"
-        / "unified-parameters-migration-active-choices.hpi",
-        PLUGINS_DIR / "unified-parameters-migration-active-choices.jpi",
-    )
-    shutil.copy2(
-        ROOT
-        / "migration-list-git-branches"
-        / "target"
-        / "unified-parameters-migration-list-git-branches.hpi",
-        PLUGINS_DIR / "unified-parameters-migration-list-git-branches.jpi",
-    )
-    shutil.copy2(
-        ROOT
-        / "migration-additional-sources"
-        / "target"
-        / "unified-parameters-migration-additional-sources.hpi",
-        PLUGINS_DIR / "unified-parameters-migration-additional-sources.jpi",
-    )
 
 
 def start() -> None:

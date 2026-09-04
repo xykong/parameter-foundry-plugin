@@ -17,8 +17,8 @@ Detailed redacted output:
 
 ## Passed Checks
 
-- The required source plugins, core plugin, four migration adapters, and all
-  three reference companions loaded and were active.
+- The required source plugins and the single Unified Parameters HPI loaded and
+  were active.
 - The reference Renderer and Script Provider companion checks passed.
 - Active Choices and List Git Branches migration previews passed without
   executing source scripts or copying sensitive source values.

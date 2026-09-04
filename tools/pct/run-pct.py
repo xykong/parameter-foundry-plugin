@@ -21,16 +21,7 @@ CORE_JAVA_RELEASES = {
     "2.528.3": "17",
     "2.568.2": "21",
 }
-PLUGIN_IDS = (
-    "unified-parameters",
-    "unified-parameters-migration-extended-choice",
-    "unified-parameters-migration-active-choices",
-    "unified-parameters-migration-list-git-branches",
-    "unified-parameters-migration-additional-sources",
-    "unified-parameters-companion-renderer",
-    "unified-parameters-companion-script-provider",
-    "unified-parameters-companion-git-refs",
-)
+PLUGIN_IDS = ("unified-parameters",)
 TEST_SUMMARY = re.compile(
     r"Tests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)"
 )

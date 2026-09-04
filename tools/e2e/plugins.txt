@@ -5,6 +5,7 @@ credentials:1496.vf6821f162d4e
 credentials-binding:728.v902a_273b_8947
 plain-credentials:199.v9f8e1f741799
 ssh-credentials:372.va_250881b_08cd
+git-client:6.6.1
 token-macro:477.vd4f0dc3cb_cf1
 script-security:1412.v7737b_3405f86
 config-file-provider:1006.vc7366c201f57

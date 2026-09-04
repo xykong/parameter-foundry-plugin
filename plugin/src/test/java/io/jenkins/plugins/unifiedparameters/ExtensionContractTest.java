@@ -41,6 +41,9 @@ class ExtensionContractTest {
         ScriptProviderSecurityContract reviewed =
                 new ScriptProviderSecurityContract(1, true, true, true, true, true, true, Set.of("scm"));
         assertTrue(reviewed.isReviewedV1());
+        ScriptProviderSecurityContract builtIn =
+                new ScriptProviderSecurityContract(1, false, true, true, true, true, true, Set.of("catalog"));
+        assertTrue(builtIn.isReviewedBuiltInV1());
         ScriptProviderSecurityContract missingAudit =
                 new ScriptProviderSecurityContract(1, true, true, false, true, true, true, Set.of("scm"));
         assertFalse(missingAudit.isReviewedV1());

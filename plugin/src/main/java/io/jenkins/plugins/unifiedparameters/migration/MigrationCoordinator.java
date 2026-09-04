@@ -194,6 +194,7 @@ public final class MigrationCoordinator {
 
     private static SourceMigrationAdapter requireAdapter(ParameterDefinition definition) {
         return SourceMigrationAdapter.all().stream()
+                .filter(SourceMigrationAdapter::isEnabled)
                 .filter(adapter -> adapter.supports(definition))
                 .findFirst()
                 .orElseThrow(() -> new EvaluationException(

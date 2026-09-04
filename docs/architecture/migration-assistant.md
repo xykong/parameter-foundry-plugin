@@ -28,13 +28,10 @@ not expand the safe core runtime.
 
 ## 3. Adapter Packaging
 
-Source adapters are optional companion plugins:
-
-```text
-unified-parameters-migration-extended-choice
-unified-parameters-migration-active-choices
-...
-```
+Source adapters ship inside the single `unified-parameters` HPI. They remain
+runtime-optional by source class and are controlled by the global migration
+adapter feature switch; administrators do not need to install a separate
+adapter HPI.
 
 An adapter:
 
@@ -43,13 +40,14 @@ An adapter:
 - may inspect live source objects while the source plugin is installed;
 - must not read arbitrary controller paths;
 - returns normalized intent, not a pre-created target Java object;
-- is independently updateable when source configuration changes;
+- is versioned with the Unified Parameters HPI when source configuration
+  changes;
 - cannot schedule builds or modify Jobs directly.
 
-The Extended Choice adapter is a sibling HPI module in this repository's Maven
-reactor. Packaging, dependencies, supported-version behavior, and release
-policy are fixed by
-[`ADR 0011`](../decisions/0011-migration-adapter-packaging.md).
+The former sibling-HPI packaging is retained as historical context in
+[`ADR 0011`](../decisions/0011-migration-adapter-packaging.md); the active
+packaging decision is
+[`ADR 0016`](../decisions/0016-single-hpi-product-packaging.md).
 
 ## 4. Normalized Intent
 

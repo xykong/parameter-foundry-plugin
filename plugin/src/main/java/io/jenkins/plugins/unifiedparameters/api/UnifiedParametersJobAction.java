@@ -44,7 +44,7 @@ public final class UnifiedParametersJobAction implements Action {
         List<MigrationPreview> previews = new ArrayList<>();
         for (ParameterDefinition definition : property.getParameterDefinitions()) {
             for (SourceMigrationAdapter adapter : SourceMigrationAdapter.all()) {
-                if (!adapter.supports(definition)) {
+                if (!adapter.isEnabled() || !adapter.supports(definition)) {
                     continue;
                 }
                 try {
@@ -68,7 +68,7 @@ public final class UnifiedParametersJobAction implements Action {
         }
         for (ParameterDefinition definition : property.getParameterDefinitions()) {
             for (SourceMigrationAdapter adapter : SourceMigrationAdapter.all()) {
-                if (adapter.supports(definition)) {
+                if (adapter.isEnabled() && adapter.supports(definition)) {
                     return true;
                 }
             }

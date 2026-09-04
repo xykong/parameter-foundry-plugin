@@ -19,6 +19,7 @@ The architecture follows these decisions:
 - [ADR 0012: Typed API Parameter Adapters](../decisions/0012-typed-api-parameter-adapters.md)
 - [ADR 0013: Definition Validation Lifecycle](../decisions/0013-definition-validation-lifecycle.md)
 - [ADR 0014: Technical Preview and GA Gates](../decisions/0014-technical-preview-and-ga-gates.md)
+- [ADR 0016: Single HPI Product Packaging](../decisions/0016-single-hpi-product-packaging.md)
 
 ## 2. Architectural Rules
 
@@ -31,7 +32,9 @@ The architecture follows these decisions:
    controller file reads.
 6. Persisted Job configuration uses stable public model classes and explicit
    model versions.
-7. High-risk or domain-specific capabilities use companion plugins.
+7. High-risk or domain-specific capabilities use explicit code, permission,
+   and feature-switch boundaries; first-party capabilities ship in the single
+   HPI.
 
 ## 3. Package Layout
 
@@ -46,7 +49,8 @@ io.jenkins.plugins.unifiedparameters
   renderer/      Renderer descriptors and evaluated view models
   validation/    built-in validators and error catalog
   api/           Job action and typed API DTOs
-  migration/     migration SPI and records, no source-specific code
+  migration/     migration SPI, records, and source-specific adapters
+  companion/     first-party Git, Script, and Renderer implementations
   security/      permission checks, redaction and outbound-policy helpers
   telemetry/     bounded metrics and health summaries
 ```

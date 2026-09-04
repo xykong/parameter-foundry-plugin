@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.renderer;
 
 import hudson.PluginWrapper;
+import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,14 +20,19 @@ public final class TrustedRendererRegistry {
             "list", Set.of(FAMILY_MULTI_CHOICE),
             "chips", Set.of(FAMILY_MULTI_CHOICE),
             "checkbox", Set.of(FAMILY_MULTI_CHOICE),
-            "schema", Set.of(FAMILY_FORM));
+            "schema", Set.of(FAMILY_FORM),
+            "accessible-choice-grid", Set.of(FAMILY_SINGLE_CHOICE, FAMILY_MULTI_CHOICE));
+    private static final Map<String, List<String>> BUILT_IN_ADJUNCTS =
+            Map.of("accessible-choice-grid", List.of("io.jenkins.plugins.unifiedparameters.accessible-choice-grid"));
 
     private TrustedRendererRegistry() {}
 
     public static boolean isTrusted(String rendererId, String family) {
         Set<String> builtInFamilies = BUILT_INS.get(rendererId);
         if (builtInFamilies != null) {
-            return builtInFamilies.contains(family);
+            return builtInFamilies.contains(family)
+                    && (!"accessible-choice-grid".equals(rendererId)
+                            || UnifiedParametersGlobalConfiguration.accessibleChoiceGridFeatureEnabled());
         }
         if (rendererId == null || !rendererId.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
             return false;
@@ -46,22 +52,39 @@ public final class TrustedRendererRegistry {
     }
 
     public static List<String> externalRendererIds(String family) {
-        return UnifiedParameterRenderer.all().stream()
-                .filter(renderer -> renderer.getSupportedFamilies().contains(family))
-                .filter(renderer -> renderer.getSecurityContract().isTrustedV1())
-                .filter(renderer -> {
-                    PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
-                    return owner != null && !"unified-parameters".equals(owner.getShortName());
-                })
-                .map(UnifiedParameterRenderer::getId)
-                .filter(id -> id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}"))
-                .distinct()
-                .sorted()
+        java.util.stream.Stream<String> builtIn =
+                UnifiedParametersGlobalConfiguration.accessibleChoiceGridFeatureEnabled()
+                                && BUILT_INS.get("accessible-choice-grid").contains(family)
+                        ? java.util.stream.Stream.of("accessible-choice-grid")
+                        : java.util.stream.Stream.empty();
+        return java.util.stream.Stream.concat(
+                        builtIn,
+                        UnifiedParameterRenderer.all().stream()
+                                .filter(renderer ->
+                                        renderer.getSupportedFamilies().contains(family))
+                                .filter(renderer ->
+                                        renderer.getSecurityContract().isTrustedV1())
+                                .filter(renderer -> {
+                                    PluginWrapper owner =
+                                            Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
+                                    return owner != null && !"unified-parameters".equals(owner.getShortName());
+                                })
+                                .map(UnifiedParameterRenderer::getId)
+                                .filter(id -> id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}"))
+                                .filter(id -> !"accessible-choice-grid".equals(id))
+                                .distinct()
+                                .sorted())
                 .toList();
     }
 
     public static List<String> trustedAdjuncts(String rendererId, String family) {
-        if (!isTrusted(rendererId, family) || BUILT_INS.containsKey(rendererId)) {
+        if (!isTrusted(rendererId, family)) {
+            return List.of();
+        }
+        if (BUILT_IN_ADJUNCTS.containsKey(rendererId)) {
+            return BUILT_IN_ADJUNCTS.get(rendererId);
+        }
+        if (BUILT_INS.containsKey(rendererId)) {
             return List.of();
         }
         return UnifiedParameterRenderer.all().stream()

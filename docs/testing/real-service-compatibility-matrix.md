@@ -64,7 +64,7 @@ The following repository-owned checks have been executed:
 - Latest Docker canary with the Git refs companion and refreshed migration
   semantics; see
   [`Source Plugin Docker Canary`](./source-plugin-docker-canary-2026-09-03.md).
-- Latest PCT matrix with eight modules and the Git refs companion; see
+- Latest PCT matrix with the single HPI and all first-party capabilities; see
   [`PCT Verification`](./pct-verification-2026-09-03.md).
 - Repeatable source-plugin Docker canary covering real HPI loading, migration
   clone/apply/rollback, Standard REST, webhook-style REST, Typed REST, CLI,

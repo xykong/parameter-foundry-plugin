@@ -27,13 +27,6 @@
 
   <modules>
     <module>plugin</module>
-    <module>migration-extended-choice</module>
-    <module>migration-active-choices</module>
-    <module>migration-list-git-branches</module>
-    <module>migration-additional-sources</module>
-    <module>companion-renderer</module>
-    <module>companion-script-provider</module>
-    <module>companion-git-refs</module>
   </modules>
 
   <scm>
@@ -56,7 +49,6 @@
     <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
 
-    <extended-choice.version>388.ve7b_d0b_920e10</extended-choice.version>
     <config-file-provider.version>1006.vc7366c201f57</config-file-provider.version>
     <job-dsl.version>3732.v9a_c49a_61a_313</job-dsl.version>
     <pipeline-model-definition.version>2.2293.v6e7193cec599</pipeline-model-definition.version>

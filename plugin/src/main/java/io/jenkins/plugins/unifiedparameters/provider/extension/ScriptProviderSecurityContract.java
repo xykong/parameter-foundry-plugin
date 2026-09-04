@@ -25,4 +25,14 @@ public record ScriptProviderSecurityContract(
                 && schemaValidated
                 && !sourceKinds.isEmpty();
     }
+
+    public boolean isReviewedBuiltInV1() {
+        return apiVersion == 1
+                && dedicatedConfigurePermission
+                && audited
+                && boundedOutput
+                && schemaValidated
+                && sandboxed
+                && !sourceKinds.isEmpty();
+    }
 }

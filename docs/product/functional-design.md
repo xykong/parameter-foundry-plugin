@@ -8,7 +8,7 @@
 | 目标 | 成为 Jenkins 通用参数领域的功能超集和首选实现 |
 | 覆盖原则 | 全部竞品有效使用场景必须有明确替代路径 |
 | 兼容原则 | 追求语义正确和迁移可控，不追求旧实现逐字节兼容 |
-| 安全原则 | 高风险能力隔离到受控 Provider 或 companion plugin |
+| 安全原则 | 高风险能力隔离到受控 Provider、权限和功能开关边界；第一方能力统一随单一 HPI 交付 |
 | 迁移原则 | 发现、分类、转换、验证、回滚、下线全流程产品化 |
 | UI/API 一致性 | 参数业务语义强一致；不一致不得发布 |
 | 完成标准 | 每个竞品功能都有目标能力、迁移器、测试和 Gallery 证据 |
@@ -52,7 +52,7 @@ XML、Pipeline `$class` 或历史构建记录的无缝兼容。规范定义见
 | Direct | 配置可以直接转换，语义不变 | 静态单选、多选、Radio、Checkbox |
 | Semantic | 用新模型实现相同业务目标 | `:selected` 转成结构化 default |
 | Refactor | 需要用户确认更安全的新实现 | Groovy 网络请求转成 REST Provider |
-| Extension | 需要受控 companion plugin | 复杂动态脚本转成 Script Provider |
+| Extension | 需要受控 Provider/内置扩展或外部 companion plugin | 复杂动态脚本转成 Script Provider |
 | Reject-and-redesign | 旧行为本身不应保留 | 任意 JavaScript、未授权文件读取 |
 
 即使属于 `Reject-and-redesign`，Migration Assistant 也必须说明：
@@ -163,7 +163,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | Textarea Provider | Inline Provider | Direct |
 | Global Textarea | Global/Folder Provider | Direct |
 | Filename Provider | Managed File / SCM Provider | Refactor |
-| System Groovy | Script Provider companion | Extension |
+| System Groovy | Built-in sandboxed Script Provider or external companion | Extension |
 | editable mode | Editable Choice policy | Direct |
 | add edited choice | Managed Option contribution workflow | Semantic |
 | ChoiceListProvider SPI | Unified Provider SPI | Direct |
@@ -261,7 +261,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 | 来源能力 | Unified Parameters 目标 | 替代方式 |
 |----------|---------------------------|----------|
-| shared scripts | Script Catalog companion | Extension |
+| shared scripts | Built-in Script Catalog or external companion | Extension |
 | Git-managed scripts | SCM Script Provider | Extension |
 | permissions | Provider-specific permission | Direct |
 | parameters/bindings | Typed Provider Context | Semantic |
@@ -271,12 +271,12 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 | 来源能力 | Unified Parameters 目标 | 替代方式 |
 |----------|---------------------------|----------|
-| branch/tag/ref discovery | governed REST or Git refs companion Provider | Extension |
+| branch/tag/ref discovery | governed REST or built-in Git refs Provider | Extension |
 | repository URL | administrator-owned Connection Profile | Refactor |
 | credentials | credential ID in the governed profile | Direct |
-| `PT_BRANCH` | Git refs companion `branch` mode | Semantic |
-| `PT_TAG` | Git refs companion `tag` mode | Semantic |
-| `PT_BRANCH_TAG` | Git refs companion full `ref` mode | Semantic |
+| `PT_BRANCH` | Built-in Git refs `branch` mode | Semantic |
+| `PT_TAG` | Built-in Git refs `tag` mode | Semantic |
+| `PT_BRANCH_TAG` | Built-in Git refs full `ref` mode | Semantic |
 | `ORG_BRANCH` | Branch candidate after organization output confirmation | Manual/Class C |
 | branch/tag filter/sort | typed Provider configuration and transform chain | Semantic |
 | default and deleted ref | explicit default/stale validation | Semantic |
@@ -940,7 +940,7 @@ Source Inspector
 7. Json Editor/HTML Parameters。
 8. Scriptler。
 
-Adapter 作为可选 source-specific companion plugin 独立发布更新，以跟进来源插件配置变化。
+Adapter 随 `unified-parameters` 单一 HPI 交付，通过全局 migration adapter 开关控制启用。
 Adapter 只生成 Normalized Intent，不直接修改 Job 或调度构建。
 
 ## 12. 让用户迁移的明确理由

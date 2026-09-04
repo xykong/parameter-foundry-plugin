@@ -195,7 +195,7 @@ metadata: {}
 | UP-SPIKE-007 | Mixed Typed API | Core String/Text/Boolean/Choice + Unified Job 原子调度通过 |
 | UP-SPIKE-008 | Rebuild | 保持 Renderer 并按当前 definition 重验证 |
 | UP-SPIKE-009 | CSP/No-JS | CSP-safe enhancement 和 bounded fallback 通过 |
-| UP-SPIKE-010 | Migration reactor | core HPI 与 Extended Choice adapter HPI 单向依赖通过 |
+| UP-SPIKE-010 | Single HPI migration packaging | core、source adapter、Provider 和 Renderer 在一个 HPI 中加载通过 |
 
 详细门禁见
 [`ADR 0014`](../decisions/0014-technical-preview-and-ga-gates.md)。
@@ -532,7 +532,8 @@ Connection Profile 的权限、URL 构造和凭据绑定见
 - 所有值服务端校验。
 - 管理员配置和普通 Build 权限分离。
 
-Script Provider、Git Provider、Registry Provider 等高风险或领域能力放入独立 companion plugin。
+Script Provider、Git Provider、Registry Provider 等高风险或领域能力在
+单一 HPI 内保持独立权限、代码和开关边界；外部实现仍可通过 SPI 扩展。
 Endpoint 权限和 API 行为见
 [`ADR 0006`](../decisions/0006-api-input-errors-and-permissions.md)。
 
@@ -607,5 +608,5 @@ Endpoint 权限和 API 行为见
 2. 根据 spike 结果修订 ADR；通过后再冻结 `modelVersion: 1` 和 API `/v1`。
 3. 建立 `1.0` Jenkins Test Harness parity fixture。
 4. 实现真实插件 UI 并生成目标 Gallery。
-5. 建立 Extended Choice 静态迁移 adapter HPI。
+5. 将 Extended Choice 静态迁移 adapter 合入单一 HPI。
 6. 准备社区 RFC、hosting 和名称最终检查材料。

@@ -1,4 +1,0 @@
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
-  <p>Sandboxed Script Provider companion is installed.</p>
-</j:jelly>

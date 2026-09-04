@@ -201,23 +201,7 @@ def free_port() -> int:
 
 
 def artifact_paths() -> list[Path]:
-    return [
-        ROOT / "plugin" / "target" / "unified-parameters.hpi",
-        ROOT / "migration-extended-choice" / "target"
-        / "unified-parameters-migration-extended-choice.hpi",
-        ROOT / "migration-active-choices" / "target"
-        / "unified-parameters-migration-active-choices.hpi",
-        ROOT / "migration-list-git-branches" / "target"
-        / "unified-parameters-migration-list-git-branches.hpi",
-        ROOT / "migration-additional-sources" / "target"
-        / "unified-parameters-migration-additional-sources.hpi",
-        ROOT / "companion-renderer" / "target"
-        / "unified-parameters-companion-renderer.hpi",
-        ROOT / "companion-script-provider" / "target"
-        / "unified-parameters-companion-script-provider.hpi",
-        ROOT / "companion-git-refs" / "target"
-        / "unified-parameters-companion-git-refs.hpi",
-    ]
+    return [ROOT / "plugin" / "target" / "unified-parameters.hpi"]
 
 
 def build_artifacts() -> None:
@@ -543,13 +527,6 @@ def main() -> int:
                 "list-git-branches-parameter",
                 "file-parameters",
                 "unified-parameters",
-                "unified-parameters-migration-extended-choice",
-                "unified-parameters-migration-active-choices",
-                "unified-parameters-migration-list-git-branches",
-                "unified-parameters-migration-additional-sources",
-                "unified-parameters-companion-renderer",
-                "unified-parameters-companion-script-provider",
-                "unified-parameters-companion-git-refs",
             }
             active_plugins = {
                 item["shortName"]

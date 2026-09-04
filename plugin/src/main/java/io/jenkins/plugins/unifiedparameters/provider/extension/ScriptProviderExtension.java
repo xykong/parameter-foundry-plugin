@@ -8,8 +8,9 @@ import java.util.List;
 import net.sf.json.JSONObject;
 
 /**
- * High-risk script execution remains in separately installed companions. Core
- * supplies only the governed request/result contract.
+ * High-risk script execution uses a governed request/result contract. The
+ * first-party implementation ships in the Unified Parameters HPI, while
+ * external companions may implement the same SPI.
  */
 public abstract class ScriptProviderExtension implements ExtensionPoint {
 

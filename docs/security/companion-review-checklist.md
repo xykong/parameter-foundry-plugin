@@ -1,8 +1,8 @@
 # Companion Plugin Review Checklist
 
-This checklist is required before a reference companion is treated as a
-Jenkins community release. Automated tests demonstrate the local contract but
-do not approve the larger attack surface of an installed companion.
+This checklist is required before a first-party high-risk capability or
+external companion is treated as a production-ready release. Automated tests
+demonstrate the local contract but do not approve the larger attack surface.
 
 ## Script Provider
 
@@ -59,7 +59,7 @@ do not approve the larger attack surface of an installed companion.
 - [ ] Jenkins community/security review is complete.
 - [ ] Upgrade, removal, and fail-closed behavior are documented.
 
-The current reference companion artifacts have automated and Docker evidence in
+The current first-party capabilities have automated and Docker evidence in
 [`pct-verification-2026-09-03.md`](../testing/pct-verification-2026-09-03.md)
 and
 [`source-plugin-docker-canary-2026-09-03.md`](../testing/source-plugin-docker-canary-2026-09-03.md).

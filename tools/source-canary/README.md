@@ -1,7 +1,7 @@
 # Source Plugin Docker Canary
 
 This tool runs a disposable Jenkins Controller with real source-plugin HPI
-files and the locally built Unified Parameters artifacts.
+files and the locally built Unified Parameters HPI.
 
 It is intentionally limited to synthetic Jobs and binds Jenkins to a random
 localhost port. It does not read production credentials, connect to production
@@ -29,5 +29,5 @@ The tool verifies real HPI loading, migration previews, Extended Choice
 clone/apply/rollback, standard REST and webhook-style delimited input, Typed
 REST arrays, Jenkins CLI JSON arrays, Pipeline upstream/downstream execution,
 invalid-input no-queue behavior, Rebuild rendering, Active Choices/List Git
-Branches migration boundaries, Git refs companion loading, and native Stashed
-File multipart submission. The canary pins Git Client `6.6.1`.
+Branches migration boundaries, built-in Git refs Provider loading, and native
+Stashed File multipart submission. The canary pins Git Client `6.6.1`.

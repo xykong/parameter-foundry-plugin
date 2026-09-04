@@ -6,8 +6,10 @@ This threat model covers the core plugin, typed Job API, configuration and
 build UI, Provider cache/snapshots, migration framework, and first-party
 Providers.
 
-Companion Script, Git, artifact, registry, cloud, and custom Renderer plugins
-must publish their own threat-model extension.
+External Script, Git, artifact, registry, cloud, and custom Renderer plugins
+must publish their own threat-model extension. First-party Script, Git, and
+Renderer implementations ship in the single HPI but retain separate
+permission, validation, and feature-switch boundaries.
 
 ## 2. Assets
 
@@ -31,7 +33,7 @@ must publish their own threat-model extension.
 | Folder administrator | manage Providers in the delegated Folder boundary |
 | Jenkins administrator | global Provider, migration batch, and companion-plugin administration |
 | malicious Provider endpoint | returns oversized, malformed, slow, redirected, or hostile data |
-| compromised companion plugin | outside core trust promise; limited by SPI validation where possible |
+| compromised external companion plugin | outside first-party trust promise; limited by SPI validation where possible |
 
 ## 4. Trust Boundaries
 
@@ -258,8 +260,9 @@ status, Renderer type, and migration classification.
 
 ## 9. Residual Risks
 
-- Jenkins administrators can install companion plugins with a larger attack
-  surface.
+- The single HPI has a larger installed surface than the former core-only
+  artifact; administrators can disable first-party high-risk capabilities with
+  the global feature switches.
 - Administrators may explicitly allow internal Provider targets.
 - Parameter values stored in ordinary Jenkins build records are visible
   according to Jenkins permissions; Unified Parameters is not a secret

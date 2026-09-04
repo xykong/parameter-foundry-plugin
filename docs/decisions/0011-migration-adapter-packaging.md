@@ -1,7 +1,8 @@
 # ADR 0011: Migration Adapter Packaging
 
-- Status: Accepted
+- Status: Superseded by ADR 0016
 - Date: August 28, 2026
+- Superseded by: [ADR 0016](./0016-single-hpi-product-packaging.md)
 
 ## Context
 
@@ -9,7 +10,13 @@
 core must not depend on source plugins or carry their classes after migration.
 The adapter packaging therefore cannot remain conditional or conceptual.
 
-## Decision
+## Historical Decision
+
+This ADR records the former multi-HPI packaging design. It is retained as
+history and is superseded by
+[ADR 0016: Single HPI Product Packaging](./0016-single-hpi-product-packaging.md).
+
+## Former Decision
 
 ### Repository Structure
 
