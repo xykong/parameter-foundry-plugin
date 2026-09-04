@@ -49,7 +49,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     }
 
     public List<String> getDefaultValues() {
-        return defaultValues;
+        return defaultValues == null ? List.of() : defaultValues;
     }
 
     @DataBoundSetter

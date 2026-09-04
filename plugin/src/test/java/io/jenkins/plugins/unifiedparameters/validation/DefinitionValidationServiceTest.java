@@ -1,11 +1,13 @@
 package io.jenkins.plugins.unifiedparameters.validation;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import java.lang.reflect.Field;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -56,5 +58,21 @@ class DefinitionValidationServiceTest {
 
         assertFalse(result.isValid());
         assertTrue(result.summarize().contains("customValueMaxLength"));
+    }
+
+    @Test
+    void missingOptionalCollectionsFromLoadedConfigDoNotCrashValidation() throws Exception {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setChoices(List.of(new Option("staging")));
+
+        Field dependsOn = definition.getClass().getSuperclass().getDeclaredField("dependsOn");
+        dependsOn.setAccessible(true);
+        dependsOn.set(definition, null);
+
+        DefinitionValidationResult result =
+                assertDoesNotThrow(() -> DefinitionValidationService.validateStoredDefinition(definition));
+
+        assertTrue(result.isValid());
+        assertTrue(definition.getDependsOn().isEmpty());
     }
 }

@@ -80,7 +80,7 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
     }
 
     public List<String> getTags() {
-        return tags;
+        return tags == null ? List.of() : tags;
     }
 
     @DataBoundSetter

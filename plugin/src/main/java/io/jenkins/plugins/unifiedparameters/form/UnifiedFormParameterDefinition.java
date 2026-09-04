@@ -40,7 +40,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public List<FormField> getFields() {
-        return fields;
+        return fields == null ? List.of() : fields;
     }
 
     @DataBoundSetter
@@ -49,7 +49,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public List<FormLayout> getLayouts() {
-        return layouts;
+        return layouts == null ? List.of() : layouts;
     }
 
     @DataBoundSetter

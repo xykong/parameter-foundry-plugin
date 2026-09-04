@@ -23,7 +23,7 @@ public final class StaticProviderDefinition extends SharedProviderDefinition {
     }
 
     public List<Option> getOptions() {
-        return options;
+        return options == null ? List.of() : options;
     }
 
     @DataBoundSetter

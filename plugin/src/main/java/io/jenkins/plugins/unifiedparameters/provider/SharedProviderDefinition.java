@@ -97,7 +97,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
     }
 
     public List<TransformStep> getTransforms() {
-        return transforms;
+        return transforms == null ? List.of() : transforms;
     }
 
     @DataBoundSetter

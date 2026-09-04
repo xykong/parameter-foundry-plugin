@@ -36,7 +36,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public List<Option> getChoices() {
-        return choices;
+        return choices == null ? List.of() : choices;
     }
 
     @DataBoundSetter
@@ -67,7 +67,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public List<String> getDependsOn() {
-        return dependsOn;
+        return dependsOn == null ? List.of() : dependsOn;
     }
 
     @DataBoundSetter
@@ -80,7 +80,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public String getDefaultMode() {
-        return defaultMode;
+        return defaultMode == null ? "none" : defaultMode;
     }
 
     @DataBoundSetter
@@ -111,7 +111,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public Option findOption(String value) {
-        return findOption(choices, value);
+        return findOption(getChoices(), value);
     }
 
     public Option findOption(List<Option> options, String value) {
@@ -124,7 +124,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public Option firstEnabledOption() {
-        return firstEnabledOption(choices);
+        return firstEnabledOption(getChoices());
     }
 
     public Option firstEnabledOption(List<Option> options) {
@@ -137,19 +137,20 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public List<Option> getFallbackChoices() {
-        if (choices.size() <= NO_JAVASCRIPT_OPTION_LIMIT) {
-            return choices;
+        List<Option> currentChoices = getChoices();
+        if (currentChoices.size() <= NO_JAVASCRIPT_OPTION_LIMIT) {
+            return currentChoices;
         }
         Map<String, Option> defaultsOutsideWindow = new LinkedHashMap<>();
         for (String defaultValue : getFallbackDefaultValues()) {
             Option option = findOption(defaultValue);
-            if (option != null && choices.indexOf(option) >= NO_JAVASCRIPT_OPTION_LIMIT) {
+            if (option != null && currentChoices.indexOf(option) >= NO_JAVASCRIPT_OPTION_LIMIT) {
                 defaultsOutsideWindow.put(defaultValue, option);
             }
         }
         int ordinaryLimit = Math.max(0, NO_JAVASCRIPT_OPTION_LIMIT - defaultsOutsideWindow.size());
         Map<String, Option> result = new LinkedHashMap<>();
-        for (Option option : choices.subList(0, ordinaryLimit)) {
+        for (Option option : currentChoices.subList(0, ordinaryLimit)) {
             result.put(option.getValue(), option);
         }
         result.putAll(defaultsOutsideWindow);
@@ -157,7 +158,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public int getOptionCount() {
-        return choices.size();
+        return getChoices().size();
     }
 
     public List<String> getAvailableExternalRenderers() {

@@ -69,7 +69,7 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
     }
 
     public List<String> getFieldNames() {
-        return fieldNames;
+        return fieldNames == null ? List.of() : fieldNames;
     }
 
     public String getFieldNamesText() {
@@ -92,7 +92,7 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
     }
 
     public List<FormLayout> getChildren() {
-        return children;
+        return children == null ? List.of() : children;
     }
 
     @DataBoundSetter

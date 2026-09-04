@@ -169,7 +169,7 @@ public final class FormField extends AbstractDescribableImpl<FormField> implemen
     }
 
     public List<Option> getChoices() {
-        return choices;
+        return choices == null ? List.of() : choices;
     }
 
     @DataBoundSetter
@@ -178,7 +178,7 @@ public final class FormField extends AbstractDescribableImpl<FormField> implemen
     }
 
     public List<FormField> getFields() {
-        return fields;
+        return fields == null ? List.of() : fields;
     }
 
     @DataBoundSetter
