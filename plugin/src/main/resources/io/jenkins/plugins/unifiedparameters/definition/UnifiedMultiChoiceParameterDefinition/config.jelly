@@ -37,19 +37,19 @@
   </f:entry>
   <f:entry title="Renderer">
     <select class="jenkins-select__input" name="parameter.renderer">
-      <option value="checkbox" selected="${instance.renderer == 'checkbox'}">Checkbox group</option>
-      <option value="list" selected="${instance.renderer == 'list'}">Multi-select list</option>
-      <option value="chips" selected="${instance.renderer == 'chips'}">Chips</option>
+      <option value="checkbox" selected="${instance.renderer == 'checkbox' ? 'selected' : null}">Checkbox group</option>
+      <option value="list" selected="${instance.renderer == 'list' ? 'selected' : null}">Multi-select list</option>
+      <option value="chips" selected="${instance.renderer == 'chips' ? 'selected' : null}">Chips</option>
       <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
-        <option value="${rendererId}" selected="${instance.renderer == rendererId}">${rendererId}</option>
+        <option value="${rendererId}" selected="${instance.renderer == rendererId ? 'selected' : null}">${rendererId}</option>
       </j:forEach>
     </select>
   </f:entry>
   <f:entry title="Default mode">
     <select class="jenkins-select__input" name="parameter.defaultMode">
-      <option value="none" selected="${instance.defaultMode == 'none'}">None</option>
-      <option value="first" selected="${instance.defaultMode == 'first'}">First enabled option</option>
-      <option value="explicit" selected="${instance.defaultMode == 'explicit'}">Explicit values</option>
+      <option value="none" selected="${instance.defaultMode == 'none' ? 'selected' : null}">None</option>
+      <option value="first" selected="${instance.defaultMode == 'first' ? 'selected' : null}">First enabled option</option>
+      <option value="explicit" selected="${instance.defaultMode == 'explicit' ? 'selected' : null}">Explicit values</option>
     </select>
   </f:entry>
   <f:entry title="Default values">
@@ -66,9 +66,9 @@
   </f:entry>
   <f:entry title="Standard API input mode">
     <select class="jenkins-select__input" name="parameter.standardApiInputMode">
-      <option value="repeated" selected="${instance.standardApiInputMode == 'repeated'}">Repeated fields</option>
-      <option value="json-array" selected="${instance.standardApiInputMode == 'json-array'}">JSON array field</option>
-      <option value="delimited" selected="${instance.standardApiInputMode == 'delimited'}">Delimited field</option>
+      <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Repeated fields</option>
+      <option value="json-array" selected="${instance.standardApiInputMode == 'json-array' ? 'selected' : null}">JSON array field</option>
+      <option value="delimited" selected="${instance.standardApiInputMode == 'delimited' ? 'selected' : null}">Delimited field</option>
     </select>
   </f:entry>
   <f:entry title="Delimiter">

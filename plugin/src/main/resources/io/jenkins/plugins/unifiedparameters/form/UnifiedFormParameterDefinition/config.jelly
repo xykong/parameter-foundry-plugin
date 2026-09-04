@@ -11,21 +11,21 @@
   </f:entry>
   <f:entry title="Pipeline output">
     <select class="jenkins-select__input" name="parameter.outputMode">
-      <option value="map" selected="${instance.outputMode == 'map'}">Map</option>
-      <option value="json" selected="${instance.outputMode == 'json'}">JSON string</option>
+      <option value="map" selected="${instance.outputMode == 'map' ? 'selected' : null}">Map</option>
+      <option value="json" selected="${instance.outputMode == 'json' ? 'selected' : null}">JSON string</option>
     </select>
   </f:entry>
   <f:entry title="Environment export">
     <select class="jenkins-select__input" name="parameter.environmentExport">
-      <option value="json" selected="${instance.environmentExport == 'json'}">Complete JSON</option>
-      <option value="none" selected="${instance.environmentExport == 'none'}">No complete-form export</option>
+      <option value="json" selected="${instance.environmentExport == 'json' ? 'selected' : null}">Complete JSON</option>
+      <option value="none" selected="${instance.environmentExport == 'none' ? 'selected' : null}">No complete-form export</option>
     </select>
   </f:entry>
   <f:entry title="Renderer">
     <select class="jenkins-select__input" name="parameter.renderer">
-      <option value="schema" selected="${instance.renderer == 'schema'}">Built-in schema form</option>
+      <option value="schema" selected="${instance.renderer == 'schema' ? 'selected' : null}">Built-in schema form</option>
       <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
-        <option value="${rendererId}" selected="${instance.renderer == rendererId}">${rendererId}</option>
+        <option value="${rendererId}" selected="${instance.renderer == rendererId ? 'selected' : null}">${rendererId}</option>
       </j:forEach>
     </select>
   </f:entry>
