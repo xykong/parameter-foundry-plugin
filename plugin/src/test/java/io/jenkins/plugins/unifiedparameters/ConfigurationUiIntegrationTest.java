@@ -9,6 +9,7 @@ import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDef
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import java.net.URL;
 import java.util.List;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,19 @@ class ConfigurationUiIntegrationTest {
                 "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition",
                 "environmentExport",
                 "none");
+    }
+
+    @Test
+    void globalProviderConfigurationIsRendered(JenkinsRule jenkins) throws Exception {
+        HtmlPage page =
+                jenkins.createWebClient().withJavaScriptEnabled(false).getPage(new URL(jenkins.getURL(), "configure"));
+
+        assertTrue(page.asNormalizedText().contains("Unified Parameters feature switches"));
+        assertEquals(
+                4,
+                page.getByXPath(
+                                "//input[contains(@name, 'migrationAdaptersEnabled') or contains(@name, 'scriptProviderEnabled') or contains(@name, 'gitRefsProviderEnabled') or contains(@name, 'accessibleChoiceGridEnabled')]")
+                        .size());
     }
 
     private static void assertSelected(HtmlPage page, String descriptorId, String field, String value) {

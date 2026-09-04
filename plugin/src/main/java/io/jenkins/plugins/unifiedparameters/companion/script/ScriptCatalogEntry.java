@@ -1,9 +1,11 @@
 package io.jenkins.plugins.unifiedparameters.companion.script;
 
+import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import java.io.Serial;
 import java.io.Serializable;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -42,5 +44,14 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
 
     public SecureGroovyScript getScript() {
         return script;
+    }
+
+    @Extension
+    @Symbol("unifiedScriptCatalogEntry")
+    public static final class DescriptorImpl extends Descriptor<ScriptCatalogEntry> {
+        @Override
+        public String getDisplayName() {
+            return "Unified Parameters Script Catalog Entry";
+        }
     }
 }
