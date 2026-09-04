@@ -3,6 +3,7 @@ package io.jenkins.plugins.unifiedparameters.validation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.List;
@@ -31,5 +32,29 @@ class DefinitionValidationServiceTest {
 
         assertFalse(result.isValid());
         assertTrue(result.summarize().contains("Reserved"));
+    }
+
+    @Test
+    void disabledCustomValueLimitDoesNotInvalidateAChoiceDefinition() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        definition.setChoices(List.of(new Option("staging")));
+        definition.setCustomValueMaxLength(0);
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void enabledCustomValueStillRequiresABoundedLimit() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        definition.setChoices(List.of(new Option("staging")));
+        definition.setAllowCustomValue(true);
+        definition.setCustomValueMaxLength(0);
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertFalse(result.isValid());
+        assertTrue(result.summarize().contains("customValueMaxLength"));
     }
 }

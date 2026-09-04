@@ -156,19 +156,19 @@ public final class DefinitionValidationService {
         if (!Set.of("string", "none").contains(definition.getEnvironmentExport())) {
             errors.add("Unsupported single-choice export mode: " + definition.getEnvironmentExport());
         }
-        if (definition.getCustomValueMaxLength() < 1 || definition.getCustomValueMaxLength() > 4096) {
-            errors.add("customValueMaxLength must be between 1 and 4096");
-        }
-        if (!definition.isAllowCustomValue()
-                && (definition.getCustomValuePattern() != null || definition.getCustomValueMaxLength() != 256)) {
-            errors.add("Custom-value validation requires allowCustomValue=true");
-        }
-        if (definition.getCustomValuePattern() != null) {
+        if (definition.isAllowCustomValue()) {
+            if (definition.getCustomValueMaxLength() < 1 || definition.getCustomValueMaxLength() > 4096) {
+                errors.add("customValueMaxLength must be between 1 and 4096");
+            }
             try {
-                CustomValuePolicy.compile(definition.getCustomValuePattern());
+                if (definition.getCustomValuePattern() != null) {
+                    CustomValuePolicy.compile(definition.getCustomValuePattern());
+                }
             } catch (IllegalArgumentException exception) {
                 errors.add(exception.getMessage());
             }
+        } else if (definition.getCustomValuePattern() != null) {
+            errors.add("Custom-value validation requires allowCustomValue=true");
         }
     }
 
