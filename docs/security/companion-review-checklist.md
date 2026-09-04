@@ -60,6 +60,6 @@ demonstrate the local contract but do not approve the larger attack surface.
 - [ ] Upgrade, removal, and fail-closed behavior are documented.
 
 The current first-party capabilities have automated and Docker evidence in
-[`pct-verification-2026-09-03.md`](../testing/pct-verification-2026-09-03.md)
+[`pct-verification-2026-09-04.md`](../testing/pct-verification-2026-09-04.md)
 and
-[`source-plugin-docker-canary-2026-09-03.md`](../testing/source-plugin-docker-canary-2026-09-03.md).
+[`source-plugin-docker-canary-2026-09-04.md`](../testing/source-plugin-docker-canary-2026-09-04.md).

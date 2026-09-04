@@ -484,8 +484,8 @@ Connection Profile 的权限、URL 构造和凭据绑定见
 | UP-FORM-002 | Layout Schema | section、grid、tabs 和条件显示不依赖任意 JavaScript |
 | UP-FORM-003 | Structured Output | Map/JSON、字段映射和环境导出有稳定 canonical contract |
 | UP-FORM-004 | Trusted Rendering | 只允许内置或已审查 Renderer 输出安全 UI |
-| UP-EXT-001 | Script Provider companion | 独立权限、审计、Schema 输出和安装边界 |
-| UP-EXT-002 | Renderer companion SPI | CSP、XSS、兼容版本和受信任插件边界明确 |
+| UP-EXT-001 | Script Provider capability | 独立权限、审计、Schema 输出和功能开关边界 |
+| UP-EXT-002 | Renderer extension SPI | CSP、XSS、兼容版本和受信任扩展边界明确 |
 | UP-MIG-004 | Retirement Dashboard | 活动配置、生成源、队列和历史 Build 分别报告 |
 | UP-MIG-005 | Active Choices adapter | 不执行来源脚本，生成 Provider/Cascade/Form 骨架和验证 fixture |
 | UP-MIG-006 | List Git Branches adapter | 不复制 URL/Credential，生成受治理 Git refs Provider 骨架 |
