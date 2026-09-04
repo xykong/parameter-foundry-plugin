@@ -806,6 +806,12 @@ async def browser_checks() -> tuple[dict[str, object], dict[str, object]]:
             '[role="alert"]', has_text="Options could not be enhanced"
         ).count()
         assert (
+            await page.locator(
+                '[data-parameter-name="RELEASE"] [data-up-generated-value][value="release-42"]'
+            ).count()
+            == 1
+        )
+        assert (
             await page.locator('input[type="checkbox"][value="target-9999"]').count()
             == 1
         )

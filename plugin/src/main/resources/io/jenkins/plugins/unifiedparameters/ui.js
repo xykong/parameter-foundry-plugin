@@ -816,14 +816,7 @@
   }
 
   function refresh(field, preserveSelection) {
-    var fallback = field.querySelector("[data-up-fallback]");
-    var initialValues = preserveSelection
-      ? selectedValuesForField(field)
-      : Array.prototype.map
-          .call(fallback.querySelectorAll("input:checked, option:checked"), function (node) {
-            return node.value;
-          })
-          .filter(Boolean);
+    var initialValues = selectedValuesForField(field);
     var previousValues = sortedSetValues(new Set(initialValues));
     var state = refreshStates.get(field) || {version: 0, controller: null, timer: null};
     state.version += 1;
