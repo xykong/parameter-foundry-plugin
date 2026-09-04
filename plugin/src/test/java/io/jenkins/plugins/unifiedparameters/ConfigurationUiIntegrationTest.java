@@ -5,13 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry;
+import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.unifiedparameters.provider.ScriptProviderDefinition;
+import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
 import java.net.URL;
 import java.util.List;
 import org.htmlunit.html.HtmlPage;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -75,6 +80,12 @@ class ConfigurationUiIntegrationTest {
 
     @Test
     void globalProviderConfigurationIsRendered(JenkinsRule jenkins) throws Exception {
+        UnifiedParametersGlobalConfiguration.get()
+                .setProviders(
+                        List.of(new ScriptProviderDefinition("script-options", "sandbox-groovy", "catalog:releases")));
+        ScriptProviderCatalog.get()
+                .setEntries(
+                        List.of(new ScriptCatalogEntry("releases", new SecureGroovyScript("return ['stable']", true))));
         HtmlPage page =
                 jenkins.createWebClient().withJavaScriptEnabled(false).getPage(new URL(jenkins.getURL(), "configure"));
 

@@ -11,11 +11,11 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Reference type" field="refType">
-    <f:select>
-      <f:option value="branch">Branches</f:option>
-      <f:option value="tag">Tags</f:option>
-      <f:option value="ref">Full refs</f:option>
-    </f:select>
+    <select name="_.refType" class="jenkins-select__input select">
+      <option value="branch" selected="${it.refType == 'branch' ? 'selected' : null}">Branches</option>
+      <option value="tag" selected="${it.refType == 'tag' ? 'selected' : null}">Tags</option>
+      <option value="ref" selected="${it.refType == 'ref' ? 'selected' : null}">Full refs</option>
+    </select>
   </f:entry>
   <f:entry title="Include regex" field="includePattern"
            description="Optional full-match regular expression applied to the normalized branch, tag, or ref value.">
@@ -26,10 +26,10 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Sort order" field="sortOrder">
-    <f:select>
-      <f:option value="ascending">Ascending</f:option>
-      <f:option value="descending">Descending</f:option>
-    </f:select>
+    <select name="_.sortOrder" class="jenkins-select__input select">
+      <option value="ascending" selected="${it.sortOrder == 'ascending' ? 'selected' : null}">Ascending</option>
+      <option value="descending" selected="${it.sortOrder == 'descending' ? 'selected' : null}">Descending</option>
+    </select>
   </f:entry>
   <f:entry title="Maximum refs" field="maximumRefs">
     <f:number min="1" max="10000" />
@@ -47,11 +47,11 @@
     <f:number min="1" max="30" />
   </f:entry>
   <f:entry title="Failure policy" field="failurePolicy">
-    <f:select>
-      <f:option value="fail-closed">Fail closed</f:option>
-      <f:option value="last-known-good">Last known good</f:option>
-      <f:option value="empty">Empty result</f:option>
-    </f:select>
+    <select name="_.failurePolicy" class="jenkins-select__input select">
+      <option value="fail-closed" selected="${it.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${it.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${it.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+    </select>
   </f:entry>
   <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
     <f:number min="0" max="604800" />

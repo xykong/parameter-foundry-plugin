@@ -1,23 +1,23 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <f:entry title="Operation" field="operation">
-    <f:select>
-      <f:option value="map">Map field</f:option>
-      <f:option value="filter">Filter</f:option>
-      <f:option value="sort">Sort</f:option>
-      <f:option value="distinct">Distinct</f:option>
-      <f:option value="limit">Limit</f:option>
-      <f:option value="group">Assign group</f:option>
-      <f:option value="mark-disabled">Mark disabled</f:option>
-    </f:select>
+    <select name="_.operation" class="jenkins-select__input select">
+      <option value="map" selected="${it.operation == 'map' ? 'selected' : null}">Map field</option>
+      <option value="filter" selected="${it.operation == 'filter' ? 'selected' : null}">Filter</option>
+      <option value="sort" selected="${it.operation == 'sort' ? 'selected' : null}">Sort</option>
+      <option value="distinct" selected="${it.operation == 'distinct' ? 'selected' : null}">Distinct</option>
+      <option value="limit" selected="${it.operation == 'limit' ? 'selected' : null}">Limit</option>
+      <option value="group" selected="${it.operation == 'group' ? 'selected' : null}">Assign group</option>
+      <option value="mark-disabled" selected="${it.operation == 'mark-disabled' ? 'selected' : null}">Mark disabled</option>
+    </select>
   </f:entry>
   <f:entry title="Field" field="field">
-    <f:select>
-      <f:option value="value">Machine value</f:option>
-      <f:option value="label">Label</f:option>
-      <f:option value="description">Description</f:option>
-      <f:option value="group">Group</f:option>
-    </f:select>
+    <select name="_.field" class="jenkins-select__input select">
+      <option value="value" selected="${it.field == 'value' ? 'selected' : null}">Machine value</option>
+      <option value="label" selected="${it.field == 'label' ? 'selected' : null}">Label</option>
+      <option value="description" selected="${it.field == 'description' ? 'selected' : null}">Description</option>
+      <option value="group" selected="${it.field == 'group' ? 'selected' : null}">Group</option>
+    </select>
   </f:entry>
   <f:entry title="Pattern" field="pattern">
     <f:textbox />

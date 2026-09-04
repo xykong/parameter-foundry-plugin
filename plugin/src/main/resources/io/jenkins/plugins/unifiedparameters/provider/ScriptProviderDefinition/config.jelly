@@ -17,11 +17,11 @@
   <f:entry title="Cache TTL seconds" field="cacheTtlSeconds"><f:number min="0" max="86400" /></f:entry>
   <f:entry title="Timeout seconds" field="timeoutSeconds"><f:number min="1" max="30" /></f:entry>
   <f:entry title="Failure policy" field="failurePolicy">
-    <f:select>
-      <f:option value="fail-closed">Fail closed</f:option>
-      <f:option value="last-known-good">Last known good</f:option>
-      <f:option value="empty">Empty result</f:option>
-    </f:select>
+    <select name="_.failurePolicy" class="jenkins-select__input select">
+      <option value="fail-closed" selected="${it.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${it.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${it.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+    </select>
   </f:entry>
   <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
     <f:number min="0" max="604800" />

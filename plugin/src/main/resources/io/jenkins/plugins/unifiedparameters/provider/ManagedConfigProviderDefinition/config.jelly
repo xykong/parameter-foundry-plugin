@@ -10,12 +10,12 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Format" field="format">
-    <f:select>
-      <f:option value="auto">Auto detect</f:option>
-      <f:option value="yaml">YAML</f:option>
-      <f:option value="json">JSON</f:option>
-      <f:option value="xml">XML</f:option>
-    </f:select>
+    <select name="_.format" class="jenkins-select__input select">
+      <option value="auto" selected="${it.format == 'auto' ? 'selected' : null}">Auto detect</option>
+      <option value="yaml" selected="${it.format == 'yaml' ? 'selected' : null}">YAML</option>
+      <option value="json" selected="${it.format == 'json' ? 'selected' : null}">JSON</option>
+      <option value="xml" selected="${it.format == 'xml' ? 'selected' : null}">XML</option>
+    </select>
   </f:entry>
   <f:entry title="Root JSONPath/XPath" field="rootPath">
     <f:textbox />
@@ -51,10 +51,10 @@
     <f:number min="0" max="86400" />
   </f:entry>
   <f:entry title="Failure policy" field="failurePolicy">
-    <f:select>
-      <f:option value="fail-closed">Fail closed</f:option>
-      <f:option value="last-known-good">Last known good</f:option>
-      <f:option value="empty">Empty result</f:option>
-    </f:select>
+    <select name="_.failurePolicy" class="jenkins-select__input select">
+      <option value="fail-closed" selected="${it.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${it.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${it.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+    </select>
   </f:entry>
 </j:jelly>
