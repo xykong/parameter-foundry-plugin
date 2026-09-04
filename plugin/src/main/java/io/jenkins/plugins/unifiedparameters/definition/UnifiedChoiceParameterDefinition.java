@@ -12,6 +12,7 @@ import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
 import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
+import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
@@ -20,7 +21,9 @@ import io.jenkins.plugins.unifiedparameters.snapshot.ResolvedProviderOptions;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -79,6 +82,26 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     @DataBoundSetter
     public void setCustomValueMaxLength(int customValueMaxLength) {
         this.customValueMaxLength = customValueMaxLength;
+    }
+
+    @Override
+    public List<Option> getFallbackChoices() {
+        List<Option> fallback = new ArrayList<>(super.getFallbackChoices());
+        if (!"explicit".equals(getDefaultMode())
+                || !allowCustomValue
+                || defaultValue == null
+                || findOption(defaultValue) != null
+                || fallback.stream().anyMatch(option -> defaultValue.equals(option.getValue()))) {
+            return List.copyOf(fallback);
+        }
+        Option historical = new Option(defaultValue);
+        historical.setLabel(defaultValue + " (custom)");
+        if (fallback.size() >= NO_JAVASCRIPT_OPTION_LIMIT) {
+            fallback.set(NO_JAVASCRIPT_OPTION_LIMIT - 1, historical);
+        } else {
+            fallback.add(historical);
+        }
+        return List.copyOf(fallback);
     }
 
     @Override

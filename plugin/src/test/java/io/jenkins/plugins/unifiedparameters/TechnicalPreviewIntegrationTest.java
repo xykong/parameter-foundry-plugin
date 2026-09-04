@@ -15,6 +15,7 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.PasswordParameterDefinition;
+import hudson.model.Result;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
@@ -22,6 +23,7 @@ import hudson.security.csrf.CrumbIssuer;
 import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
@@ -491,12 +493,37 @@ class TechnicalPreviewIntegrationTest {
         project.addProperty(new ParametersDefinitionProperty(definition));
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
 
-        HtmlPage page = jenkins.createWebClient().getPage(build, "rebuild/parameterized");
+        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(build, "rebuild/parameterized");
 
         assertFalse(page.getByXPath("//input[@type='checkbox' and @value='android']")
                 .isEmpty());
         assertFalse(
                 page.getByXPath("//input[@type='checkbox' and @value='web']").isEmpty());
+    }
+
+    @Test
+    void rebuildShowsHistoricalCustomValueInFallbackControls(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject("rebuild-custom");
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("RELEASE");
+        definition.setChoices(List.of(new Option("stable")));
+        definition.setDefaultMode("explicit");
+        definition.setDefaultValue("stable");
+        definition.setAllowCustomValue(true);
+        definition.setCustomValuePattern("release-[0-9]+");
+        project.addProperty(new ParametersDefinitionProperty(definition));
+        project.scheduleBuild2(
+                0,
+                new ParametersAction(new UnifiedChoiceParameterValue(
+                        "RELEASE", "release-42", null, definition.getEnvironmentExport())));
+        jenkins.waitUntilNoActivity();
+        FreeStyleBuild build = project.getLastBuild();
+        assertNotNull(build);
+        assertEquals(Result.SUCCESS, build.getResult());
+
+        HtmlPage page = jenkins.createWebClient().getPage(build, "rebuild/parameterized");
+
+        assertFalse(page.getByXPath("//input[@data-up-fallback-json-value='true' and @value='release-42']")
+                .isEmpty());
     }
 
     private static Page postForm(JenkinsRule jenkins, FreeStyleProject project, List<NameValuePair> parameters)
