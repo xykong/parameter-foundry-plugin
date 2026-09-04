@@ -108,6 +108,37 @@ class UnifiedFormIntegrationTest {
     }
 
     @Test
+    void rebuildCopyPreservesHistoricalStructuredValueAsDefault(JenkinsRule jenkins) throws Exception {
+        UnifiedFormParameterDefinition definition = (UnifiedFormParameterDefinition) formJob(jenkins, "form-rebuild")
+                .getProperty(ParametersDefinitionProperty.class)
+                .getParameterDefinition("DEPLOYMENT");
+        Map<String, Object> historical = Map.of(
+                "service",
+                "catalog",
+                "replicas",
+                3L,
+                "enabled",
+                true,
+                "region",
+                "eu-central",
+                "features",
+                List.of("audit"),
+                "metadata",
+                Map.of("owner", "platform"),
+                "ports",
+                List.of(8080L));
+
+        UnifiedFormParameterDefinition copy = assertInstanceOf(
+                UnifiedFormParameterDefinition.class,
+                definition.copyWithDefaultValue(new UnifiedFormParameterValue("DEPLOYMENT", historical)));
+        JSONObject defaultValue = JSONObject.fromObject(copy.getDefaultJson());
+
+        assertEquals("catalog", defaultValue.getString("service"));
+        assertEquals(3L, defaultValue.getLong("replicas"));
+        assertEquals("eu-central", defaultValue.getString("region"));
+    }
+
+    @Test
     void definitionValidationRejectsSecretWholeFormExportAndUnknownLayoutField() {
         UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("FORM");
         FormField secret = new FormField("token", "string");

@@ -32,6 +32,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     private String environmentExport = "json";
     private String renderer = "schema";
     private int modelVersion = 1;
+    private transient String rebuildDefaultJson;
 
     @DataBoundConstructor
     public UnifiedFormParameterDefinition(String name) {
@@ -104,6 +105,9 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     public String getDefaultJson() {
+        if (rebuildDefaultJson != null) {
+            return rebuildDefaultJson;
+        }
         try {
             return FormEvaluationService.toJson(FormEvaluationService.evaluate(this, null, false));
         } catch (EvaluationException exception) {
@@ -180,7 +184,18 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-        return this;
+        if (!(defaultValue instanceof UnifiedFormParameterValue formValue)) {
+            return this;
+        }
+        UnifiedFormParameterDefinition copy = new UnifiedFormParameterDefinition(getName());
+        copy.setDescription(getDescription());
+        copy.setFields(getFields());
+        copy.setLayouts(getLayouts());
+        copy.setOutputMode(getOutputMode());
+        copy.setEnvironmentExport(getEnvironmentExport());
+        copy.setRenderer(getRenderer());
+        copy.rebuildDefaultJson = formValue.getCanonicalJson();
+        return copy;
     }
 
     private UnifiedFormParameterValue evaluate(Object value, boolean present) {
