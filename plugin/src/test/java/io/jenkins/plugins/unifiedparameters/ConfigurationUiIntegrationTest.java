@@ -86,15 +86,19 @@ class ConfigurationUiIntegrationTest {
         ScriptProviderCatalog.get()
                 .setEntries(
                         List.of(new ScriptCatalogEntry("releases", new SecureGroovyScript("return ['stable']", true))));
-        HtmlPage page =
-                jenkins.createWebClient().withJavaScriptEnabled(false).getPage(new URL(jenkins.getURL(), "configure"));
+        JenkinsRule.WebClient webClient = jenkins.createWebClient();
+        HtmlPage page = webClient.getPage(new URL(jenkins.getURL(), "configure"));
+        webClient.waitForBackgroundJavaScript(1000);
 
         assertTrue(page.asNormalizedText().contains("Unified Parameters feature switches"));
+        assertTrue(page.asNormalizedText().contains("Groovy Script"));
+        assertTrue(page.asNormalizedText().contains("Use Groovy Sandbox"));
         assertEquals(
                 4,
                 page.getByXPath(
                                 "//input[contains(@name, 'migrationAdaptersEnabled') or contains(@name, 'scriptProviderEnabled') or contains(@name, 'gitRefsProviderEnabled') or contains(@name, 'accessibleChoiceGridEnabled')]")
                         .size());
+        assertTrue(page.getByXPath("//h1[normalize-space()='Oops!']").isEmpty());
     }
 
     private static void assertSelected(HtmlPage page, String descriptorId, String field, String value) {

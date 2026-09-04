@@ -49,6 +49,10 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
     @Extension
     @Symbol("unifiedScriptCatalogEntry")
     public static final class DescriptorImpl extends Descriptor<ScriptCatalogEntry> {
+        public Descriptor<SecureGroovyScript> getScriptDescriptor() {
+            return jenkins.model.Jenkins.get().getDescriptor(SecureGroovyScript.class);
+        }
+
         @Override
         public String getDisplayName() {
             return "Unified Parameters Script Catalog Entry";
