@@ -799,6 +799,12 @@ async def browser_checks() -> tuple[dict[str, object], dict[str, object]]:
             BASE_URL + "/job/unified-parameters-e2e/1/rebuild/parameterized",
             wait_until="networkidle",
         )
+        await page.wait_for_selector(
+            '[data-parameter-name="TARGETS"][data-up-interactive="true"]'
+        )
+        assert not await page.locator(
+            '[role="alert"]', has_text="Options could not be enhanced"
+        ).count()
         assert (
             await page.locator('input[type="checkbox"][value="target-9999"]').count()
             == 1

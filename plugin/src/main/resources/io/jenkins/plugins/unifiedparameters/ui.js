@@ -21,7 +21,12 @@
       return null;
     }
     var action = new URL(form.action || window.location.href, window.location.href);
-    action.pathname = action.pathname.replace(/\/build\/?$/, "/");
+    var jobPath = action.pathname.replace(/\/build\/?$/, "/");
+    jobPath = jobPath.replace(/\/\d+\/rebuild\/configSubmit\/?$/, "/");
+    if (jobPath === action.pathname) {
+      return null;
+    }
+    action.pathname = jobPath;
     action.search = "";
     return new URL("unified-parameters/api/v1/resolve", action);
   }
