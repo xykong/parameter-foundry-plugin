@@ -16,6 +16,7 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.PasswordParameterDefinition;
 import hudson.model.StringParameterDefinition;
+import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
 import hudson.security.csrf.CrumbIssuer;
 import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
@@ -371,6 +372,52 @@ class TechnicalPreviewIntegrationTest {
                 UnifiedMultiChoiceParameterValue.class,
                 downstream.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of("android", "web"), value.getValue());
+    }
+
+    @Test
+    void pipelineBuildStepPassesStringChoiceValue(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject downstream = jenkins.createFreeStyleProject("choice-downstream");
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        definition.setChoices(List.of(new Option("staging"), new Option("production")));
+        downstream.addProperty(new ParametersDefinitionProperty(definition));
+        WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "choice-upstream");
+        upstream.setDefinition(new CpsFlowDefinition("""
+                build job: 'choice-downstream', wait: true, parameters: [[
+                  $class: 'StringParameterValue',
+                  name: 'CHANNEL',
+                  value: 'production'
+                ]]
+                """, true));
+
+        jenkins.buildAndAssertSuccess(upstream);
+
+        StringParameterValue value = assertInstanceOf(
+                StringParameterValue.class,
+                downstream.getLastBuild().getAction(ParametersAction.class).getParameter("CHANNEL"));
+        assertEquals("production", value.getValue());
+    }
+
+    @Test
+    void pipelineBuildStepPassesDelimitedStringMultiChoiceValue(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject downstream = jenkins.createFreeStyleProject("delimited-downstream");
+        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        definition.setStandardApiInputMode("delimited");
+        downstream.addProperty(new ParametersDefinitionProperty(definition));
+        WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "delimited-upstream");
+        upstream.setDefinition(new CpsFlowDefinition("""
+                build job: 'delimited-downstream', wait: true, parameters: [[
+                  $class: 'StringParameterValue',
+                  name: 'TARGETS',
+                  value: 'web,android'
+                ]]
+                """, true));
+
+        jenkins.buildAndAssertSuccess(upstream);
+
+        StringParameterValue value = assertInstanceOf(
+                StringParameterValue.class,
+                downstream.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
+        assertEquals("web,android", value.getValue());
     }
 
     @Test

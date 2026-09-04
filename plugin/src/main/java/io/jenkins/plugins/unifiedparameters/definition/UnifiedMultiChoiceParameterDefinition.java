@@ -7,6 +7,7 @@ import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
+import hudson.model.StringParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
@@ -156,13 +157,21 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
 
     @Override
     public boolean isValid(ParameterValue value) {
-        if (!(value instanceof UnifiedMultiChoiceParameterValue multiValue)) {
+        List<String> submitted;
+        if (value instanceof UnifiedMultiChoiceParameterValue multiValue) {
+            submitted = multiValue.getValue();
+        } else if (value instanceof StringParameterValue stringValue) {
+            try {
+                submitted = InputDecoders.fromCli(this, stringValue.getValue()).values();
+            } catch (EvaluationException exception) {
+                return false;
+            }
+        } else {
             return false;
         }
         try {
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
-            ParameterEvaluationService.evaluateMultiple(
-                    this, DecodedInput.present(multiValue.getValue()), resolved.options());
+            ParameterEvaluationService.evaluateMultiple(this, DecodedInput.present(submitted), resolved.options());
             return true;
         } catch (EvaluationException exception) {
             return false;

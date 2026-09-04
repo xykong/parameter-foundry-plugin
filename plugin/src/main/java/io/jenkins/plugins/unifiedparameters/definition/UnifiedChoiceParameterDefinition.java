@@ -7,6 +7,7 @@ import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
+import hudson.model.StringParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
@@ -134,16 +135,21 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     @Override
     public boolean isValid(ParameterValue value) {
-        if (!(value instanceof UnifiedChoiceParameterValue choiceValue)) {
+        String submitted;
+        if (value instanceof UnifiedChoiceParameterValue choiceValue) {
+            submitted = choiceValue.getValue();
+        } else if (value instanceof StringParameterValue stringValue) {
+            submitted = stringValue.getValue();
+        } else {
             return false;
         }
         try {
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
             ParameterEvaluationService.evaluateSingle(
                     this,
-                    choiceValue.getValue() == null
+                    submitted == null
                             ? DecodedInput.present(java.util.List.of())
-                            : DecodedInput.present(java.util.List.of(choiceValue.getValue())),
+                            : DecodedInput.present(java.util.List.of(submitted)),
                     resolved.options());
             return true;
         } catch (EvaluationException exception) {
