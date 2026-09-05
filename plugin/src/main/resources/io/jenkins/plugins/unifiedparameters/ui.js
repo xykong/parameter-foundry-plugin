@@ -338,6 +338,10 @@
     var search = createSearch(status.id);
     var select = document.createElement("select");
     select.className = "jenkins-select__input unified-parameters-native-list";
+    select.setAttribute(
+      "aria-label",
+      field.dataset.parameterName || "Select an option",
+    );
     select.setAttribute("aria-describedby", status.id);
     var allowCustom = field.dataset.allowCustom === "true";
     var searchable =
@@ -488,6 +492,10 @@
     select.multiple = true;
     select.size = Math.min(10, Math.max(4, options.length));
     select.className = "jenkins-select__input unified-parameters-native-list";
+    select.setAttribute(
+      "aria-label",
+      field.dataset.parameterName || "Select options",
+    );
     select.setAttribute("aria-describedby", status.id);
 
     function filtered() {
