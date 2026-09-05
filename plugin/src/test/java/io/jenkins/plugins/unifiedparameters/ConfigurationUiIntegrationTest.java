@@ -3,15 +3,21 @@ package io.jenkins.plugins.unifiedparameters;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition;
 import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry;
 import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition;
+import io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition;
 import io.jenkins.plugins.unifiedparameters.provider.ScriptProviderDefinition;
+import io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition;
+import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersFolderProperty;
 import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
 import java.net.URL;
 import java.util.List;
@@ -101,6 +107,78 @@ class ConfigurationUiIntegrationTest {
         assertTrue(page.getByXPath("//h1[normalize-space()='Oops!']").isEmpty());
     }
 
+    @Test
+    void providerEnumValuesRemainSelectedAfterReload(JenkinsRule jenkins) throws Exception {
+        Folder folder = jenkins.createProject(Folder.class, "provider-configuration");
+
+        GitRefProviderDefinition git = new GitRefProviderDefinition("refs", "profile");
+        git.setRefType("tag");
+        git.setSortOrder("descending");
+        git.setFailurePolicy("empty");
+
+        RestProviderDefinition rest = new RestProviderDefinition("rest", "profile", "options");
+        rest.setFormat("json");
+        rest.setFailurePolicy("last-known-good");
+
+        ManagedConfigProviderDefinition managed = new ManagedConfigProviderDefinition("managed", "config");
+        managed.setFormat("xml");
+        managed.setFailurePolicy("empty");
+
+        StaticProviderDefinition staticProvider = new StaticProviderDefinition("static");
+        staticProvider.setFailurePolicy("empty");
+
+        UnifiedParametersFolderProperty property = new UnifiedParametersFolderProperty();
+        property.setProviders(List.of(git, rest, managed, staticProvider));
+        folder.addProperty(property);
+
+        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(folder, "configure");
+
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "refs",
+                "refType",
+                "tag");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "refs",
+                "sortOrder",
+                "descending");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "refs",
+                "failurePolicy",
+                "empty");
+        assertSelectedProviderOption(
+                page, "io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition", "rest", "format", "json");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition",
+                "rest",
+                "failurePolicy",
+                "last-known-good");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition",
+                "managed",
+                "format",
+                "xml");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition",
+                "managed",
+                "failurePolicy",
+                "empty");
+        assertSelectedProviderOption(
+                page,
+                "io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition",
+                "static",
+                "failurePolicy",
+                "empty");
+    }
+
     private static void assertSelected(HtmlPage page, String descriptorId, String field, String value) {
         String selected = "//div[@descriptorid='"
                 + descriptorId
@@ -116,5 +194,19 @@ class ConfigurationUiIntegrationTest {
                 + "']/option[@selected='false']";
         assertEquals(1, page.getByXPath(selected).size(), descriptorId + " " + field);
         assertTrue(page.getByXPath(invalid).isEmpty(), descriptorId + " " + field);
+    }
+
+    private static void assertSelectedProviderOption(
+            HtmlPage page, String descriptorId, String providerId, String field, String value) {
+        String selected = "//div[@descriptorid='"
+                + descriptorId
+                + "'][.//input[@name='_.id' and @value='"
+                + providerId
+                + "']]//select[@name='_."
+                + field
+                + "']/option[@selected='selected' and @value='"
+                + value
+                + "']";
+        assertEquals(1, page.getByXPath(selected).size(), providerId + " " + field);
     }
 }

@@ -17,9 +17,9 @@
   </f:entry>
   <f:entry title="Failure policy" field="failurePolicy">
     <select name="_.failurePolicy" class="jenkins-select__input select">
-      <option value="fail-closed" selected="${it.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
-      <option value="last-known-good" selected="${it.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
-      <option value="empty" selected="${it.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+      <option value="fail-closed" selected="${instance.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${instance.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${instance.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
     </select>
   </f:entry>
   <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">

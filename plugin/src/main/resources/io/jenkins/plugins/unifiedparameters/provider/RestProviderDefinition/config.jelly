@@ -19,9 +19,9 @@
   </f:entry>
   <f:entry title="Format" field="format">
     <select name="_.format" class="jenkins-select__input select">
-      <option value="auto" selected="${it.format == 'auto' ? 'selected' : null}">From Content-Type</option>
-      <option value="json" selected="${it.format == 'json' ? 'selected' : null}">JSON</option>
-      <option value="xml" selected="${it.format == 'xml' ? 'selected' : null}">XML</option>
+      <option value="auto" selected="${instance.format == 'auto' ? 'selected' : null}">From Content-Type</option>
+      <option value="json" selected="${instance.format == 'json' ? 'selected' : null}">JSON</option>
+      <option value="xml" selected="${instance.format == 'xml' ? 'selected' : null}">XML</option>
     </select>
   </f:entry>
   <f:entry title="Root JSONPath/XPath" field="rootPath">
@@ -62,9 +62,9 @@
   </f:entry>
   <f:entry title="Failure policy" field="failurePolicy">
     <select name="_.failurePolicy" class="jenkins-select__input select">
-      <option value="fail-closed" selected="${it.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
-      <option value="last-known-good" selected="${it.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
-      <option value="empty" selected="${it.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+      <option value="fail-closed" selected="${instance.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${instance.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${instance.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
     </select>
   </f:entry>
   <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
