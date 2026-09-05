@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,6 +12,8 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
@@ -168,6 +171,81 @@ class ReactiveSnapshotIntegrationTest {
     }
 
     @Test
+    void cliOmittedReactiveParameterUsesDependencyAwareDefault(JenkinsRule jenkins) throws Exception {
+        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ProviderSnapshotStore.get().clear();
+        FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-omitted");
+
+        CLICommandInvoker.Result result = new CLICommandInvoker(jenkins, "build")
+                .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
+
+        assertEquals(0, result.returnCode(), result.stderr());
+        UnifiedChoiceParameterValue environment = (UnifiedChoiceParameterValue)
+                project.getLastBuild().getAction(ParametersAction.class).getParameter("ENVIRONMENT");
+        UnifiedChoiceParameterValue artifact = (UnifiedChoiceParameterValue)
+                project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
+        assertEquals("production", environment.getValue());
+        assertEquals("production-artifact", artifact.getValue());
+        assertNotNull(artifact.getProviderSnapshot());
+    }
+
+    @Test
+    void cliOmittedReactiveParameterUsesDependencyDefault(JenkinsRule jenkins) throws Exception {
+        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ProviderSnapshotStore.get().clear();
+        FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-defaults");
+
+        CLICommandInvoker.Result result =
+                new CLICommandInvoker(jenkins, "build").invokeWithArgs(project.getFullName(), "-s");
+
+        assertEquals(0, result.returnCode(), result.stderr());
+        UnifiedChoiceParameterValue environment = (UnifiedChoiceParameterValue)
+                project.getLastBuild().getAction(ParametersAction.class).getParameter("ENVIRONMENT");
+        UnifiedChoiceParameterValue artifact = (UnifiedChoiceParameterValue)
+                project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
+        assertEquals("staging", environment.getValue());
+        assertEquals("staging-artifact", artifact.getValue());
+        assertNotNull(artifact.getProviderSnapshot());
+    }
+
+    @Test
+    void cliOmittedReactiveMultiChoiceUsesDependencyAwareDefault(JenkinsRule jenkins) throws Exception {
+        UnifiedParametersGlobalConfiguration.get()
+                .setProviders(List.of(new MultiDependencyProvider("multi-artifacts")));
+        ProviderSnapshotStore.get().clear();
+        FreeStyleProject project = reactiveMultiJob(jenkins, "reactive-cli-multi-omitted");
+
+        CLICommandInvoker.Result result = new CLICommandInvoker(jenkins, "build")
+                .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
+
+        assertEquals(0, result.returnCode(), result.stderr());
+        UnifiedMultiChoiceParameterValue targets = (UnifiedMultiChoiceParameterValue)
+                project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS");
+        assertEquals(List.of("production-android"), targets.getValue());
+        assertNotNull(targets.getProviderSnapshot());
+    }
+
+    @Test
+    void cliOmittedReactiveRequiredValueFailsBeforeQueueing(JenkinsRule jenkins) throws Exception {
+        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ProviderSnapshotStore.get().clear();
+        FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-required");
+        UnifiedChoiceParameterDefinition artifact = (UnifiedChoiceParameterDefinition)
+                project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("ARTIFACT");
+        artifact.setDefaultMode("none");
+        artifact.setRequired(true);
+        project.save();
+
+        CLICommandInvoker.Result result = new CLICommandInvoker(jenkins, "build")
+                .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
+
+        assertTrue(result.returnCode() != 0);
+        assertTrue(result.stderr().contains("No default value for the parameter 'ARTIFACT'"));
+        assertNull(project.getLastBuild());
+        assertEquals(0, jenkins.jenkins.getQueue().getItems().length);
+    }
+
+    @Test
     void jobValidationRejectsReactiveCycles(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("reactive-cycle");
         UnifiedChoiceParameterDefinition first = new UnifiedChoiceParameterDefinition("FIRST");
@@ -200,6 +278,21 @@ class ReactiveSnapshotIntegrationTest {
         return project;
     }
 
+    private static FreeStyleProject reactiveMultiJob(JenkinsRule jenkins, String name) throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject(name);
+        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        environment.setChoices(List.of(new Option("staging"), new Option("production")));
+        environment.setDefaultMode("explicit");
+        environment.setDefaultValue("staging");
+
+        UnifiedMultiChoiceParameterDefinition targets = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        targets.setProviderId("multi-artifacts");
+        targets.setDependsOn(List.of("ENVIRONMENT"));
+        targets.setDefaultMode("first");
+        project.addProperty(new ParametersDefinitionProperty(environment, targets));
+        return project;
+    }
+
     private static JenkinsRule.JSONWebResponse postJson(JenkinsRule jenkins, String path, JSONObject body)
             throws Exception {
         JenkinsRule.WebClient client = jenkins.createWebClient()
@@ -229,6 +322,23 @@ class ReactiveSnapshotIntegrationTest {
         @Override
         protected String providerFingerprint() {
             return "dependency-provider";
+        }
+    }
+
+    private static final class MultiDependencyProvider extends SharedProviderDefinition {
+        MultiDependencyProvider(String id) {
+            super(id);
+        }
+
+        @Override
+        public List<Option> load(ProviderLoadContext context) {
+            String environment = context.request().dependencyValues().get("ENVIRONMENT");
+            return List.of(new Option(environment + "-android"), new Option(environment + "-ios"));
+        }
+
+        @Override
+        protected String providerFingerprint() {
+            return "multi-dependency-provider";
         }
     }
 }

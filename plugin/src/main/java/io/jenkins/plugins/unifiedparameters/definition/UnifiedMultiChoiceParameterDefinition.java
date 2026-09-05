@@ -147,9 +147,10 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     @Override
     public UnifiedMultiChoiceParameterValue getDefaultParameterValue() {
         try {
-            ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.RESOLVE);
+            ResolvedProviderOptions resolved = ProviderSubmission.resolveForDefault(this);
             return toValue(
-                    ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options()));
+                    ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options()),
+                    resolved.metadata());
         } catch (EvaluationException exception) {
             return null;
         }
@@ -233,11 +234,6 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     @Override
     public boolean isMultiple() {
         return true;
-    }
-
-    private UnifiedMultiChoiceParameterValue toValue(List<String> values) {
-        return new UnifiedMultiChoiceParameterValue(
-                getName(), values, getDescription(), getEnvironmentExport(), getDelimiter());
     }
 
     private UnifiedMultiChoiceParameterDefinition copyDefinition() {

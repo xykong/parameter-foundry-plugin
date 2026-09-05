@@ -52,6 +52,32 @@ public final class ProviderSubmission {
         return ProviderSnapshotStore.get().resolveForBuild(job, definition, Map.of(), null, operation);
     }
 
+    public static ResolvedProviderOptions resolveForDefault(AbstractUnifiedParameterDefinition definition) {
+        if (!definition.isProviderBacked()) {
+            return new ResolvedProviderOptions(definition.getChoices(), null, null, false);
+        }
+        Job<?, ?> owningJob = requireOwningJob(definition);
+        CliBuildContext context = UnifiedParametersCliListener.currentBuild();
+        if (context != null && context.job().getFullName().equals(owningJob.getFullName())) {
+            try {
+                return resolveForCliParameters(
+                        context.job(), definition, ProviderOperation.BUILD, context.parameters());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new EvaluationException(
+                        ErrorCode.PROVIDER_UNAVAILABLE,
+                        definition.getName(),
+                        "CLI default Provider resolution was interrupted.");
+            } catch (java.io.IOException exception) {
+                throw new EvaluationException(
+                        ErrorCode.PROVIDER_UNAVAILABLE,
+                        definition.getName(),
+                        "CLI default Provider resolution failed.");
+            }
+        }
+        return resolveWithoutSubmission(owningJob, definition, ProviderOperation.RESOLVE);
+    }
+
     public static ResolvedProviderOptions resolveForCli(
             Job<?, ?> job,
             AbstractUnifiedParameterDefinition definition,
@@ -67,6 +93,20 @@ public final class ProviderSubmission {
                     definition.getName(),
                     "Reactive CLI evaluation requires the Jenkins build command.");
         }
+        Map<String, String> parameters =
+                buildCommand.parameters == null ? Map.of() : Map.copyOf(buildCommand.parameters);
+        return resolveForCliParameters(job, definition, operation, parameters);
+    }
+
+    private static ResolvedProviderOptions resolveForCliParameters(
+            Job<?, ?> job,
+            AbstractUnifiedParameterDefinition definition,
+            ProviderOperation operation,
+            Map<String, String> parameters)
+            throws java.io.IOException, InterruptedException {
+        if (definition.getDependsOn().isEmpty()) {
+            return ProviderSnapshotStore.get().resolveForBuild(job, definition, Map.of(), null, operation);
+        }
         ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
         if (property == null) {
             throw new EvaluationException(
@@ -79,16 +119,19 @@ public final class ProviderSubmission {
             throw new EvaluationException(ErrorCode.CONFIGURATION_INVALID, job.getFullName(), validation.summarize());
         }
         Map<String, ParameterValue> values = new java.util.LinkedHashMap<>();
+        BuildCommand cliCommand = new BuildCommand();
+        cliCommand.job = job;
+        cliCommand.parameters = parameters;
         for (String dependency : definition.getDependsOn()) {
             ParameterDefinition dependencyDefinition = property.getParameterDefinition(dependency);
             if (dependencyDefinition == null) {
                 throw new EvaluationException(
                         ErrorCode.DEPENDENCY_INVALID, definition.getName(), "Unknown dependency: " + dependency);
             }
-            String raw = buildCommand.parameters == null ? null : buildCommand.parameters.get(dependency);
+            String raw = parameters.get(dependency);
             ParameterValue value = raw == null
                     ? dependencyDefinition.getDefaultParameterValue()
-                    : dependencyDefinition.createValue(command, raw);
+                    : dependencyDefinition.createValue(cliCommand, raw);
             if (value == null) {
                 throw new EvaluationException(
                         ErrorCode.DEPENDENCY_INVALID,
