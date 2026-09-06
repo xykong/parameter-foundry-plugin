@@ -85,6 +85,23 @@ class ConfigurationUiIntegrationTest {
     }
 
     @Test
+    void requiredReactiveWithoutDefaultShowsConfigurationWarning(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject("configuration-warning");
+        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        environment.setChoices(List.of(new Option("staging")));
+        UnifiedChoiceParameterDefinition artifact = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        artifact.setProviderId("artifacts");
+        artifact.setDependsOn(List.of("ENVIRONMENT"));
+        artifact.setRequired(true);
+        project.addProperty(new ParametersDefinitionProperty(environment, artifact));
+
+        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(project, "configure");
+
+        assertTrue(page.asNormalizedText().contains("Required reactive parameter has no default"));
+        assertTrue(page.asNormalizedText().contains("must submit it explicitly"));
+    }
+
+    @Test
     void globalProviderConfigurationIsRendered(JenkinsRule jenkins) throws Exception {
         UnifiedParametersGlobalConfiguration.get()
                 .setProviders(

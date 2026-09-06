@@ -5,6 +5,7 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -112,6 +113,10 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
 
     public int getModelVersion() {
         return modelVersion;
+    }
+
+    public List<String> getConfigurationWarnings() {
+        return DefinitionValidationService.validateStoredDefinition(this).getWarnings();
     }
 
     public Option findOption(String value) {

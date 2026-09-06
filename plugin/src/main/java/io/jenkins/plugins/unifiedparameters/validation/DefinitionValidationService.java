@@ -29,6 +29,7 @@ public final class DefinitionValidationService {
 
     public static DefinitionValidationResult validateStoredDefinition(ParameterDefinition definition) {
         List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
         if (definition instanceof UnifiedFormParameterDefinition form) {
             if (form.getName() == null
                     || form.getName().isEmpty()
@@ -60,6 +61,7 @@ public final class DefinitionValidationService {
         if (!unified.getDependsOn().isEmpty() && !unified.isProviderBacked()) {
             errors.add("Reactive dependencies require a shared Provider");
         }
+        validateCliDefaultPolicy(unified, warnings);
         validateChoices(unified, errors);
 
         if (unified instanceof UnifiedChoiceParameterDefinition single) {
@@ -67,7 +69,7 @@ public final class DefinitionValidationService {
         } else if (unified instanceof UnifiedMultiChoiceParameterDefinition multiple) {
             validateMultiple(multiple, errors);
         }
-        return new DefinitionValidationResult(errors);
+        return new DefinitionValidationResult(errors, warnings);
     }
 
     public static DefinitionValidationResult validateJobDefinitions(List<ParameterDefinition> definitions) {
@@ -104,6 +106,15 @@ public final class DefinitionValidationService {
             errors.add("Parameter name is required");
         } else if (AbstractUnifiedParameterDefinition.PRESENCE_FIELD.equals(name)) {
             errors.add("Parameter name is reserved");
+        }
+    }
+
+    private static void validateCliDefaultPolicy(AbstractUnifiedParameterDefinition definition, List<String> warnings) {
+        if (definition.isRequired()
+                && !definition.getDependsOn().isEmpty()
+                && "none".equals(definition.getDefaultMode())) {
+            warnings.add(
+                    "Required reactive parameter has no default; CLI and other omission-based callers must submit it explicitly.");
         }
     }
 

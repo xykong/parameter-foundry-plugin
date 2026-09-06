@@ -145,6 +145,10 @@ requirements:
     release: "1.0"
     summary: Reserved form presence marker
     plannedTests: [presence-marker-selected-empty-absent, optional-single-blank-sentinel, presence-marker-conflict-malformed]
+  - id: UP-SEM-008
+    release: "1.2"
+    summary: Required Reactive omission and CLI default contract
+    plannedTests: [reactive-cli-omitted-default, reactive-cli-required-no-default, reactive-configuration-warning]
 
   - id: UP-VAL-001
     release: "1.0"

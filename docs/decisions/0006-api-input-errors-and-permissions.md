@@ -111,6 +111,14 @@ cannot promise the full typed error envelope in every Jenkins integration, so
 clients requiring stable machine-readable errors use `/api/v1/validate` or
 `/api/v1/build`.
 
+For Jenkins CLI, omission is handled by Jenkins Core's `BuildCommand` through
+`ParameterDefinition.getDefaultParameterValue()`. Unified Parameters resolves
+omitted Reactive defaults with the CLI dependency context. A required Reactive
+parameter configured with `defaultMode=none` remains valid configuration, but
+the caller must submit it explicitly. If it is omitted, Jenkins CLI returns the
+native `No default value for the parameter ...` message on stderr with a
+non-zero exit status before queue scheduling.
+
 That HTTP 4xx/no-queue behavior is a mandatory `0.1` integration gate on the
 declared Jenkins matrix. The project does not freeze the `1.0` claim until the
 gate in [ADR 0014](./0014-technical-preview-and-ga-gates.md) passes.

@@ -62,6 +62,20 @@ class DefinitionValidationServiceTest {
     }
 
     @Test
+    void requiredReactiveWithoutDefaultIsValidButWarnsForOmissionBasedCallers() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        definition.setProviderId("artifacts");
+        definition.setDependsOn(List.of("ENVIRONMENT"));
+        definition.setRequired(true);
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertTrue(result.isValid());
+        assertTrue(result.hasWarnings());
+        assertTrue(result.getWarnings().stream().anyMatch(warning -> warning.contains("must submit it explicitly")));
+    }
+
+    @Test
     void missingOptionalCollectionsFromLoadedConfigDoNotCrashValidation() throws Exception {
         UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
         definition.setChoices(List.of(new Option("staging")));

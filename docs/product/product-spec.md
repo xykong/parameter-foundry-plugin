@@ -232,6 +232,12 @@ metadata: {}
 | UP-SEM-005 | stale default | `1.0` Inline stale default 始终阻止保存；动态策略在后续版本显式配置 |
 | UP-SEM-006 | multi-choice order | 业务值为无序集合；所有输出按机器值 `String.compareTo` 稳定排序 |
 | UP-SEM-007 | form presence marker | `__unified_parameters_presence` 不进入值列表，冲突/重复/未知 marker 拒绝 |
+| UP-SEM-008 | required Reactive omission | 无默认值的必填 Reactive 参数允许保存，但 CLI/自动化调用方必须显式提交；配置页显示警告 |
+
+必填 Reactive 参数不强制必须拥有默认值。`defaultMode: none` 是合法配置，表示
+用户或自动化调用方必须显式提供值。若希望 CLI 或其他省略参数的入口自动构建，
+必须配置可解析的 `first` 或 `explicit` 默认策略。缺少可用默认值时，Jenkins
+CLI 在入队前返回原生 `No default value for the parameter ...` 错误，不创建构建。
 
 ### 6.4 验证
 

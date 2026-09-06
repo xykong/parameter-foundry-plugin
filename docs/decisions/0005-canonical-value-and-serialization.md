@@ -107,6 +107,14 @@ Disabled values cannot be defaults. Inline stale defaults block configuration
 save. Dynamic stale defaults fail closed unless a later Provider policy
 explicitly authorizes a bounded last-known-good snapshot.
 
+A required Reactive parameter may intentionally use `defaultMode=none`. This is
+valid configuration, but omission-based callers such as Jenkins CLI must submit
+the parameter explicitly. The configuration UI shows a warning for this
+combination. If omission should be supported, the definition must use a
+resolvable `first` or `explicit` default strategy. When Jenkins CLI cannot
+obtain a required default, Jenkins Core returns its native `No default value for
+the parameter ...` error before queue scheduling; no build is created.
+
 ### Multiple-Selection Ordering and Duplicates
 
 `unifiedMultiChoice` models an unordered selection set. Order is not part of

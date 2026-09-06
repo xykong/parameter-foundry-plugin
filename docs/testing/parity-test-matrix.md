@@ -47,6 +47,8 @@ Each parameter type runs:
 
 - explicit valid value;
 - absent input with `none`, `first`, and explicit defaults;
+- required Reactive omission with and without a resolvable default; no-default
+  omission must fail before queueing and show a configuration warning;
 - explicit empty input;
 - selected/empty/absent presence-marker forms, optional single-select blank
   sentinel, and malformed marker metadata;

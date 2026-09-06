@@ -2,6 +2,14 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
   <st:adjunct includes="io.jenkins.plugins.unifiedparameters.config-import"/>
   <div class="up-parameter-config">
+  <j:if test="${!empty instance.configurationWarnings}">
+    <div class="jenkins-alert jenkins-alert-warning" role="status">
+      <strong>Configuration warning</strong>
+      <j:forEach var="warning" items="${instance.configurationWarnings}">
+        <p>${warning}</p>
+      </j:forEach>
+    </div>
+  </j:if>
   <f:entry title="Name" help="/help/parameter/name.html">
     <f:textbox name="parameter.name" value="${instance.name}" />
   </f:entry>
