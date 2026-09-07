@@ -823,6 +823,37 @@
     return status;
   }
 
+  function updateBuildAvailability(form) {
+    if (!form) {
+      return;
+    }
+    var providerFields = Array.prototype.slice.call(
+      form.querySelectorAll('[data-unified-parameter][data-provider-backed="true"]'),
+    );
+    if (!providerFields.length) {
+      return;
+    }
+    var blocked = providerFields.some(function (field) {
+      return !["ready", "fallback", "empty"].includes(field.dataset.upState);
+    });
+    Array.prototype.forEach.call(
+      form.querySelectorAll("button.jenkins-button--primary, input[type='submit']"),
+      function (button) {
+        if (!button.dataset.upProviderGate) {
+          button.dataset.upProviderGate = "true";
+          button.dataset.upProviderOriginalDisabled = String(button.disabled);
+        }
+        var originalDisabled = button.dataset.upProviderOriginalDisabled === "true";
+        button.disabled = originalDisabled || blocked;
+        if (blocked) {
+          button.title = "Waiting for Provider options to finish loading.";
+        } else if (!originalDisabled) {
+          button.removeAttribute("title");
+        }
+      },
+    );
+  }
+
   function refresh(field, preserveSelection) {
     var initialValues = selectedValuesForField(field);
     var previousValues = sortedSetValues(new Set(initialValues));
@@ -835,6 +866,7 @@
     refreshStates.set(field, state);
     var version = state.version;
     field.dataset.upState = preserveSelection ? "stale" : "loading";
+    updateBuildAvailability(field.closest("form"));
     showRefreshStatus(
       field,
       preserveSelection ? "Dependencies changed; refreshing options..." : "Loading options...",
@@ -893,6 +925,7 @@
           : options.length
             ? "ready"
             : "empty";
+        updateBuildAvailability(field.closest("form"));
         field.dataset.upEnhancementMs = String(performance.now() - modelAvailableAt);
         field.dataset.upInteractive = "true";
         var refreshedValues = sortedSetValues(new Set(selectedValuesForField(field)));
@@ -913,6 +946,7 @@
           return;
         }
         field.dataset.upState = preserveSelection ? "stale" : "error";
+        updateBuildAvailability(field.closest("form"));
         showRefreshStatus(
           field,
           preserveSelection
@@ -961,6 +995,7 @@
       document.querySelectorAll("[data-unified-parameter]"),
       function (field) {
         bridgeFallbackValues(field);
+        updateBuildAvailability(field.closest("form"));
         if (
           field.dataset.renderer !== "radio" ||
           field.dataset.providerBacked === "true" ||

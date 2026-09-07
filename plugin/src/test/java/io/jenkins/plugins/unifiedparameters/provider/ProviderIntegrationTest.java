@@ -10,6 +10,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
@@ -124,6 +125,25 @@ class ProviderIntegrationTest {
                 .getPage(project, "build?delay=0sec");
 
         assertEquals(0, loadCount.get());
+        assertTrue(page.asNormalizedText().contains("Loading options..."));
+    }
+
+    @Test
+    void providerBackedBuildFormKeepsBuildButtonInInitialMarkup(JenkinsRule jenkins) throws Exception {
+        StaticProviderDefinition provider = new StaticProviderDefinition("button-gated");
+        provider.setOptions(List.of(new Option("one")));
+        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        FreeStyleProject project = providerJob(jenkins, "provider-button-gated");
+        UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
+                project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
+        definition.setProviderId("button-gated");
+
+        HtmlPage page = (HtmlPage) jenkins.createWebClient()
+                .withJavaScriptEnabled(false)
+                .withThrowExceptionOnFailingStatusCode(false)
+                .getPage(project, "build?delay=0sec");
+
+        assertEquals(1, page.getByXPath("//button[normalize-space()='Build']").size());
         assertTrue(page.asNormalizedText().contains("Loading options..."));
     }
 
