@@ -16,6 +16,7 @@ import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.htmlunit.HttpMethod;
@@ -99,10 +100,31 @@ class ProviderIntegrationTest {
                 .getPage(project, "build?delay=0sec");
 
         assertTrue(page.asNormalizedText().contains("uses shared Provider dynamic"));
+        assertTrue(page.asNormalizedText().contains("Loading options..."));
         assertTrue(page.getByXPath("//button[normalize-space()='Build without JavaScript']")
                 .isEmpty());
         assertFalse(page.getByXPath("//input[@name='__unified_parameters_presence']")
                 .isEmpty());
+    }
+
+    @Test
+    void providerBackedBuildFormRendersBeforeProviderResolution(JenkinsRule jenkins) throws Exception {
+        AtomicInteger loadCount = new AtomicInteger();
+        UnifiedParametersGlobalConfiguration.get()
+                .setProviders(List.of(new CountingProvider("slow-dynamic", loadCount)));
+        FreeStyleProject project = jenkins.createFreeStyleProject("provider-form-loading");
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setProviderId("slow-dynamic");
+        definition.setDefaultMode("first");
+        project.addProperty(new ParametersDefinitionProperty(definition));
+
+        HtmlPage page = (HtmlPage) jenkins.createWebClient()
+                .withJavaScriptEnabled(false)
+                .withThrowExceptionOnFailingStatusCode(false)
+                .getPage(project, "build?delay=0sec");
+
+        assertEquals(0, loadCount.get());
+        assertTrue(page.asNormalizedText().contains("Loading options..."));
     }
 
     private static FreeStyleProject providerJob(JenkinsRule jenkins, String name) throws Exception {
@@ -119,6 +141,26 @@ class ProviderIntegrationTest {
         }
         project.addProperty(new ParametersDefinitionProperty(definition));
         return project;
+    }
+
+    private static final class CountingProvider extends SharedProviderDefinition {
+        private transient AtomicInteger loadCount;
+
+        CountingProvider(String id, AtomicInteger loadCount) {
+            super(id);
+            this.loadCount = loadCount;
+        }
+
+        @Override
+        public List<Option> load(ProviderLoadContext context) {
+            loadCount.incrementAndGet();
+            return List.of(new Option("one"));
+        }
+
+        @Override
+        protected String providerFingerprint() {
+            return "counting-provider";
+        }
     }
 
     private static void assertCanonical(FreeStyleProject project, List<String> expected) {
