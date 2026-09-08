@@ -190,12 +190,12 @@
     }
   }
 
-  function createSearch(statusId) {
+  function createSearch(field, statusId) {
     var input = document.createElement("input");
     input.type = "search";
     input.className = "jenkins-input unified-parameters-search";
-    input.placeholder = "Search label, value, description, group, or tag";
-    input.setAttribute("aria-label", "Search options");
+    input.placeholder = localized(field, "searchPlaceholder", "Search label, value, description, group, or tag");
+    input.setAttribute("aria-label", localized(field, "searchLabel", "Search options"));
     input.setAttribute("aria-describedby", statusId);
     return input;
   }
@@ -352,9 +352,7 @@
     enhanced.className = "unified-parameters-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
-    var search = createSearch(status.id);
-    search.placeholder = localized(field, "searchPlaceholder", search.placeholder);
-    search.setAttribute("aria-label", localized(field, "searchLabel", "Search options"));
+    var search = createSearch(field, status.id);
     var select = document.createElement("select");
     select.className = "jenkins-select__input unified-parameters-native-list";
     select.setAttribute(
@@ -383,7 +381,7 @@
       if (field.dataset.required !== "true") {
         var none = document.createElement("option");
         none.value = "";
-        none.textContent = "None";
+        none.textContent = localized(field, "noneOption", "None");
         none.selected = selected.size === 0;
         select.appendChild(none);
       }
@@ -394,7 +392,7 @@
         if (!known) {
           var custom = document.createElement("option");
           custom.value = value;
-          custom.textContent = value + " (custom)";
+          custom.textContent = formatMessage(localized(field, "customOption", "{0} (custom)"), [value]);
           custom.selected = true;
           select.appendChild(custom);
         }
@@ -410,8 +408,11 @@
       });
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
-          ? matches.length + " matches; showing " + MAX_RENDERED_OPTIONS + ". Refine the search."
-          : "匹配 " + matches.length + " 项。";
+          ? formatMessage(
+              localized(field, "limitedSingleMatches", "{0} matches; showing {1}. Refine the search."),
+              [matches.length, MAX_RENDERED_OPTIONS],
+            )
+          : formatMessage(localized(field, "matchesSummary", "{0} matching options."), [matches.length]);
       if (customButton) {
         var candidate = search.value;
         var maximum = Number(field.dataset.customMaxLength || "256");
@@ -427,11 +428,11 @@
         }
         customButton.disabled = !valid;
         customButton.textContent = candidate
-          ? 'Use custom value "' + candidate + '"'
-          : "Enter a custom value";
+          ? formatMessage(localized(field, "useCustomValue", 'Use custom value "{0}"'), [candidate])
+          : localized(field, "enterCustomValue", "Enter a custom value");
         customButton.title = valid
-          ? "Create a custom value distinct from the configured options."
-          : "The custom value does not satisfy the configured policy.";
+          ? localized(field, "customValueHint", "Create a custom value distinct from the configured options.")
+          : localized(field, "customValueInvalid", "The custom value does not satisfy the configured policy.");
       }
     }
 
@@ -470,7 +471,7 @@
       customButton.className = "jenkins-button unified-parameters-custom-value";
       customButton.setAttribute(
         "aria-label",
-        "Use search text as a custom value",
+        localized(field, "useSearchAsCustomValue", "Use search text as a custom value"),
       );
       customButton.addEventListener("click", function () {
         if (customButton.disabled) {
@@ -509,7 +510,7 @@
     enhanced.className = "unified-parameters-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
-    var search = createSearch(status.id);
+    var search = createSearch(field, status.id);
     var select = document.createElement("select");
     select.multiple = true;
     select.size = Math.min(10, Math.max(4, options.length));
@@ -582,7 +583,7 @@
     enhanced.className = "unified-parameters-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
-    var search = createSearch(status.id);
+    var search = createSearch(field, status.id);
     var chips = document.createElement("div");
     chips.className = "unified-parameters-chips";
     chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));

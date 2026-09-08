@@ -32,7 +32,16 @@
          data-up-visible-selection-inverted="${it.uiVisibleSelectionInverted}"
          data-up-visible-selection-cleared="${it.uiVisibleSelectionCleared}"
          data-up-all-selections-cleared="${it.uiAllSelectionsCleared}"
-         data-up-custom-value-selected="${it.uiCustomValueSelected}">
+         data-up-custom-value-selected="${it.uiCustomValueSelected}"
+         data-up-matches-summary="${it.uiMatchesSummary}"
+         data-up-limited-single-matches="${it.uiLimitedSingleMatches}"
+         data-up-none-option="${it.uiNoneOption}"
+         data-up-custom-option="${it.uiCustomOption}"
+         data-up-use-custom-value="${it.uiUseCustomValue}"
+         data-up-enter-custom-value="${it.uiEnterCustomValue}"
+         data-up-custom-value-hint="${it.uiCustomValueHint}"
+         data-up-custom-value-invalid="${it.uiCustomValueInvalid}"
+         data-up-use-search-as-custom-value="${it.uiUseSearchAsCustomValue}">
       <input type="hidden" name="name" value="${it.name}" />
       <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
       <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />

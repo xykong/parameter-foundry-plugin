@@ -117,6 +117,42 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.CustomValueSelected("{0}");
     }
 
+    public String getUiMatchesSummary() {
+        return Messages.MatchesSummary("{0}");
+    }
+
+    public String getUiLimitedSingleMatches() {
+        return Messages.LimitedSingleMatches("{0}", "{1}");
+    }
+
+    public String getUiNoneOption() {
+        return Messages.NoneOption();
+    }
+
+    public String getUiCustomOption() {
+        return Messages.CustomOption("{0}");
+    }
+
+    public String getUiUseCustomValue() {
+        return Messages.UseCustomValue("{0}");
+    }
+
+    public String getUiEnterCustomValue() {
+        return Messages.EnterCustomValue();
+    }
+
+    public String getUiCustomValueHint() {
+        return Messages.CustomValueHint();
+    }
+
+    public String getUiCustomValueInvalid() {
+        return Messages.CustomValueInvalid();
+    }
+
+    public String getUiUseSearchAsCustomValue() {
+        return Messages.UseSearchAsCustomValue();
+    }
+
     public List<Option> getChoices() {
         return choices == null ? List.of() : choices;
     }
