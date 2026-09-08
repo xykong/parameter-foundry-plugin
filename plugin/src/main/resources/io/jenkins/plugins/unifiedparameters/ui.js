@@ -751,24 +751,41 @@
 
     toolbar.appendChild(
       createToolbarButton(localized(field, "selectVisible", "Select visible"), function () {
-        changeSelection(filtered(), "select", "Visible selection updated.");
+        changeSelection(
+          filtered(),
+          "select",
+          localized(field, "visibleSelectionUpdated", "Visible selection updated."),
+        );
       }),
     );
     toolbar.appendChild(
       createToolbarButton(localized(field, "invertVisible", "Invert visible"), function () {
-        changeSelection(filtered(), "invert", "Visible selection inverted.");
+        changeSelection(
+          filtered(),
+          "invert",
+          localized(field, "visibleSelectionInverted", "Visible selection inverted."),
+        );
       }),
     );
     toolbar.appendChild(
       createToolbarButton(localized(field, "clearVisible", "Clear visible"), function () {
-        changeSelection(filtered(), "clear", "Visible selection cleared.");
+        changeSelection(
+          filtered(),
+          "clear",
+          localized(field, "visibleSelectionCleared", "Visible selection cleared."),
+        );
       }),
     );
     toolbar.appendChild(
       createToolbarButton(localized(field, "clearAll", "Clear all"), function () {
         var affected = selected.size;
         selected.clear();
-        sync(true, "All selections cleared. " + affected + " changed.");
+        sync(
+          true,
+          formatMessage(localized(field, "allSelectionsCleared", "All selections cleared. {0} changed."), [
+            affected,
+          ]),
+        );
       }),
     );
 
