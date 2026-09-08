@@ -209,6 +209,17 @@
     return status;
   }
 
+  function localized(field, key, fallback) {
+    var attribute = "up" + key.charAt(0).toUpperCase() + key.slice(1);
+    return field.dataset[attribute] || fallback;
+  }
+
+  function selectedSummary(field, selected, total) {
+    return localized(field, "selectionSummary", "Selected {0} of {1}")
+      .replace("{0}", selected)
+      .replace("{1}", total);
+  }
+
   function disableFallback(field) {
     var fallback = field.querySelector("[data-up-fallback]");
     Array.prototype.forEach.call(fallback.querySelectorAll("input, select"), function (control) {
@@ -336,6 +347,8 @@
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
     var search = createSearch(status.id);
+    search.placeholder = localized(field, "searchPlaceholder", search.placeholder);
+    search.setAttribute("aria-label", localized(field, "searchLabel", "Search options"));
     var select = document.createElement("select");
     select.className = "jenkins-select__input unified-parameters-native-list";
     select.setAttribute(
@@ -563,14 +576,14 @@
     var search = createSearch(status.id);
     var chips = document.createElement("div");
     chips.className = "unified-parameters-chips";
-    chips.setAttribute("aria-label", "Selected options");
+    chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
     var toolbar = document.createElement("div");
     toolbar.className = "unified-parameters-toolbar";
     toolbar.setAttribute("aria-label", "Selection actions");
     var list = document.createElement("div");
     list.id = uniqueId("up-options");
     list.className = "unified-parameters-options";
-    list.setAttribute("aria-label", "Available options");
+    list.setAttribute("aria-label", localized(field, "availableOptionsLabel", "Available options"));
     search.setAttribute("aria-controls", list.id);
 
     function filtered() {
@@ -609,11 +622,7 @@
     function updateStatus(message) {
       status.textContent =
         (message ? message + " " : "") +
-        "已选择 " +
-        selected.size +
-        " / " +
-        options.length +
-        " 项";
+        selectedSummary(field, selected.size, options.length);
     }
 
     function changeSelection(values, mode, message) {
@@ -689,7 +698,7 @@
                 } else {
                   selected.delete(value);
                 }
-                sync(false, "已更新选择。");
+                sync(false, localized(field, "selectionUpdated", "Selection updated."));
               }),
             );
           });
@@ -711,7 +720,7 @@
             " 项。请缩小搜索范围。已选择 " +
             selected.size +
             " 项。"
-          : "已选择 " + selected.size + " / " + options.length + " 项";
+          : selectedSummary(field, selected.size, options.length);
     }
 
     function sync(rerender, message) {

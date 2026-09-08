@@ -12,7 +12,13 @@
          data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}"
          data-allow-custom="${it.allowCustomValue}"
          data-custom-pattern="${it.customValuePattern}"
-         data-custom-max-length="${it.customValueMaxLength}">
+         data-custom-max-length="${it.customValueMaxLength}"
+         data-up-search-placeholder="${%SearchOptions}"
+         data-up-search-label="${%SearchOptions}"
+         data-up-selected-options-label="${%SelectedOptions}"
+         data-up-available-options-label="${%AvailableOptions}"
+         data-up-selection-summary="${%SelectedSummary}"
+         data-up-selection-updated="${%SelectionUpdated}">
       <input type="hidden" name="name" value="${it.name}" />
       <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
       <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />
