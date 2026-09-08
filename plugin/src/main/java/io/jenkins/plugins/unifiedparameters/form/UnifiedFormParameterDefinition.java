@@ -6,6 +6,7 @@ import hudson.cli.CLICommand;
 import hudson.model.Descriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
+import io.jenkins.plugins.unifiedparameters.Messages;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import java.io.IOException;
@@ -37,6 +38,18 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     @DataBoundConstructor
     public UnifiedFormParameterDefinition(String name) {
         super(name);
+    }
+
+    public String getUiSchemaLoadError() {
+        return Messages.FormSchemaLoadError();
+    }
+
+    public String getUiValueSynchronized() {
+        return Messages.FormValueSynchronized();
+    }
+
+    public String getUiNestedJsonInvalid() {
+        return Messages.NestedJsonInvalid("{0}");
     }
 
     public List<FormField> getFields() {

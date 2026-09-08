@@ -7,7 +7,10 @@
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="up-form" data-up-form="true"
-         data-parameter-name="${it.name}" data-renderer="${it.renderer}">
+         data-parameter-name="${it.name}" data-renderer="${it.renderer}"
+         data-up-schema-load-error="${it.uiSchemaLoadError}"
+         data-up-value-synchronized="${it.uiValueSynchronized}"
+         data-up-nested-json-invalid="${it.uiNestedJsonInvalid}">
       <input type="hidden" name="name" value="${it.name}" />
       <textarea data-up-form-schema="true" hidden="hidden">${it.schemaJson}</textarea>
       <div data-up-form-fallback="true">

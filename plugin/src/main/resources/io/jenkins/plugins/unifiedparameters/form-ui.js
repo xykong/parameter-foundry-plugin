@@ -20,6 +20,10 @@
     }
   }
 
+  function message(form, name, fallback) {
+    return form.dataset["up" + name.charAt(0).toUpperCase() + name.slice(1)] || fallback;
+  }
+
   function initialValue(field) {
     if (field.defaultValue == null) {
       if (field.type === "boolean") {
@@ -56,7 +60,7 @@
     var status = form.querySelector(".up-form-status");
     var schema = parseJson(schemaSource.value, null);
     if (!schema || !Array.isArray(schema.fields)) {
-      status.textContent = "The form schema could not be loaded.";
+      status.textContent = message(form, "schemaLoadError", "The form schema could not be loaded.");
       status.setAttribute("role", "alert");
       return;
     }
@@ -74,7 +78,7 @@
         form.appendChild(hidden);
       }
       hidden.value = encoded;
-      status.textContent = "Form value is synchronized as canonical JSON.";
+      status.textContent = message(form, "valueSynchronized", "Form value is synchronized as canonical JSON.");
       applyConditions();
     }
 
@@ -142,7 +146,7 @@
             synchronize();
           } else {
             control.setAttribute("aria-invalid", "true");
-            status.textContent = "Nested JSON is invalid for " + field.name + ".";
+            status.textContent = message(form, "nestedJsonInvalid", "Nested JSON is invalid for {0}.").replace("{0}", field.name);
           }
         });
       } else {
