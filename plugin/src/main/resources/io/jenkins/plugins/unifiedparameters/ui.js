@@ -480,7 +480,10 @@
         selected.add(search.value);
         setSubmittedValues(field, selected, true);
         render();
-        status.textContent = '已选择自定义值 "' + search.value + '"。';
+        status.textContent = formatMessage(
+          localized(field, "customValueSelected", 'Custom value "{0}" selected.'),
+          [search.value],
+        );
       });
       enhanced.appendChild(customButton);
     }
@@ -536,7 +539,7 @@
         item.title = option.disabledReason || option.description || "";
         select.appendChild(item);
       });
-      status.textContent = "已选择 " + selected.size + " / " + options.length + " 项";
+      status.textContent = selectedSummary(field, selected.size, options.length);
     }
 
     search.addEventListener("input", render);
@@ -556,7 +559,7 @@
         }
       });
       setSubmittedValues(field, selected, true);
-      status.textContent = "已选择 " + selected.size + " / " + options.length + " 项";
+      status.textContent = selectedSummary(field, selected.size, options.length);
     });
     enhanced.appendChild(search);
     enhanced.appendChild(select);

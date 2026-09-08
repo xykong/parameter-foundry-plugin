@@ -113,6 +113,10 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.AllSelectionsCleared("{0}");
     }
 
+    public String getUiCustomValueSelected() {
+        return Messages.CustomValueSelected("{0}");
+    }
+
     public List<Option> getChoices() {
         return choices == null ? List.of() : choices;
     }
