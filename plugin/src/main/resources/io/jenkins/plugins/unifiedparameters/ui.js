@@ -609,10 +609,11 @@
     function updateStatus(message) {
       status.textContent =
         (message ? message + " " : "") +
-        filtered().length +
-        " option(s), " +
+        "已选择 " +
         selected.size +
-        " selected.";
+        " / " +
+        options.length +
+        " 项";
     }
 
     function changeSelection(values, mode, message) {
@@ -637,7 +638,7 @@
           affected += 1;
         }
       });
-      sync(true, message + " " + affected + " changed; " + skipped + " disabled skipped.");
+      sync(true, message + " 已变更 " + affected + " 项，跳过禁用项 " + skipped + " 项。");
     }
 
     function groupHeader(groupName, groupOptions) {
@@ -688,7 +689,7 @@
                 } else {
                   selected.delete(value);
                 }
-                sync(false, "Selection updated.");
+                sync(false, "已更新选择。");
               }),
             );
           });

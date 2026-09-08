@@ -13,12 +13,23 @@
   margin-block: 0.25rem;
 }
 
-.unified-parameters-fallback-warning,
 .unified-parameters-status {
+  padding: 0.15rem 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--up-muted);
+  font-size: 0.8rem;
+}
+
+.unified-parameters-fallback-warning {
   padding: 0.75rem;
   border: 1px solid var(--up-border);
   border-radius: 0.5rem;
   color: var(--up-muted);
+}
+
+.unified-parameters-status {
+  min-height: 1.2rem;
 }
 
 .unified-parameters-enhanced {
@@ -123,9 +134,14 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: start;
-  min-height: 2.5rem;
-  padding: 0.45rem 0.65rem;
-  border-block-end: 1px solid color-mix(in srgb, var(--up-border) 60%, transparent);
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  border-block-end: 1px solid color-mix(in srgb, var(--up-border) 85%, transparent);
+  transition: background-color 120ms ease;
+}
+
+.unified-parameters-option:hover {
+  background: color-mix(in srgb, var(--up-accent) 7%, transparent);
 }
 
 .unified-parameters-option label {
