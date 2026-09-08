@@ -392,7 +392,7 @@
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
           ? matches.length + " matches; showing " + MAX_RENDERED_OPTIONS + ". Refine the search."
-          : matches.length + " option(s).";
+          : "匹配 " + matches.length + " 项。";
       if (customButton) {
         var candidate = search.value;
         var maximum = Number(field.dataset.customMaxLength || "256");
@@ -461,7 +461,7 @@
         selected.add(search.value);
         setSubmittedValues(field, selected, true);
         render();
-        status.textContent = 'Custom value "' + search.value + '" selected.';
+        status.textContent = '已选择自定义值 "' + search.value + '"。';
       });
       enhanced.appendChild(customButton);
     }
@@ -517,7 +517,7 @@
         item.title = option.disabledReason || option.description || "";
         select.appendChild(item);
       });
-      status.textContent = matches.length + " option(s), " + selected.size + " selected.";
+      status.textContent = "已选择 " + selected.size + " / " + options.length + " 项";
     }
 
     search.addEventListener("input", render);
@@ -537,7 +537,7 @@
         }
       });
       setSubmittedValues(field, selected, true);
-      status.textContent = filtered().length + " option(s), " + selected.size + " selected.";
+      status.textContent = "已选择 " + selected.size + " / " + options.length + " 项";
     });
     enhanced.appendChild(search);
     enhanced.appendChild(select);
@@ -704,13 +704,14 @@
       }
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
-          ? matches.length +
-            " matches; showing " +
+          ? "匹配 " +
+            matches.length +
+            " 项，当前显示前 " +
             MAX_RENDERED_OPTIONS +
-            ". Refine the search to reach other options. " +
+            " 项。请缩小搜索范围。已选择 " +
             selected.size +
-            " selected."
-          : matches.length + " option(s), " + selected.size + " selected.";
+            " 项。"
+          : "已选择 " + selected.size + " / " + options.length + " 项";
     }
 
     function sync(rerender, message) {
