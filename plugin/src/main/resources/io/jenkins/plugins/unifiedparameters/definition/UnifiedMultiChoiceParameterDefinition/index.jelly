@@ -15,7 +15,16 @@
          data-up-selected-options-label="${it.uiSelectedOptionsLabel}"
          data-up-available-options-label="${it.uiAvailableOptionsLabel}"
          data-up-selection-summary="${it.uiSelectionSummaryTemplate}"
-         data-up-selection-updated="${it.uiSelectionUpdated}">
+         data-up-selection-updated="${it.uiSelectionUpdated}"
+         data-up-select-group="${it.uiSelectGroup}"
+         data-up-group-selection-updated="${it.uiGroupSelectionUpdated}"
+         data-up-selection-changed="${it.uiSelectionChanged}"
+         data-up-removed="${it.uiRemovedTemplate}"
+         data-up-no-options-match="${it.uiNoOptionsMatch}"
+         data-up-select-visible="${it.uiSelectVisible}"
+         data-up-invert-visible="${it.uiInvertVisible}"
+         data-up-clear-visible="${it.uiClearVisible}"
+         data-up-clear-all="${it.uiClearAll}">
       <input type="hidden" name="name" value="${it.name}" />
       <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
       <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />

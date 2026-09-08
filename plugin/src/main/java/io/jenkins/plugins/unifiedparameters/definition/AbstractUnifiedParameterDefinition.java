@@ -61,6 +61,42 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.SelectionUpdated();
     }
 
+    public String getUiSelectGroup() {
+        return Messages.SelectGroup();
+    }
+
+    public String getUiGroupSelectionUpdated() {
+        return Messages.GroupSelectionUpdated();
+    }
+
+    public String getUiSelectionChanged() {
+        return Messages.SelectionChanged("{0}", "{1}");
+    }
+
+    public String getUiRemovedTemplate() {
+        return Messages.Removed("{0}");
+    }
+
+    public String getUiNoOptionsMatch() {
+        return Messages.NoOptionsMatch();
+    }
+
+    public String getUiSelectVisible() {
+        return Messages.SelectVisible();
+    }
+
+    public String getUiInvertVisible() {
+        return Messages.InvertVisible();
+    }
+
+    public String getUiClearVisible() {
+        return Messages.ClearVisible();
+    }
+
+    public String getUiClearAll() {
+        return Messages.ClearAll();
+    }
+
     public List<Option> getChoices() {
         return choices == null ? List.of() : choices;
     }

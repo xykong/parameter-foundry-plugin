@@ -220,6 +220,12 @@
       .replace("{1}", total);
   }
 
+  function formatMessage(template, values) {
+    return values.reduce(function (result, value, index) {
+      return result.replace("{" + index + "}", value);
+    }, template);
+  }
+
   function disableFallback(field) {
     var fallback = field.querySelector("[data-up-fallback]");
     Array.prototype.forEach.call(fallback.querySelectorAll("input, select"), function (control) {
@@ -612,7 +618,7 @@
         remove.setAttribute("aria-label", "Remove " + caption);
         remove.addEventListener("click", function () {
           selected.delete(value);
-          sync(true, "Removed " + caption + ".");
+          sync(true, formatMessage(localized(field, "removed", "Removed {0}."), [caption]));
         });
         chip.appendChild(remove);
         chips.appendChild(chip);
@@ -647,7 +653,13 @@
           affected += 1;
         }
       });
-      sync(true, message + " 已变更 " + affected + " 项，跳过禁用项 " + skipped + " 项。");
+      sync(
+        true,
+        formatMessage(localized(field, "selectionChanged", "{0} changed; {1} disabled skipped."), [
+          affected,
+          skipped,
+        ]),
+      );
     }
 
     function groupHeader(groupName, groupOptions) {
@@ -663,8 +675,8 @@
       });
       collapse.className = "unified-parameters-group-toggle";
       collapse.setAttribute("aria-expanded", String(!collapsedGroups.has(groupName)));
-      var selectGroup = createToolbarButton("Select group", function () {
-        changeSelection(groupOptions, "select", "Group selection updated.");
+      var selectGroup = createToolbarButton(localized(field, "selectGroup", "Select group"), function () {
+        changeSelection(groupOptions, "select", localized(field, "groupSelectionUpdated", "Group selection updated."));
       });
       selectGroup.className = "jenkins-button unified-parameters-group-select";
       heading.appendChild(collapse);
@@ -708,18 +720,19 @@
       if (matches.length === 0) {
         var empty = document.createElement("p");
         empty.className = "unified-parameters-empty";
-        empty.textContent = "No options match this search.";
+        empty.textContent = localized(field, "noOptionsMatch", "No options match this search.");
         list.appendChild(empty);
       }
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
-          ? "匹配 " +
-            matches.length +
-            " 项，当前显示前 " +
-            MAX_RENDERED_OPTIONS +
-            " 项。请缩小搜索范围。已选择 " +
-            selected.size +
-            " 项。"
+          ? formatMessage(
+              localized(
+                field,
+                "limitedMatches",
+                "{0} matches; showing {1}. Refine the search. {2} selected.",
+              ),
+              [matches.length, MAX_RENDERED_OPTIONS, selected.size],
+            )
           : selectedSummary(field, selected.size, options.length);
     }
 
@@ -737,22 +750,22 @@
     }
 
     toolbar.appendChild(
-      createToolbarButton("Select visible", function () {
+      createToolbarButton(localized(field, "selectVisible", "Select visible"), function () {
         changeSelection(filtered(), "select", "Visible selection updated.");
       }),
     );
     toolbar.appendChild(
-      createToolbarButton("Invert visible", function () {
+      createToolbarButton(localized(field, "invertVisible", "Invert visible"), function () {
         changeSelection(filtered(), "invert", "Visible selection inverted.");
       }),
     );
     toolbar.appendChild(
-      createToolbarButton("Clear visible", function () {
+      createToolbarButton(localized(field, "clearVisible", "Clear visible"), function () {
         changeSelection(filtered(), "clear", "Visible selection cleared.");
       }),
     );
     toolbar.appendChild(
-      createToolbarButton("Clear all", function () {
+      createToolbarButton(localized(field, "clearAll", "Clear all"), function () {
         var affected = selected.size;
         selected.clear();
         sync(true, "All selections cleared. " + affected + " changed.");
@@ -765,7 +778,7 @@
         var values = sortedSetValues(selected);
         var removed = values[values.length - 1];
         selected.delete(removed);
-        sync(true, "Removed " + removed + ".");
+        sync(true, formatMessage(localized(field, "removed", "Removed {0}."), [removed]));
         event.preventDefault();
       } else if (event.key === "Escape" && search.value) {
         search.value = "";
