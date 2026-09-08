@@ -14,6 +14,7 @@
          data-up-search-label="${it.uiSearchLabel}"
          data-up-selected-options-label="${it.uiSelectedOptionsLabel}"
          data-up-available-options-label="${it.uiAvailableOptionsLabel}"
+         data-up-limited-matches="${it.uiLimitedMatches}"
          data-up-selection-summary="${it.uiSelectionSummaryTemplate}"
          data-up-selection-updated="${it.uiSelectionUpdated}"
          data-up-select-group="${it.uiSelectGroup}"

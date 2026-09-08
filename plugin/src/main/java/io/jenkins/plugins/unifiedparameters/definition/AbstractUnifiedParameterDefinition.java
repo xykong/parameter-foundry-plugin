@@ -125,6 +125,10 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.LimitedSingleMatches("{0}", "{1}");
     }
 
+    public String getUiLimitedMatches() {
+        return Messages.LimitedMatches("{0}", "{1}", "{2}");
+    }
+
     public String getUiNoneOption() {
         return Messages.NoneOption();
     }
