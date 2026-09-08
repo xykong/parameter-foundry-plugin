@@ -3,6 +3,7 @@ package io.jenkins.plugins.unifiedparameters.definition;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.Messages;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
@@ -34,6 +35,30 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
 
     protected AbstractUnifiedParameterDefinition(String name) {
         super(name);
+    }
+
+    public String getUiSearchPlaceholder() {
+        return Messages.SearchOptions();
+    }
+
+    public String getUiSearchLabel() {
+        return Messages.SearchOptions();
+    }
+
+    public String getUiSelectedOptionsLabel() {
+        return Messages.SelectedOptions();
+    }
+
+    public String getUiAvailableOptionsLabel() {
+        return Messages.AvailableOptions();
+    }
+
+    public String getUiSelectionSummaryTemplate() {
+        return Messages.SelectedSummaryTemplate("{0}", "{1}");
+    }
+
+    public String getUiSelectionUpdated() {
+        return Messages.SelectionUpdated();
     }
 
     public List<Option> getChoices() {
