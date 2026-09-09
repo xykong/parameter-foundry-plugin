@@ -231,12 +231,26 @@
     if ((navigator.language || "").toLowerCase().indexOf("zh") !== 0) {
       return message;
     }
-    return {
+    var translations = {
+      "Dependency field is unavailable: ": "依赖参数不可用：",
+      "Request failed with ": "请求失败，状态码：",
       "Reactive dependencies require a shared Provider":
         "Reactive 依赖必须配置共享 Provider",
       "Renderer is not valid for multiple choice: table":
         "多选参数不支持当前渲染器：table",
-    }[message] || message;
+      "Details": "详情",
+      "Machine value: ": "机器值：",
+      "Unavailable: ": "不可用：",
+    };
+    if (translations[message]) {
+      return translations[message];
+    }
+    for (var prefix in translations) {
+      if (prefix.endsWith(": ") && message.indexOf(prefix) === 0) {
+        return translations[prefix] + message.slice(prefix.length);
+      }
+    }
+    return message;
   }
 
   function parseJson(value, fallback) {
@@ -376,15 +390,16 @@
     sync(false);
   }
 
-  function detailsFor(option, detailsId) {
+  function detailsFor(option, detailsId, field) {
     var details = document.createElement("details");
     details.id = detailsId;
     details.className = "unified-parameters-details";
     var summary = document.createElement("summary");
-    summary.textContent = "Details";
+    summary.textContent = localized(field, "details", "Details");
     details.appendChild(summary);
     var machineValue = document.createElement("span");
-    machineValue.textContent = "Machine value: " + option.value;
+    machineValue.textContent =
+      localized(field, "machineValue", "Machine value: ") + option.value;
     details.appendChild(machineValue);
     if (option.description) {
       var description = document.createElement("span");
@@ -429,7 +444,7 @@
     label.appendChild(copy);
     row.appendChild(label);
     if (option.description || option.disabledReason || option.label !== option.value) {
-      row.appendChild(detailsFor(option, detailsId));
+      row.appendChild(detailsFor(option, detailsId, field));
     }
     return row;
   }

@@ -24,6 +24,10 @@
     return form.dataset["up" + name.charAt(0).toUpperCase() + name.slice(1)] || fallback;
   }
 
+  function errorMessage(text, zh) {
+    return (navigator.language || "").toLowerCase().indexOf("zh") === 0 ? zh : text;
+  }
+
   function initialValue(field) {
     if (field.defaultValue == null) {
       if (field.type === "boolean") {
@@ -60,7 +64,7 @@
     var status = form.querySelector(".up-form-status");
     var schema = parseJson(schemaSource.value, null);
     if (!schema || !Array.isArray(schema.fields)) {
-      status.textContent = message(form, "schemaLoadError", "The form schema could not be loaded.");
+      status.textContent = message(form, "schemaLoadError", errorMessage("The form schema could not be loaded.", "无法加载表单结构。"));
       status.setAttribute("role", "alert");
       return;
     }
@@ -78,7 +82,7 @@
         form.appendChild(hidden);
       }
       hidden.value = encoded;
-      status.textContent = message(form, "valueSynchronized", "Form value is synchronized as canonical JSON.");
+      status.textContent = message(form, "valueSynchronized", errorMessage("Form value is synchronized as canonical JSON.", "表单值已同步为标准 JSON。"));
       applyConditions();
     }
 

@@ -3,6 +3,10 @@
 
   var PREVIEW_LIMIT = 20;
 
+  function localized(text, zh) {
+    return (navigator.language || "").toLowerCase().indexOf("zh") === 0 ? zh : text;
+  }
+
   function headers() {
     var result = {"Content-Type": "application/json"};
     var name = document.head.dataset.crumbHeader;
@@ -296,16 +300,25 @@
     textarea.addEventListener("input", function () {
       imported = [];
       applyButton.disabled = true;
-      status.textContent = "Preview the edited input before applying it.";
+      status.textContent = localized(
+        "Preview the edited input before applying it.",
+        "应用前请先预览已编辑的输入。",
+      );
     });
 
     previewButton.addEventListener("click", function () {
       var endpoint = endpointFor(panel);
       if (!endpoint) {
-        status.textContent = "Unable to determine the protected import preview endpoint.";
+      status.textContent = localized(
+        "Unable to determine the protected import preview endpoint.",
+        "无法确定受保护的导入预览地址。",
+      );
         return;
       }
-      status.textContent = "Parsing import on the Jenkins controller...";
+      status.textContent = localized(
+        "Parsing import on the Jenkins controller...",
+        "正在 Jenkins 控制器上解析导入内容……",
+      );
       applyButton.disabled = true;
       fetch(endpoint, {
         method: "POST",
@@ -316,7 +329,10 @@
         .then(function (response) {
           return response.json().then(function (body) {
             if (!response.ok || !body.ok) {
-              throw new Error(body.message || "Import preview failed.");
+              throw new Error(
+                body.message ||
+                  localized("Import preview failed.", "导入预览失败。"),
+              );
             }
             imported = body.options;
             var changes = diff(currentOptions(panel), imported);
