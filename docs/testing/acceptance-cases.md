@@ -23,20 +23,20 @@ until every applicable column passes.
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
 | UP-AC-001 | UnifiedChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
-| UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Local E2E; production acceptance |
-| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Required on all applicable platforms |
+| UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Local E2E; production desktop Chromium 151 and Linux-agent build |
+| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Production desktop Chromium 151 and Linux-agent build; touch/manual rows pending |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
-| UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | Browser |
-| UP-AC-007 | Layout | Verify title is bold on the left, description is a bounded wrapping block on the right, and controls align under the description. | Desktop and mobile |
+| UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | English/Chinese production desktop verified; Japanese/Korean pending |
+| UP-AC-007 | Layout | Verify title is bold on the left, description is a bounded wrapping block on the right, and controls align under the description. | Desktop Chromium verified; mobile pending |
 | UP-AC-008 | Transport | Submit from UI, CLI, REST, Pipeline, Freestyle, and rebuild. Verify equivalent normalized values. | End to end |
-| UP-AC-009 | Migration | Preview and apply Active Choices, Extended Choice, File Parameter, and Git migrations. Preserve source jobs and verify target behavior. | Migration jobs |
+| UP-AC-009 | Migration | Preview and apply Active Choices, Extended Choice, File Parameter, and Git migrations. Preserve source jobs and verify target behavior. | Active Choices source/target production build verified; other sources pending |
 
 ## Platform and Device Cases
 
 | ID | Platform/device | Required checks | Status |
 | --- | --- | --- | --- |
-| UP-PLAT-001 | Chrome desktop, macOS | Full shared matrix, keyboard focus, localization, table layout | Pending current run |
+| UP-PLAT-001 | Chrome desktop, macOS | Full shared matrix, keyboard focus, localization, table layout | Passed 2026-09-10: Chromium 151, macOS, 1440x1000; agent build via CLI |
 | UP-PLAT-002 | Chrome desktop, Linux agent | Build submission, Pipeline/Freestyle values, provider refresh | Pending current run |
 | UP-PLAT-003 | Safari/iOS viewport | Responsive layout, table horizontal scroll, touch selection | Pending |
 | UP-PLAT-004 | Android Chrome viewport | Responsive layout, touch selection, validation visibility | Pending |
@@ -57,7 +57,7 @@ until every applicable column passes.
 - Fix: add safe JSON parsing and include `table` in the multiple-choice
   renderer allowlist.
 - Verification: local build and production plugin `0.2.5-SNAPSHOT`; matrix
-  case still requires a fresh browser run after subsequent UI changes.
+  case verified again with plugin `0.2.9-SNAPSHOT` on desktop Chromium.
 
 ### UP-ISSUE-002: Title and description layout
 
@@ -79,8 +79,6 @@ until every applicable column passes.
 - Verification: plugin `0.2.9-SNAPSHOT`; English fallback and Chinese browser
   checks required. Server-side error-code migration remains tracked work.
 
-## Recording Rule
-
 ### UP-ISSUE-004: Multi-choice enhancement failed after localization
 
 - Reproduction: open a multi-choice build form with option labels different
@@ -91,7 +89,10 @@ until every applicable column passes.
   `detailsFor`.
 - Regression: existing TARGETS browser interaction, chips, keyboard and rebuild
   assertions in `tools/e2e/run-e2e.py` exercise this path.
-- Verification: passed on 2026-09-10. `make e2e` succeeded and `mvn -B -ntp verify` passed with 179 tests.
+- Verification: passed on 2026-09-10. `make e2e` succeeded, `mvn -B -ntp verify`
+  passed with 179 tests, and the production matrix/migration pages rendered.
+
+## Recording Rule
 
 For every new failure, add a case or issue before changing code. Record the
 exact URL/job path only in local operational notes, not in committed files
