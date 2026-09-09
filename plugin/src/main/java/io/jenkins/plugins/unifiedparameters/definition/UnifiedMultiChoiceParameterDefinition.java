@@ -13,6 +13,7 @@ import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
 import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
 import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSubmission;
@@ -43,6 +44,16 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     private String standardApiInputMode = "repeated";
     private String delimiter = ",";
     private String selectedDisplay = "none";
+    private ChoiceMatrix table;
+
+    public ChoiceMatrix getTable() {
+        return table;
+    }
+
+    @DataBoundSetter
+    public void setTable(ChoiceMatrix table) {
+        this.table = table;
+    }
 
     public String getSelectedDisplay() {
         return selectedDisplay == null || selectedDisplay.isBlank() ? "none" : selectedDisplay;
@@ -254,6 +265,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
         copy.setDependsOn(getDependsOn());
         copy.setRenderer(getRenderer());
         copy.setSelectedDisplay(getSelectedDisplay());
+        copy.setTable(getTable());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValues(getDefaultValues());
         copy.setRequired(isRequired());

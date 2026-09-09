@@ -11,6 +11,7 @@ import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.form.FormEvaluationService;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -193,6 +194,10 @@ public final class DefinitionValidationService {
         if (!MULTI_SELECTED_DISPLAYS.contains(definition.getSelectedDisplay())) {
             errors.add("Selected display is not valid for multiple choice: " + definition.getSelectedDisplay());
         }
+        ChoiceMatrix table = definition.getTable();
+        if (table != null) {
+            validateMatrix(table, definition, errors);
+        }
         if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())) {
             errors.add("Unsupported standard API input mode: " + definition.getStandardApiInputMode());
         }
@@ -228,6 +233,35 @@ public final class DefinitionValidationService {
                         errors.add("Option contains the configured delimiter: " + option.getValue());
                     }
                 }
+            }
+        }
+    }
+
+    private static void validateMatrix(
+            ChoiceMatrix matrix, UnifiedMultiChoiceParameterDefinition definition, List<String> errors) {
+        if (matrix.getRows().isEmpty() || matrix.getColumns().isEmpty()) {
+            errors.add("Choice matrix requires at least one row and column");
+            return;
+        }
+        Set<String> rows = new HashSet<>();
+        matrix.getRows().forEach(row -> {
+            if (!rows.add(row.getValue())) {
+                errors.add("Duplicate matrix row value: " + row.getValue());
+            }
+        });
+        Set<String> columns = new HashSet<>();
+        matrix.getColumns().forEach(column -> {
+            if (!columns.add(column.getValue())) {
+                errors.add("Duplicate matrix column value: " + column.getValue());
+            }
+        });
+        Set<String> coordinates = new HashSet<>();
+        for (var cell : matrix.getCells()) {
+            if (!rows.contains(cell.getRow()) || !columns.contains(cell.getColumn())) {
+                errors.add("Matrix cell references an unknown row or column: " + cell.getValue());
+            }
+            if (!coordinates.add(cell.getRow() + "\u0000" + cell.getColumn())) {
+                errors.add("Duplicate matrix cell coordinate: " + cell.getRow() + "/" + cell.getColumn());
             }
         }
     }
