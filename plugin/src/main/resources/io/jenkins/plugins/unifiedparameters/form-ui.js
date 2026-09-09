@@ -85,6 +85,9 @@
     function fieldControl(field) {
       var wrapper = create("div", "up-form-field");
       wrapper.dataset.upFormField = field.name;
+      if (field.type === "boolean") {
+        wrapper.classList.add("up-form-field--boolean");
+      }
       var label = create("label", null, field.label || field.name);
       wrapper.appendChild(label);
       var control;

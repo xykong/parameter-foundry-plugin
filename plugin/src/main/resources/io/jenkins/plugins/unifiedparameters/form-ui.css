@@ -15,6 +15,23 @@
   min-width: 0;
 }
 
+.up-form-field--boolean {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.up-form-field--boolean > label {
+  order: 1;
+  margin: 0;
+}
+
+.up-form-field--boolean > input[type="checkbox"] {
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
 .up-form-field > label,
 .up-form-field > legend {
   font-weight: 650;
