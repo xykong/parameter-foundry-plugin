@@ -6,6 +6,37 @@
   gap: 0.75rem;
 }
 
+/* Keep the parameter title and description aligned without affecting other plugins. */
+.jenkins-form-item.unified-parameters-entry {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: start;
+}
+
+.unified-parameters-entry > .jenkins-form-label {
+  font-weight: 700;
+}
+
+.unified-parameters-entry > .jenkins-form-description {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.unified-parameters-entry > .setting-main,
+.unified-parameters-entry > .validation-error-area,
+.unified-parameters-entry > .jenkins-help {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  .jenkins-form-item.unified-parameters-entry {
+    grid-template-columns: 1fr;
+    row-gap: 0.25rem;
+  }
+}
+
 .unified-parameters-field label {
   display: flex;
   gap: 0.5rem;

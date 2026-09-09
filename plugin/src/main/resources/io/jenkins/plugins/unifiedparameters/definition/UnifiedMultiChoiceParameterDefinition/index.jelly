@@ -5,7 +5,7 @@
     <st:adjunct includes="${adjunct}"/>
   </j:forEach>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
-  <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+  <f:entry class="unified-parameters-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="unified-parameters-field" data-unified-parameter="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
          data-selected-display="${it.selectedDisplay}"
