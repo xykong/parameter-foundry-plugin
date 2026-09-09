@@ -476,7 +476,6 @@
     var customButton = null;
     var customValidation = null;
     if (searchable) {
-      select.size = 8;
       enhanced.appendChild(search);
     }
     var selected = new Set(initialValues);
@@ -515,6 +514,7 @@
         element.selected = selected.has(option.value);
         select.appendChild(element);
       });
+      select.size = Math.min(8, Math.max(1, select.options.length));
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
           ? formatMessage(
@@ -556,10 +556,6 @@
     }
 
     if (searchable) {
-      select.size = Math.min(
-        8,
-        Math.max(3, options.length + (field.dataset.required === "true" ? 0 : 1)),
-      );
       search.addEventListener("input", render);
       search.addEventListener("keydown", function (event) {
         if (event.key === "Escape" && search.value) {
@@ -640,7 +636,6 @@
     var search = createSearch(field, status.id);
     var select = document.createElement("select");
     select.multiple = true;
-    select.size = Math.min(10, Math.max(4, options.length));
     select.className = "jenkins-select__input unified-parameters-native-list";
     select.setAttribute(
       "aria-label",
@@ -667,6 +662,7 @@
         item.title = option.disabledReason || option.description || "";
         select.appendChild(item);
       });
+      select.size = Math.min(10, Math.max(1, select.options.length));
       status.textContent = selectedSummary(field, selected.size, options.length);
     }
 

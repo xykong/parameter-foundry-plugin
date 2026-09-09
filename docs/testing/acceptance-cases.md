@@ -100,8 +100,10 @@ until every applicable column passes.
   producing a very tall empty box.
 - Fix: remove the fixed minimum height and size the list from its actual
   rendered option count, capped at eight rows.
-- Regression: browser check must assert that a two-option search list remains
-  compact and that search/selection still works.
+- Regression: the E2E suite now asserts a two-option native list stays under
+  160 px while search/selection behavior continues to pass.
+- Verification: passed on 2026-09-10. `make e2e` succeeded and
+  `mvn -B -ntp verify` passed with 179 tests.
 
 ## Recording Rule
 

@@ -274,7 +274,7 @@
 
 .unified-parameters-native-list {
   width: min(100%, 38rem);
-  min-height: 12rem;
+  height: auto;
 }
 
 .up-no-javascript-submit {

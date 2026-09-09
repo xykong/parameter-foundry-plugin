@@ -402,6 +402,10 @@ async def accessibility_audit(page: Page) -> dict[str, object]:
 
 
 async def keyboard_and_interaction_checks(page: Page) -> None:
+    channel = page.locator('[data-parameter-name="CHANNEL"]')
+    channel_list = await channel.locator(".unified-parameters-native-list").bounding_box()
+    assert channel_list is not None and channel_list["height"] <= 160, channel_list
+
     release = page.locator('[data-parameter-name="RELEASE"]')
     release_search = release.locator(".unified-parameters-search")
     await release_search.fill("release-42")
