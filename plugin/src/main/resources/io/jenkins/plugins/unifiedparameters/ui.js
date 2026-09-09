@@ -420,7 +420,7 @@
     return details;
   }
 
-  function optionRow(option, selected, onChange) {
+  function optionRow(field, option, selected, onChange) {
     var row = document.createElement("div");
     row.className = "unified-parameters-option";
     row.setAttribute("aria-disabled", String(Boolean(option.disabled)));
@@ -838,7 +838,7 @@
         if (!collapsedGroups.has(groupName) || search.value) {
           groupOptions.forEach(function (option) {
             group.appendChild(
-              optionRow(option, selected, function (value, checked) {
+              optionRow(field, option, selected, function (value, checked) {
                 if (checked) {
                   selected.add(value);
                 } else {

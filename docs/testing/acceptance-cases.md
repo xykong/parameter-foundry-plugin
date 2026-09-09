@@ -81,6 +81,18 @@ until every applicable column passes.
 
 ## Recording Rule
 
+### UP-ISSUE-004: Multi-choice enhancement failed after localization
+
+- Reproduction: open a multi-choice build form with option labels different
+  from their values. Run `make e2e`, which waits for TARGETS to become interactive.
+- Actual: enhancement failed because `optionRow` used an undefined `field`
+  when calling `detailsFor`; the browser test timed out.
+- Fix: explicitly pass the parameter field into `optionRow` and then into
+  `detailsFor`.
+- Regression: existing TARGETS browser interaction, chips, keyboard and rebuild
+  assertions in `tools/e2e/run-e2e.py` exercise this path.
+- Verification: passed on 2026-09-10. `make e2e` succeeded and `mvn -B -ntp verify` passed with 179 tests.
+
 For every new failure, add a case or issue before changing code. Record the
 exact URL/job path only in local operational notes, not in committed files
 when it exposes private infrastructure. Update the verification column only
