@@ -92,6 +92,17 @@ until every applicable column passes.
 - Verification: passed on 2026-09-10. `make e2e` succeeded, `mvn -B -ntp verify`
   passed with 179 tests, and the production matrix/migration pages rendered.
 
+### UP-ISSUE-005: Single-choice search list was oversized
+
+- Reproduction: open a single-choice parameter that uses search/custom values
+  with only two matching options.
+- Actual: the native list had a forced minimum height and at least three rows,
+  producing a very tall empty box.
+- Fix: remove the fixed minimum height and size the list from its actual
+  rendered option count, capped at eight rows.
+- Regression: browser check must assert that a two-option search list remains
+  compact and that search/selection still works.
+
 ## Recording Rule
 
 For every new failure, add a case or issue before changing code. Record the
