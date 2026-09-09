@@ -39,6 +39,13 @@ changes, and organization-specific Job data do not belong in this repository.
 - Architecture decisions live in `docs/decisions/`.
 - Generated real-plugin screenshots live in `docs/ui-gallery/`.
 - UI Lab automation lives in `tools/ui-lab/`.
+- Acceptance cases and user-reported UI issues must be recorded in
+  `docs/testing/acceptance-cases.md`. Keep shared cross-platform cases
+  separate from platform/device-specific cases, and include reproduction
+  steps, expected behavior, actual behavior, fix, and verification status.
+- When adding or changing a test, update the index and platform coverage
+  matrix in `docs/testing/acceptance-cases.md`; do not rely only on generated
+  screenshots or CI output.
 
 ## Git
 
