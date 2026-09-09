@@ -624,7 +624,7 @@
 
     function renderChips() {
       removeChildren(chips);
-      if (field.dataset.renderer !== "chips") {
+      if (field.dataset.selectedDisplay !== "chips") {
         return;
       }
       sortedSetValues(selected).forEach(function (value) {
@@ -854,7 +854,7 @@
       event.preventDefault();
     });
 
-    if (field.dataset.renderer === "chips") {
+    if (field.dataset.selectedDisplay === "chips") {
       enhanced.appendChild(chips);
     }
     enhanced.appendChild(search);

@@ -42,7 +42,8 @@ class ConfigurationUiIntegrationTest {
 
         UnifiedMultiChoiceParameterDefinition multiple = new UnifiedMultiChoiceParameterDefinition("TARGETS");
         multiple.setChoices(List.of(new Option("web")));
-        multiple.setRenderer("chips");
+        multiple.setRenderer("checkbox");
+        multiple.setSelectedDisplay("chips");
         multiple.setDefaultMode("explicit");
         multiple.setDefaultValues(List.of("web"));
         multiple.setStandardApiInputMode("delimited");
@@ -69,6 +70,11 @@ class ConfigurationUiIntegrationTest {
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition",
                 "renderer",
+                "checkbox");
+        assertSelected(
+                page,
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition",
+                "selectedDisplay",
                 "chips");
         assertSelected(
                 page,

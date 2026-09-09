@@ -46,5 +46,7 @@ changes, and organization-specific Job data do not belong in this repository.
 - Commit completed, coherent work promptly after each logical milestone and
   relevant verification; do not accumulate a long development session into one
   large uncommitted change.
+- Every publish/release deployment must increment the plugin version in
+  `pom.xml`; never deploy a new release using the previous version number.
 - Do not push without explicit user authorization.
 - Do not rewrite or amend commits unless explicitly requested.

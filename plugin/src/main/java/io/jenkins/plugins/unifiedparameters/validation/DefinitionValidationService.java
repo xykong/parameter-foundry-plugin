@@ -21,7 +21,8 @@ public final class DefinitionValidationService {
 
     private static final Set<String> DEFAULT_MODES = Set.of("none", "first", "explicit");
     private static final Set<String> SINGLE_RENDERERS = Set.of("select", "searchable", "radio");
-    private static final Set<String> MULTI_RENDERERS = Set.of("list", "chips", "checkbox");
+    private static final Set<String> MULTI_RENDERERS = Set.of("list", "checkbox");
+    private static final Set<String> MULTI_SELECTED_DISPLAYS = Set.of("none", "chips");
     private static final Set<String> MULTI_API_MODES = Set.of("repeated", "json-array", "delimited");
     private static final Set<String> MULTI_EXPORT_MODES = Set.of("delimited", "json", "none");
 
@@ -188,6 +189,9 @@ public final class DefinitionValidationService {
                 && !TrustedRendererRegistry.isTrusted(
                         definition.getRenderer(), TrustedRendererRegistry.FAMILY_MULTI_CHOICE)) {
             errors.add("Renderer is not valid for multiple choice: " + definition.getRenderer());
+        }
+        if (!MULTI_SELECTED_DISPLAYS.contains(definition.getSelectedDisplay())) {
+            errors.add("Selected display is not valid for multiple choice: " + definition.getSelectedDisplay());
         }
         if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())) {
             errors.add("Unsupported standard API input mode: " + definition.getStandardApiInputMode());

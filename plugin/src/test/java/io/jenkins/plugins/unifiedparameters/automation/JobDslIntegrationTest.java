@@ -38,7 +38,8 @@ class JobDslIntegrationTest {
                             unifiedMultiChoice('TARGETS') {
                               option('android', 'Android')
                               option('ios', 'iOS')
-                              renderer('chips')
+                              renderer('checkbox')
+                              selectedDisplay('chips')
                               defaultValue('ios')
                               defaultValue('android')
                               selectionRange(1, 2)

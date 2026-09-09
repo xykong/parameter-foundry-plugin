@@ -130,6 +130,7 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
         private String providerId;
         private String description;
         private String renderer = "checkbox";
+        private String selectedDisplay = "none";
         private String defaultMode = "none";
         private boolean required;
         private int minimumSelections;
@@ -163,6 +164,10 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
 
         public void renderer(String renderer) {
             this.renderer = renderer;
+        }
+
+        public void selectedDisplay(String selectedDisplay) {
+            this.selectedDisplay = selectedDisplay;
         }
 
         public void defaultMode(String defaultMode) {
@@ -199,6 +204,7 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             definition.setProviderId(providerId);
             definition.setDependsOn(dependsOn);
             definition.setRenderer(renderer);
+            definition.setSelectedDisplay(selectedDisplay);
             definition.setDefaultMode(defaultMode);
             definition.setDefaultValues(defaultValues);
             definition.setRequired(required);

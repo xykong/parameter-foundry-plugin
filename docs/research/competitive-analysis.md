@@ -723,7 +723,8 @@ parameters {
         ],
         defaultMode: 'explicit',
         defaultValues: ['android', 'ios'],
-        renderer: 'chips',
+        renderer: 'checkbox',
+    selectedDisplay: 'chips',
         minSelections: 1
     )
 }

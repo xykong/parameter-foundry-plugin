@@ -42,6 +42,16 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     private String duplicatePolicy = "reject";
     private String standardApiInputMode = "repeated";
     private String delimiter = ",";
+    private String selectedDisplay = "none";
+
+    public String getSelectedDisplay() {
+        return selectedDisplay == null || selectedDisplay.isBlank() ? "none" : selectedDisplay;
+    }
+
+    @DataBoundSetter
+    public void setSelectedDisplay(String selectedDisplay) {
+        this.selectedDisplay = selectedDisplay;
+    }
 
     @DataBoundConstructor
     public UnifiedMultiChoiceParameterDefinition(String name) {
@@ -243,6 +253,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
         copy.setProviderId(getProviderId());
         copy.setDependsOn(getDependsOn());
         copy.setRenderer(getRenderer());
+        copy.setSelectedDisplay(getSelectedDisplay());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValues(getDefaultValues());
         copy.setRequired(isRequired());

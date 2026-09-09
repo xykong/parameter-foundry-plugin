@@ -8,6 +8,7 @@
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="unified-parameters-field" data-unified-parameter="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
+         data-selected-display="${it.selectedDisplay}"
          data-multiple="true" data-required="${it.required}" data-option-count="${it.optionCount}"
          data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}"
          data-up-search-placeholder="${it.uiSearchPlaceholder}"

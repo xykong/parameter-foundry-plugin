@@ -73,6 +73,7 @@ final class TypedParameterAdapterRegistry {
             schema.put("providerBacked", multiple.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(multiple.getDependsOn()));
             schema.put("renderer", multiple.getRenderer());
+            schema.put("selectedDisplay", multiple.getSelectedDisplay());
             schema.put("availableExternalRenderers", JSONArray.fromObject(multiple.getAvailableExternalRenderers()));
         } else if (definition instanceof UnifiedFormParameterDefinition form) {
             schema.put("outputMode", form.getOutputMode());

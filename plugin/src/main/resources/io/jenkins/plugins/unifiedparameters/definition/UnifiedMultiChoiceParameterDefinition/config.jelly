@@ -47,10 +47,15 @@
     <select class="jenkins-select__input" name="parameter.renderer">
       <option value="checkbox" selected="${instance.renderer == 'checkbox' ? 'selected' : null}">Checkbox group</option>
       <option value="list" selected="${instance.renderer == 'list' ? 'selected' : null}">Multi-select list</option>
-      <option value="chips" selected="${instance.renderer == 'chips' ? 'selected' : null}">Chips</option>
       <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
         <option value="${rendererId}" selected="${instance.renderer == rendererId ? 'selected' : null}">${rendererId}</option>
       </j:forEach>
+    </select>
+  </f:entry>
+  <f:entry title="Selected value display">
+    <select class="jenkins-select__input" name="parameter.selectedDisplay">
+      <option value="none" selected="${instance.selectedDisplay == 'none' ? 'selected' : null}">Hidden</option>
+      <option value="chips" selected="${instance.selectedDisplay == 'chips' ? 'selected' : null}">Chips</option>
     </select>
   </f:entry>
   <f:entry title="Default mode">

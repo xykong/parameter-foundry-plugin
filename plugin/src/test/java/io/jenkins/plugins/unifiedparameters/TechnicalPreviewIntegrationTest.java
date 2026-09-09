@@ -331,7 +331,8 @@ class TechnicalPreviewIntegrationTest {
                       choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
                       defaultMode: 'explicit',
                       defaultValues: ['web', 'android'],
-                      renderer: 'chips'
+                      renderer: 'checkbox',
+                      selectedDisplay: 'chips'
                     )
                   }
                   stages {
