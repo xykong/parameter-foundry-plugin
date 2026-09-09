@@ -226,6 +226,19 @@
     }, template);
   }
 
+  function localizedError(error) {
+    var message = error && error.message ? error.message : String(error);
+    if ((navigator.language || "").toLowerCase().indexOf("zh") !== 0) {
+      return message;
+    }
+    return {
+      "Reactive dependencies require a shared Provider":
+        "Reactive 依赖必须配置共享 Provider",
+      "Renderer is not valid for multiple choice: table":
+        "多选参数不支持当前渲染器：table",
+    }[message] || message;
+  }
+
   function parseJson(value, fallback) {
     try {
       return JSON.parse(value);
@@ -1092,8 +1105,8 @@
           field,
           preserveSelection
             ? "Options could not be refreshed; the visible selection is stale: " +
-                error.message
-            : "Options could not be enhanced: " + error.message,
+                localizedError(error)
+            : "Options could not be enhanced: " + localizedError(error),
           "alert",
         );
       });
