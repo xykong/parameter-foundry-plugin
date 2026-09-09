@@ -30,10 +30,20 @@
   grid-column: 1 / -1;
 }
 
+.unified-parameters-entry > .setting-main,
+.unified-parameters-entry > .validation-error-area {
+  padding-left: calc(14rem + 1rem);
+}
+
 @media (max-width: 640px) {
   .jenkins-form-item.unified-parameters-entry {
     grid-template-columns: 1fr;
     row-gap: 0.25rem;
+  }
+
+  .unified-parameters-entry > .setting-main,
+  .unified-parameters-entry > .validation-error-area {
+    padding-left: 0;
   }
 }
 
