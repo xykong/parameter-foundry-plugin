@@ -241,6 +241,12 @@
       "Details": "详情",
       "Machine value: ": "机器值：",
       "Unavailable: ": "不可用：",
+      "Unable to resolve the parameter endpoint.":
+        "无法确定参数请求地址。",
+      "A newer dependency refresh superseded this response.":
+        "更新的依赖刷新请求已替代当前响应。",
+      "Dependencies changed; waiting to refresh...":
+        "依赖项已变更，等待刷新……",
     };
     if (translations[message]) {
       return translations[message];
@@ -1146,7 +1152,10 @@
           state.controller.abort();
         }
         field.dataset.upState = "loading";
-        showRefreshStatus(field, "Dependencies changed; waiting to refresh...");
+        showRefreshStatus(
+          field,
+          localizedError(new Error("Dependencies changed; waiting to refresh...")),
+        );
         state.timer = window.setTimeout(function () {
           state.timer = null;
           refresh(field, true);
