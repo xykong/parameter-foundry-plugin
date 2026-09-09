@@ -117,6 +117,14 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.CustomValueSelected("{0}");
     }
 
+    public String getUiCustomValueInvalidWithRule() {
+        return Messages.CustomValueInvalidWithRule("{0}");
+    }
+
+    public String getUiCustomValuePolicy() {
+        return Messages.CustomValuePolicy();
+    }
+
     public String getUiMatchesSummary() {
         return Messages.MatchesSummary("{0}");
     }

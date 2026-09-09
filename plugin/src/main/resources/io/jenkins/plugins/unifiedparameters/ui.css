@@ -78,6 +78,11 @@
   color: inherit;
 }
 
+.unified-parameters-custom-validation {
+  color: var(--error-color, #b32d2e);
+  font-size: 0.8rem;
+}
+
 .unified-parameters-options {
   max-height: 22rem;
   overflow: auto;

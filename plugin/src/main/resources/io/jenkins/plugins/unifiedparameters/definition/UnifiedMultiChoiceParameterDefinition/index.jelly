@@ -30,7 +30,9 @@
          data-up-visible-selection-inverted="${it.uiVisibleSelectionInverted}"
          data-up-visible-selection-cleared="${it.uiVisibleSelectionCleared}"
          data-up-all-selections-cleared="${it.uiAllSelectionsCleared}"
-         data-up-custom-value-selected="${it.uiCustomValueSelected}">
+         data-up-custom-value-selected="${it.uiCustomValueSelected}"
+         data-up-custom-value-invalid-with-rule="${it.uiCustomValueInvalidWithRule}"
+         data-up-custom-value-policy="${it.uiCustomValuePolicy}">
       <input type="hidden" name="name" value="${it.name}" />
       <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
       <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />

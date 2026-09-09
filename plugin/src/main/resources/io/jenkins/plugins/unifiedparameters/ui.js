@@ -366,6 +366,7 @@
       options.length > MAX_RENDERED_OPTIONS ||
       allowCustom;
     var customButton = null;
+    var customValidation = null;
     if (searchable) {
       select.size = 8;
       enhanced.appendChild(search);
@@ -433,6 +434,16 @@
         customButton.title = valid
           ? localized(field, "customValueHint", "Create a custom value distinct from the configured options.")
           : localized(field, "customValueInvalid", "The custom value does not satisfy the configured policy.");
+        if (customValidation) {
+          customValidation.textContent =
+            candidate && !valid
+              ? formatMessage(
+                  localized(field, "customValueInvalidWithRule", "Value must match: {0}"),
+                  [field.dataset.customPattern || localized(field, "customValuePolicy", "the configured policy")],
+                )
+              : "";
+          customValidation.hidden = !candidate || valid;
+        }
       }
     }
 
@@ -487,6 +498,11 @@
         );
       });
       enhanced.appendChild(customButton);
+      customValidation = document.createElement("div");
+      customValidation.className = "unified-parameters-custom-validation";
+      customValidation.setAttribute("role", "alert");
+      customValidation.hidden = true;
+      enhanced.appendChild(customValidation);
     }
     enhanced.appendChild(status);
     disableFallback(field);
