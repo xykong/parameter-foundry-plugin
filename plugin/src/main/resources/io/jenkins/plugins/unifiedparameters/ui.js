@@ -477,6 +477,8 @@
     });
     enhanced.appendChild(select);
     if (allowCustom) {
+      var customAction = document.createElement("div");
+      customAction.className = "unified-parameters-custom-action";
       customButton = document.createElement("button");
       customButton.type = "button";
       customButton.className = "jenkins-button unified-parameters-custom-value";
@@ -497,12 +499,13 @@
           [search.value],
         );
       });
-      enhanced.appendChild(customButton);
       customValidation = document.createElement("div");
       customValidation.className = "unified-parameters-custom-validation";
       customValidation.setAttribute("role", "alert");
       customValidation.hidden = true;
-      enhanced.appendChild(customValidation);
+      customAction.appendChild(customButton);
+      customAction.appendChild(customValidation);
+      enhanced.appendChild(customAction);
     }
     enhanced.appendChild(status);
     disableFallback(field);

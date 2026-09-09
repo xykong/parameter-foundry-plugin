@@ -83,6 +83,18 @@
   font-size: 0.8rem;
 }
 
+.unified-parameters-custom-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.unified-parameters-custom-validation {
+  flex: 1 1 18rem;
+  margin: 0;
+}
+
 .unified-parameters-options {
   max-height: 22rem;
   overflow: auto;
