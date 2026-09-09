@@ -226,6 +226,14 @@
     }, template);
   }
 
+  function parseJson(value, fallback) {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return fallback;
+    }
+  }
+
   function enhanceTable(field, options, initialValues) {
     var tableModel = parseJson(field.dataset.table || "", null);
     if (!tableModel || !tableModel.rows || !tableModel.columns || !tableModel.cells) {
