@@ -102,6 +102,33 @@
   border-radius: 0.5rem;
 }
 
+.unified-parameters-table {
+  border-collapse: collapse;
+  min-width: 32rem;
+  width: 100%;
+}
+
+.unified-parameters-table th,
+.unified-parameters-table td {
+  border: 1px solid var(--up-border);
+  padding: 0.55rem 0.7rem;
+  text-align: center;
+}
+
+.unified-parameters-table th[scope="row"] {
+  text-align: start;
+  white-space: nowrap;
+}
+
+.unified-parameters-table td:has(input:checked) {
+  background: color-mix(in srgb, var(--up-accent) 10%, transparent);
+}
+
+.unified-parameters-table-enhanced {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .unified-parameters-group-section + .unified-parameters-group-section {
   border-block-start: 1px solid var(--up-border);
 }

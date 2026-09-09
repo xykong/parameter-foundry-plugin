@@ -47,6 +47,7 @@
     <select class="jenkins-select__input" name="parameter.renderer">
       <option value="checkbox" selected="${instance.renderer == 'checkbox' ? 'selected' : null}">Checkbox group</option>
       <option value="list" selected="${instance.renderer == 'list' ? 'selected' : null}">Multi-select list</option>
+      <option value="table" selected="${instance.renderer == 'table' ? 'selected' : null}">Choice table</option>
       <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
         <option value="${rendererId}" selected="${instance.renderer == rendererId ? 'selected' : null}">${rendererId}</option>
       </j:forEach>

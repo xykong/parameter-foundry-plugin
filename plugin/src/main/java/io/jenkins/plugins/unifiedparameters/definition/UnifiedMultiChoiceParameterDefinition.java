@@ -55,6 +55,10 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
         this.table = table;
     }
 
+    public String getTableJson() {
+        return table == null ? "" : JSONObject.fromObject(table).toString();
+    }
+
     public String getSelectedDisplay() {
         return selectedDisplay == null || selectedDisplay.isBlank() ? "none" : selectedDisplay;
     }

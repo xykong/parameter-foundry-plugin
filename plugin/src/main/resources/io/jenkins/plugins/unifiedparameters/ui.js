@@ -226,6 +226,72 @@
     }, template);
   }
 
+  function enhanceTable(field, options, initialValues) {
+    var tableModel = parseJson(field.dataset.table || "", null);
+    if (!tableModel || !tableModel.rows || !tableModel.columns || !tableModel.cells) {
+      return false;
+    }
+    var selected = new Set(initialValues);
+    var enhanced = document.createElement("div");
+    enhanced.className = "unified-parameters-enhanced unified-parameters-table-enhanced";
+    var table = document.createElement("table");
+    table.className = "unified-parameters-table";
+    var head = document.createElement("thead");
+    var headerRow = document.createElement("tr");
+    headerRow.appendChild(document.createElement("th"));
+    tableModel.columns.forEach(function (column) {
+      var th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = column.label || column.value;
+      headerRow.appendChild(th);
+    });
+    head.appendChild(headerRow);
+    table.appendChild(head);
+    var body = document.createElement("tbody");
+    var cells = new Map(tableModel.cells.map(function (cell) {
+      return [cell.row + "\u0000" + cell.column, cell];
+    }));
+    tableModel.rows.forEach(function (rowModel) {
+      var tr = document.createElement("tr");
+      var rowHeader = document.createElement("th");
+      rowHeader.scope = "row";
+      rowHeader.textContent = rowModel.label || rowModel.value;
+      tr.appendChild(rowHeader);
+      tableModel.columns.forEach(function (column) {
+        var cell = cells.get(rowModel.value + "\u0000" + column.value);
+        var td = document.createElement("td");
+        if (!cell) {
+          td.textContent = "-";
+          td.setAttribute("aria-label", "Unavailable");
+        } else {
+          var input = document.createElement("input");
+          input.type = field.dataset.multiple === "true" ? "checkbox" : "radio";
+          input.name = field.dataset.parameterName;
+          input.value = cell.value;
+          input.checked = selected.has(cell.value);
+          input.disabled = Boolean(cell.disabled);
+          input.setAttribute("aria-label", (rowModel.label || rowModel.value) + " / " + (column.label || column.value));
+          input.addEventListener("change", function () {
+            if (field.dataset.multiple !== "true") {
+              selected.clear();
+            }
+            if (input.checked) selected.add(cell.value); else selected.delete(cell.value);
+            setSubmittedValues(field, selected, true);
+          });
+          td.appendChild(input);
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    table.appendChild(body);
+    enhanced.appendChild(table);
+    disableFallback(field);
+    field.appendChild(enhanced);
+    setSubmittedValues(field, selected);
+    return true;
+  }
+
   function disableFallback(field) {
     var fallback = field.querySelector("[data-up-fallback]");
     Array.prototype.forEach.call(fallback.querySelectorAll("input, select"), function (control) {
@@ -591,6 +657,9 @@
   }
 
   function enhanceMultiple(field, options, initialValues) {
+    if (field.dataset.renderer === "table" && enhanceTable(field, options, initialValues)) {
+      return;
+    }
     if (field.dataset.renderer === "list") {
       enhanceMultipleList(field, options, initialValues);
       return;
