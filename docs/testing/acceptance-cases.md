@@ -30,7 +30,7 @@ until every applicable column passes.
 | UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | English/Chinese production desktop verified; Japanese/Korean pending |
 | UP-AC-007 | Layout | Verify title is bold on the left, description is a bounded wrapping block on the right, and controls align under the description. | Desktop Chromium verified; mobile pending |
 | UP-AC-008 | Transport | Submit from UI, CLI, REST, Pipeline, Freestyle, and rebuild. Verify equivalent normalized values. | End to end |
-| UP-AC-009 | Migration | Preview and apply Active Choices, Extended Choice, File Parameter, and Git migrations. Preserve source jobs and verify target behavior. | Active Choices source/target production build verified; other sources pending |
+| UP-AC-009 | Migration | Preview and apply Active Choices, Extended Choice, File Parameter, and Git migrations. Preserve source jobs and verify target behavior. | Active Choices/Extended Choice/Git source-target production builds verified; File Parameter is an explicit native-capability boundary |
 
 ## Platform and Device Cases
 
@@ -105,6 +105,20 @@ until every applicable column passes.
 - Verification: passed on 2026-09-10. `make e2e` succeeded and
   `mvn -B -ntp verify` passed with 179 tests. The production mixed-parameter
   page measured a 74 px list and its Linux-agent build succeeded.
+
+### UP-ISSUE-006: Migration comparison examples showed only the source plugin
+
+- Reproduction: open the Extended Choice and Git migration example build forms.
+- Actual: some jobs exposed only the legacy source parameter, so users could
+  not compare the migrated Unified Parameters control with the original.
+- Fix: keep the legacy source parameters, add equivalent Unified Parameters
+  controls for Extended Choice and governed Git refs, print both values in the
+  build log, and label the File Parameter case as a native-capability boundary
+  instead of creating a false equivalent choice.
+- Regression: verify old and new controls are present on the build page, no
+  enhancement alert is shown, and both mapped values appear in build logs.
+- Verification: passed on 2026-09-10 with real Chromium desktop checks and
+  Linux-agent builds for Extended Choice source/clone and Git branch cases.
 
 ## Recording Rule
 
