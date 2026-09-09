@@ -103,7 +103,8 @@ until every applicable column passes.
 - Regression: the E2E suite now asserts a two-option native list stays under
   160 px while search/selection behavior continues to pass.
 - Verification: passed on 2026-09-10. `make e2e` succeeded and
-  `mvn -B -ntp verify` passed with 179 tests.
+  `mvn -B -ntp verify` passed with 179 tests. The production mixed-parameter
+  page measured a 74 px list and its Linux-agent build succeeded.
 
 ## Recording Rule
 
