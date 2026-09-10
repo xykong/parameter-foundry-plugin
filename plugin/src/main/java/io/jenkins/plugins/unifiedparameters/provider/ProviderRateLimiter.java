@@ -18,6 +18,7 @@ final class ProviderRateLimiter {
     private final Map<String, Semaphore> jobs = new ConcurrentHashMap<>();
     private final Map<String, Semaphore> providers = new ConcurrentHashMap<>();
     private final Map<String, Window> windows = new ConcurrentHashMap<>();
+    private volatile long lastSweepMillis;
 
     ProviderRateLimiter() {
         this(60, 120, 240, 64, Clock.systemUTC());
@@ -34,6 +35,7 @@ final class ProviderRateLimiter {
     }
 
     Lease acquire(ProviderRequest request) {
+        sweepIfNeeded();
         String principal = request.principal() == null ? "anonymous" : request.principal();
         String job = request.job().getFullName();
         String provider = request.ownerId() + "/" + request.providerId();
@@ -63,6 +65,36 @@ final class ProviderRateLimiter {
             throw limited(request.providerId());
         }
         return new Lease(globalPermit, principalPermit, jobPermit, providerPermit);
+    }
+
+    private void sweepIfNeeded() {
+        long now = clock.millis();
+        if (now - lastSweepMillis < 60_000L) {
+            return;
+        }
+        lastSweepMillis = now;
+        sweepForEviction();
+    }
+
+    void sweepForEviction() {
+        long minute = clock.millis() / 60_000L;
+        windows.entrySet().removeIf(entry -> {
+            Window window = entry.getValue();
+            synchronized (window) {
+                return window.minute != minute;
+            }
+        });
+        sweepIdle(principals, 8);
+        sweepIdle(jobs, 16);
+        sweepIdle(providers, 8);
+    }
+
+    private static void sweepIdle(Map<String, Semaphore> semaphores, int permits) {
+        semaphores.entrySet().removeIf(entry -> entry.getValue().availablePermits() == permits);
+    }
+
+    int trackedKeys() {
+        return principals.size() + jobs.size() + providers.size() + windows.size();
     }
 
     private Semaphore selectGlobalPermit(ProviderOperation operation) {

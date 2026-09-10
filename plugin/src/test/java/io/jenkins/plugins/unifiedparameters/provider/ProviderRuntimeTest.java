@@ -122,6 +122,61 @@ class ProviderRuntimeTest {
     }
 
     @Test
+    void sweepRemovesExpiredCacheAndKeepsFreshEntries(JenkinsRule jenkins) throws Exception {
+        ProviderRuntime runtime = runtime(new ProviderRateLimiter());
+
+        FreeStyleProject expiredJob = jenkins.createFreeStyleProject("provider-cache-expired");
+        CountingProvider expiredProvider = new CountingProvider("expired");
+        expiredProvider.setOptions(List.of(new Option("one")));
+        expiredProvider.setCacheTtlSeconds(0);
+        ProviderRegistry.LocatedProvider expiredLocated =
+                new ProviderRegistry.LocatedProvider(expiredProvider, ProviderScope.GLOBAL, "jenkins");
+        runtime.resolve(expiredJob, expiredLocated, ProviderOperation.RESOLVE, Map.of(), "builder");
+
+        FreeStyleProject freshJob = jenkins.createFreeStyleProject("provider-cache-fresh");
+        CountingProvider freshProvider = new CountingProvider("fresh");
+        freshProvider.setOptions(List.of(new Option("one")));
+        ProviderRegistry.LocatedProvider freshLocated =
+                new ProviderRegistry.LocatedProvider(freshProvider, ProviderScope.GLOBAL, "jenkins");
+        runtime.resolve(freshJob, freshLocated, ProviderOperation.RESOLVE, Map.of(), "builder");
+        Thread.sleep(1_100L);
+        runtime.sweepForEviction();
+        // The expired entry is gone; the fresh entry survives the sweep.
+        assertEquals(1, runtime.trackedCacheKeys());
+        runtime.resolve(expiredJob, expiredLocated, ProviderOperation.RESOLVE, Map.of(), "builder");
+        assertEquals(2, expiredProvider.loads.get());
+        ProviderResolution cached =
+                runtime.resolve(freshJob, freshLocated, ProviderOperation.RESOLVE, Map.of(), "builder");
+        assertTrue(cached.cacheHit());
+        assertEquals(1, freshProvider.loads.get());
+    }
+
+    @Test
+    void sweepRetainsEntriesStillUsableForLastKnownGood(JenkinsRule jenkins) throws Exception {
+        ProviderRuntime runtime = runtime(new ProviderRateLimiter());
+
+        FreeStyleProject job = jenkins.createFreeStyleProject("provider-cache-stale-fallback");
+        CountingProvider provider = new CountingProvider("stale-fallback");
+        provider.setOptions(List.of(new Option("stable")));
+        provider.setCacheTtlSeconds(0);
+        provider.setFailurePolicy("last-known-good");
+        provider.setMaximumStalenessSeconds(60);
+        ProviderRegistry.LocatedProvider located =
+                new ProviderRegistry.LocatedProvider(provider, ProviderScope.GLOBAL, "jenkins");
+
+        runtime.resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder");
+        runtime.sweepForEviction();
+        assertEquals(1, runtime.trackedCacheKeys());
+
+        provider.fail = true;
+        ProviderResolution fallback = runtime.resolve(job, located, ProviderOperation.BUILD, Map.of(), "builder");
+        assertTrue(fallback.fallback());
+        assertEquals(
+                List.of("stable"),
+                fallback.options().stream().map(Option::getValue).toList());
+    }
+
+    @Test
     void validateAndBuildUseReservedCapacityWhenPreviewCapacityIsFull(JenkinsRule jenkins) throws Exception {
         FreeStyleProject job = jenkins.createFreeStyleProject("provider-reserved");
         ProviderRateLimiter limiter = new ProviderRateLimiter(100, 100, 100, 4, Clock.systemUTC());

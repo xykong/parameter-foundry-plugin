@@ -28,6 +28,7 @@ public final class ProviderRuntime {
     private final Map<String, ProviderHealth> health = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor executor;
     private final ProviderRateLimiter limiter;
+    private volatile long lastEvictionMillis;
 
     public ProviderRuntime() {
         this(
@@ -61,6 +62,7 @@ public final class ProviderRuntime {
             ProviderOperation operation,
             Map<String, String> dependencies,
             String principal) {
+        evictExpiredIfNeeded();
         SharedProviderDefinition provider = located.provider();
         Optional<ConnectionProfile> connectionProfile;
         if (provider instanceof ConnectionProfileConsumer consumer) {
@@ -127,6 +129,28 @@ public final class ProviderRuntime {
         health.clear();
     }
 
+    private void evictExpiredIfNeeded() {
+        long now = System.currentTimeMillis();
+        if (now - lastEvictionMillis < 60_000L) {
+            return;
+        }
+        lastEvictionMillis = now;
+        sweepForEviction();
+    }
+
+    void sweepForEviction() {
+        Instant now = Instant.now();
+        cache.entrySet()
+                .removeIf(entry -> !now.isBefore(entry.getValue().expiresAt)
+                        && Duration.between(entry.getValue().generatedAt, now).getSeconds()
+                                > entry.getValue().maximumStalenessSeconds);
+        failures.entrySet().removeIf(entry -> !now.isBefore(entry.getValue().expiresAt));
+    }
+
+    int trackedCacheKeys() {
+        return cache.size() + failures.size();
+    }
+
     private CacheEntry loadCoalesced(
             CacheKey key,
             ProviderRegistry.LocatedProvider located,
@@ -188,6 +212,7 @@ public final class ProviderRuntime {
                                 request.providerDigest(),
                                 generated,
                                 generated.plusSeconds(provider.getCacheTtlSeconds()),
+                                provider.getMaximumStalenessSeconds(),
                                 located.ownerId() + "/" + provider.getId());
                         cache.put(key, entry);
                         failures.remove(key);
@@ -239,7 +264,7 @@ public final class ProviderRuntime {
         }
         if ("empty".equals(provider.getFailurePolicy())) {
             CacheEntry empty = CacheEntry.create(
-                    List.of(), request.providerDigest(), now, now, request.ownerId() + "/" + provider.getId());
+                    List.of(), request.providerDigest(), now, now, 0, request.ownerId() + "/" + provider.getId());
             return empty.toResolution(false, true, exception.getMessage());
         }
         throw exception;
@@ -254,6 +279,7 @@ public final class ProviderRuntime {
             String optionSetDigest,
             Instant generatedAt,
             Instant expiresAt,
+            int maximumStalenessSeconds,
             String provenance) {
 
         static CacheEntry create(
@@ -261,10 +287,17 @@ public final class ProviderRuntime {
                 String providerDigest,
                 Instant generatedAt,
                 Instant expiresAt,
+                int maximumStalenessSeconds,
                 String provenance) {
             List<Option> normalized = List.copyOf(options);
             return new CacheEntry(
-                    normalized, providerDigest, Digests.options(normalized), generatedAt, expiresAt, provenance);
+                    normalized,
+                    providerDigest,
+                    Digests.options(normalized),
+                    generatedAt,
+                    expiresAt,
+                    maximumStalenessSeconds,
+                    provenance);
         }
 
         ProviderResolution toResolution(boolean cacheHit, boolean fallback, String fallbackReason) {
