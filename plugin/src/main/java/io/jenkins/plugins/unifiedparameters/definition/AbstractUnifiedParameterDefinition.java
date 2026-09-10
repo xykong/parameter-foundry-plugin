@@ -35,7 +35,9 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     private String environmentExport;
     private List<String> defaultValues = List.of();
     private int minSelections;
-    private int maxSelections = -1;
+    // Boxed so that a definition stored before this field existed still means "unlimited".
+    // XStream does not run field initializers, so a primitive would deserialize to 0.
+    private Integer maxSelections;
     private String duplicatePolicy = "reject";
     private String standardApiInputMode = "repeated";
     private String delimiter = ",";
@@ -269,7 +271,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public int getMaxSelections() {
-        return maxSelections;
+        return maxSelections == null ? -1 : maxSelections;
     }
 
     @DataBoundSetter

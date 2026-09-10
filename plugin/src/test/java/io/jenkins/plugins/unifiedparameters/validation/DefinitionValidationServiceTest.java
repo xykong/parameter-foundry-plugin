@@ -1,15 +1,19 @@
 package io.jenkins.plugins.unifiedparameters.validation;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
+import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
 import io.jenkins.plugins.unifiedparameters.form.FormLayout;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.lang.reflect.Field;
 import java.util.List;
+import jenkins.model.Jenkins;
 import org.junit.jupiter.api.Test;
 
 class DefinitionValidationServiceTest {
@@ -125,5 +129,50 @@ class DefinitionValidationServiceTest {
         visibleWhenField.set(layout, "");
 
         assertTrue(layout.getVisibleWhenField() == null);
+    }
+
+    @Test
+    void absentMaximumSelectionsStillMeansUnlimitedAfterDeserialization() {
+        UnifiedChoiceParameterDefinition reloaded =
+                (UnifiedChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(multipleChoiceXmlWithoutSelectionBounds());
+
+        assertEquals("multiple", reloaded.getSelectionMode());
+        assertEquals(-1, reloaded.getMaxSelections());
+        assertEquals(
+                List.of("android", "ios"),
+                ParameterEvaluationService.evaluateMultiple(reloaded, DecodedInput.present(List.of("android", "ios"))));
+    }
+
+    @Test
+    void storedMaximumSelectionsSurvivesDeserialization() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        definition.setSelectionMode("multiple");
+        definition.setChoices(List.of(new Option("android"), new Option("ios")));
+        definition.setMaxSelections(1);
+
+        UnifiedChoiceParameterDefinition reloaded =
+                (UnifiedChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(Jenkins.XSTREAM2.toXML(definition));
+
+        assertEquals(1, reloaded.getMaxSelections());
+    }
+
+    private static String multipleChoiceXmlWithoutSelectionBounds() {
+        return """
+                <io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition>
+                  <name>TARGETS</name>
+                  <selectionMode>multiple</selectionMode>
+                  <choices>
+                    <io.jenkins.plugins.unifiedparameters.model.Option>
+                      <value>android</value>
+                    </io.jenkins.plugins.unifiedparameters.model.Option>
+                    <io.jenkins.plugins.unifiedparameters.model.Option>
+                      <value>ios</value>
+                    </io.jenkins.plugins.unifiedparameters.model.Option>
+                  </choices>
+                  <renderer>checkbox</renderer>
+                  <defaultMode>none</defaultMode>
+                  <modelVersion>1</modelVersion>
+                </io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition>
+                """;
     }
 }
