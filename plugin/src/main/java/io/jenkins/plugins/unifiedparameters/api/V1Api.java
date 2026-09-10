@@ -15,6 +15,7 @@ import io.jenkins.plugins.unifiedparameters.evaluation.DependencyGraph;
 import io.jenkins.plugins.unifiedparameters.evaluation.DependencyValues;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
@@ -115,16 +116,7 @@ public final class V1Api {
             result.put("parameter", name);
             result.put("version", body.containsKey("version") ? body.get("version") : null);
             result.put("options", options);
-            Object defaultValue = unified.isMultiple()
-                    ? io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService.evaluateMultiple(
-                            (io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition)
-                                    unified,
-                            io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput.absent(),
-                            resolution.options())
-                    : io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService.evaluateSingle(
-                            (io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition) unified,
-                            io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput.absent(),
-                            resolution.options());
+            Object defaultValue = ParameterEvaluationService.defaultFor(unified, resolution.options());
             result.put("default", defaultValue);
             result.put(
                     "defaults",

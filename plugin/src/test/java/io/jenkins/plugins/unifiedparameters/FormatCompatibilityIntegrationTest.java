@@ -214,6 +214,23 @@ class FormatCompatibilityIntegrationTest {
     }
 
     @Test
+    void resolveReturnsOptionsForUnifiedChoiceMultipleMode(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = unifiedMultipleJob(jenkins, "unified-resolve-multiple");
+
+        JSONObject body = new JSONObject();
+        body.put("parameter", "TARGETS");
+        JenkinsRule.JSONWebResponse response =
+                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", body);
+
+        assertEquals(200, response.getStatusCode(), response.getJSONObject().toString());
+        JSONObject resolved = response.getJSONObject();
+        assertEquals(3, resolved.getJSONArray("options").size());
+        assertTrue(resolved.getJSONArray("defaults").isEmpty());
+        assertEquals(
+                "android", resolved.getJSONArray("options").getJSONObject(1).getString("value"));
+    }
+
+    @Test
     void typedApiUsesDefaultsForOmittedValuesAndEmptyArrayForExplicitEmpty(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-empty-default", ",");
         UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)

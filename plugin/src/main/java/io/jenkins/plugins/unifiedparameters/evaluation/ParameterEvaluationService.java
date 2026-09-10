@@ -76,6 +76,22 @@ public final class ParameterEvaluationService {
         return List.copyOf(normalized);
     }
 
+    /**
+     * Resolves the value a caller gets when the parameter is omitted. The result is a
+     * {@link String} or {@code null} for single selection and a {@link List} for multiple
+     * selection, so callers must branch on the definition rather than on a concrete class.
+     */
+    public static Object defaultFor(AbstractUnifiedParameterDefinition definition, List<Option> options) {
+        if (definition.isMultiple()) {
+            return evaluateMultiple(definition, DecodedInput.absent(), options);
+        }
+        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+            return evaluateSingle(choice, DecodedInput.absent(), options);
+        }
+        throw error(
+                ErrorCode.UNSUPPORTED_DEFINITION, definition, "Definition does not expose a single-choice default.");
+    }
+
     private static String resolveSingleDefault(UnifiedChoiceParameterDefinition definition, List<Option> options) {
         return switch (definition.getDefaultMode()) {
             case "none" -> null;

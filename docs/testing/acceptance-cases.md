@@ -121,6 +121,22 @@ until every applicable column passes.
 - Verification: passed on 2026-09-10 with real Chromium desktop checks and
   Linux-agent builds for Extended Choice source/clone and Git branch cases.
 
+### UP-ISSUE-007: Unified Choice multiple mode failed to resolve options
+
+- Reproduction: open the build form of a `unifiedChoice` parameter configured
+  with `selectionMode: multiple`, or POST its name to
+  `unified-parameters/api/v1/resolve`.
+- Actual: the request returned HTTP `500` and the build form could not load any
+  option, because the resolve endpoint still cast the definition to the legacy
+  multi-choice class. `java.lang.ClassCastException` was recorded in the
+  controller log.
+- Cause: unifying the entry point made `UnifiedChoiceParameterDefinition` able
+  to report `isMultiple()`, but the resolve endpoint kept a cast that only the
+  legacy definition satisfied.
+- Fix: evaluate through the shared base definition instead of casting, and
+  cover the resolve path for a multiple-mode unified choice.
+- Verification: pending; recorded before the fix, per the recording rule.
+
 ## Recording Rule
 
 For every new failure, add a case or issue before changing code. Record the
