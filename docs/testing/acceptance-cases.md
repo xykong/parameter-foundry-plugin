@@ -23,8 +23,8 @@ until every applicable column passes.
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
 | UP-AC-001 | UnifiedChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
-| UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Local E2E; production desktop Chromium 151 and Linux-agent build |
-| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Production desktop Chromium 151 and Linux-agent build; touch/manual rows pending |
+| UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
+| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Rendering passed 2026-09-11 (7 semantic `th`, 8 rendered cells, disabled cell not selectable, missing cell not synthesized, row/column accessible names); cell submission blocked by UP-ISSUE-008; header verification is server-rendered only |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
 | UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | English/Chinese production desktop verified; Japanese/Korean pending |
@@ -135,7 +135,29 @@ until every applicable column passes.
   legacy definition satisfied.
 - Fix: evaluate through the shared base definition instead of casting, and
   cover the resolve path for a multiple-mode unified choice.
-- Verification: pending; recorded before the fix, per the recording rule.
+- Verification: passed on 2026-09-11 with plugin `0.2.13-SNAPSHOT`. The resolve
+  sweep returned `200` for all 55 Unified choice parameters across the 32
+  acceptance Jobs, and a real browser confirmed that a `selectionMode: multiple`
+  field loads its options and keeps two chips synchronized.
+
+### UP-ISSUE-008: Matrix cell values cannot be submitted
+
+- Reproduction: open the matrix acceptance build form (rows Android/iOS/Web,
+  columns A/B/C), select a cell such as `android-a`, then submit or validate it.
+- Actual: the server rejects the value with
+  `UNIFIED_PARAMETER_UNKNOWN_VALUE: Unsupported value: android-a` and nothing is
+  queued. Only the flat option values `android`, `ios`, and `web` are accepted,
+  although the form renders selectable cells with `android-a`-style values.
+- Cause: option resolution and validation read the flat `choices` list, while
+  the table renderer builds its controls from `table.cells`. The two option
+  models are never merged, so every rendered cell value is outside the accepted
+  option set. This predates the unified entry point.
+- Additional: the table renderer does not expose `disabledReason` for disabled
+  cells, although the matrix design requires disabled cells to expose a reason
+  where configured. Flat options already do this.
+- Fix: not started; the change affects the option source for table parameters
+  and needs a scope decision first.
+- Verification: pending.
 
 ## Recording Rule
 
