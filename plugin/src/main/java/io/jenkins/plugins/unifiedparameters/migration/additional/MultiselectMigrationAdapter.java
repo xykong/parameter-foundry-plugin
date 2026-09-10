@@ -24,7 +24,7 @@ public final class MultiselectMigrationAdapter extends AbstractAdditionalMigrati
 
     @Override
     protected String targetSkeleton(ParameterDefinition definition) {
-        return "unifiedMultiChoice(\n"
+        return "unifiedChoice(\n" + "    selectionMode: 'multiple',\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"

@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.Util;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
@@ -77,8 +76,8 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         boolean hasUnsupportedDefault = supportedDefaults.size() != defaults.size();
 
         if (multiple) {
-            UnifiedMultiChoiceParameterDefinition target =
-                    new UnifiedMultiChoiceParameterDefinition(definition.getName());
+            UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition(definition.getName());
+            target.setSelectionMode("multiple");
             copyCommon(definition, target, options);
             target.setRenderer(CHECK_BOX.equals(type) ? "checkbox" : "list");
             target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
@@ -185,11 +184,11 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
 
     private static String dynamicSkeleton(ParameterDefinition source, String type) {
         boolean multiple = MULTI_SELECT.equals(type) || CHECK_BOX.equals(type) || MULTI_LEVEL_MULTI_SELECT.equals(type);
-        String symbol = multiple ? "unifiedMultiChoice" : "unifiedChoice";
-        return symbol + "(\n"
+        return "unifiedChoice(\n"
                 + "    name: '"
                 + source.getName().replace("'", "\\'")
                 + "',\n"
+                + (multiple ? "    selectionMode: 'multiple',\n" : "")
                 + "    providerId: 'TODO-governed-provider',\n"
                 + "    dependsOn: ['TODO-dependency'],\n"
                 + "    renderer: '"

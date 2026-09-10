@@ -3,12 +3,12 @@ package io.jenkins.plugins.unifiedparameters.automation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import java.io.File;
 import java.util.List;
@@ -44,6 +44,14 @@ class JobDslIntegrationTest {
                               defaultValue('android')
                               selectionRange(1, 2)
                             }
+                            unifiedChoice('MULTI') {
+                              option('a', 'A')
+                              option('b', 'B')
+                              selectionMode('multiple')
+                              renderer('list')
+                              defaultValue('a')
+                              selectionRange(1, 2)
+                            }
                             unifiedForm('DEPLOYMENT') {
                               field('service', 'string') {
                                 required(true)
@@ -72,13 +80,20 @@ class JobDslIntegrationTest {
         assertNotNull(property);
         ParameterDefinition channel = property.getParameterDefinition("CHANNEL");
         ParameterDefinition targets = property.getParameterDefinition("TARGETS");
+        ParameterDefinition multi = property.getParameterDefinition("MULTI");
         ParameterDefinition deployment = property.getParameterDefinition("DEPLOYMENT");
         assertInstanceOf(UnifiedChoiceParameterDefinition.class, channel);
-        UnifiedMultiChoiceParameterDefinition multiple =
-                assertInstanceOf(UnifiedMultiChoiceParameterDefinition.class, targets);
+        UnifiedChoiceParameterDefinition multiple = assertInstanceOf(UnifiedChoiceParameterDefinition.class, targets);
+        assertEquals("multiple", multiple.getSelectionMode());
+        assertTrue(multiple.isMultiple());
         assertEquals(List.of("ios", "android"), multiple.getDefaultValues());
         assertEquals(1, multiple.getMinSelections());
         assertEquals(2, multiple.getMaxSelections());
+        UnifiedChoiceParameterDefinition unifiedMultiple =
+                assertInstanceOf(UnifiedChoiceParameterDefinition.class, multi);
+        assertEquals("multiple", unifiedMultiple.getSelectionMode());
+        assertEquals("list", unifiedMultiple.getRenderer());
+        assertEquals(List.of("a"), unifiedMultiple.getDefaultValues());
         UnifiedFormParameterDefinition form = assertInstanceOf(UnifiedFormParameterDefinition.class, deployment);
         assertEquals(List.of("service", "region"), form.getLayouts().get(0).getFieldNames());
         assertEquals("SERVICE_NAME", form.getFields().get(0).getEnvironmentVariable());

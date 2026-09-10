@@ -37,6 +37,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     private static final long serialVersionUID = 1L;
 
+    private String selectionMode = "single";
     private String defaultValue;
     private boolean allowCustomValue;
     private String customValuePattern;
@@ -45,6 +46,15 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     @DataBoundConstructor
     public UnifiedChoiceParameterDefinition(String name) {
         super(name);
+    }
+
+    public String getSelectionMode() {
+        return selectionMode == null || selectionMode.isBlank() ? "single" : selectionMode;
+    }
+
+    @DataBoundSetter
+    public void setSelectionMode(String selectionMode) {
+        this.selectionMode = selectionMode;
     }
 
     public String getDefaultValue() {
@@ -108,6 +118,12 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     public ParameterValue createValue(StaplerRequest2 request) {
         try {
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null);
+            if (isMultiple()) {
+                return toMultiValue(
+                        ParameterEvaluationService.evaluateMultiple(
+                                this, InputDecoders.fromStandardRequest(this, request), resolved.options()),
+                        resolved.metadata());
+            }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
                             this, InputDecoders.fromStandardRequest(this, request), resolved.options()),
@@ -121,6 +137,12 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     public ParameterValue createValue(StaplerRequest2 request, JSONObject submitted) {
         try {
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted);
+            if (isMultiple()) {
+                return toMultiValue(
+                        ParameterEvaluationService.evaluateMultiple(
+                                this, InputDecoders.fromSubmittedJson(this, submitted), resolved.options()),
+                        resolved.metadata());
+            }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
                             this, InputDecoders.fromSubmittedJson(this, submitted), resolved.options()),
@@ -137,6 +159,12 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
                     ? ProviderSubmission.resolveForCli(
                             ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
                     : new ResolvedProviderOptions(getChoices(), null, null, false);
+            if (isMultiple()) {
+                return toMultiValue(
+                        ParameterEvaluationService.evaluateMultiple(
+                                this, InputDecoders.fromCli(this, value), resolved.options()),
+                        resolved.metadata());
+            }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
                             this, InputDecoders.fromCli(this, value), resolved.options()),
@@ -147,9 +175,14 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     }
 
     @Override
-    public UnifiedChoiceParameterValue getDefaultParameterValue() {
+    public ParameterValue getDefaultParameterValue() {
         try {
             ResolvedProviderOptions resolved = ProviderSubmission.resolveForDefault(this);
+            if (isMultiple()) {
+                return toMultiValue(
+                        ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options()),
+                        resolved.metadata());
+            }
             String value = ParameterEvaluationService.evaluateSingle(this, DecodedInput.absent(), resolved.options());
             if (value == null && isRequired()) {
                 return null;
@@ -162,16 +195,29 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     @Override
     public boolean isValid(ParameterValue value) {
-        String submitted;
-        if (value instanceof UnifiedChoiceParameterValue choiceValue) {
-            submitted = choiceValue.getValue();
-        } else if (value instanceof StringParameterValue stringValue) {
-            submitted = stringValue.getValue();
-        } else {
-            return false;
-        }
         try {
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
+            if (isMultiple()) {
+                List<String> submitted;
+                if (value instanceof UnifiedMultiChoiceParameterValue multiValue) {
+                    submitted = multiValue.getValue();
+                } else if (value instanceof StringParameterValue stringValue) {
+                    submitted =
+                            InputDecoders.fromCli(this, stringValue.getValue()).values();
+                } else {
+                    return false;
+                }
+                ParameterEvaluationService.evaluateMultiple(this, DecodedInput.present(submitted), resolved.options());
+                return true;
+            }
+            String submitted;
+            if (value instanceof UnifiedChoiceParameterValue choiceValue) {
+                submitted = choiceValue.getValue();
+            } else if (value instanceof StringParameterValue stringValue) {
+                submitted = stringValue.getValue();
+            } else {
+                return false;
+            }
             ParameterEvaluationService.evaluateSingle(
                     this,
                     submitted == null
@@ -186,48 +232,79 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
+        UnifiedChoiceParameterDefinition copy = copyDefinition();
+        if (isMultiple()) {
+            if (!(defaultValue instanceof UnifiedMultiChoiceParameterValue multiValue)) {
+                return this;
+            }
+            copy.setDefaultMode("explicit");
+            copy.setDefaultValues(multiValue.getValue());
+            return copy;
+        }
         if (!(defaultValue instanceof UnifiedChoiceParameterValue choiceValue)) {
             return this;
         }
-        UnifiedChoiceParameterDefinition copy = copyDefinition();
         copy.setDefaultMode("explicit");
         copy.setDefaultValue(choiceValue.getValue());
         return copy;
     }
 
     public boolean isDefault(String value) {
-        UnifiedChoiceParameterValue defaultParameterValue = getDefaultParameterValue();
-        return defaultParameterValue != null && java.util.Objects.equals(defaultParameterValue.getValue(), value);
+        if (isMultiple()) {
+            try {
+                ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.RESOLVE);
+                return ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options())
+                        .contains(value);
+            } catch (EvaluationException exception) {
+                return false;
+            }
+        }
+        ParameterValue defaultParameterValue = getDefaultParameterValue();
+        return defaultParameterValue instanceof UnifiedChoiceParameterValue choiceValue
+                && java.util.Objects.equals(choiceValue.getValue(), value);
     }
 
     @Override
     protected String getDefaultRenderer() {
-        return "select";
+        return isMultiple() ? "checkbox" : "select";
     }
 
     @Override
     protected String getRendererFamily() {
-        return io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_SINGLE_CHOICE;
+        return isMultiple()
+                ? io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_MULTI_CHOICE
+                : io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_SINGLE_CHOICE;
     }
 
     @Override
     protected String getDefaultEnvironmentExport() {
-        return "string";
+        return isMultiple() ? "delimited" : "string";
     }
 
     @Override
     protected java.util.List<String> getFallbackDefaultValues() {
-        UnifiedChoiceParameterValue value = getDefaultParameterValue();
-        return value == null || value.getValue() == null ? java.util.List.of() : java.util.List.of(value.getValue());
+        if (isMultiple()) {
+            try {
+                ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.RESOLVE);
+                return ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options());
+            } catch (EvaluationException exception) {
+                return List.of();
+            }
+        }
+        ParameterValue value = getDefaultParameterValue();
+        return value instanceof UnifiedChoiceParameterValue choiceValue && choiceValue.getValue() != null
+                ? java.util.List.of(choiceValue.getValue())
+                : java.util.List.of();
     }
 
     @Override
     public boolean isMultiple() {
-        return false;
+        return "multiple".equals(getSelectionMode());
     }
 
     private UnifiedChoiceParameterDefinition copyDefinition() {
         UnifiedChoiceParameterDefinition copy = new UnifiedChoiceParameterDefinition(getName());
+        copy.setSelectionMode(getSelectionMode());
         copy.setDescription(getDescription());
         copy.setChoices(getChoices());
         copy.setProviderId(getProviderId());
@@ -235,6 +312,14 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         copy.setRenderer(getRenderer());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
+        copy.setDefaultValues(getDefaultValues());
+        copy.setMinSelections(getMinSelections());
+        copy.setMaxSelections(getMaxSelections());
+        copy.setDuplicatePolicy(getDuplicatePolicy());
+        copy.setStandardApiInputMode(getStandardApiInputMode());
+        copy.setDelimiter(getDelimiter());
+        copy.setSelectedDisplay(getSelectedDisplay());
+        copy.setTable(getTable());
         copy.setAllowCustomValue(isAllowCustomValue());
         copy.setCustomValuePattern(getCustomValuePattern());
         copy.setCustomValueMaxLength(getCustomValueMaxLength());
@@ -266,6 +351,11 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         return new UnifiedChoiceParameterValue(getName(), value, getDescription(), getEnvironmentExport(), metadata);
     }
 
+    private UnifiedMultiChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
+        return new UnifiedMultiChoiceParameterValue(
+                getName(), values, getDescription(), getEnvironmentExport(), getDelimiter(), metadata);
+    }
+
     @Extension
     @Symbol("unifiedChoice")
     public static final class DescriptorImpl extends ParameterDescriptor {
@@ -278,10 +368,16 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         public UnifiedChoiceParameterDefinition newInstance(StaplerRequest2 request, JSONObject formData)
                 throws Descriptor.FormException {
             JSONObject data = JSONObject.fromObject(formData);
+            String defaultValuesText = data.optString("defaultValuesText", "");
             String dependsOnText = data.optString("dependsOnText", "");
+            data.remove("defaultValuesText");
             data.remove("dependsOnText");
             UnifiedChoiceParameterDefinition definition =
                     (UnifiedChoiceParameterDefinition) super.newInstance(request, data);
+            definition.setDefaultValues(Arrays.stream(defaultValuesText.split("[\\r\\n,]+"))
+                    .map(String::trim)
+                    .filter(value -> !value.isEmpty())
+                    .toList());
             definition.setDependsOn(Arrays.stream(dependsOnText.split("[\\r\\n,]+"))
                     .map(String::trim)
                     .filter(value -> !value.isEmpty())

@@ -91,6 +91,45 @@ class ConfigurationUiIntegrationTest {
     }
 
     @Test
+    void unifiedChoiceMultipleModeRendersMultipleFields(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject("configuration-ui-multiple");
+
+        UnifiedChoiceParameterDefinition multiple = new UnifiedChoiceParameterDefinition("TARGETS");
+        multiple.setSelectionMode("multiple");
+        multiple.setChoices(List.of(new Option("web")));
+        multiple.setRenderer("checkbox");
+        multiple.setSelectedDisplay("chips");
+        multiple.setDefaultMode("explicit");
+        multiple.setDefaultValues(List.of("web"));
+        multiple.setStandardApiInputMode("delimited");
+
+        project.addProperty(new ParametersDefinitionProperty(multiple));
+
+        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(project, "configure");
+
+        assertSelected(
+                page,
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "selectionMode",
+                "multiple");
+        assertSelected(
+                page,
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "renderer",
+                "checkbox");
+        assertSelected(
+                page,
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "selectedDisplay",
+                "chips");
+        assertSelected(
+                page,
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "standardApiInputMode",
+                "delimited");
+    }
+
+    @Test
     void requiredReactiveWithoutDefaultShowsConfigurationWarning(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("configuration-warning");
         UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");

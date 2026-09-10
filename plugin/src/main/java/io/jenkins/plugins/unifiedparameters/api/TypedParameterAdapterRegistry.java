@@ -8,6 +8,7 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
+import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
@@ -54,7 +55,8 @@ final class TypedParameterAdapterRegistry {
                         : "jenkins-core");
         if (definition instanceof UnifiedFormParameterDefinition) {
             schema.put("type", "object");
-        } else if (definition instanceof UnifiedMultiChoiceParameterDefinition) {
+        } else if (definition instanceof UnifiedMultiChoiceParameterDefinition
+                || (definition instanceof UnifiedChoiceParameterDefinition choice && choice.isMultiple())) {
             schema.put("type", "array");
         } else if (definition instanceof BooleanParameterDefinition) {
             schema.put("type", "boolean");
@@ -62,13 +64,19 @@ final class TypedParameterAdapterRegistry {
             schema.put("type", "string");
         }
         if (definition instanceof UnifiedChoiceParameterDefinition single) {
-            schema.put("allowCustomValue", single.isAllowCustomValue());
-            schema.put("customValuePattern", single.getCustomValuePattern());
-            schema.put("customValueMaxLength", single.getCustomValueMaxLength());
+            schema.put("selectionMode", single.getSelectionMode());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
             schema.put("renderer", single.getRenderer());
             schema.put("availableExternalRenderers", JSONArray.fromObject(single.getAvailableExternalRenderers()));
+            if (single.isMultiple()) {
+                schema.put("selectedDisplay", single.getSelectedDisplay());
+                schema.put("table", single.getTable());
+            } else {
+                schema.put("allowCustomValue", single.isAllowCustomValue());
+                schema.put("customValuePattern", single.getCustomValuePattern());
+                schema.put("customValueMaxLength", single.getCustomValueMaxLength());
+            }
         } else if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
             schema.put("providerBacked", multiple.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(multiple.getDependsOn()));
@@ -107,46 +115,30 @@ final class TypedParameterAdapterRegistry {
             }
             return form.createTypedValue(typedValue, present);
         }
-        if (definition instanceof UnifiedChoiceParameterDefinition single) {
+        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+            if (choice.isMultiple()) {
+                return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
+            }
             ResolvedProviderOptions resolved =
-                    ProviderSnapshotStore.get().resolveForBuild(job, single, dependencies, snapshotId, operation);
+                    ProviderSnapshotStore.get().resolveForBuild(job, choice, dependencies, snapshotId, operation);
             String value = !present || typedValue == null || typedValue instanceof JSONNull
                     ? null
                     : requireString(definition, typedValue);
             String canonical = ParameterEvaluationService.evaluateSingle(
-                    single,
+                    choice,
                     present
                             ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
                             : DecodedInput.absent(),
                     resolved.options());
             return new UnifiedChoiceParameterValue(
-                    single.getName(),
+                    choice.getName(),
                     canonical,
-                    single.getDescription(),
-                    single.getEnvironmentExport(),
+                    choice.getDescription(),
+                    choice.getEnvironmentExport(),
                     resolved.metadata());
         }
         if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            if (present && !(typedValue instanceof JSONArray)) {
-                throw invalidType(definition, "Expected a JSON array.");
-            }
-            List<String> values = new ArrayList<>();
-            if (present) {
-                for (Object value : (JSONArray) typedValue) {
-                    values.add(requireString(definition, value));
-                }
-            }
-            ResolvedProviderOptions resolved =
-                    ProviderSnapshotStore.get().resolveForBuild(job, multiple, dependencies, snapshotId, operation);
-            List<String> canonical = ParameterEvaluationService.evaluateMultiple(
-                    multiple, present ? DecodedInput.present(values) : DecodedInput.absent(), resolved.options());
-            return new UnifiedMultiChoiceParameterValue(
-                    multiple.getName(),
-                    canonical,
-                    multiple.getDescription(),
-                    multiple.getEnvironmentExport(),
-                    multiple.getDelimiter(),
-                    resolved.metadata());
+            return decodeMultiple(job, multiple, present, typedValue, dependencies, snapshotId, operation);
         }
         if (!present) {
             return definition.getDefaultParameterValue();
@@ -170,6 +162,36 @@ final class TypedParameterAdapterRegistry {
             return parameterValue;
         }
         throw invalidType(definition, "Unsupported typed value.");
+    }
+
+    private static ParameterValue decodeMultiple(
+            Job<?, ?> job,
+            AbstractUnifiedParameterDefinition definition,
+            boolean present,
+            Object typedValue,
+            Map<String, String> dependencies,
+            String snapshotId,
+            ProviderOperation operation) {
+        if (present && !(typedValue instanceof JSONArray)) {
+            throw invalidType(definition, "Expected a JSON array.");
+        }
+        List<String> values = new ArrayList<>();
+        if (present) {
+            for (Object value : (JSONArray) typedValue) {
+                values.add(requireString(definition, value));
+            }
+        }
+        ResolvedProviderOptions resolved =
+                ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
+        List<String> canonical = ParameterEvaluationService.evaluateMultiple(
+                definition, present ? DecodedInput.present(values) : DecodedInput.absent(), resolved.options());
+        return new UnifiedMultiChoiceParameterValue(
+                definition.getName(),
+                canonical,
+                definition.getDescription(),
+                definition.getEnvironmentExport(),
+                definition.getDelimiter(),
+                resolved.metadata());
     }
 
     private static String requireString(ParameterDefinition definition, Object value) {

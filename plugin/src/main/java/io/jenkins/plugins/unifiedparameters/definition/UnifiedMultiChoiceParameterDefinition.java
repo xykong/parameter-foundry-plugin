@@ -12,7 +12,6 @@ import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
 import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
@@ -21,110 +20,30 @@ import io.jenkins.plugins.unifiedparameters.snapshot.ResolvedProviderOptions;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.verb.POST;
 
+/**
+ * Legacy multiple-choice definition retained so existing Job configurations keep loading.
+ *
+ * <p>New configurations and Job DSL scripts should use
+ * {@link UnifiedChoiceParameterDefinition} with {@code selectionMode("multiple")}.
+ */
+@Deprecated
 public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnifiedParameterDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> defaultValues = List.of();
-    private int minSelections;
-    private int maxSelections = -1;
-    private String duplicatePolicy = "reject";
-    private String standardApiInputMode = "repeated";
-    private String delimiter = ",";
-    private String selectedDisplay = "none";
-    private ChoiceMatrix table;
-
-    public ChoiceMatrix getTable() {
-        return table;
-    }
-
-    @DataBoundSetter
-    public void setTable(ChoiceMatrix table) {
-        this.table = table;
-    }
-
-    public String getTableJson() {
-        return table == null ? "" : JSONObject.fromObject(table).toString();
-    }
-
-    public String getSelectedDisplay() {
-        return selectedDisplay == null || selectedDisplay.isBlank() ? "none" : selectedDisplay;
-    }
-
-    @DataBoundSetter
-    public void setSelectedDisplay(String selectedDisplay) {
-        this.selectedDisplay = selectedDisplay;
-    }
-
     @DataBoundConstructor
     public UnifiedMultiChoiceParameterDefinition(String name) {
         super(name);
-    }
-
-    public List<String> getDefaultValues() {
-        return defaultValues == null ? List.of() : defaultValues;
-    }
-
-    @DataBoundSetter
-    public void setDefaultValues(List<String> defaultValues) {
-        this.defaultValues = defaultValues == null ? List.of() : List.copyOf(new ArrayList<>(defaultValues));
-    }
-
-    public int getMinSelections() {
-        return minSelections;
-    }
-
-    @DataBoundSetter
-    public void setMinSelections(int minSelections) {
-        this.minSelections = minSelections;
-    }
-
-    public int getMaxSelections() {
-        return maxSelections;
-    }
-
-    @DataBoundSetter
-    public void setMaxSelections(int maxSelections) {
-        this.maxSelections = maxSelections;
-    }
-
-    public String getDuplicatePolicy() {
-        return duplicatePolicy == null || duplicatePolicy.isBlank() ? "reject" : duplicatePolicy;
-    }
-
-    @DataBoundSetter
-    public void setDuplicatePolicy(String duplicatePolicy) {
-        this.duplicatePolicy = duplicatePolicy;
-    }
-
-    public String getStandardApiInputMode() {
-        return standardApiInputMode == null || standardApiInputMode.isBlank() ? "repeated" : standardApiInputMode;
-    }
-
-    @DataBoundSetter
-    public void setStandardApiInputMode(String standardApiInputMode) {
-        this.standardApiInputMode = standardApiInputMode;
-    }
-
-    public String getDelimiter() {
-        return delimiter == null || delimiter.isEmpty() ? "," : delimiter;
-    }
-
-    @DataBoundSetter
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
     }
 
     @Override
@@ -223,12 +142,6 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
         } catch (EvaluationException exception) {
             return false;
         }
-    }
-
-    public String getDefaultValuesText() {
-        return getDefaultValues().stream()
-                .map(value -> value == null ? "" : value)
-                .collect(java.util.stream.Collectors.joining("\n"));
     }
 
     @Override
@@ -341,7 +254,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
 
         @Override
         public String getDisplayName() {
-            return "Unified Multi-choice Parameter";
+            return "Unified Multi-choice Parameter (legacy)";
         }
     }
 }

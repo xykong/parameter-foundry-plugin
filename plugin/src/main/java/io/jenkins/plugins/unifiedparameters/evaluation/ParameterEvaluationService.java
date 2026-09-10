@@ -2,7 +2,6 @@ package io.jenkins.plugins.unifiedparameters.evaluation;
 
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.util.ArrayList;
@@ -43,12 +42,12 @@ public final class ParameterEvaluationService {
         return value;
     }
 
-    public static List<String> evaluateMultiple(UnifiedMultiChoiceParameterDefinition definition, DecodedInput input) {
+    public static List<String> evaluateMultiple(AbstractUnifiedParameterDefinition definition, DecodedInput input) {
         return evaluateMultiple(definition, input, definition.getChoices());
     }
 
     public static List<String> evaluateMultiple(
-            UnifiedMultiChoiceParameterDefinition definition, DecodedInput input, List<Option> options) {
+            AbstractUnifiedParameterDefinition definition, DecodedInput input, List<Option> options) {
         DefinitionValidationService.requireValid(definition);
         List<String> values = input.present() ? input.values() : resolveMultipleDefault(definition, options);
         if (values.isEmpty()) {
@@ -94,7 +93,7 @@ public final class ParameterEvaluationService {
     }
 
     private static List<String> resolveMultipleDefault(
-            UnifiedMultiChoiceParameterDefinition definition, List<Option> options) {
+            AbstractUnifiedParameterDefinition definition, List<Option> options) {
         List<String> defaults =
                 switch (definition.getDefaultMode()) {
                     case "none" -> List.of();
@@ -129,7 +128,7 @@ public final class ParameterEvaluationService {
         }
     }
 
-    private static void validateSelectionCount(UnifiedMultiChoiceParameterDefinition definition, int count) {
+    private static void validateSelectionCount(AbstractUnifiedParameterDefinition definition, int count) {
         if (definition.isRequired() && count == 0) {
             throw error(ErrorCode.REQUIRED, definition, "At least one value is required.");
         }

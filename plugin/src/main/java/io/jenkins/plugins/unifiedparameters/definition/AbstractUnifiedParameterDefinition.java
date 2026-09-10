@@ -4,6 +4,7 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.Messages;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
@@ -31,6 +33,14 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     private String defaultMode = "none";
     private boolean required;
     private String environmentExport;
+    private List<String> defaultValues = List.of();
+    private int minSelections;
+    private int maxSelections = -1;
+    private String duplicatePolicy = "reject";
+    private String standardApiInputMode = "repeated";
+    private String delimiter = ",";
+    private String selectedDisplay = "none";
+    private ChoiceMatrix table;
     private int modelVersion = 1;
 
     protected AbstractUnifiedParameterDefinition(String name) {
@@ -238,6 +248,88 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     @DataBoundSetter
     public void setEnvironmentExport(String environmentExport) {
         this.environmentExport = environmentExport;
+    }
+
+    public List<String> getDefaultValues() {
+        return defaultValues == null ? List.of() : defaultValues;
+    }
+
+    @DataBoundSetter
+    public void setDefaultValues(List<String> defaultValues) {
+        this.defaultValues = defaultValues == null ? List.of() : List.copyOf(new ArrayList<>(defaultValues));
+    }
+
+    public int getMinSelections() {
+        return minSelections;
+    }
+
+    @DataBoundSetter
+    public void setMinSelections(int minSelections) {
+        this.minSelections = minSelections;
+    }
+
+    public int getMaxSelections() {
+        return maxSelections;
+    }
+
+    @DataBoundSetter
+    public void setMaxSelections(int maxSelections) {
+        this.maxSelections = maxSelections;
+    }
+
+    public String getDuplicatePolicy() {
+        return duplicatePolicy == null || duplicatePolicy.isBlank() ? "reject" : duplicatePolicy;
+    }
+
+    @DataBoundSetter
+    public void setDuplicatePolicy(String duplicatePolicy) {
+        this.duplicatePolicy = duplicatePolicy;
+    }
+
+    public String getStandardApiInputMode() {
+        return standardApiInputMode == null || standardApiInputMode.isBlank() ? "repeated" : standardApiInputMode;
+    }
+
+    @DataBoundSetter
+    public void setStandardApiInputMode(String standardApiInputMode) {
+        this.standardApiInputMode = standardApiInputMode;
+    }
+
+    public String getDelimiter() {
+        return delimiter == null || delimiter.isEmpty() ? "," : delimiter;
+    }
+
+    @DataBoundSetter
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public String getSelectedDisplay() {
+        return selectedDisplay == null || selectedDisplay.isBlank() ? "none" : selectedDisplay;
+    }
+
+    @DataBoundSetter
+    public void setSelectedDisplay(String selectedDisplay) {
+        this.selectedDisplay = selectedDisplay;
+    }
+
+    public ChoiceMatrix getTable() {
+        return table;
+    }
+
+    @DataBoundSetter
+    public void setTable(ChoiceMatrix table) {
+        this.table = table;
+    }
+
+    public String getTableJson() {
+        return table == null ? "" : JSONObject.fromObject(table).toString();
+    }
+
+    public String getDefaultValuesText() {
+        return getDefaultValues().stream()
+                .map(value -> value == null ? "" : value)
+                .collect(java.util.stream.Collectors.joining("\n"));
     }
 
     public int getModelVersion() {

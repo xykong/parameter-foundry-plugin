@@ -22,6 +22,18 @@ class ParameterEvaluationServiceTest {
     }
 
     @Test
+    void unifiedChoiceInMultipleModeUsesStableMachineValueOrder() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        definition.setSelectionMode("multiple");
+        definition.setChoices(List.of(new Option("web"), new Option("android")));
+
+        List<String> result = ParameterEvaluationService.evaluateMultiple(
+                definition, DecodedInput.present(List.of("web", "android")));
+
+        assertEquals(List.of("android", "web"), result);
+    }
+
+    @Test
     void multipleChoiceRejectsDuplicatesByDefault() {
         UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
 

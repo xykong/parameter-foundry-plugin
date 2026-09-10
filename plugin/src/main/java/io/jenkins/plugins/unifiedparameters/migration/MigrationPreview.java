@@ -3,7 +3,6 @@ package io.jenkins.plugins.unifiedparameters.migration;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -138,29 +137,30 @@ public final class MigrationPreview {
     }
 
     private static String snippet(ParameterDefinition target) {
-        if (target instanceof UnifiedChoiceParameterDefinition single) {
+        if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isMultiple()) {
             return "unifiedChoice(\n"
                     + "  name: "
-                    + quote(single.getName())
+                    + quote(choice.getName())
                     + ",\n"
                     + "  choices: "
-                    + choices(single.getChoices())
+                    + choices(choice.getChoices())
                     + ",\n"
                     + "  renderer: "
-                    + quote(single.getRenderer())
+                    + quote(choice.getRenderer())
                     + ",\n"
                     + "  defaultMode: "
-                    + quote(single.getDefaultMode())
-                    + ("explicit".equals(single.getDefaultMode())
-                            ? ",\n  defaultValue: " + quote(single.getDefaultValue())
+                    + quote(choice.getDefaultMode())
+                    + ("explicit".equals(choice.getDefaultMode())
+                            ? ",\n  defaultValue: " + quote(choice.getDefaultValue())
                             : "")
                     + "\n)";
         }
-        if (target instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            return "unifiedMultiChoice(\n"
+        if (target instanceof AbstractUnifiedParameterDefinition multiple && multiple.isMultiple()) {
+            return "unifiedChoice(\n"
                     + "  name: "
                     + quote(multiple.getName())
                     + ",\n"
+                    + "  selectionMode: 'multiple',\n"
                     + "  choices: "
                     + choices(multiple.getChoices())
                     + ",\n"

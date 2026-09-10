@@ -28,9 +28,10 @@ class ExtendedChoiceMigrationUiTest {
         String text = page.asNormalizedText();
 
         assertTrue(text.contains("Class B"));
-        assertTrue(text.contains("UnifiedMultiChoiceParameterDefinition"));
+        assertTrue(text.contains("UnifiedChoiceParameterDefinition"));
         assertTrue(text.contains("Confirm that selection order is not part of the business requirement."));
-        assertTrue(text.contains("unifiedMultiChoice"));
+        assertTrue(text.contains("unifiedChoice"));
+        assertTrue(text.contains("selectionMode: 'multiple'"));
         assertTrue(text.contains("Standard REST, Typed REST, CLI, and Pipeline build"));
         assertTrue(text.contains("does not modify the Job"));
     }

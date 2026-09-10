@@ -76,6 +76,31 @@ class DefinitionValidationServiceTest {
     }
 
     @Test
+    void unifiedChoiceSupportsMultipleSelectionMode() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        definition.setSelectionMode("multiple");
+        definition.setRenderer("checkbox");
+        definition.setChoices(List.of(new Option("android"), new Option("ios")));
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertTrue(result.isValid());
+        assertTrue(definition.isMultiple());
+    }
+
+    @Test
+    void unsupportedSelectionModeIsConfigurationInvalid() {
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        definition.setSelectionMode("both");
+        definition.setChoices(List.of(new Option("android")));
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertFalse(result.isValid());
+        assertTrue(result.summarize().contains("selection mode"));
+    }
+
+    @Test
     void missingOptionalCollectionsFromLoadedConfigDoNotCrashValidation() throws Exception {
         UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
         definition.setChoices(List.of(new Option("staging")));

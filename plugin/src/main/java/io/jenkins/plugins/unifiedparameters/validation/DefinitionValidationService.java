@@ -66,8 +66,15 @@ public final class DefinitionValidationService {
         validateCliDefaultPolicy(unified, warnings);
         validateChoices(unified, errors);
 
-        if (unified instanceof UnifiedChoiceParameterDefinition single) {
-            validateSingle(single, errors);
+        if (unified instanceof UnifiedChoiceParameterDefinition choice) {
+            if (!Set.of("single", "multiple").contains(choice.getSelectionMode())) {
+                errors.add("Unsupported selection mode: " + choice.getSelectionMode());
+            }
+            if (choice.isMultiple()) {
+                validateMultiple(choice, errors);
+            } else {
+                validateSingle(choice, errors);
+            }
         } else if (unified instanceof UnifiedMultiChoiceParameterDefinition multiple) {
             validateMultiple(multiple, errors);
         }
@@ -185,7 +192,7 @@ public final class DefinitionValidationService {
         }
     }
 
-    private static void validateMultiple(UnifiedMultiChoiceParameterDefinition definition, List<String> errors) {
+    private static void validateMultiple(AbstractUnifiedParameterDefinition definition, List<String> errors) {
         if (!MULTI_RENDERERS.contains(definition.getRenderer())
                 && !TrustedRendererRegistry.isTrusted(
                         definition.getRenderer(), TrustedRendererRegistry.FAMILY_MULTI_CHOICE)) {
@@ -238,7 +245,7 @@ public final class DefinitionValidationService {
     }
 
     private static void validateMatrix(
-            ChoiceMatrix matrix, UnifiedMultiChoiceParameterDefinition definition, List<String> errors) {
+            ChoiceMatrix matrix, AbstractUnifiedParameterDefinition definition, List<String> errors) {
         if (matrix.getRows().isEmpty() || matrix.getColumns().isEmpty()) {
             errors.add("Choice matrix requires at least one row and column");
             return;

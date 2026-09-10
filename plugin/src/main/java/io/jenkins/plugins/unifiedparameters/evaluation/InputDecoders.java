@@ -4,7 +4,6 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,8 +28,8 @@ public final class InputDecoders {
         if (raw == null) {
             return marked ? DecodedInput.present(List.of()) : DecodedInput.absent();
         }
-        if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            return DecodedInput.present(decodeMultiTransport(multiple, Arrays.asList(raw)));
+        if (definition.isMultiple()) {
+            return DecodedInput.present(decodeMultiTransport(definition, Arrays.asList(raw)));
         }
         return DecodedInput.present(Arrays.asList(raw));
     }
@@ -57,7 +56,7 @@ public final class InputDecoders {
         if (rawValue == null) {
             return DecodedInput.absent();
         }
-        if (!(definition instanceof UnifiedMultiChoiceParameterDefinition multiple)) {
+        if (!definition.isMultiple()) {
             return DecodedInput.present(List.of(rawValue));
         }
         if (rawValue.startsWith("[")) {
@@ -73,14 +72,13 @@ public final class InputDecoders {
                         ErrorCode.MALFORMED_INPUT, definition.getName(), "CLI JSON array is malformed.");
             }
         }
-        if ("delimited".equals(multiple.getStandardApiInputMode())) {
-            return DecodedInput.present(splitDelimited(rawValue, multiple.getDelimiter()));
+        if ("delimited".equals(definition.getStandardApiInputMode())) {
+            return DecodedInput.present(splitDelimited(rawValue, definition.getDelimiter()));
         }
         return DecodedInput.present(List.of(rawValue));
     }
 
-    private static List<String> decodeMultiTransport(
-            UnifiedMultiChoiceParameterDefinition definition, List<String> raw) {
+    private static List<String> decodeMultiTransport(AbstractUnifiedParameterDefinition definition, List<String> raw) {
         return switch (definition.getStandardApiInputMode()) {
             case "repeated" -> List.copyOf(raw);
             case "json-array" -> {

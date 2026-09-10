@@ -2,7 +2,6 @@ package io.jenkins.plugins.unifiedparameters.automation;
 
 import hudson.Extension;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.FormField;
 import io.jenkins.plugins.unifiedparameters.form.FormLayout;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
@@ -26,7 +25,8 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
 
     @DslExtensionMethod(context = BuildParametersContext.class)
     public Object unifiedMultiChoice(String name, Runnable closure) {
-        MultiChoiceContext context = new MultiChoiceContext();
+        ChoiceContext context = new ChoiceContext();
+        context.selectionMode("multiple");
         executeInContext(closure, context);
         return context.create(name);
     }
@@ -40,15 +40,23 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
 
     public static class ChoiceContext implements Context {
         private final List<Option> options = new ArrayList<>();
+        private final List<String> defaultValues = new ArrayList<>();
         private String providerId;
         private String description;
+        private String selectionMode = "single";
         private String renderer = "select";
+        private String selectedDisplay = "none";
         private String defaultMode = "none";
         private String defaultValue;
         private boolean required;
         private boolean allowCustomValue;
         private String customValuePattern;
         private int customValueMaxLength = 256;
+        private int minimumSelections;
+        private int maximumSelections = -1;
+        private String duplicatePolicy = "reject";
+        private String standardApiInputMode = "repeated";
+        private String delimiter = ",";
         private final List<String> dependsOn = new ArrayList<>();
 
         public void option(String value) {
@@ -84,82 +92,8 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             this.description = description;
         }
 
-        public void renderer(String renderer) {
-            this.renderer = renderer;
-        }
-
-        public void defaultMode(String defaultMode) {
-            this.defaultMode = defaultMode;
-        }
-
-        public void defaultValue(String defaultValue) {
-            this.defaultMode = "explicit";
-            this.defaultValue = defaultValue;
-        }
-
-        public void required(boolean required) {
-            this.required = required;
-        }
-
-        public void customValue(String pattern, int maximumLength) {
-            this.allowCustomValue = true;
-            this.customValuePattern = pattern;
-            this.customValueMaxLength = maximumLength;
-        }
-
-        UnifiedChoiceParameterDefinition create(String name) {
-            UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition(name);
-            definition.setDescription(description);
-            definition.setChoices(options);
-            definition.setProviderId(providerId);
-            definition.setDependsOn(dependsOn);
-            definition.setRenderer(renderer);
-            definition.setDefaultMode(defaultMode);
-            definition.setDefaultValue(defaultValue);
-            definition.setRequired(required);
-            definition.setAllowCustomValue(allowCustomValue);
-            definition.setCustomValuePattern(customValuePattern);
-            definition.setCustomValueMaxLength(customValueMaxLength);
-            return definition;
-        }
-    }
-
-    public static final class MultiChoiceContext implements Context {
-        private final List<Option> options = new ArrayList<>();
-        private final List<String> defaultValues = new ArrayList<>();
-        private String providerId;
-        private String description;
-        private String renderer = "checkbox";
-        private String selectedDisplay = "none";
-        private String defaultMode = "none";
-        private boolean required;
-        private int minimumSelections;
-        private int maximumSelections = -1;
-        private String duplicatePolicy = "reject";
-        private String standardApiInputMode = "repeated";
-        private String delimiter = ",";
-        private final List<String> dependsOn = new ArrayList<>();
-
-        public void option(String value) {
-            options.add(new Option(value));
-        }
-
-        public void option(String value, String label) {
-            Option option = new Option(value);
-            option.setLabel(label);
-            options.add(option);
-        }
-
-        public void provider(String providerId) {
-            this.providerId = providerId;
-        }
-
-        public void dependsOn(String... parameterNames) {
-            this.dependsOn.addAll(List.of(parameterNames));
-        }
-
-        public void description(String description) {
-            this.description = description;
+        public void selectionMode(String selectionMode) {
+            this.selectionMode = selectionMode;
         }
 
         public void renderer(String renderer) {
@@ -174,13 +108,23 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             this.defaultMode = defaultMode;
         }
 
-        public void defaultValue(String value) {
+        public void defaultValue(String defaultValue) {
             this.defaultMode = "explicit";
-            this.defaultValues.add(value);
+            if ("multiple".equals(selectionMode)) {
+                this.defaultValues.add(defaultValue);
+            } else {
+                this.defaultValue = defaultValue;
+            }
         }
 
         public void required(boolean required) {
             this.required = required;
+        }
+
+        public void customValue(String pattern, int maximumLength) {
+            this.allowCustomValue = true;
+            this.customValuePattern = pattern;
+            this.customValueMaxLength = maximumLength;
         }
 
         public void selectionRange(int minimum, int maximum) {
@@ -197,17 +141,24 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             this.delimiter = delimiter;
         }
 
-        UnifiedMultiChoiceParameterDefinition create(String name) {
-            UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition(name);
+        UnifiedChoiceParameterDefinition create(String name) {
+            UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition(name);
             definition.setDescription(description);
             definition.setChoices(options);
             definition.setProviderId(providerId);
             definition.setDependsOn(dependsOn);
-            definition.setRenderer(renderer);
+            definition.setSelectionMode(selectionMode);
+            String effectiveRenderer =
+                    "multiple".equals(selectionMode) && "select".equals(renderer) ? "checkbox" : renderer;
+            definition.setRenderer(effectiveRenderer);
             definition.setSelectedDisplay(selectedDisplay);
             definition.setDefaultMode(defaultMode);
+            definition.setDefaultValue(defaultValue);
             definition.setDefaultValues(defaultValues);
             definition.setRequired(required);
+            definition.setAllowCustomValue(allowCustomValue);
+            definition.setCustomValuePattern(customValuePattern);
+            definition.setCustomValueMaxLength(customValueMaxLength);
             definition.setMinSelections(minimumSelections);
             definition.setMaxSelections(maximumSelections);
             definition.setDuplicatePolicy(duplicatePolicy);

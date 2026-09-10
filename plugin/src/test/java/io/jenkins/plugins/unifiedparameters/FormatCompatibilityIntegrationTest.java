@@ -190,6 +190,30 @@ class FormatCompatibilityIntegrationTest {
     }
 
     @Test
+    void unifiedChoiceMultipleModeUsesArrayShapeInTypedApi(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = unifiedMultipleJob(jenkins, "unified-typed-array");
+
+        JSONObject values = new JSONObject();
+        values.put("TARGETS", JSONArray.fromObject(List.of("web", "android")));
+        JSONObject body = new JSONObject();
+        body.put("values", values);
+
+        JenkinsRule.JSONWebResponse response =
+                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+
+        assertEquals(200, response.getStatusCode(), response.getJSONObject().toString());
+        assertEquals(
+                JSONArray.fromObject(List.of("android", "web")),
+                response.getJSONObject().getJSONObject("canonicalValues").getJSONArray("TARGETS"));
+
+        JenkinsRule.JSONWebResponse schema =
+                jenkins.createWebClient().getJSON(project.getUrl() + "unified-parameters/api/v1/schema");
+        JSONObject targets = schemaFor(schema, "TARGETS");
+        assertEquals("array", targets.getString("type"));
+        assertEquals("multiple", targets.getString("selectionMode"));
+    }
+
+    @Test
     void typedApiUsesDefaultsForOmittedValuesAndEmptyArrayForExplicitEmpty(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-empty-default", ",");
         UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
@@ -499,6 +523,15 @@ class FormatCompatibilityIntegrationTest {
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setStandardApiInputMode(mode);
         definition.setDelimiter(delimiter);
+        project.addProperty(new ParametersDefinitionProperty(definition));
+        return project;
+    }
+
+    private static FreeStyleProject unifiedMultipleJob(JenkinsRule jenkins, String name) throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject(name);
+        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        definition.setSelectionMode("multiple");
+        definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         project.addProperty(new ParametersDefinitionProperty(definition));
         return project;
     }

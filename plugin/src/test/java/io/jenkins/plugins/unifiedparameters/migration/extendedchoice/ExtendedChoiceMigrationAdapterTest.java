@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
 import java.util.List;
@@ -42,8 +41,9 @@ class ExtendedChoiceMigrationAdapterTest {
         MigrationPlan plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.B, plan.getClassification());
-        UnifiedMultiChoiceParameterDefinition target =
-                assertInstanceOf(UnifiedMultiChoiceParameterDefinition.class, plan.getTarget());
+        UnifiedChoiceParameterDefinition target =
+                assertInstanceOf(UnifiedChoiceParameterDefinition.class, plan.getTarget());
+        assertEquals("multiple", target.getSelectionMode());
         assertEquals("checkbox", target.getRenderer());
         assertEquals("delimited", target.getStandardApiInputMode());
         assertEquals(List.of("web", "android"), target.getDefaultValues());
@@ -74,8 +74,9 @@ class ExtendedChoiceMigrationAdapterTest {
         MigrationPlan plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.B, plan.getClassification());
-        UnifiedMultiChoiceParameterDefinition target =
-                assertInstanceOf(UnifiedMultiChoiceParameterDefinition.class, plan.getTarget());
+        UnifiedChoiceParameterDefinition target =
+                assertInstanceOf(UnifiedChoiceParameterDefinition.class, plan.getTarget());
+        assertEquals("multiple", target.getSelectionMode());
         assertEquals("none", target.getDefaultMode());
         assertEquals(
                 List.of("android", "ios"),
