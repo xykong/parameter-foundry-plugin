@@ -314,8 +314,8 @@ Parameter Definition
 |----------|------|
 | `unifiedText` | 单行、多行、隐藏和可验证文本 |
 | `unifiedBoolean` | Boolean/switch |
-| `unifiedChoice` | 单选、Radio、Editable |
-| `unifiedMultiChoice` | 多选、Checkbox、chips |
+| `unifiedChoice` | 单选/多选（`selectionMode: single|multiple`）、Radio/Checkbox/chips/table |
+| `unifiedMultiChoice` | 兼容别名，等价于 `unifiedChoice` + `selectionMode: multiple` |
 | `unifiedCascade` | 多列依赖选择 |
 | `unifiedForm` | Schema 组合表单 |
 

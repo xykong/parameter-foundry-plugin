@@ -10,7 +10,7 @@
 | 预期仓库 | `jenkinsci/unified-parameters-plugin` |
 | Maven groupId | `io.jenkins.plugins` |
 | Java package | `io.jenkins.plugins.unifiedparameters` |
-| Pipeline 主 Symbol | `unifiedChoice`、`unifiedMultiChoice`、`unifiedForm` |
+| Pipeline 主 Symbol | `unifiedChoice`（`selectionMode: single|multiple`）、`unifiedForm`；`unifiedMultiChoice` 为兼容别名 |
 | 产品标语 | **One parameter model. Every Jenkins entry point.** |
 | UI/API 一致性 | 强保证；不一致视为发布阻断 |
 | 规格日期 | 2026-08-28 |
@@ -175,7 +175,7 @@ metadata: {}
 - `json`：JSON Array。
 - `none`：不导出环境变量。
 
-多选顺序不是 `unifiedMultiChoice` 的业务语义；List/环境变量顺序在一个 Provider snapshot 内
+多选顺序不是 `unifiedChoice` 多选模式（`selectionMode: multiple`）的业务语义；List/环境变量顺序在一个 Provider snapshot 内
 确定，动态快照变化后可能变化。顺序敏感需求使用后续 ordered collection/Form 类型。
 
 如果选项值包含 delimiter，保存配置时必须报错，或要求切换为 JSON 输出。
@@ -304,8 +304,9 @@ parameters {
         renderer: 'searchable'
     )
 
-    unifiedMultiChoice(
+    unifiedChoice(
         name: 'TARGETS',
+        selectionMode: 'multiple',
         choices: [
             [value: 'android', label: 'Android', group: 'Mobile'],
             [value: 'ios', label: 'iOS', group: 'Mobile'],

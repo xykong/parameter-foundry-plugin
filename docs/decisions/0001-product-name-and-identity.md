@@ -13,7 +13,7 @@ Use the following public identity:
 | Plugin short name / artifactId | `unified-parameters` |
 | Repository | `jenkinsci/unified-parameters-plugin` |
 | Java package | `io.jenkins.plugins.unifiedparameters` |
-| Primary Symbols | `unifiedChoice`, `unifiedMultiChoice`, `unifiedForm` |
+| Primary Symbols | `unifiedChoice` (single/multiple via `selectionMode`), `unifiedForm`; `unifiedMultiChoice` is a deprecated compatibility alias |
 | Tagline | One parameter model. Every Jenkins entry point. |
 
 ## Rationale
@@ -21,3 +21,8 @@ Use the following public identity:
 “Unified” describes the durable product promise: one model and one evaluation
 contract across Jenkins UI and automation entry points. “Modern” remains a
 product quality goal rather than part of the permanent name.
+
+Since September 2026 `unifiedChoice` is the single choice entry point for both
+single and multiple selection (`selectionMode: 'single'|'multiple'`). The former
+`unifiedMultiChoice` symbol is retained only so existing Job DSL and Pipeline
+scripts keep working; new configurations use `unifiedChoice`.
