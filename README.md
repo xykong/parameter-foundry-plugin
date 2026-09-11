@@ -12,8 +12,9 @@ foundation: static and governed dynamic choices, reactive dependencies and
 Provider snapshots, typed Unified Forms, migration execution and rollback,
 trusted companion extension contracts, reference Renderer and sandboxed Script
 Provider companions, source migration boundaries, and retirement reporting.
-The artifact version remains `0.1-SNAPSHOT` until the release and community
-review gates are completed.
+Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
+number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
+changes and `AGENTS.md` for the release rules.
 
 Product and technical design documents are under [`docs/`](./docs/).
 The reproducible competitor UI benchmark is under

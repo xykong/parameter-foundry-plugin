@@ -34,6 +34,8 @@ changes, and organization-specific Job data do not belong in this repository.
 
 ## Documentation
 
+- Keep `CHANGELOG.md` current: every release adds its version section and the
+  entries describe user-visible changes only.
 - Product specifications live in `docs/product/`.
 - Research and competitor analysis live in `docs/research/`.
 - Architecture decisions live in `docs/decisions/`.
@@ -53,7 +55,13 @@ changes, and organization-specific Job data do not belong in this repository.
 - Commit completed, coherent work promptly after each logical milestone and
   relevant verification; do not accumulate a long development session into one
   large uncommitted change.
-- Every publish/release deployment must increment the plugin version in
-  `pom.xml`; never deploy a new release using the previous version number.
+- Plugin versions follow `<major>.<minor>.<commit-count>`.
+- Increment the second field when the release scope changes.
+- The third field is the number of commits on `master` at the released commit,
+  so `git rev-list --count master` returns that number for the version commit.
+- Keep the `-SNAPSHOT` suffix while the build is unpublished and drop it for a
+  tagged release.
+- Every publish/release deployment must set the plugin version in `pom.xml`
+  accordingly; never deploy a new release using the previous version number.
 - Do not push without explicit user authorization.
 - Do not rewrite or amend commits unless explicitly requested.
