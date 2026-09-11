@@ -13,18 +13,18 @@
   <f:entry title="Name" help="/help/parameter/name.html">
     <f:textbox name="parameter.name" value="${instance.name}" />
   </f:entry>
-  <f:entry title="Selection mode"
+  <f:entry title="Selection mode" field="selectionMode"
            description="Single returns a scalar value; multiple returns a deterministic list.">
     <select class="jenkins-select__input" name="parameter.selectionMode">
       <option value="single" selected="${instance.selectionMode == 'single' ? 'selected' : null}">Single</option>
       <option value="multiple" selected="${instance.selectionMode == 'multiple' ? 'selected' : null}">Multiple</option>
     </select>
   </f:entry>
-  <f:entry title="Shared Provider ID"
+  <f:entry title="Shared Provider ID" field="providerId"
            description="Leave empty to use the Inline choices below.">
     <f:textbox name="parameter.providerId" value="${instance.providerId}" />
   </f:entry>
-  <f:entry title="Depends on"
+  <f:entry title="Depends on" field="dependsOnText"
            description="Comma- or line-separated parameter names. Reactive dependencies require a shared Provider.">
     <f:textarea name="parameter.dependsOnText" value="${instance.dependsOnText}" />
   </f:entry>
@@ -33,7 +33,7 @@
       <f:repeatableProperty field="choices" add="Add option" header="Option" />
     </div>
   </f:entry>
-  <f:entry title="Import YAML or JSON">
+  <f:entry title="Import YAML or JSON" field="importSource">
     <div class="up-import-panel" data-up-import-panel="true"
          data-parameter-kind="${instance.multiple ? 'multiple' : 'single'}"
          data-endpoint="${rootURL}/descriptorByName/io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition/previewImport">
@@ -53,7 +53,7 @@
   </f:entry>
   <j:choose>
     <j:when test="${instance.multiple}">
-      <f:entry title="Renderer">
+      <f:entry title="Renderer" field="renderer">
         <select class="jenkins-select__input" name="parameter.renderer">
           <option value="checkbox" selected="${instance.renderer == 'checkbox' ? 'selected' : null}">Checkbox group</option>
           <option value="list" selected="${instance.renderer == 'list' ? 'selected' : null}">Multi-select list</option>
@@ -63,44 +63,44 @@
           </j:forEach>
         </select>
       </f:entry>
-      <f:entry title="Selected value display">
+      <f:entry title="Selected value display" field="selectedDisplay">
         <select class="jenkins-select__input" name="parameter.selectedDisplay">
           <option value="none" selected="${instance.selectedDisplay == 'none' ? 'selected' : null}">Hidden</option>
           <option value="chips" selected="${instance.selectedDisplay == 'chips' ? 'selected' : null}">Chips</option>
         </select>
       </f:entry>
-      <f:entry title="Default mode">
+      <f:entry title="Default mode" field="defaultMode">
         <select class="jenkins-select__input" name="parameter.defaultMode">
           <option value="none" selected="${instance.defaultMode == 'none' ? 'selected' : null}">None</option>
           <option value="first" selected="${instance.defaultMode == 'first' ? 'selected' : null}">First enabled option</option>
           <option value="explicit" selected="${instance.defaultMode == 'explicit' ? 'selected' : null}">Explicit values</option>
         </select>
       </f:entry>
-      <f:entry title="Default values">
+      <f:entry title="Default values" field="defaultValuesText">
         <f:textarea name="parameter.defaultValuesText" value="${instance.defaultValuesText}" />
       </f:entry>
-      <f:entry title="Minimum selections">
+      <f:entry title="Minimum selections" field="minSelections">
         <f:number name="parameter.minSelections" value="${instance.minSelections}" min="0" />
       </f:entry>
-      <f:entry title="Maximum selections">
+      <f:entry title="Maximum selections" field="maxSelections">
         <f:number name="parameter.maxSelections" value="${instance.maxSelections}" min="-1" />
       </f:entry>
-      <f:entry title="Required">
+      <f:entry title="Required" field="required">
         <f:checkbox name="parameter.required" checked="${instance.required}" />
       </f:entry>
-      <f:entry title="Standard API input mode">
+      <f:entry title="Standard API input mode" field="standardApiInputMode">
         <select class="jenkins-select__input" name="parameter.standardApiInputMode">
           <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Repeated fields</option>
           <option value="json-array" selected="${instance.standardApiInputMode == 'json-array' ? 'selected' : null}">JSON array field</option>
           <option value="delimited" selected="${instance.standardApiInputMode == 'delimited' ? 'selected' : null}">Delimited field</option>
         </select>
       </f:entry>
-      <f:entry title="Delimiter">
+      <f:entry title="Delimiter" field="delimiter">
         <f:textbox name="parameter.delimiter" value="${instance.delimiter}" />
       </f:entry>
     </j:when>
     <j:otherwise>
-      <f:entry title="Renderer">
+      <f:entry title="Renderer" field="renderer">
         <select class="jenkins-select__input" name="parameter.renderer">
           <option value="select" selected="${instance.renderer == 'select' ? 'selected' : null}">Select</option>
           <option value="searchable" selected="${instance.renderer == 'searchable' ? 'selected' : null}">Searchable</option>
@@ -110,26 +110,26 @@
           </j:forEach>
         </select>
       </f:entry>
-      <f:entry title="Default mode">
+      <f:entry title="Default mode" field="defaultMode">
         <select class="jenkins-select__input" name="parameter.defaultMode">
           <option value="none" selected="${instance.defaultMode == 'none' ? 'selected' : null}">None</option>
           <option value="first" selected="${instance.defaultMode == 'first' ? 'selected' : null}">First enabled option</option>
           <option value="explicit" selected="${instance.defaultMode == 'explicit' ? 'selected' : null}">Explicit value</option>
         </select>
       </f:entry>
-      <f:entry title="Default value">
+      <f:entry title="Default value" field="defaultValue">
         <f:textbox name="parameter.defaultValue" value="${instance.defaultValue}" />
       </f:entry>
-      <f:entry title="Required">
+      <f:entry title="Required" field="required">
         <f:checkbox name="parameter.required" checked="${instance.required}" />
       </f:entry>
-      <f:entry title="Allow custom value">
+      <f:entry title="Allow custom value" field="allowCustomValue">
         <f:checkbox name="parameter.allowCustomValue" checked="${instance.allowCustomValue}" />
       </f:entry>
-      <f:entry title="Custom value regex">
+      <f:entry title="Custom value regex" field="customValuePattern">
         <f:textbox name="parameter.customValuePattern" value="${instance.customValuePattern}" />
       </f:entry>
-      <f:entry title="Custom value maximum length">
+      <f:entry title="Custom value maximum length" field="customValueMaxLength">
         <f:number name="parameter.customValueMaxLength"
                   value="${instance.customValueMaxLength}" min="1" max="4096" />
       </f:entry>

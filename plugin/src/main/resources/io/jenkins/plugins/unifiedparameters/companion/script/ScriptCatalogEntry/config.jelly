@@ -3,7 +3,7 @@
   <f:entry title="Catalog ID" field="id">
     <f:textbox />
   </f:entry>
-  <f:entry title="Sandboxed Groovy">
+  <f:entry title="Sandboxed Groovy" field="script">
     <f:property field="script" propertyDescriptor="${descriptor.scriptDescriptor}" />
   </f:entry>
 </j:jelly>

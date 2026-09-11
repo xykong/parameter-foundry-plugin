@@ -21,6 +21,24 @@ The reproducible competitor UI benchmark is under
 [`tools/ui-lab/`](./tools/ui-lab/), with generated results in
 [`docs/ui-gallery/`](./docs/ui-gallery/).
 
+## Documentation
+
+New to the plugin? Start with the user guide:
+
+| I want to | Read |
+|---|---|
+| Create my first parameter | [docs/guide/getting-started.md](./docs/guide/getting-started.md) |
+| Look up a field, default, or transport | [docs/guide/parameters.md](./docs/guide/parameters.md) |
+| Copy a working configuration | [docs/guide/examples.md](./docs/guide/examples.md) |
+| Connect a backend | [docs/guide/providers.md](./docs/guide/providers.md) |
+| Move off another parameter plugin | [docs/guide/migration.md](./docs/guide/migration.md) |
+| Fix an error | [docs/guide/troubleshooting.md](./docs/guide/troubleshooting.md) |
+
+Every configuration field also documents itself inside Jenkins through a help
+popup, and [`llms.txt`](./llms.txt) is the machine-readable entry point for AI
+assistants. Released changes are listed in [`CHANGELOG.md`](./CHANGELOG.md); the
+internal design set lives under [`docs/`](./docs/README.md).
+
 ## Development
 
 Requirements:

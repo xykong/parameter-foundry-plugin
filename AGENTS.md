@@ -36,6 +36,16 @@ changes, and organization-specific Job data do not belong in this repository.
 
 - Keep `CHANGELOG.md` current: every release adds its version section and the
   entries describe user-visible changes only.
+- User-facing documentation lives in `docs/guide/`. Keep it, `README.md`, and
+  `llms.txt` aligned whenever the public parameter surface, symbols, transports,
+  or workflows change.
+- Every configuration field must document itself inside Jenkins: a
+  `help-<field>.html` next to the owning `config.jelly`.
+  `ConfigurationHelpCoverageTest` enforces this, so add the help file in the same
+  change as the field.
+- `README.md`, `docs/README.md`, and `docs/guide/README.md` are the entry points
+  for users; `llms.txt` is the entry point for AI assistants. Update the index
+  when adding a guide page.
 - Product specifications live in `docs/product/`.
 - Research and competitor analysis live in `docs/research/`.
 - Architecture decisions live in `docs/decisions/`.

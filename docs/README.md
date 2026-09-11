@@ -1,5 +1,24 @@
 # Unified Parameters Documentation
 
+## User guide
+
+Start here if you are configuring or using the plugin:
+
+- [User guide index](./guide/README.md)
+- [Getting started](./guide/getting-started.md)
+- [Parameter reference](./guide/parameters.md)
+- [Cookbook](./guide/examples.md)
+- [Providers](./guide/providers.md)
+- [Migration](./guide/migration.md)
+- [Best practices](./guide/best-practices.md)
+- [Design goals](./guide/design-goals.md)
+- [Troubleshooting](./guide/troubleshooting.md)
+
+The plugin also documents every configuration field inside Jenkins: each field in
+a `config.jelly` ships a `help-<field>.html` popup, and
+`ConfigurationHelpCoverageTest` fails the build when a field is added without
+help.
+
 ## Product
 
 - [Product specification](./product/product-spec.md)

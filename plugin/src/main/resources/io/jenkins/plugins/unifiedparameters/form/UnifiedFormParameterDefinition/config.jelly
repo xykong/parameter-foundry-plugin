@@ -9,19 +9,19 @@
   <f:entry title="Layouts" field="layouts">
     <f:repeatableProperty field="layouts" add="Add layout" header="Layout" />
   </f:entry>
-  <f:entry title="Pipeline output">
+  <f:entry title="Pipeline output" field="outputMode">
     <select class="jenkins-select__input" name="parameter.outputMode">
       <option value="map" selected="${instance.outputMode == 'map' ? 'selected' : null}">Map</option>
       <option value="json" selected="${instance.outputMode == 'json' ? 'selected' : null}">JSON string</option>
     </select>
   </f:entry>
-  <f:entry title="Environment export">
+  <f:entry title="Environment export" field="environmentExport">
     <select class="jenkins-select__input" name="parameter.environmentExport">
       <option value="json" selected="${instance.environmentExport == 'json' ? 'selected' : null}">Complete JSON</option>
       <option value="none" selected="${instance.environmentExport == 'none' ? 'selected' : null}">No complete-form export</option>
     </select>
   </f:entry>
-  <f:entry title="Renderer">
+  <f:entry title="Renderer" field="renderer">
     <select class="jenkins-select__input" name="parameter.renderer">
       <option value="schema" selected="${instance.renderer == 'schema' ? 'selected' : null}">Built-in schema form</option>
       <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">

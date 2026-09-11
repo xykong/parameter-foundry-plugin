@@ -1,21 +1,21 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <f:section title="Unified Parameters feature switches">
-    <f:entry title="Enable migration adapters"
+    <f:entry title="Enable migration adapters" field="migrationAdaptersEnabled"
              description="Expose source-plugin migration previews and apply/clone actions.">
-      <f:checkbox field="migrationAdaptersEnabled" />
+      <f:checkbox />
     </f:entry>
-    <f:entry title="Enable sandboxed Script Provider"
+    <f:entry title="Enable sandboxed Script Provider" field="scriptProviderEnabled"
              description="Allow governed catalog references to use the built-in sandboxed Groovy engine.">
-      <f:checkbox field="scriptProviderEnabled" />
+      <f:checkbox />
     </f:entry>
-    <f:entry title="Enable Git refs Provider"
+    <f:entry title="Enable Git refs Provider" field="gitRefsProviderEnabled"
              description="Allow branch, tag, and full-ref discovery through governed Connection Profiles.">
-      <f:checkbox field="gitRefsProviderEnabled" />
+      <f:checkbox />
     </f:entry>
-    <f:entry title="Enable accessible choice-grid Renderer"
+    <f:entry title="Enable accessible choice-grid Renderer" field="accessibleChoiceGridEnabled"
              description="Expose the packaged accessible choice-grid renderer.">
-      <f:checkbox field="accessibleChoiceGridEnabled" />
+      <f:checkbox />
     </f:entry>
   </f:section>
   <f:section title="Unified Parameters shared providers">

@@ -1,0 +1,61 @@
+# Unified Parameters (Jenkins plugin)
+
+> Jenkins plugin that provides one parameter model for choices and typed input
+> across the UI, Pipeline, REST, CLI, Rebuild, and downstream builds. Values are
+> canonical, providers are governed, and the core never executes Job-supplied
+> code.
+
+Repository: https://github.com/jenkinsci/unified-parameters-plugin
+Plugin short name: `unified-parameters`
+Current symbols: `unifiedChoice`, `unifiedForm`
+
+## Start here
+
+- [User guide index](docs/guide/README.md): who the guide is for and where to go next
+- [Getting started](docs/guide/getting-started.md): five-minute walkthrough
+- [Parameter reference](docs/guide/parameters.md): every field, default, and transport
+- [Cookbook](docs/guide/examples.md): copy-pasteable configurations
+- [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
+- [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
+- [Best practices](docs/guide/best-practices.md): modelling, defaults, security, scale
+- [Design goals](docs/guide/design-goals.md): principles, scope, non-goals
+- [Troubleshooting](docs/guide/troubleshooting.md): stable error codes and common situations
+- [Changelog](CHANGELOG.md): released changes per version
+
+## Core concepts
+
+- `unifiedChoice` with `selectionMode: single` returns a string or `null`.
+- `unifiedChoice` with `selectionMode: multiple` returns an unordered list sorted by machine value.
+- `renderer: table` makes the matrix cells the selectable values; missing cells are unavailable and
+  disabled cells stay unselectable.
+- `unifiedForm` returns a typed map or JSON object built from its field schema.
+- Options come from inline `choices` or from a Provider referenced by `providerId`; `dependsOn`
+  makes the parameter reactive.
+- Providers resolve through Connection Profiles that declare base URL, credentials, path and query
+  allow-lists, timeouts, and response size bounds.
+- Environment export: `string` or `none` for single selection, `delimited`, `json`, or `none` for
+  multiple selection, `json` or `none` plus per-field variables for forms.
+- Typed API: `…/unified-parameters/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
+- Errors carry stable codes such as `UNIFIED_PARAMETER_UNKNOWN_VALUE`.
+
+## Conventions for generated content
+
+- Prefer Provider-backed parameters over copied option lists.
+- Keep machine values stable; change labels, not values.
+- Use `defaultMode: none` unless a default is genuinely safe.
+- Validate via `api/v1/validate` before scheduling when building tooling.
+
+## Boundaries
+
+- The core plugin never executes Job-supplied Groovy, JavaScript, HTML, or reads controller file
+  paths. Scripting and custom rendering live behind reviewed companion contracts.
+- Native file parameters keep Jenkins multipart upload and are not converted into choices.
+
+## Internal references (for contributors and reviewers)
+
+- [Requirements manifest](docs/testing/requirements.yaml)
+- [Acceptance cases and known issues](docs/testing/acceptance-cases.md)
+- [Product specification](docs/product/product-spec.md)
+- [Core architecture](docs/architecture/core-architecture.md)
+- [Architecture decisions](docs/decisions/)
+- [Production verification records](docs/testing/)

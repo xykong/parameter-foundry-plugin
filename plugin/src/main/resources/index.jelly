@@ -1,5 +1,49 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Unified Parameters provides one secure and consistent parameter model
-    across Jenkins user interfaces and automation entry points.
+  <p>
+    <strong>Unified Parameters</strong> provides one parameter model for choices and typed input
+    across the Jenkins UI, Pipeline, REST, CLI, webhooks, upstream builds, and Rebuild. Every entry
+    point calls the same server-side evaluation service, so the value a user picks is the value the
+    build records.
+  </p>
+
+  <h2>Parameter types</h2>
+  <ul>
+    <li>
+      <strong>Unified Choice Parameter</strong> — one entry point for single selection, multiple
+      selection, and two-dimensional choice tables. Options come from an inline list or from a shared
+      Provider, and reactive parameters refresh when their dependencies change.
+    </li>
+    <li>
+      <strong>Unified Form Parameter</strong> — typed schema with validation, layouts, conditional
+      visibility, canonical JSON output, and governed environment export.
+    </li>
+  </ul>
+
+  <h2>Highlights</h2>
+  <ul>
+    <li>Selection modes: single (string or null) and multiple (unordered, canonical list).</li>
+    <li>Renderers: select, searchable, radio, list, checkbox, chips, table, and a packaged accessible choice grid.</li>
+    <li>Providers: static options, managed configuration, REST (JSON and XML), sandboxed Groovy, and Git refs, all behind governed Connection Profiles.</li>
+    <li>Transports: browser, CLI, REST, Pipeline, Rebuild, and downstream builds decode into the same canonical value.</li>
+    <li>Migration: preview and apply adapters for Active Choices, Extended Choice, List Git Branches, and other source parameter families, with rollback and a retirement dashboard.</li>
+    <li>Safety: the core plugin never executes Job-supplied Groovy, JavaScript, HTML, or reads controller file paths.</li>
+  </ul>
+
+  <h2>Quick example</h2>
+  <pre>
+unifiedChoice(
+  name: 'CHANNEL',
+  choices: [[value: 'staging', label: 'Staging'], [value: 'production', label: 'Production']],
+  renderer: 'searchable',
+  defaultMode: 'explicit',
+  defaultValue: 'staging'
+)</pre>
+
+  <p>
+    Every configuration field has a help popup in Jenkins; open the question mark next to the field
+    for its meaning and defaults. The repository's
+    <code>docs/guide/</code> directory holds the user guide: getting started, the full parameter
+    reference, a cookbook, Provider configuration, migration, best practices, and troubleshooting.
+  </p>
 </div>

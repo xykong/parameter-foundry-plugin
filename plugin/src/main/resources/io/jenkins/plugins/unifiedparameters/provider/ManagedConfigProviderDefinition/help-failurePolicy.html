@@ -1,0 +1,9 @@
+<div>
+  <p>What happens when the Provider fails:</p>
+<ul>
+  <li><code>fail-closed</code> (default) fails the request with a stable error code.</li>
+  <li><code>last-known-good</code> reuses the cached option set while it is younger than the
+  maximum staleness; the response is marked as a fallback.</li>
+  <li><code>empty</code> returns an empty option set and marks the response as a fallback.</li>
+</ul>
+</div>
