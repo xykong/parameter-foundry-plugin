@@ -22,9 +22,9 @@ public final class ProviderResolutionService {
         if (!definition.isProviderBacked()) {
             Instant generated = Instant.now();
             return new ProviderResolution(
-                    definition.getChoices(),
+                    definition.getSelectableOptions(),
                     Digests.sha256("inline\u0000" + definition.getName()),
-                    Digests.options(definition.getChoices()),
+                    Digests.options(definition.getSelectableOptions()),
                     generated,
                     Instant.MAX,
                     true,

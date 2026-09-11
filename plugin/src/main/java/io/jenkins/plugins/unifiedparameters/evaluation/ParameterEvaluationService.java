@@ -14,7 +14,7 @@ public final class ParameterEvaluationService {
     private ParameterEvaluationService() {}
 
     public static String evaluateSingle(UnifiedChoiceParameterDefinition definition, DecodedInput input) {
-        return evaluateSingle(definition, input, definition.getChoices());
+        return evaluateSingle(definition, input, definition.getSelectableOptions());
     }
 
     public static String evaluateSingle(
@@ -43,7 +43,7 @@ public final class ParameterEvaluationService {
     }
 
     public static List<String> evaluateMultiple(AbstractUnifiedParameterDefinition definition, DecodedInput input) {
-        return evaluateMultiple(definition, input, definition.getChoices());
+        return evaluateMultiple(definition, input, definition.getSelectableOptions());
     }
 
     public static List<String> evaluateMultiple(

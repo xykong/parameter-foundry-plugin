@@ -311,7 +311,12 @@
           input.value = cell.value;
           input.checked = selected.has(cell.value);
           input.disabled = Boolean(cell.disabled);
-          input.setAttribute("aria-label", (rowModel.label || rowModel.value) + " / " + (column.label || column.value));
+          var cellLabel = (rowModel.label || rowModel.value) + " / " + (column.label || column.value);
+          if (cell.disabled && cell.disabledReason) {
+            cellLabel += " - Unavailable: " + cell.disabledReason;
+            input.title = cell.disabledReason;
+          }
+          input.setAttribute("aria-label", cellLabel);
           input.addEventListener("change", function () {
             if (field.dataset.multiple !== "true") {
               selected.clear();

@@ -186,6 +186,53 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         this.choices = choices == null ? List.of() : List.copyOf(new ArrayList<>(choices));
     }
 
+    /**
+     * Every machine value this parameter accepts: the flat options plus one option per
+     * selectable matrix cell. Evaluation, validation, and the rendering fallback read this
+     * set, while {@link #getChoices()} keeps the flat list the option editor owns.
+     */
+    public List<Option> getSelectableOptions() {
+        List<Option> flat = getChoices();
+        ChoiceMatrix matrix = getTable();
+        if (matrix == null || matrix.getCells().isEmpty()) {
+            return flat;
+        }
+        Map<String, Option> merged = new LinkedHashMap<>();
+        for (Option option : flat) {
+            if (option != null && option.getValue() != null) {
+                merged.put(option.getValue(), option);
+            }
+        }
+        for (var cell : matrix.getCells()) {
+            if (cell == null || cell.getValue() == null) {
+                continue;
+            }
+            Option option = new Option(cell.getValue());
+            option.setLabel(cellLabel(matrix, cell));
+            option.setDescription(cell.getDescription());
+            option.setDisabled(cell.isDisabled());
+            option.setDisabledReason(cell.getDisabledReason());
+            merged.put(cell.getValue(), option);
+        }
+        return List.copyOf(merged.values());
+    }
+
+    private static String cellLabel(ChoiceMatrix matrix, io.jenkins.plugins.unifiedparameters.model.MatrixCell cell) {
+        if (cell.getLabel() != null && !cell.getLabel().equals(cell.getValue())) {
+            return cell.getLabel();
+        }
+        return axisLabel(matrix.getRows(), cell.getRow()) + " / " + axisLabel(matrix.getColumns(), cell.getColumn());
+    }
+
+    private static String axisLabel(List<io.jenkins.plugins.unifiedparameters.model.AxisOption> axis, String value) {
+        for (var option : axis) {
+            if (option != null && option.getValue() != null && option.getValue().equals(value)) {
+                return option.getLabel();
+            }
+        }
+        return value == null ? "" : value;
+    }
+
     public String getRenderer() {
         return renderer == null || renderer.isBlank() ? getDefaultRenderer() : renderer;
     }
@@ -343,7 +390,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public Option findOption(String value) {
-        return findOption(getChoices(), value);
+        return findOption(getSelectableOptions(), value);
     }
 
     public Option findOption(List<Option> options, String value) {
@@ -356,7 +403,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public Option firstEnabledOption() {
-        return firstEnabledOption(getChoices());
+        return firstEnabledOption(getSelectableOptions());
     }
 
     public Option firstEnabledOption(List<Option> options) {
@@ -369,7 +416,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public List<Option> getFallbackChoices() {
-        List<Option> currentChoices = getChoices();
+        List<Option> currentChoices = getSelectableOptions();
         if (currentChoices.size() <= NO_JAVASCRIPT_OPTION_LIMIT) {
             return currentChoices;
         }
@@ -390,7 +437,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public int getOptionCount() {
-        return getChoices().size();
+        return getSelectableOptions().size();
     }
 
     public List<String> getAvailableExternalRenderers() {
@@ -402,7 +449,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     }
 
     public boolean isFallbackTruncated() {
-        return getChoices().size() > NO_JAVASCRIPT_OPTION_LIMIT;
+        return getSelectableOptions().size() > NO_JAVASCRIPT_OPTION_LIMIT;
     }
 
     public boolean hasPresenceMarker(String[] markers) {

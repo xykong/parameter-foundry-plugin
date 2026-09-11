@@ -78,7 +78,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
             ResolvedProviderOptions resolved = isProviderBacked()
                     ? ProviderSubmission.resolveForCli(
                             ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
-                    : new ResolvedProviderOptions(getChoices(), null, null, false);
+                    : new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
             return toValue(
                     ParameterEvaluationService.evaluateMultiple(
                             this, InputDecoders.fromCli(this, value), resolved.options()),
@@ -198,7 +198,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
     private ResolvedProviderOptions optionsFor(
             StaplerRequest2 request, ProviderOperation operation, JSONObject submitted) {
         if (!isProviderBacked()) {
-            return new ResolvedProviderOptions(getChoices(), null, null, false);
+            return new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
         }
         Job<?, ?> job = request.findAncestorObject(Job.class);
         if (job == null) {
@@ -209,7 +209,7 @@ public final class UnifiedMultiChoiceParameterDefinition extends AbstractUnified
 
     private ResolvedProviderOptions optionsForOwner(ProviderOperation operation) {
         if (!isProviderBacked()) {
-            return new ResolvedProviderOptions(getChoices(), null, null, false);
+            return new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
         }
         return ProviderSubmission.resolveWithoutSubmission(ProviderSubmission.requireOwningJob(this), this, operation);
     }

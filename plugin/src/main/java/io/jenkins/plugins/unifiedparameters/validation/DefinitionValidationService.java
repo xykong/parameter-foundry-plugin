@@ -135,13 +135,16 @@ public final class DefinitionValidationService {
             if (!definition.getChoices().isEmpty()) {
                 errors.add("Provider-backed definitions cannot also declare Inline choices");
             }
+            if (definition.getTable() != null) {
+                errors.add("Provider-backed definitions cannot also declare a choice matrix");
+            }
             return;
         }
-        if (definition.getChoices().isEmpty()) {
+        if (definition.getSelectableOptions().isEmpty()) {
             errors.add("At least one option is required");
             return;
         }
-        Set<String> values = new HashSet<>();
+        Set<String> flatValues = new HashSet<>();
         for (Option option : definition.getChoices()) {
             if (option == null) {
                 errors.add("Null option");
@@ -155,8 +158,19 @@ public final class DefinitionValidationService {
             if (containsProhibitedControl(value)) {
                 errors.add("Option contains a prohibited control character: " + value);
             }
-            if (!values.add(value)) {
+            if (!flatValues.add(value)) {
                 errors.add("Duplicate option value: " + value);
+            }
+        }
+        ChoiceMatrix matrix = definition.getTable();
+        if (matrix != null) {
+            for (var cell : matrix.getCells()) {
+                if (cell == null || cell.getValue() == null) {
+                    continue;
+                }
+                if (flatValues.contains(cell.getValue())) {
+                    errors.add("Matrix cell value duplicates an option value: " + cell.getValue());
+                }
             }
         }
     }
@@ -233,7 +247,7 @@ public final class DefinitionValidationService {
             if (delimiter == null || delimiter.isEmpty()) {
                 errors.add("A non-empty delimiter is required");
             } else {
-                for (Option option : definition.getChoices()) {
+                for (Option option : definition.getSelectableOptions()) {
                     if (option != null
                             && option.getValue() != null
                             && option.getValue().contains(delimiter)) {
@@ -263,12 +277,18 @@ public final class DefinitionValidationService {
             }
         });
         Set<String> coordinates = new HashSet<>();
+        Set<String> cellValues = new HashSet<>();
         for (var cell : matrix.getCells()) {
             if (!rows.contains(cell.getRow()) || !columns.contains(cell.getColumn())) {
                 errors.add("Matrix cell references an unknown row or column: " + cell.getValue());
             }
             if (!coordinates.add(cell.getRow() + "\u0000" + cell.getColumn())) {
                 errors.add("Duplicate matrix cell coordinate: " + cell.getRow() + "/" + cell.getColumn());
+            }
+            if (cell.getValue() == null || cell.getValue().isEmpty()) {
+                errors.add("Matrix cell values must be non-empty");
+            } else if (!cellValues.add(cell.getValue())) {
+                errors.add("Duplicate matrix cell value: " + cell.getValue());
             }
         }
     }

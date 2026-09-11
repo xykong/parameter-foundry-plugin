@@ -156,6 +156,80 @@ class DefinitionValidationServiceTest {
         assertEquals(1, reloaded.getMaxSelections());
     }
 
+    @Test
+    void matrixOnlyDefinitionIsValidWithoutFlatOptions() {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setRenderer("table");
+        definition.setTable(matrix(List.of(cell("android", "a", "android-a", false))));
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertTrue(result.isValid(), result.summarize());
+    }
+
+    @Test
+    void duplicateMatrixCellValueIsConfigurationInvalid() {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setRenderer("table");
+        definition.setTable(
+                matrix(List.of(cell("android", "a", "shared", false), cell("android", "b", "shared", false))));
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertFalse(result.isValid());
+        assertTrue(result.summarize().contains("Duplicate matrix cell value"));
+    }
+
+    @Test
+    void matrixCellValueCollidingWithFlatOptionIsConfigurationInvalid() {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setRenderer("table");
+        definition.setChoices(List.of(new Option("shared")));
+        definition.setTable(matrix(List.of(cell("android", "a", "shared", false))));
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertFalse(result.isValid());
+        assertTrue(result.summarize().contains("duplicates an option value"));
+    }
+
+    @Test
+    void declaredMatrixRequiresRowsAndColumns() {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setRenderer("table");
+        io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
+                new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();
+        matrix.setCells(List.of(cell("android", "a", "android-a", false)));
+        definition.setTable(matrix);
+
+        DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
+
+        assertFalse(result.isValid());
+        assertTrue(result.summarize().contains("at least one row and column"));
+    }
+
+    private static io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix(
+            List<io.jenkins.plugins.unifiedparameters.model.MatrixCell> cells) {
+        io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
+                new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();
+        matrix.setRows(List.of(
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("android", "Android"),
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("ios", "iOS")));
+        matrix.setColumns(List.of(
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("a", "A"),
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("b", "B")));
+        matrix.setCells(cells);
+        return matrix;
+    }
+
+    private static io.jenkins.plugins.unifiedparameters.model.MatrixCell cell(
+            String row, String column, String value, boolean disabled) {
+        io.jenkins.plugins.unifiedparameters.model.MatrixCell cell =
+                new io.jenkins.plugins.unifiedparameters.model.MatrixCell(row, column, value);
+        cell.setDisabled(disabled);
+        return cell;
+    }
+
     private static String multipleChoiceXmlWithoutSelectionBounds() {
         return """
                 <io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition>

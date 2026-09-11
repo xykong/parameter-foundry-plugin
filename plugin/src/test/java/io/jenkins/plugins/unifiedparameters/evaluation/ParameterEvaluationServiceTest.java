@@ -34,6 +34,51 @@ class ParameterEvaluationServiceTest {
     }
 
     @Test
+    void matrixCellValuesAreSelectable() {
+        UnifiedMultiChoiceParameterDefinition definition = matrixDefinition();
+
+        assertEquals(
+                List.of("android-a", "web-c"),
+                ParameterEvaluationService.evaluateMultiple(
+                        definition, DecodedInput.present(List.of("web-c", "android-a"))));
+    }
+
+    @Test
+    void matrixDisabledCellIsRejectedAsDisabled() {
+        UnifiedMultiChoiceParameterDefinition definition = matrixDefinition();
+
+        EvaluationException exception = assertThrows(
+                EvaluationException.class,
+                () -> ParameterEvaluationService.evaluateMultiple(definition, DecodedInput.present(List.of("ios-a"))));
+
+        assertEquals(ErrorCode.DISABLED_VALUE, exception.getCode());
+    }
+
+    private static UnifiedMultiChoiceParameterDefinition matrixDefinition() {
+        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        definition.setRenderer("table");
+        io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
+                new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();
+        matrix.setRows(List.of(
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("android", "Android"),
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("ios", "iOS")));
+        matrix.setColumns(List.of(
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("a", "A"),
+                new io.jenkins.plugins.unifiedparameters.model.AxisOption("c", "C")));
+        io.jenkins.plugins.unifiedparameters.model.MatrixCell androidA =
+                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("android", "a", "android-a");
+        io.jenkins.plugins.unifiedparameters.model.MatrixCell webC =
+                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("android", "c", "web-c");
+        io.jenkins.plugins.unifiedparameters.model.MatrixCell iosA =
+                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("ios", "a", "ios-a");
+        iosA.setDisabled(true);
+        iosA.setDisabledReason("Not available for iOS");
+        matrix.setCells(List.of(androidA, webC, iosA));
+        definition.setTable(matrix);
+        return definition;
+    }
+
+    @Test
     void multipleChoiceRejectsDuplicatesByDefault() {
         UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
 
