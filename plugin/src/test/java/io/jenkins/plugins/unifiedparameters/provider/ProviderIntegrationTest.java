@@ -12,7 +12,7 @@ import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
@@ -184,10 +184,10 @@ class ProviderIntegrationTest {
     }
 
     private static void assertCanonical(FreeStyleProject project, List<String> expected) {
-        UnifiedMultiChoiceParameterValue value = assertInstanceOf(
-                UnifiedMultiChoiceParameterValue.class,
+        UnifiedChoiceParameterValue value = assertInstanceOf(
+                UnifiedChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
-        assertEquals(expected, value.getValue());
+        assertEquals(expected, value.getValues());
     }
 
     private static Page postForm(JenkinsRule jenkins, FreeStyleProject project, List<NameValuePair> parameters)

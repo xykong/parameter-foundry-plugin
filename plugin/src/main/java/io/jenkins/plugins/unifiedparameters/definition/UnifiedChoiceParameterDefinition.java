@@ -197,33 +197,37 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     public boolean isValid(ParameterValue value) {
         try {
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
-            if (isMultiple()) {
-                List<String> submitted;
-                if (value instanceof UnifiedMultiChoiceParameterValue multiValue) {
-                    submitted = multiValue.getValue();
-                } else if (value instanceof StringParameterValue stringValue) {
-                    submitted =
-                            InputDecoders.fromCli(this, stringValue.getValue()).values();
+            if (value instanceof UnifiedChoiceParameterValue choiceValue) {
+                if (isMultiple()) {
+                    ParameterEvaluationService.evaluateMultiple(
+                            this, DecodedInput.present(choiceValue.getValues()), resolved.options());
                 } else {
-                    return false;
+                    String submitted = choiceValue.getScalarValue();
+                    ParameterEvaluationService.evaluateSingle(
+                            this,
+                            submitted == null
+                                    ? DecodedInput.present(List.of())
+                                    : DecodedInput.present(List.of(submitted)),
+                            resolved.options());
                 }
-                ParameterEvaluationService.evaluateMultiple(this, DecodedInput.present(submitted), resolved.options());
                 return true;
             }
-            String submitted;
-            if (value instanceof UnifiedChoiceParameterValue choiceValue) {
-                submitted = choiceValue.getValue();
-            } else if (value instanceof StringParameterValue stringValue) {
-                submitted = stringValue.getValue();
-            } else {
+            if (!(value instanceof StringParameterValue stringValue)) {
                 return false;
             }
-            ParameterEvaluationService.evaluateSingle(
-                    this,
-                    submitted == null
-                            ? DecodedInput.present(java.util.List.of())
-                            : DecodedInput.present(java.util.List.of(submitted)),
-                    resolved.options());
+            if (isMultiple()) {
+                ParameterEvaluationService.evaluateMultiple(
+                        this,
+                        DecodedInput.present(InputDecoders.fromCli(this, stringValue.getValue())
+                                .values()),
+                        resolved.options());
+            } else {
+                String submitted = stringValue.getValue();
+                ParameterEvaluationService.evaluateSingle(
+                        this,
+                        submitted == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(submitted)),
+                        resolved.options());
+            }
             return true;
         } catch (EvaluationException exception) {
             return false;
@@ -232,20 +236,16 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-        UnifiedChoiceParameterDefinition copy = copyDefinition();
-        if (isMultiple()) {
-            if (!(defaultValue instanceof UnifiedMultiChoiceParameterValue multiValue)) {
-                return this;
-            }
-            copy.setDefaultMode("explicit");
-            copy.setDefaultValues(multiValue.getValue());
-            return copy;
-        }
         if (!(defaultValue instanceof UnifiedChoiceParameterValue choiceValue)) {
             return this;
         }
+        UnifiedChoiceParameterDefinition copy = copyDefinition();
         copy.setDefaultMode("explicit");
-        copy.setDefaultValue(choiceValue.getValue());
+        if (isMultiple()) {
+            copy.setDefaultValues(choiceValue.getValues());
+        } else {
+            copy.setDefaultValue(choiceValue.getScalarValue());
+        }
         return copy;
     }
 
@@ -292,9 +292,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             }
         }
         ParameterValue value = getDefaultParameterValue();
-        return value instanceof UnifiedChoiceParameterValue choiceValue && choiceValue.getValue() != null
-                ? java.util.List.of(choiceValue.getValue())
-                : java.util.List.of();
+        return value instanceof UnifiedChoiceParameterValue choiceValue ? choiceValue.getValues() : java.util.List.of();
     }
 
     @Override
@@ -348,11 +346,11 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     }
 
     private UnifiedChoiceParameterValue toValue(String value, ProviderSnapshotMetadata metadata) {
-        return new UnifiedChoiceParameterValue(getName(), value, getDescription(), getEnvironmentExport(), metadata);
+        return UnifiedChoiceParameterValue.single(getName(), value, getDescription(), getEnvironmentExport(), metadata);
     }
 
-    private UnifiedMultiChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
-        return new UnifiedMultiChoiceParameterValue(
+    private UnifiedChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
+        return UnifiedChoiceParameterValue.multiple(
                 getName(), values, getDescription(), getEnvironmentExport(), getDelimiter(), metadata);
     }
 

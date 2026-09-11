@@ -11,7 +11,6 @@ import hudson.model.StringParameterValue;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
@@ -119,7 +118,7 @@ final class TypedParameterAdapterRegistry {
                             ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
                             : DecodedInput.absent(),
                     resolved.options());
-            return new UnifiedChoiceParameterValue(
+            return UnifiedChoiceParameterValue.single(
                     choice.getName(),
                     canonical,
                     choice.getDescription(),
@@ -171,7 +170,7 @@ final class TypedParameterAdapterRegistry {
                 ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
         List<String> canonical = ParameterEvaluationService.evaluateMultiple(
                 definition, present ? DecodedInput.present(values) : DecodedInput.absent(), resolved.options());
-        return new UnifiedMultiChoiceParameterValue(
+        return UnifiedChoiceParameterValue.multiple(
                 definition.getName(),
                 canonical,
                 definition.getDescription(),

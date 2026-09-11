@@ -21,7 +21,6 @@ import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.form.FormField;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterValue;
@@ -470,20 +469,20 @@ class FormatCompatibilityIntegrationTest {
 
     @Test
     void multiChoiceExportUsesCanonicalFormatNotSubmissionOrder() {
-        UnifiedMultiChoiceParameterValue delimited =
-                new UnifiedMultiChoiceParameterValue("TARGETS", List.of("web", "android"), null, "delimited", "|");
+        UnifiedChoiceParameterValue delimited = UnifiedChoiceParameterValue.multiple(
+                "TARGETS", List.of("web", "android"), null, "delimited", "|", null);
         EnvVars delimitedEnvironment = new EnvVars();
         delimited.buildEnvironment(null, delimitedEnvironment);
         assertEquals("android|web", delimitedEnvironment.get("TARGETS"));
 
-        UnifiedMultiChoiceParameterValue json =
-                new UnifiedMultiChoiceParameterValue("TARGETS", List.of("web", "android"), null, "json", "|");
+        UnifiedChoiceParameterValue json =
+                UnifiedChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "json", "|", null);
         EnvVars jsonEnvironment = new EnvVars();
         json.buildEnvironment(null, jsonEnvironment);
         assertEquals("[\"android\",\"web\"]", jsonEnvironment.get("TARGETS"));
 
-        UnifiedMultiChoiceParameterValue none =
-                new UnifiedMultiChoiceParameterValue("TARGETS", List.of("web", "android"), null, "none", "|");
+        UnifiedChoiceParameterValue none =
+                UnifiedChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "none", "|", null);
         EnvVars noneEnvironment = new EnvVars();
         none.buildEnvironment(null, noneEnvironment);
         assertFalse(noneEnvironment.containsKey("TARGETS"));
@@ -526,9 +525,9 @@ class FormatCompatibilityIntegrationTest {
         return response.getJSONObject().getJSONArray("errors").getJSONObject(0).getString("code");
     }
 
-    private static UnifiedMultiChoiceParameterValue multipleValue(FreeStyleBuild build) {
+    private static UnifiedChoiceParameterValue multipleValue(FreeStyleBuild build) {
         return assertInstanceOf(
-                UnifiedMultiChoiceParameterValue.class,
+                UnifiedChoiceParameterValue.class,
                 build.getAction(ParametersAction.class).getParameter("TARGETS"));
     }
 

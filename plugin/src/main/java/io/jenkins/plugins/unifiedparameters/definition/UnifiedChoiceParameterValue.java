@@ -5,50 +5,145 @@ import hudson.model.ParameterValue;
 import hudson.model.Run;
 import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import net.sf.json.JSONArray;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+/**
+ * Canonical value for {@link UnifiedChoiceParameterDefinition}. One type covers both
+ * cardinalities: {@code selectionMode} states the mode, {@code value} carries the scalar of a
+ * single selection, and {@code values} carries the unordered set of a multiple selection.
+ */
 @ExportedBean(defaultVisibility = 2)
 public final class UnifiedChoiceParameterValue extends ParameterValue {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private final String selectionMode;
     private final String value;
+    private final List<String> values;
     private final String exportMode;
+    private final String delimiter;
     private final ProviderSnapshotMetadata providerSnapshot;
 
     @DataBoundConstructor
-    public UnifiedChoiceParameterValue(String name, String value) {
-        this(name, value, null, "string", null);
+    public UnifiedChoiceParameterValue(String name, Object value) {
+        this(name, modeFor(value), value, null, null, null, null);
     }
 
     public UnifiedChoiceParameterValue(String name, String value, String description, String exportMode) {
-        this(name, value, description, exportMode, null);
+        this(name, "single", value, description, exportMode, null, null);
     }
 
-    public UnifiedChoiceParameterValue(
+    public static UnifiedChoiceParameterValue single(
             String name,
             String value,
             String description,
             String exportMode,
             ProviderSnapshotMetadata providerSnapshot) {
+        return new UnifiedChoiceParameterValue(name, "single", value, description, exportMode, null, providerSnapshot);
+    }
+
+    public static UnifiedChoiceParameterValue multiple(
+            String name,
+            List<String> values,
+            String description,
+            String exportMode,
+            String delimiter,
+            ProviderSnapshotMetadata providerSnapshot) {
+        return new UnifiedChoiceParameterValue(
+                name, "multiple", values, description, exportMode, delimiter, providerSnapshot);
+    }
+
+    private UnifiedChoiceParameterValue(
+            String name,
+            String selectionMode,
+            Object rawValue,
+            String description,
+            String exportMode,
+            String delimiter,
+            ProviderSnapshotMetadata providerSnapshot) {
         super(name, description);
-        this.value = value;
-        this.exportMode = exportMode == null ? "string" : exportMode;
+        boolean multiple = "multiple".equals(selectionMode);
+        this.selectionMode = multiple ? "multiple" : "single";
+        this.value = multiple ? null : scalarFor(rawValue);
+        this.values = multiple ? normalized(rawValue) : null;
+        this.exportMode = exportMode == null ? (multiple ? "delimited" : "string") : exportMode;
+        this.delimiter = delimiter == null || delimiter.isEmpty() ? "," : delimiter;
         this.providerSnapshot = providerSnapshot;
     }
 
+    private static String modeFor(Object value) {
+        return value instanceof Collection<?> || value instanceof Object[] ? "multiple" : "single";
+    }
+
+    private static String scalarFor(Object value) {
+        return value == null ? null : String.valueOf(value);
+    }
+
+    private static List<String> normalized(Object value) {
+        List<String> collected = new ArrayList<>();
+        if (value instanceof Collection<?> collection) {
+            for (Object item : collection) {
+                if (item != null) {
+                    collected.add(String.valueOf(item));
+                }
+            }
+        } else if (value instanceof Object[] array) {
+            for (Object item : array) {
+                if (item != null) {
+                    collected.add(String.valueOf(item));
+                }
+            }
+        }
+        collected.sort(String::compareTo);
+        return List.copyOf(collected);
+    }
+
+    public String getSelectionMode() {
+        return isMultiple() ? "multiple" : "single";
+    }
+
+    public boolean isMultiple() {
+        return "multiple".equals(selectionMode);
+    }
+
+    /**
+     * Exported as {@code value}: a {@link String} for single selection and a {@link List} for
+     * multiple selection, matching the documented external contract of each mode.
+     */
     @Override
     @Exported(visibility = 4)
-    public String getValue() {
-        return value;
+    public Object getValue() {
+        return isMultiple() ? getValues() : value;
+    }
+
+    public String getScalarValue() {
+        return isMultiple() ? null : value;
+    }
+
+    public List<String> getValues() {
+        if (isMultiple()) {
+            return values == null ? List.of() : values;
+        }
+        return value == null ? List.of() : List.of(value);
     }
 
     public String getExportMode() {
-        return exportMode;
+        if (exportMode != null && !exportMode.isBlank()) {
+            return exportMode;
+        }
+        return isMultiple() ? "delimited" : "string";
+    }
+
+    public String getDelimiter() {
+        return delimiter == null || delimiter.isEmpty() ? "," : delimiter;
     }
 
     @Exported
@@ -58,14 +153,27 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
 
     @Override
     public void buildEnvironment(Run<?, ?> build, EnvVars environment) {
-        if (!"none".equals(exportMode) && value != null) {
-            environment.put(getName(), value);
+        String mode = getExportMode();
+        if ("none".equals(mode)) {
+            return;
         }
+        if (!isMultiple()) {
+            if (value != null) {
+                environment.put(getName(), value);
+            }
+            return;
+        }
+        if ("json".equals(mode)) {
+            environment.put(getName(), JSONArray.fromObject(getValues()).toString());
+            return;
+        }
+        environment.put(getName(), String.join(getDelimiter(), getValues()));
     }
 
     @Override
     public String getShortDescription() {
-        return getName() + "=" + (value == null ? "" : value);
+        Object current = getValue();
+        return getName() + "=" + (current == null ? "" : current);
     }
 
     @Override
@@ -76,11 +184,13 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
         if (!(other instanceof UnifiedChoiceParameterValue valueObject)) {
             return false;
         }
-        return Objects.equals(getName(), valueObject.getName()) && Objects.equals(value, valueObject.value);
+        return Objects.equals(getName(), valueObject.getName())
+                && Objects.equals(selectionMode, valueObject.selectionMode)
+                && Objects.equals(getValues(), valueObject.getValues());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), value);
+        return Objects.hash(getName(), selectionMode, getValues());
     }
 }

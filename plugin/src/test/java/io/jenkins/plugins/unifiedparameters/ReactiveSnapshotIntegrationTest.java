@@ -12,7 +12,6 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
@@ -218,7 +217,7 @@ class ReactiveSnapshotIntegrationTest {
                 .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedMultiChoiceParameterValue targets = (UnifiedMultiChoiceParameterValue)
+        UnifiedChoiceParameterValue targets = (UnifiedChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS");
         assertEquals(List.of("production-android"), targets.getValue());
         assertNotNull(targets.getProviderSnapshot());

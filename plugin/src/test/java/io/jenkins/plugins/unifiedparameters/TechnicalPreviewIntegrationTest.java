@@ -24,7 +24,6 @@ import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.net.URL;
@@ -122,8 +121,8 @@ class TechnicalPreviewIntegrationTest {
 
         assertEquals(201, response.getWebResponse().getStatusCode());
         jenkins.waitUntilNoActivity();
-        UnifiedMultiChoiceParameterValue value = assertInstanceOf(
-                UnifiedMultiChoiceParameterValue.class,
+        UnifiedChoiceParameterValue value = assertInstanceOf(
+                UnifiedChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of(), value.getValue());
     }
@@ -364,7 +363,7 @@ class TechnicalPreviewIntegrationTest {
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "upstream");
         upstream.setDefinition(new CpsFlowDefinition("""
                 build job: 'downstream', wait: true, parameters: [[
-                  $class: 'io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue',
+                  $class: 'UnifiedChoiceParameterValue',
                   name: 'TARGETS',
                   value: ['web', 'android']
                 ]]
@@ -372,8 +371,8 @@ class TechnicalPreviewIntegrationTest {
 
         jenkins.buildAndAssertSuccess(upstream);
 
-        UnifiedMultiChoiceParameterValue value = assertInstanceOf(
-                UnifiedMultiChoiceParameterValue.class,
+        UnifiedChoiceParameterValue value = assertInstanceOf(
+                UnifiedChoiceParameterValue.class,
                 downstream.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of("android", "web"), value.getValue());
     }
@@ -433,8 +432,8 @@ class TechnicalPreviewIntegrationTest {
                 .invokeWithArgs(project.getFullName(), "-p", "TARGETS=[\"web\",\"android\"]", "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedMultiChoiceParameterValue value = assertInstanceOf(
-                UnifiedMultiChoiceParameterValue.class,
+        UnifiedChoiceParameterValue value = assertInstanceOf(
+                UnifiedChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of("android", "web"), value.getValue());
     }
