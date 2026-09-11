@@ -24,7 +24,8 @@ until every applicable column passes.
 | --- | --- | --- | --- |
 | UP-AC-001 | UnifiedChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
-| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Rendering passed 2026-09-11 (7 semantic `th`, 8 rendered cells, disabled cell not selectable, missing cell not synthesized, row/column accessible names); cell submission blocked by UP-ISSUE-008; header verification is server-rendered only |
+| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Passed 2026-09-11 on `0.2.14-SNAPSHOT`: 7 semantic `th`, 8 rendered cells with stable values and row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, and a build submitted `[ios-a, web-b]`; responsive overflow still needs a mobile viewport |
+| UP-AC-011 | Unified fixtures | Every acceptance Job configures choice parameters through `unifiedChoice` (+ `selectionMode: multiple` where needed) and none use the deprecated entry. | Passed 2026-09-11: 32 of 32 Jobs migrated and built, 55 of 55 resolve calls returned `200`, and the deprecated descriptor is no longer offered in the configuration UI |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
 | UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | English/Chinese production desktop verified; Japanese/Korean pending |
@@ -155,9 +156,15 @@ until every applicable column passes.
 - Additional: the table renderer does not expose `disabledReason` for disabled
   cells, although the matrix design requires disabled cells to expose a reason
   where configured. Flat options already do this.
-- Fix: not started; the change affects the option source for table parameters
-  and needs a scope decision first.
-- Verification: pending.
+- Fix: selectable options now merge the flat options with one entry per matrix
+  cell, and evaluation, defaults, validation, and the rendering fallback read
+  that set. Duplicate cell values and cell values colliding with a flat option
+  are rejected, and the table renderer exposes a disabled cell reason through
+  its accessible name and tooltip.
+- Verification: passed on 2026-09-11 with plugin `0.2.14-SNAPSHOT`. A
+  matrix-only fixture resolves exactly its eight cells, `android-a` and `web-b`
+  validate and build, `web-c` fails as disabled, `ios-b` fails as missing, and
+  the browser reports the configured disabled reason.
 
 ## Recording Rule
 
