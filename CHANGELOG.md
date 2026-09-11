@@ -11,7 +11,25 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-Current version: `0.3.143-SNAPSHOT`.
+Current version: `0.3.146-SNAPSHOT`.
+
+### Added
+
+- In-plugin documentation: every configuration field now ships a help popup, so
+  the form explains itself while you are filling it in.
+- A user guide covering getting started, the parameter reference, a cookbook,
+  Providers, migration, best practices, design goals, and troubleshooting.
+- `llms.txt`, a machine-readable entry point for AI assistants, and a
+  documentation index in `README.md` and `docs/README.md`.
+- `ConfigurationHelpCoverageTest`, which fails the build when a configuration
+  field is added without help.
+
+### Changed
+
+- The plugin About page now describes the parameter types, highlights, and a
+  quick example instead of a single sentence.
+
+## 0.3.143 - 2026-09-11
 
 ### Changed
 
