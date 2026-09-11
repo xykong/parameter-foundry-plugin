@@ -315,13 +315,12 @@ Parameter Definition
 | `unifiedText` | 单行、多行、隐藏和可验证文本 |
 | `unifiedBoolean` | Boolean/switch |
 | `unifiedChoice` | 单选/多选（`selectionMode: single|multiple`）、Radio/Checkbox/chips/table |
-| `unifiedMultiChoice` | 兼容别名，等价于 `unifiedChoice` + `selectionMode: multiple` |
 | `unifiedCascade` | 多列依赖选择 |
 | `unifiedForm` | Schema 组合表单 |
 
 内部尽量复用统一模型，但公开 Symbol 保持用途清晰。
 
-`1.0` 只发布 `unifiedChoice` 和 `unifiedMultiChoice`。Editable/custom、Text、Boolean、
+`1.0` 只发布 `unifiedChoice`（单选与多选）。Editable/custom、Text、Boolean、
 Cascade 和 Form 按
 [`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)
 的路线进入后续版本。

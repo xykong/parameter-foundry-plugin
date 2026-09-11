@@ -9,8 +9,9 @@ import hudson.cli.CLICommandInvoker;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.net.URL;
@@ -113,7 +114,7 @@ class ProviderIntegrationTest {
         UnifiedParametersGlobalConfiguration.get()
                 .setProviders(List.of(new CountingProvider("slow-dynamic", loadCount)));
         FreeStyleProject project = jenkins.createFreeStyleProject("provider-form-loading");
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setProviderId("slow-dynamic");
         definition.setDefaultMode("first");
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -133,7 +134,7 @@ class ProviderIntegrationTest {
         provider.setOptions(List.of(new Option("one")));
         UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
         FreeStyleProject project = providerJob(jenkins, "provider-button-gated");
-        UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
+        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setProviderId("button-gated");
 
@@ -148,7 +149,7 @@ class ProviderIntegrationTest {
 
     private static FreeStyleProject providerJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setProviderId("releases");
         if ("provider-form".equals(name)) {
             definition.setProviderId("dynamic");

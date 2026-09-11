@@ -5,7 +5,6 @@ import hudson.ExtensionList;
 import hudson.model.Job;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.model.Option;
@@ -136,24 +135,27 @@ public final class ProviderSnapshotStore {
                 .append(definition.isRequired())
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
-        if (definition instanceof UnifiedChoiceParameterDefinition single) {
-            value.append('\u0000')
-                    .append(single.getDefaultValue())
-                    .append('\u0000')
-                    .append(single.isAllowCustomValue())
-                    .append('\u0000')
-                    .append(single.getCustomValuePattern())
-                    .append('\u0000')
-                    .append(single.getCustomValueMaxLength());
-        } else if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            value.append('\u0000')
-                    .append(multiple.getDefaultValues())
-                    .append('\u0000')
-                    .append(multiple.getMinSelections())
-                    .append('\u0000')
-                    .append(multiple.getMaxSelections())
-                    .append('\u0000')
-                    .append(multiple.getDuplicatePolicy());
+        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+            value.append('\u0000').append(choice.getSelectionMode());
+            if (choice.isMultiple()) {
+                value.append('\u0000')
+                        .append(choice.getDefaultValues())
+                        .append('\u0000')
+                        .append(choice.getMinSelections())
+                        .append('\u0000')
+                        .append(choice.getMaxSelections())
+                        .append('\u0000')
+                        .append(choice.getDuplicatePolicy());
+            } else {
+                value.append('\u0000')
+                        .append(choice.getDefaultValue())
+                        .append('\u0000')
+                        .append(choice.isAllowCustomValue())
+                        .append('\u0000')
+                        .append(choice.getCustomValuePattern())
+                        .append('\u0000')
+                        .append(choice.getCustomValueMaxLength());
+            }
         }
         return Digests.sha256(value.toString());
     }

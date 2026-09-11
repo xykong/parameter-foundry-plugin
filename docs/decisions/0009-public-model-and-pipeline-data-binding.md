@@ -75,8 +75,9 @@ internal specs.
 Static `1.0` syntax remains:
 
 ```groovy
-unifiedMultiChoice(
+unifiedChoice(
     name: 'TARGETS',
+    selectionMode: 'multiple',
     choices: [
         [value: 'android', label: 'Android'],
         [value: 'ios', label: 'iOS']

@@ -9,7 +9,7 @@ import hudson.model.Item;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.User;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
@@ -156,7 +156,7 @@ class ApiSecurityIntegrationTest {
     @Test
     void nativeFileParametersRemainAvailableWhileTypedJsonFailsExplicitly(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("native-file-compatibility");
-        UnifiedMultiChoiceParameterDefinition targets = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
         targets.setChoices(List.of(new Option("android"), new Option("ios")));
         project.addProperty(new ParametersDefinitionProperty(new FileParameterDefinition("UPLOAD"), targets));
 
@@ -182,7 +182,7 @@ class ApiSecurityIntegrationTest {
 
     private static FreeStyleProject parameterizedProject(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));

@@ -21,7 +21,6 @@ import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.form.FormField;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
@@ -86,7 +85,7 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void standardRestAbsentAndPresenceOnlyEmptyRemainDistinct(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "standard-empty", ",");
-        UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
+        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
@@ -233,7 +232,7 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void typedApiUsesDefaultsForOmittedValuesAndEmptyArrayForExplicitEmpty(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-empty-default", ",");
-        UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
+        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
@@ -377,7 +376,7 @@ class FormatCompatibilityIntegrationTest {
                 "UNKNOWN_VALUE");
 
         FreeStyleProject disabled = standardMultipleJob(jenkins, "repeated", "standard-disabled", ",");
-        UnifiedMultiChoiceParameterDefinition disabledDefinition = (UnifiedMultiChoiceParameterDefinition)
+        UnifiedChoiceParameterDefinition disabledDefinition = (UnifiedChoiceParameterDefinition)
                 disabled.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         Option disabledOption = disabledDefinition.findOption("android");
         disabledOption.setDisabled(true);
@@ -411,7 +410,7 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void typedApiRejectsWrongContainersInsteadOfApplyingDefaults(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-wrong-container", ",");
-        UnifiedMultiChoiceParameterDefinition definition = (UnifiedMultiChoiceParameterDefinition)
+        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
@@ -536,7 +535,7 @@ class FormatCompatibilityIntegrationTest {
     private static FreeStyleProject standardMultipleJob(JenkinsRule jenkins, String mode, String name, String delimiter)
             throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setStandardApiInputMode(mode);
         definition.setDelimiter(delimiter);
@@ -571,7 +570,7 @@ class FormatCompatibilityIntegrationTest {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
         UnifiedChoiceParameterDefinition channel = new UnifiedChoiceParameterDefinition("CHANNEL");
         channel.setChoices(List.of(new Option("staging"), new Option("production")));
-        UnifiedMultiChoiceParameterDefinition targets = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
         targets.setChoices(List.of(new Option("web"), new Option("android")));
         UnifiedFormParameterDefinition form = formDefinition();
         project.addProperty(new ParametersDefinitionProperty(

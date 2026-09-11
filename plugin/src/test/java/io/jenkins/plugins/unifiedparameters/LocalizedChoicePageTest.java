@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.io.InputStream;
 import java.util.List;
@@ -20,7 +19,7 @@ class LocalizedChoicePageTest {
     @Test
     void injectsDefaultLocaleTemplatesAndShipsTranslations(JenkinsRule jenkins) throws Exception {
         var project = jenkins.createFreeStyleProject();
-        var parameter = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        var parameter = MultipleChoiceFixtures.multipleChoice("TARGETS");
         parameter.setChoices(List.of(new Option("unchanged-value")));
         project.addProperty(new ParametersDefinitionProperty(parameter));
         try (var client =

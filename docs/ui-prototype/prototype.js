@@ -361,7 +361,7 @@ function renderConfigPreview() {
     .map(groovyQuote);
 
   const lines = [
-    "unifiedMultiChoice(",
+    "unifiedChoice(",
     `    name: ${groovyQuote(name)},`,
     "    choices: [",
     optionLines.join(",\n"),

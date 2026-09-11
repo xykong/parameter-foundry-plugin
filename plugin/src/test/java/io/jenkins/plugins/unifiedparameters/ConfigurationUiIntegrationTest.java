@@ -10,7 +10,6 @@ import io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefiniti
 import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry;
 import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition;
@@ -40,7 +39,7 @@ class ConfigurationUiIntegrationTest {
         choice.setDefaultMode("explicit");
         choice.setDefaultValue("staging");
 
-        UnifiedMultiChoiceParameterDefinition multiple = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition multiple = MultipleChoiceFixtures.multipleChoice("TARGETS");
         multiple.setChoices(List.of(new Option("web")));
         multiple.setRenderer("checkbox");
         multiple.setSelectedDisplay("chips");
@@ -59,33 +58,43 @@ class ConfigurationUiIntegrationTest {
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "CHANNEL",
                 "renderer",
                 "searchable");
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "CHANNEL",
                 "defaultMode",
                 "explicit");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition",
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "renderer",
                 "checkbox");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition",
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "selectedDisplay",
                 "chips");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition",
+                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "standardApiInputMode",
                 "delimited");
         assertSelected(
-                page, "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition", "outputMode", "json");
+                page,
+                "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition",
+                "FORM",
+                "outputMode",
+                "json");
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition",
+                "FORM",
                 "environmentExport",
                 "none");
     }
@@ -110,21 +119,25 @@ class ConfigurationUiIntegrationTest {
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "selectionMode",
                 "multiple");
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "renderer",
                 "checkbox");
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "selectedDisplay",
                 "chips");
         assertSelected(
                 page,
                 "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "TARGETS",
                 "standardApiInputMode",
                 "delimited");
     }
@@ -241,21 +254,22 @@ class ConfigurationUiIntegrationTest {
                 "empty");
     }
 
-    private static void assertSelected(HtmlPage page, String descriptorId, String field, String value) {
-        String selected = "//div[@descriptorid='"
+    private static void assertSelected(
+            HtmlPage page, String descriptorId, String parameterName, String field, String value) {
+        String panel = "//div[@descriptorid='"
                 + descriptorId
-                + "']//select[@name='parameter."
+                + "'][.//input[@name='parameter.name' and @value='"
+                + parameterName
+                + "']]";
+        String selected = panel
+                + "//select[@name='parameter."
                 + field
                 + "']/option[@selected='selected' and @value='"
                 + value
                 + "']";
-        String invalid = "//div[@descriptorid='"
-                + descriptorId
-                + "']//select[@name='parameter."
-                + field
-                + "']/option[@selected='false']";
-        assertEquals(1, page.getByXPath(selected).size(), descriptorId + " " + field);
-        assertTrue(page.getByXPath(invalid).isEmpty(), descriptorId + " " + field);
+        String invalid = panel + "//select[@name='parameter." + field + "']/option[@selected='false']";
+        assertEquals(1, page.getByXPath(selected).size(), descriptorId + " " + parameterName + " " + field);
+        assertTrue(page.getByXPath(invalid).isEmpty(), descriptorId + " " + parameterName + " " + field);
     }
 
     private static void assertSelectedProviderOption(

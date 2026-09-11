@@ -3,7 +3,6 @@ package io.jenkins.plugins.unifiedparameters.validation;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.evaluation.CustomValuePolicy;
 import io.jenkins.plugins.unifiedparameters.evaluation.DependencyGraph;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
@@ -75,8 +74,6 @@ public final class DefinitionValidationService {
             } else {
                 validateSingle(choice, errors);
             }
-        } else if (unified instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            validateMultiple(multiple, errors);
         }
         return new DefinitionValidationResult(errors, warnings);
     }

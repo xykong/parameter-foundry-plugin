@@ -714,7 +714,8 @@ parameters {
         defaultMode: 'explicit',
         defaultValue: 'test'
     )
-    unifiedMultiChoice(
+    unifiedChoice(
+        selectionMode: 'multiple',
         name: 'TARGETS',
         choices: [
             [value: 'android', label: 'Android'],
@@ -730,7 +731,7 @@ parameters {
 }
 ```
 
-`1.0` Symbol 已固定为 `unifiedChoice` 和 `unifiedMultiChoice`；实现前仍须通过 Declarative
+`1.0` Symbol 已固定为 `unifiedChoice`（`selectionMode` 表达基数）和 `unifiedForm`；实现前仍须通过 Declarative
 Pipeline 和嵌套 Describable 技术 spike。
 
 ### 11.9 REST Provider 安全

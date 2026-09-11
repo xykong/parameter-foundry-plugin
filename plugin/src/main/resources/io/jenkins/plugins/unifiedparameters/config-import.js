@@ -202,11 +202,10 @@
       shown.join(", ") +
       (omitted > 0 ? ", /* " + omitted + " more imported options */" : "") +
       "]";
-    var symbol = kind === "multiple" ? "unifiedMultiChoice" : "unifiedChoice";
     var pipeline =
-      symbol +
-      "(\n  name: " +
+      "unifiedChoice(\n  name: " +
       quote(name) +
+      (kind === "multiple" ? ",\n  selectionMode: 'multiple'" : "") +
       ",\n  choices: " +
       choices +
       "\n)";

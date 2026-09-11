@@ -10,9 +10,8 @@
 
 Unified Choice is one public parameter entry point. `selectionMode` expresses the
 value cardinality, `renderer` the selection surface, and `selectedDisplay` the
-presentation of selected values. The legacy `unifiedMultiChoice` symbol remains
-as a deprecated compatibility alias that maps to `selectionMode: 'multiple'`.
-Unified Choice also supports structured two-dimensional option matrices. A
+presentation of selected values. Unified Choice also supports structured
+two-dimensional option matrices. A
 matrix preserves the meaning of rows and columns instead of flattening every
 combination into a long list.
 

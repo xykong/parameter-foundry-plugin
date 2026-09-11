@@ -39,12 +39,13 @@ classification:
       question: Is selection order part of the business requirement?
       choices:
         - value: unordered
-          result: Generate unifiedMultiChoice and verify membership only
+          result: Generate unifiedChoice with selectionMode multiple and verify membership only
         - value: ordered
           result: Do not generate a 1.0 target; redesign with an ordered Form field
 
 targetWhenUnordered:
-  symbol: unifiedMultiChoice
+  symbol: unifiedChoice
+selectionMode: multiple
   arguments:
     name: DEPLOY_STEPS
     choices:

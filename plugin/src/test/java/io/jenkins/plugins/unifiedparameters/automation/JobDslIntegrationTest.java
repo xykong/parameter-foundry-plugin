@@ -35,7 +35,8 @@ class JobDslIntegrationTest {
                               renderer('searchable')
                               defaultValue('staging')
                             }
-                            unifiedMultiChoice('TARGETS') {
+                            unifiedChoice('TARGETS') {
+                              selectionMode('multiple')
                               option('android', 'Android')
                               option('ios', 'iOS')
                               renderer('checkbox')

@@ -11,7 +11,6 @@ import hudson.model.StringParameterValue;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
@@ -34,7 +33,6 @@ final class TypedParameterAdapterRegistry {
 
     static boolean supports(ParameterDefinition definition) {
         return definition instanceof UnifiedChoiceParameterDefinition
-                || definition instanceof UnifiedMultiChoiceParameterDefinition
                 || definition instanceof UnifiedFormParameterDefinition
                 || definition instanceof ChoiceParameterDefinition
                 || definition instanceof BooleanParameterDefinition
@@ -49,14 +47,12 @@ final class TypedParameterAdapterRegistry {
         schema.put(
                 "owner",
                 definition instanceof UnifiedChoiceParameterDefinition
-                                || definition instanceof UnifiedMultiChoiceParameterDefinition
                                 || definition instanceof UnifiedFormParameterDefinition
                         ? "unified-parameters"
                         : "jenkins-core");
         if (definition instanceof UnifiedFormParameterDefinition) {
             schema.put("type", "object");
-        } else if (definition instanceof UnifiedMultiChoiceParameterDefinition
-                || (definition instanceof UnifiedChoiceParameterDefinition choice && choice.isMultiple())) {
+        } else if (definition instanceof UnifiedChoiceParameterDefinition choice && choice.isMultiple()) {
             schema.put("type", "array");
         } else if (definition instanceof BooleanParameterDefinition) {
             schema.put("type", "boolean");
@@ -77,13 +73,6 @@ final class TypedParameterAdapterRegistry {
                 schema.put("customValuePattern", single.getCustomValuePattern());
                 schema.put("customValueMaxLength", single.getCustomValueMaxLength());
             }
-        } else if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            schema.put("providerBacked", multiple.isProviderBacked());
-            schema.put("dependsOn", JSONArray.fromObject(multiple.getDependsOn()));
-            schema.put("renderer", multiple.getRenderer());
-            schema.put("selectedDisplay", multiple.getSelectedDisplay());
-            schema.put("table", multiple.getTable());
-            schema.put("availableExternalRenderers", JSONArray.fromObject(multiple.getAvailableExternalRenderers()));
         } else if (definition instanceof UnifiedFormParameterDefinition form) {
             schema.put("outputMode", form.getOutputMode());
             schema.put("renderer", form.getRenderer());
@@ -136,9 +125,6 @@ final class TypedParameterAdapterRegistry {
                     choice.getDescription(),
                     choice.getEnvironmentExport(),
                     resolved.metadata());
-        }
-        if (definition instanceof UnifiedMultiChoiceParameterDefinition multiple) {
-            return decodeMultiple(job, multiple, present, typedValue, dependencies, snapshotId, operation);
         }
         if (!present) {
             return definition.getDefaultParameterValue();

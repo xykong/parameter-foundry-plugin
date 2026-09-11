@@ -24,14 +24,6 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
     }
 
     @DslExtensionMethod(context = BuildParametersContext.class)
-    public Object unifiedMultiChoice(String name, Runnable closure) {
-        ChoiceContext context = new ChoiceContext();
-        context.selectionMode("multiple");
-        executeInContext(closure, context);
-        return context.create(name);
-    }
-
-    @DslExtensionMethod(context = BuildParametersContext.class)
     public Object unifiedForm(String name, Runnable closure) {
         FormContext context = new FormContext();
         executeInContext(closure, context);

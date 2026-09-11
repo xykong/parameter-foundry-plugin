@@ -6,7 +6,7 @@ This specification covers:
 
 - Freestyle/Pipeline parameter configuration;
 - Build with Parameters;
-- `unifiedChoice` and `unifiedMultiChoice`;
+- `unifiedChoice` with `selectionMode`;
 - Inline Provider editing;
 - select, searchable combobox, radio, list, chips, and checkbox renderers;
 - loading, empty, invalid, disabled, and configuration-error states.

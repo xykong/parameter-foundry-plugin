@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
 import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
 import io.jenkins.plugins.unifiedparameters.form.FormLayout;
@@ -20,7 +20,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void duplicateMachineValuesAreConfigurationInvalid() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("android"), new Option("android")));
 
         DefinitionValidationResult result = DefinitionValidationService.validateStoredDefinition(definition);
@@ -31,8 +31,8 @@ class DefinitionValidationServiceTest {
 
     @Test
     void reservedPresenceNameIsInvalidAtJobLevel() {
-        UnifiedMultiChoiceParameterDefinition definition =
-                new UnifiedMultiChoiceParameterDefinition("__unified_parameters_presence");
+        UnifiedChoiceParameterDefinition definition =
+                MultipleChoiceFixtures.multipleChoice("__unified_parameters_presence");
         definition.setChoices(List.of(new Option("android")));
 
         DefinitionValidationResult result = DefinitionValidationService.validateJobDefinitions(List.of(definition));
@@ -106,7 +106,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void missingOptionalCollectionsFromLoadedConfigDoNotCrashValidation() throws Exception {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("staging")));
 
         Field dependsOn = definition.getClass().getSuperclass().getDeclaredField("dependsOn");
@@ -158,7 +158,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void matrixOnlyDefinitionIsValidWithoutFlatOptions() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
         definition.setTable(matrix(List.of(cell("android", "a", "android-a", false))));
 
@@ -169,7 +169,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void duplicateMatrixCellValueIsConfigurationInvalid() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
         definition.setTable(
                 matrix(List.of(cell("android", "a", "shared", false), cell("android", "b", "shared", false))));
@@ -182,7 +182,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void matrixCellValueCollidingWithFlatOptionIsConfigurationInvalid() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
         definition.setChoices(List.of(new Option("shared")));
         definition.setTable(matrix(List.of(cell("android", "a", "shared", false))));
@@ -195,7 +195,7 @@ class DefinitionValidationServiceTest {
 
     @Test
     void declaredMatrixRequiresRowsAndColumns() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
         io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
                 new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();

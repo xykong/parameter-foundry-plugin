@@ -117,7 +117,7 @@ the parameter ...` error before queue scheduling; no build is created.
 
 ### Multiple-Selection Ordering and Duplicates
 
-`unifiedMultiChoice` models an unordered selection set. Order is not part of
+`unifiedChoice` in multiple mode models an unordered selection set. Order is not part of
 its business value in `1.x`.
 
 The `List<String>` exposed to Pipeline and stored in a build is a deterministic
@@ -132,7 +132,7 @@ Labels, groups, and Provider option order never affect Pipeline `params`,
 environment export, or build-record serialization.
 
 Jobs for which order is business-significant must use a future ordered
-collection/Form field rather than `unifiedMultiChoice`.
+collection/Form field rather than a multiple-mode choice.
 
 Duplicate submitted values are rejected by default with
 `UNIFIED_PARAMETER_DUPLICATE_VALUE`. A definition may opt into `deduplicate`;

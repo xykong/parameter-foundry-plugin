@@ -44,7 +44,8 @@ classification:
   userDecisions: []
 
 target:
-  symbol: unifiedMultiChoice
+  symbol: unifiedChoice
+selectionMode: multiple
   arguments:
     name: TARGETS
     choices:

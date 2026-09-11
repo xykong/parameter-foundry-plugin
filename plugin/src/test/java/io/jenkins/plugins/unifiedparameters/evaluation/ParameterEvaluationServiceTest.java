@@ -3,8 +3,8 @@ package io.jenkins.plugins.unifiedparameters.evaluation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void multipleChoiceUsesStableMachineValueOrder() {
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
 
         List<String> result = ParameterEvaluationService.evaluateMultiple(
                 definition, DecodedInput.present(List.of("web", "android")));
@@ -35,7 +35,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void matrixCellValuesAreSelectable() {
-        UnifiedMultiChoiceParameterDefinition definition = matrixDefinition();
+        UnifiedChoiceParameterDefinition definition = matrixDefinition();
 
         assertEquals(
                 List.of("android-a", "web-c"),
@@ -45,7 +45,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void matrixDisabledCellIsRejectedAsDisabled() {
-        UnifiedMultiChoiceParameterDefinition definition = matrixDefinition();
+        UnifiedChoiceParameterDefinition definition = matrixDefinition();
 
         EvaluationException exception = assertThrows(
                 EvaluationException.class,
@@ -54,8 +54,8 @@ class ParameterEvaluationServiceTest {
         assertEquals(ErrorCode.DISABLED_VALUE, exception.getCode());
     }
 
-    private static UnifiedMultiChoiceParameterDefinition matrixDefinition() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+    private static UnifiedChoiceParameterDefinition matrixDefinition() {
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
         io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
                 new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();
@@ -80,7 +80,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void multipleChoiceRejectsDuplicatesByDefault() {
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
 
         EvaluationException exception = assertThrows(
                 EvaluationException.class,
@@ -92,7 +92,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void absentAndExplicitEmptyHaveDifferentSemantics() {
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web"));
 
@@ -141,7 +141,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void selectionRangeIsValidated() {
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setMinSelections(2);
         definition.setMaxSelections(2);
 
@@ -163,7 +163,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void deduplicatePolicyUsesStableCanonicalValue() {
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setDuplicatePolicy("deduplicate");
 
         assertEquals(
@@ -203,8 +203,8 @@ class ParameterEvaluationServiceTest {
         assertEquals(ErrorCode.CUSTOM_VALUE_INVALID, length.getCode());
     }
 
-    private static UnifiedMultiChoiceParameterDefinition multipleDefinition() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+    private static UnifiedChoiceParameterDefinition multipleDefinition() {
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         return definition;
     }

@@ -24,7 +24,6 @@ import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
@@ -68,11 +67,11 @@ class TechnicalPreviewIntegrationTest {
 
     @Test
     void malformedXstreamDefinitionIsDiagnosedAndCannotQueue(JenkinsRule jenkins) throws Exception {
-        UnifiedMultiChoiceParameterDefinition valid = multipleDefinition();
+        UnifiedChoiceParameterDefinition valid = multipleDefinition();
         String xml = Jenkins.XSTREAM2.toXML(valid);
         String malformedXml = xml.replace("<value>ios</value>", "<value>android</value>");
-        UnifiedMultiChoiceParameterDefinition malformed =
-                (UnifiedMultiChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(malformedXml);
+        UnifiedChoiceParameterDefinition malformed =
+                (UnifiedChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(malformedXml);
         assertFalse(
                 DefinitionValidationService.validateStoredDefinition(malformed).isValid());
 
@@ -111,7 +110,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void standardRestPresenceMarkerDistinguishesEmptyFromAbsent(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("presence");
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -295,8 +294,9 @@ class TechnicalPreviewIntegrationTest {
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "pipeline");
         job.setDefinition(new CpsFlowDefinition("""
                 properties([parameters([
-                  unifiedMultiChoice(
+                  unifiedChoice(
                     name: 'TARGETS',
+                    selectionMode: 'multiple',
                     choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
                     defaultMode: 'explicit',
                     defaultValues: ['web', 'android'],
@@ -326,8 +326,9 @@ class TechnicalPreviewIntegrationTest {
                       defaultValue: 'staging',
                       renderer: 'searchable'
                     )
-                    unifiedMultiChoice(
+                    unifiedChoice(
                       name: 'TARGETS',
+                      selectionMode: 'multiple',
                       choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
                       defaultMode: 'explicit',
                       defaultValues: ['web', 'android'],
@@ -353,7 +354,7 @@ class TechnicalPreviewIntegrationTest {
         ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
         assertNotNull(property);
         assertInstanceOf(UnifiedChoiceParameterDefinition.class, property.getParameterDefinition("CHANNEL"));
-        assertInstanceOf(UnifiedMultiChoiceParameterDefinition.class, property.getParameterDefinition("TARGETS"));
+        assertInstanceOf(UnifiedChoiceParameterDefinition.class, property.getParameterDefinition("TARGETS"));
     }
 
     @Test
@@ -363,7 +364,7 @@ class TechnicalPreviewIntegrationTest {
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "upstream");
         upstream.setDefinition(new CpsFlowDefinition("""
                 build job: 'downstream', wait: true, parameters: [[
-                  $class: 'UnifiedMultiChoiceParameterValue',
+                  $class: 'io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterValue',
                   name: 'TARGETS',
                   value: ['web', 'android']
                 ]]
@@ -403,7 +404,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void pipelineBuildStepPassesDelimitedStringMultiChoiceValue(JenkinsRule jenkins) throws Exception {
         FreeStyleProject downstream = jenkins.createFreeStyleProject("delimited-downstream");
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setStandardApiInputMode("delimited");
         downstream.addProperty(new ParametersDefinitionProperty(definition));
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "delimited-upstream");
@@ -463,7 +464,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void noJavaScriptLargeListIsBounded(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("large-form");
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         List<Option> options = new ArrayList<>();
         for (int index = 0; index < 1000; index++) {
             options.add(new Option(String.format("option-%04d", index)));
@@ -488,7 +489,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void rebuildUsesCurrentDefinitionRendererAndHistoricalValue(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("rebuild");
-        UnifiedMultiChoiceParameterDefinition definition = multipleDefinition();
+        UnifiedChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web", "android"));
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -562,8 +563,8 @@ class TechnicalPreviewIntegrationTest {
         return definition;
     }
 
-    private static UnifiedMultiChoiceParameterDefinition multipleDefinition() {
-        UnifiedMultiChoiceParameterDefinition definition = new UnifiedMultiChoiceParameterDefinition("TARGETS");
+    private static UnifiedChoiceParameterDefinition multipleDefinition() {
+        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web", "android"));
@@ -577,8 +578,8 @@ class TechnicalPreviewIntegrationTest {
         assertEquals(2, definitions.size());
         UnifiedChoiceParameterDefinition single =
                 assertInstanceOf(UnifiedChoiceParameterDefinition.class, definitions.get(0));
-        UnifiedMultiChoiceParameterDefinition multiple =
-                assertInstanceOf(UnifiedMultiChoiceParameterDefinition.class, definitions.get(1));
+        UnifiedChoiceParameterDefinition multiple =
+                assertInstanceOf(UnifiedChoiceParameterDefinition.class, definitions.get(1));
         assertEquals("staging", single.getDefaultValue());
         assertEquals(List.of("web", "android"), multiple.getDefaultValues());
     }

@@ -77,13 +77,12 @@ Both definitions extend Jenkins `ParameterDefinition`. Their
 Each definition has a unique `@Symbol`:
 
 - `unifiedChoice` (single and multiple via `selectionMode`);
-- `unifiedForm`;
-- `unifiedMultiChoice` is retained only as a deprecated compatibility symbol.
+- `unifiedForm`.
 
 `unifiedChoice` carries both single and multiple cardinality so the public
 model, renderers, validation, and transport contracts stay behind one entry
-point. The legacy `unifiedMultiChoice` definition remains loadable so existing
-Jobs and Pipeline scripts keep working.
+point. The former `unifiedMultiChoice` definition and symbol were removed rather
+than kept as aliases; every stored configuration was migrated.
 
 They share immutable internal components:
 

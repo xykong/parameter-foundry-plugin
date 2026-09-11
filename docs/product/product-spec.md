@@ -10,7 +10,7 @@
 | 预期仓库 | `jenkinsci/unified-parameters-plugin` |
 | Maven groupId | `io.jenkins.plugins` |
 | Java package | `io.jenkins.plugins.unifiedparameters` |
-| Pipeline 主 Symbol | `unifiedChoice`（`selectionMode: single|multiple`）、`unifiedForm`；`unifiedMultiChoice` 为兼容别名 |
+| Pipeline 主 Symbol | `unifiedChoice`（`selectionMode: single|multiple`）、`unifiedForm` |
 | 产品标语 | **One parameter model. Every Jenkins entry point.** |
 | UI/API 一致性 | 强保证；不一致视为发布阻断 |
 | 规格日期 | 2026-08-28 |
@@ -70,7 +70,7 @@
 - `plugins.jenkins.io/unified-parameters/` 不存在。
 - `jenkinsci/unified-parameters-plugin` 不存在。
 - Jenkins Maven 仓库中没有 `io.jenkins.plugins:unified-parameters`。
-- 未发现已公开使用的 `unifiedChoice`、`unifiedMultiChoice`、`unifiedForm`
+- 未发现已公开使用的 `unifiedChoice`、`unifiedForm`
   Jenkins Symbol。
 
 以上只是当前可用性证据。正式申请 Jenkins 社区托管时仍须执行最终名称检查和社区评审。

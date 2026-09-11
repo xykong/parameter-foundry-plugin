@@ -13,7 +13,7 @@ sourceFamilies:
   - plugin: custom-checkbox-parameter
     sourceClass: com.bluersw.CheckboxParameterDefinition
     classification: A
-    target: unifiedMultiChoice
+    target: unifiedChoice (selectionMode: multiple)
     decisions:
       - ordered-versus-unordered-membership
       - renderer-and-empty-semantics
@@ -21,7 +21,7 @@ sourceFamilies:
   - plugin: multiselect-parameter
     sourceClass: de.westemeyer.plugins.multiselect.MultiselectParameterDefinition
     classification: B
-    target: unifiedMultiChoice
+    target: unifiedChoice (selectionMode: multiple)
     decisions:
       - repeated-versus-json-array-versus-delimited-transport
       - ordering-and-duplicate-policy
@@ -29,7 +29,7 @@ sourceFamilies:
   - plugin: extensible-choice-parameter
     sourceClass: jp.ikedam.jenkins.plugins.extensible_choice_parameter.ExtensibleChoiceParameterDefinition
     classification: C
-    target: unifiedChoice-or-unifiedMultiChoice
+    target: unifiedChoice (selectionMode: single or multiple)
     decisions:
       - static-versus-governed-provider
       - authority-and-credential

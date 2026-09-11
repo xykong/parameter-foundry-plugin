@@ -50,7 +50,7 @@ old implementation format is not required.
 | Release | Committed scope |
 |---------|-----------------|
 | `0.1 Technical Preview` | non-GA executable spikes for persistence/data binding, malformed definition validation, Pipeline/downstream values, form presence, standard REST 4xx/no-queue, CLI, mixed Core/Unified Typed API, Rebuild, CSP/no-JS, and migration reactor packaging |
-| `1.0 Static Choice Foundation` | `unifiedChoice`, `unifiedMultiChoice`, static `choices` adapted to Inline Provider, select/search/radio/list/chips/checkbox renderers, explicit defaults and empty semantics, known/disabled/required/min/max validation, all applicable submission-entry parity, and an installable Extended Choice static migration adapter for discovery/preview/target generation |
+| `1.0 Static Choice Foundation` | `unifiedChoice` (single and multiple), static `choices` adapted to Inline Provider, select/search/radio/list/chips/checkbox renderers, explicit defaults and empty semantics, known/disabled/required/min/max validation, all applicable submission-entry parity, and an installable Extended Choice static migration adapter for discovery/preview/target generation |
 | `1.1 Governed Provider Platform` | Global/Folder/Managed Config/REST JSON/XML Providers, Connection Profiles, editable/custom values, cache/health/fallback/security controls, Job DSL/JCasC integration, and safe apply/clone/rollback for static migration |
 | `1.2 Reactive and Cascade` | dependency graph, Provider snapshots, reactive resolution, cascade/tree parameters, and dynamic migration adapters |
 | `2.0 Complete Requirement Coverage` | Unified Form, controlled Renderer and Script Provider companions, remaining source adapters, and retirement dashboard |
