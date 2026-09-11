@@ -65,14 +65,15 @@ objects, or a specific Renderer.
 
 ```text
 UnifiedChoiceParameterDefinition
-UnifiedMultiChoiceParameterDefinition
+UnifiedFormParameterDefinition
 UnifiedChoiceParameterValue
-UnifiedMultiChoiceParameterValue
+UnifiedFormParameterValue
 ```
 
-Both definitions extend Jenkins `ParameterDefinition`. Their
-`@DataBoundConstructor` contains only `name`; all other public fields use
-`@DataBoundSetter`.
+The choice definition and its value type cover both cardinalities;
+`selectionMode` states the mode. The definitions extend Jenkins
+`ParameterDefinition`. Their `@DataBoundConstructor` contains only `name`; all
+other public fields use `@DataBoundSetter`.
 
 Each definition has a unique `@Symbol`:
 
@@ -112,13 +113,13 @@ ParameterModelVersion
 | `environmentExport` | no | typed export configuration |
 | `modelVersion` | yes | current persisted-model version |
 
-`UnifiedMultiChoiceParameterDefinition` persists the same fields with:
+`selectionMode: multiple` adds, on the same definition:
 
-- a multiple-capable Renderer;
-- `defaultValues`;
+- a multiple-capable Renderer, including the choice table;
+- `defaultValues` and a matrix `table` whose cells are selectable values;
 - min/max selection settings;
 - duplicate policy;
-- delimited/json/none export mode.
+- delimited/json/none export mode;
 - `standardApiInputMode`, defaulting to repeated form fields.
 
 Public fields are converted into immutable internal `DefaultSpec`,
@@ -143,24 +144,16 @@ selected import hint
 arbitrary Java objects. `selected` is normalized into Provider default
 candidates and is not an independent runtime default.
 
-`UnifiedChoiceParameterValue` persists:
+`UnifiedChoiceParameterValue` persists the mode and the matching canonical
+shape; the exported `value` property stays a scalar for single selection and a
+list for multiple selection.
 
 ```text
 name
-canonical String or null
-configuration digest
+selectionMode
+scalar value for single selection, or the immutable canonical list for multiple
 snapshot metadata when applicable
-export mode
-```
-
-`UnifiedMultiChoiceParameterValue` persists:
-
-```text
-name
-immutable canonical list
-configuration digest
-snapshot metadata when applicable
-export mode and delimiter when applicable
+export mode and, for multiple selection, the delimiter
 ```
 
 `equals` and `hashCode` follow ADR 0005 business-value equality and do not

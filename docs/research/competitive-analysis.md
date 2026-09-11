@@ -897,7 +897,7 @@ canonical value、`ParameterValue`、环境变量、构建记录和稳定 error 
 
 | 原问题 | 决策 |
 |--------|------|
-| 单一还是拆分公开类型 | `1.0` 拆分 `UnifiedChoiceParameterDefinition` 和 `UnifiedMultiChoiceParameterDefinition` |
+| 单一还是拆分公开类型 | 最终统一为 `UnifiedChoiceParameterDefinition`，由 `selectionMode` 表达单选/多选 |
 | Declarative Pipeline Symbol 和字段 | ADR 0009 固定 flat static DSL 和 nested dynamic Provider，由技术 spike 验证 Jenkins binding |
 | Rebuild 集成和历史兼容 | ADR 0008 |
 | Provider API 校验和快照 | ADR 0007 |

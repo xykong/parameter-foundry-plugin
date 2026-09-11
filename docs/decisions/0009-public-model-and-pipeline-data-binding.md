@@ -32,10 +32,12 @@ environmentExport
 modelVersion
 ```
 
-`UnifiedMultiChoiceParameterDefinition`:
+`UnifiedChoiceParameterDefinition` in multiple mode:
 
 ```text
 name                         constructor field
+selectionMode                single | multiple
+table                        optional matrix whose cells are selectable values
 description
 choices                      static List<Option>
 provider                     dynamic ProviderSpec, added in 1.1
