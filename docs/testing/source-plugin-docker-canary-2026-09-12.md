@@ -2,7 +2,7 @@
 
 - Date: September 12, 2026
 - Jenkins image: `jenkins/jenkins:2.568.2-lts-jdk21`
-- Target commit: `c177ea248cdb96a5eafee80f7280cc406e32919d`
+- Target commit: `a7b446985072d5e84fcb1292880e732572e9f5a8`
 - Scope: synthetic Docker canary only; no production configuration involved
 - Machine-readable result: [`results/source-plugin-canary-2026-09-12.json`](./results/source-plugin-canary-2026-09-12.json)
 

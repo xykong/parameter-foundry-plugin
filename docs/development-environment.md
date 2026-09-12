@@ -41,3 +41,18 @@ make gallery-clean
 
 The UI Lab starts isolated Jenkins controllers bound only to localhost and
 uses synthetic data. Generated artifacts are written to `docs/ui-gallery/`.
+
+## Repository identity
+
+On September 12, 2026 the commit author and committer of every commit were
+rewritten from the previous shared identity to `xy.kong <xy.kong@gmail.com>` so
+the history carries the maintainer's own identity before any public hosting
+request. Commit SHAs therefore changed on that date, and any SHA recorded before
+it refers to the pre-rewrite history.
+
+Set the identity locally when contributing to this repository:
+
+```bash
+git config user.name "xy.kong"
+git config user.email "xy.kong@gmail.com"
+```
