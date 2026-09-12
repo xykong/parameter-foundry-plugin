@@ -40,10 +40,10 @@ until every applicable column passes.
 | --- | --- | --- | --- |
 | UP-PLAT-001 | Chrome desktop, macOS | Full shared matrix, keyboard focus, localization, table layout | Passed 2026-09-10: Chromium 151, macOS, 1440x1000; agent build via CLI |
 | UP-PLAT-002 | Chrome desktop, Linux agent | Build submission, Pipeline/Freestyle values, provider refresh | Pending current run |
-| UP-PLAT-003 | Safari/iOS viewport | Responsive layout, table horizontal scroll, touch selection | Pending |
-| UP-PLAT-004 | Android Chrome viewport | Responsive layout, touch selection, validation visibility | Pending |
-| UP-PLAT-005 | Keyboard-only | Tab order, visible focus, radio/checkbox/table operation, error announcement | Pending |
-| UP-PLAT-006 | Screen reader | Labels, row/column headers, status and validation announcements | Manual acceptance required |
+| UP-PLAT-003 | Safari/iOS viewport | Responsive layout, table horizontal scroll, touch selection | Partial 2026-09-12: a 390x844 Chromium viewport shows the choice field and the table inside the page width, and the table scrolls inside its own container; a real Safari/iOS device run is still required |
+| UP-PLAT-004 | Android Chrome viewport | Responsive layout, touch selection, validation visibility | Partial 2026-09-12: layout and selection verified in a 390x844 Chromium viewport without page overflow; real Android touch input and validation visibility still to confirm |
+| UP-PLAT-005 | Keyboard-only | Tab order, visible focus, radio/checkbox/table operation, error announcement | Passed 2026-09-12 (desktop Chromium): Tab order runs search, toolbar, group toggle, then options; Space toggles an option and a table cell; chips and the `role="status"` summary update; the matrix skips the missing coordinate |
+| UP-PLAT-006 | Screen reader | Labels, row/column headers, status and validation announcements | Partial 2026-09-12: role-based queries confirm cell checkboxes named `<row> / <column>`, the disabled cell including its reason, one live status region per field, and named chip removal buttons; manual screen-reader sign-off remains |
 | UP-PLAT-007 | No JavaScript | Native fallback controls, submission, and readable errors | Local E2E |
 
 ## User-Reported Issues
@@ -184,7 +184,9 @@ until every applicable column passes.
   default selection, a disabled cell, and a missing coordinate, and asserts the
   chips, the disabled state, and chip-driven deselection.
 - Verification: passed on 2026-09-12 with `make e2e` against the containerized
-  Jenkins; production verification follows the next deployment.
+  Jenkins, and confirmed in production with `0.3.149-SNAPSHOT`: the field shows
+  `Android A` with `Selected 1 of 8`, selecting `iOS / A` adds a chip and updates
+  the status, and removing the chip clears the cell again.
 
 ## Recording Rule
 
