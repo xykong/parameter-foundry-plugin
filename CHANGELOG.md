@@ -11,7 +11,7 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-Current version: `0.3.146-SNAPSHOT`.
+Current version: `0.3.149-SNAPSHOT`.
 
 ### Added
 
@@ -28,6 +28,11 @@ Current version: `0.3.146-SNAPSHOT`.
 
 - The plugin About page now describes the parameter types, highlights, and a
   quick example instead of a single sentence.
+
+### Fixed
+
+- A choice table now honours `selectedDisplay`: it shows the selected chips and a
+  selection summary, and removing a chip clears the matching cell.
 
 ## 0.3.143 - 2026-09-11
 
