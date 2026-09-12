@@ -11,7 +11,7 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-Current version: `0.3.149-SNAPSHOT`.
+Current version: `0.3.155-SNAPSHOT`.
 
 ### Added
 
@@ -33,6 +33,9 @@ Current version: `0.3.149-SNAPSHOT`.
 
 - A choice table now honours `selectedDisplay`: it shows the selected chips and a
   selection summary, and removing a chip clears the matching cell.
+- Enter in a searchable choice field no longer submits the build form when the
+  typed custom value is invalid; the candidate and its validation message stay in
+  place so it can be corrected.
 
 ## 0.3.143 - 2026-09-11
 
