@@ -426,6 +426,43 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
         ".unified-parameters-status"
     ).inner_text()
 
+    # An invalid custom value must not submit the build form when the user presses Enter.
+    # Reload first so this runs from a clean form, independent of the earlier benchmarks.
+    await page.goto(BUILD_URL, wait_until="networkidle")
+    await wait_interactive(page, all_fields=True)
+    release = page.locator('[data-parameter-name="RELEASE"]')
+    release_search = release.locator(".unified-parameters-search")
+    builds_before = await page.request.get(
+        BUILD_URL.rsplit("/build", 1)[0] + "/api/json?tree=builds[number]"
+    )
+    before_numbers = [build["number"] for build in (await builds_before.json()).get("builds", [])]
+    await release_search.fill("not-a-valid-value")
+    await page.wait_for_timeout(300)
+    validation_text = await release.locator(
+        ".unified-parameters-custom-validation"
+    ).inner_text()
+    assert "Value must match" in validation_text, repr(validation_text)
+    await release_search.press("Enter")
+    await page.wait_for_timeout(500)
+    assert await page.locator('[data-parameter-name="RELEASE"]').count() == 1
+    assert await release_search.input_value() == "not-a-valid-value"
+    builds_after = await page.request.get(
+        BUILD_URL.rsplit("/build", 1)[0] + "/api/json?tree=builds[number]"
+    )
+    after_numbers = [build["number"] for build in (await builds_after.json()).get("builds", [])]
+    assert after_numbers == before_numbers, "Enter on an invalid custom value queued a build"
+
+    # Restore the custom selection the later build assertions expect.
+    await release_search.fill("release-42")
+    await release_search.press("Enter")
+    await page.wait_for_timeout(300)
+    assert (
+        await release.locator(
+            'input[data-up-generated-value][value="release-42"]'
+        ).count()
+        == 1
+    )
+
     # Matrix renderer: cells are the selectable values, missing coordinates are not rendered as
     # controls, disabled cells stay unselectable, and selectedDisplay=chips stays synchronized.
     table = page.locator('[data-parameter-name="TABLE_TARGETS"]')

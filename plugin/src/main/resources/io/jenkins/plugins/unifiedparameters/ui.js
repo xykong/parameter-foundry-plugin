@@ -640,12 +640,12 @@
           search.value = "";
           render();
           event.preventDefault();
-        } else if (
-          event.key === "Enter" &&
-          customButton &&
-          !customButton.disabled
-        ) {
-          customButton.click();
+        } else if (event.key === "Enter") {
+          // Never let Enter submit the build form: it either creates the custom value or
+          // leaves the invalid candidate in place so the user can correct it.
+          if (customButton && !customButton.disabled) {
+            customButton.click();
+          }
           event.preventDefault();
         }
       });

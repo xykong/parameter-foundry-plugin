@@ -40,10 +40,10 @@ until every applicable column passes.
 | --- | --- | --- | --- |
 | UP-PLAT-001 | Chrome desktop, macOS | Full shared matrix, keyboard focus, localization, table layout | Passed 2026-09-10: Chromium 151, macOS, 1440x1000; agent build via CLI |
 | UP-PLAT-002 | Chrome desktop, Linux agent | Build submission, Pipeline/Freestyle values, provider refresh | Pending current run |
-| UP-PLAT-003 | Safari/iOS viewport | Responsive layout, table horizontal scroll, touch selection | Partial 2026-09-12: a 390x844 Chromium viewport shows the choice field and the table inside the page width, and the table scrolls inside its own container; a real Safari/iOS device run is still required |
-| UP-PLAT-004 | Android Chrome viewport | Responsive layout, touch selection, validation visibility | Partial 2026-09-12: layout and selection verified in a 390x844 Chromium viewport without page overflow; real Android touch input and validation visibility still to confirm |
+| UP-PLAT-003 | Safari/iOS viewport | Responsive layout, table horizontal scroll, touch selection | Partial 2026-09-12: WebKit (Safari engine) with iPhone 14 emulation loads the choice field, keeps both the field and the table inside the page width, scrolls the table inside its own container, and reports 8 named cell checkboxes with 3 row and 3 column headers; a physical iOS device run is still required |
+| UP-PLAT-004 | Android Chrome viewport | Responsive layout, touch selection, validation visibility | Partial 2026-09-12: Chromium with Pixel 7 emulation, including touch events, selects an option and a table cell by tap, keeps the page inside the 412px viewport, and scrolls the table in place; a physical Android device run is still required |
 | UP-PLAT-005 | Keyboard-only | Tab order, visible focus, radio/checkbox/table operation, error announcement | Passed 2026-09-12 (desktop Chromium): Tab order runs search, toolbar, group toggle, then options; Space toggles an option and a table cell; chips and the `role="status"` summary update; the matrix skips the missing coordinate |
-| UP-PLAT-006 | Screen reader | Labels, row/column headers, status and validation announcements | Partial 2026-09-12: role-based queries confirm cell checkboxes named `<row> / <column>`, the disabled cell including its reason, one live status region per field, and named chip removal buttons; manual screen-reader sign-off remains |
+| UP-PLAT-006 | Screen reader | Labels, row/column headers, status and validation announcements | Partial 2026-09-12: the Chromium accessibility tree exposes `searchbox`, `status`, named cell checkboxes, `rowheader` and `columnheader` roles, the disabled cell reason inside its accessible name, and a live region that changes from `Selected 1 of 8` to `Selection updated. Selected 2 of 8`; manual screen-reader sign-off remains |
 | UP-PLAT-007 | No JavaScript | Native fallback controls, submission, and readable errors | Local E2E |
 
 ## User-Reported Issues
@@ -187,6 +187,25 @@ until every applicable column passes.
   Jenkins, and confirmed in production with `0.3.149-SNAPSHOT`: the field shows
   `Android A` with `Selected 1 of 8`, selecting `iOS / A` adds a chip and updates
   the status, and removing the chip clears the cell again.
+
+### UP-ISSUE-010: Enter submitted the form when a custom value was invalid
+
+- Reproduction: on a searchable choice parameter with `allowCustomValue`, type a
+  value that does not satisfy the configured pattern and press Enter.
+- Actual: the custom value was correctly refused, but the form was submitted and
+  a build was queued with the value the form still held. The acceptance Job
+  recorded an extra build at the time of the check.
+- Cause: the search field only called `preventDefault` when the custom-value
+  button was enabled, so an invalid candidate fell through to the browser's
+  default form submission.
+- Fix: Enter is always intercepted in the search field. It applies the custom
+  value when the candidate is valid and otherwise leaves the candidate and its
+  validation message in place for correction.
+- Regression: `make e2e` now types an invalid custom value, presses Enter, and
+  asserts that the validation message appears, the field keeps the typed text,
+  the form stays on the build page, and the Job's build list is unchanged.
+- Verification: passed 2026-09-12 with `make e2e`; production verification
+  follows the next deployment.
 
 ## Recording Rule
 
