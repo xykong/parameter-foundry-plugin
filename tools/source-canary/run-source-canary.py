@@ -600,7 +600,8 @@ def main() -> int:
                 "/job/source-stashed-file/unified-parameters/"
             )
             assert "Class B" in extended_preview
-            assert "UnifiedMultiChoiceParameterDefinition" in extended_preview
+            assert "UnifiedChoiceParameterDefinition" in extended_preview
+            assert "selectionMode: 'multiple'" in extended_preview
             assert "Class C" in active_preview
             assert "TODO-governed-provider" in active_preview
             assert "ACTIVE_BASE" in active_preview
@@ -633,7 +634,7 @@ def main() -> int:
             if status not in {200, 302}:
                 raise RuntimeError(f"migration clone returned HTTP {status}")
             clone_config = canary.get_text(f"/job/{clone_name}/config.xml")
-            if "UnifiedMultiChoiceParameterDefinition" not in clone_config:
+            if "UnifiedChoiceParameterDefinition" not in clone_config:
                 raise RuntimeError("clone did not persist the Unified target definition")
             clone_page = canary.get_text(f"/job/{clone_name}/unified-parameters/")
             if "APPLIED" not in clone_page:
@@ -743,7 +744,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 def job = Jenkins.get().createProject(WorkflowJob, '{upstream_name}')
 job.setDefinition(new CpsFlowDefinition(\"\"\"
 build job: '{clone_name}', wait: true, parameters: [[
-  \\$class: 'UnifiedMultiChoiceParameterValue',
+  \\$class: 'UnifiedChoiceParameterValue',
   name: 'LEGACY_TARGETS',
   value: ['web', 'android']
 ]]
@@ -889,7 +890,7 @@ job.save()
             if (
                 rollback_status not in {200, 302}
                 or "ExtendedChoiceParameterDefinition" not in rolled_back_config
-                or "UnifiedMultiChoiceParameterDefinition" in rolled_back_config
+                or "UnifiedChoiceParameterDefinition" in rolled_back_config
                 or "ROLLED_BACK" not in rolled_back_page
             ):
                 raise RuntimeError(

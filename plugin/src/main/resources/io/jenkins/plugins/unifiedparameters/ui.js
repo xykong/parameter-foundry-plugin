@@ -275,6 +275,70 @@
     var selected = new Set(initialValues);
     var enhanced = document.createElement("div");
     enhanced.className = "unified-parameters-enhanced unified-parameters-table-enhanced";
+    var status = createStatus();
+    var chips = document.createElement("div");
+    chips.className = "unified-parameters-chips";
+    chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
+    var inputsByValue = new Map();
+    var rowsByValue = new Map(
+      tableModel.rows.map(function (row) {
+        return [row.value, row];
+      }),
+    );
+    var columnsByValue = new Map(
+      tableModel.columns.map(function (column) {
+        return [column.value, column];
+      }),
+    );
+    var cellLabels = new Map(
+      tableModel.cells.map(function (cell) {
+        return [cell.value, cellCaption(cell)];
+      }),
+    );
+
+    function cellCaption(cell) {
+      if (cell.label && cell.label !== cell.value) {
+        return cell.label;
+      }
+      var row = rowsByValue.get(cell.row);
+      var column = columnsByValue.get(cell.column);
+      return (row ? row.label || row.value : cell.row) + " / " + (column ? column.label || column.value : cell.column);
+    }
+
+    function renderChips() {
+      removeChildren(chips);
+      if (field.dataset.selectedDisplay !== "chips") {
+        return;
+      }
+      sortedSetValues(selected).forEach(function (value) {
+        var caption = cellLabels.get(value) || value;
+        var chip = document.createElement("span");
+        chip.className = "unified-parameters-chip";
+        chip.appendChild(document.createTextNode(caption));
+        var remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "x";
+        remove.setAttribute("aria-label", "Remove " + caption);
+        remove.addEventListener("click", function () {
+          selected.delete(value);
+          var input = inputsByValue.get(value);
+          if (input) {
+            input.checked = false;
+          }
+          setSubmittedValues(field, selected, true);
+          renderChips();
+          updateStatus(formatMessage(localized(field, "removed", "Removed {0}."), [caption]));
+        });
+        chip.appendChild(remove);
+        chips.appendChild(chip);
+      });
+    }
+
+    function updateStatus(message) {
+      status.textContent =
+        (message ? message + " " : "") + selectedSummary(field, selected.size, tableModel.cells.length);
+    }
+
     var table = document.createElement("table");
     table.className = "unified-parameters-table";
     var head = document.createElement("thead");
@@ -323,7 +387,10 @@
             }
             if (input.checked) selected.add(cell.value); else selected.delete(cell.value);
             setSubmittedValues(field, selected, true);
+            renderChips();
+            updateStatus(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
           });
+          inputsByValue.set(cell.value, input);
           td.appendChild(input);
         }
         tr.appendChild(td);
@@ -331,10 +398,16 @@
       body.appendChild(tr);
     });
     table.appendChild(body);
+    if (field.dataset.selectedDisplay === "chips") {
+      enhanced.appendChild(chips);
+    }
     enhanced.appendChild(table);
+    enhanced.appendChild(status);
     disableFallback(field);
     field.appendChild(enhanced);
     setSubmittedValues(field, selected);
+    renderChips();
+    updateStatus();
     return true;
   }
 

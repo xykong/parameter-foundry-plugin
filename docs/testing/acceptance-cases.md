@@ -24,7 +24,7 @@ until every applicable column passes.
 | --- | --- | --- | --- |
 | UP-AC-001 | UnifiedChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
-| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, and responsive overflow. | Passed 2026-09-11 on `0.2.14-SNAPSHOT`: 7 semantic `th`, 8 rendered cells with stable values and row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, and a build submitted `[ios-a, web-b]`; responsive overflow still needs a mobile viewport |
+| UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
 | UP-AC-011 | Unified fixtures | Every acceptance Job configures choice parameters through `unifiedChoice` (+ `selectionMode: multiple` where needed), and the deprecated definition and symbol no longer exist. | Passed 2026-09-11 on `0.2.15-SNAPSHOT`: 32 of 32 Jobs migrated and built, 55 of 55 resolve calls returned `200`, a controller-wide scan of 688 Jobs found no remaining reference, every Job loaded without a class-loading error, and the configuration UI offers only the unified entry |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
@@ -165,6 +165,26 @@ until every applicable column passes.
   matrix-only fixture resolves exactly its eight cells, `android-a` and `web-b`
   validate and build, `web-c` fails as disabled, `ios-b` fails as missing, and
   the browser reports the configured disabled reason.
+
+### UP-ISSUE-009: Table renderer ignored the selected-value display
+
+- Reproduction: configure a multiple-selection parameter with `renderer: table`
+  and `selectedDisplay: chips`, then open the build form.
+- Actual: the table rendered and cells could be selected, but no chip summary
+  appeared and the field had no status line, so the configured `chips` value had
+  no effect and the selection summary was missing for assistive technology.
+- Cause: the multiple-selection enhancement dispatches table fields to a
+  dedicated `enhanceTable` path, which only built the grid and never created the
+  chips container or the status element that the option-based path builds.
+- Fix: the table path now creates the same chips container and status element,
+  renders a chip per selected cell using the cell or row/column caption, updates
+  the status on every change, and removes the cell selection when a chip is
+  removed.
+- Regression: the end-to-end fixture now includes a table parameter with a
+  default selection, a disabled cell, and a missing coordinate, and asserts the
+  chips, the disabled state, and chip-driven deselection.
+- Verification: passed on 2026-09-12 with `make e2e` against the containerized
+  Jenkins; production verification follows the next deployment.
 
 ## Recording Rule
 

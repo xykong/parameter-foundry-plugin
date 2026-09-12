@@ -5,11 +5,13 @@ import hudson.model.ParametersDefinitionProperty
 import io.jenkins.plugins.darktheme.DarkThemeSystemManagerFactory
 import io.jenkins.plugins.thememanager.ThemeManagerPageDecorator
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedMultiChoiceParameterDefinition
 import io.jenkins.plugins.unifiedparameters.form.FormField
 import io.jenkins.plugins.unifiedparameters.form.FormLayout
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter
+import io.jenkins.plugins.unifiedparameters.model.AxisOption
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix
+import io.jenkins.plugins.unifiedparameters.model.MatrixCell
 import io.jenkins.plugins.unifiedparameters.model.Option
 import io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition
 import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration
@@ -60,7 +62,8 @@ deployMode.setRenderer('radio')
 deployMode.setDefaultMode('explicit')
 deployMode.setDefaultValue('safe')
 
-def regions = new UnifiedMultiChoiceParameterDefinition('REGIONS')
+def regions = new UnifiedChoiceParameterDefinition('REGIONS')
+regions.setSelectionMode('multiple')
 regions.setChoices([
     new Option('us-east'),
     new Option('us-west'),
@@ -86,13 +89,15 @@ featureRetired.setLabel('Retired feature')
 featureRetired.setGroup('Experimental')
 featureRetired.setDisabled(true)
 featureRetired.setDisabledReason('Removed from the supported release train')
-def features = new UnifiedMultiChoiceParameterDefinition('FEATURES')
+def features = new UnifiedChoiceParameterDefinition('FEATURES')
+features.setSelectionMode('multiple')
 features.setChoices([featureA, featureB, featureC, featureRetired])
 features.setRenderer('checkbox')
 features.setDefaultMode('explicit')
 features.setDefaultValues(['feature-a'])
 
-def targets = new UnifiedMultiChoiceParameterDefinition('TARGETS')
+def targets = new UnifiedChoiceParameterDefinition('TARGETS')
+targets.setSelectionMode('multiple')
 targets.setChoices((0..<10000).collect { index ->
     def option = new Option(String.format('target-%04d', index))
     option.setLabel(String.format('Target %04d', index))
@@ -116,7 +121,25 @@ targets.setSelectedDisplay('chips')
 targets.setDefaultMode('explicit')
 targets.setDefaultValues(['target-0002', 'target-0001'])
 targets.setMinSelections(1)
-staticJob.addProperty(new ParametersDefinitionProperty(channel, release, deployMode, regions, features, targets))
+
+// Matrix fixture: one disabled cell and one coordinate without a cell, so the renderer has to
+// decide what is selectable versus merely unavailable.
+def matrix = new ChoiceMatrix()
+matrix.setRows([new AxisOption('android', 'Android'), new AxisOption('ios', 'iOS')])
+matrix.setColumns([new AxisOption('a', 'A'), new AxisOption('b', 'B')])
+def disabledCell = new MatrixCell('ios', 'b', 'ios-b')
+disabledCell.setDisabled(true)
+disabledCell.setDisabledReason('Not available for iOS')
+matrix.setCells([new MatrixCell('android', 'a', 'android-a'), new MatrixCell('ios', 'a', 'ios-a'), disabledCell])
+def tableTargets = new UnifiedChoiceParameterDefinition('TABLE_TARGETS')
+tableTargets.setSelectionMode('multiple')
+tableTargets.setRenderer('table')
+tableTargets.setSelectedDisplay('chips')
+tableTargets.setDefaultMode('explicit')
+tableTargets.setDefaultValues(['android-a'])
+tableTargets.setTable(matrix)
+
+staticJob.addProperty(new ParametersDefinitionProperty(channel, release, deployMode, regions, features, targets, tableTargets))
 staticJob.save()
 
 def providerJob = jenkins.getItem('unified-parameters-provider-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-provider-e2e')
@@ -126,7 +149,8 @@ providerEnvironment.setChoices([new Option('staging'), new Option('production')]
 providerEnvironment.setRenderer('select')
 providerEnvironment.setDefaultMode('explicit')
 providerEnvironment.setDefaultValue('staging')
-def environments = new UnifiedMultiChoiceParameterDefinition('ENVIRONMENTS')
+def environments = new UnifiedChoiceParameterDefinition('ENVIRONMENTS')
+environments.setSelectionMode('multiple')
 environments.setProviderId('shared-environments')
 environments.setRenderer('checkbox')
 environments.setSelectedDisplay('chips')
@@ -185,7 +209,8 @@ formJob.save()
 
 def configJob = jenkins.getItem('up-config-e2e') ?: jenkins.createProject(FreeStyleProject, 'up-config-e2e')
 configJob.removeProperty(ParametersDefinitionProperty)
-def configTargets = new UnifiedMultiChoiceParameterDefinition('CONFIG_TARGETS')
+def configTargets = new UnifiedChoiceParameterDefinition('CONFIGTARGETS')
+configTargets.setSelectionMode('multiple')
 configTargets.setChoices([new Option('android'), new Option('ios')])
 configTargets.setRenderer('checkbox')
 configTargets.setSelectedDisplay('chips')

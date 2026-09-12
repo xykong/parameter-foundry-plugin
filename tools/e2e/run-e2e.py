@@ -172,13 +172,19 @@ def attach_error_collector(page: Page, errors: list[dict[str, str]]) -> None:
     )
 
 
+# Enhanced fields in the static fixture: searchable (CHANNEL, RELEASE), list (REGIONS),
+# checkbox (FEATURES, TARGETS), and table (TABLE_TARGETS). The plain radio field stays native.
+STATIC_INTERACTIVE_FIELDS = 6
+
+
 async def wait_interactive(page: Page, *, all_fields: bool = False) -> None:
     await page.wait_for_selector(
         '[data-parameter-name="TARGETS"][data-up-interactive="true"]'
     )
     if all_fields:
         await page.wait_for_function(
-            "() => document.querySelectorAll('[data-up-interactive=\"true\"]').length === 5"
+            "() => document.querySelectorAll('[data-up-interactive=\"true\"]').length ==="
+            f" {STATIC_INTERACTIVE_FIELDS}"
         )
 
 
@@ -420,6 +426,27 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
         ".unified-parameters-status"
     ).inner_text()
 
+    # Matrix renderer: cells are the selectable values, missing coordinates are not rendered as
+    # controls, disabled cells stay unselectable, and selectedDisplay=chips stays synchronized.
+    table = page.locator('[data-parameter-name="TABLE_TARGETS"]')
+    await table.locator("table").wait_for()
+    assert await table.locator("th").count() == 5, await table.locator("th").all_inner_texts()
+    assert await table.locator("table input").count() == 3
+    table_chips = table.locator(".unified-parameters-chip")
+    assert [text.replace("\n", "") for text in await table_chips.all_inner_texts()] == [
+        "Android / Ax"
+    ]
+    await table.locator('table input[value="ios-a"]').click()
+    assert [text.replace("\n", "") for text in await table_chips.all_inner_texts()] == [
+        "Android / Ax",
+        "iOS / Ax",
+    ]
+    await table.locator(".unified-parameters-chip", has_text="iOS").locator("button").click()
+    assert [text.replace("\n", "") for text in await table_chips.all_inner_texts()] == [
+        "Android / Ax"
+    ]
+    assert await table.locator('table input[value="ios-b"]').is_disabled()
+
     target = page.locator('[data-parameter-name="TARGETS"]')
     chips = target.locator(".unified-parameters-chip")
     assert [text.replace("\n", "") for text in await chips.all_inner_texts()] == [
@@ -521,8 +548,9 @@ async def migration_preview_check(page: Page) -> None:
     )
     text = await page.locator(".up-migration-page").inner_text()
     assert "Class B" in text
-    assert "UnifiedMultiChoiceParameterDefinition" in text
-    assert "unifiedMultiChoice" in text
+    assert "UnifiedChoiceParameterDefinition" in text
+    assert "unifiedChoice" in text
+    assert "selectionMode: 'multiple'" in text
     assert "does not modify the Job" in text
     await page.screenshot(path=GALLERY_DIR / "migration-preview.png", full_page=True)
     clone_form = page.locator('form[action$="cloneMigration"]')
@@ -537,7 +565,9 @@ async def migration_preview_check(page: Page) -> None:
     clone_config = await page.request.get(
         BASE_URL + "/job/unified-migration-clone-e2e/config.xml"
     )
-    assert "UnifiedMultiChoiceParameterDefinition" in await clone_config.text()
+    cloned = await clone_config.text()
+    assert "UnifiedChoiceParameterDefinition" in cloned
+    assert "<selectionMode>multiple</selectionMode>" in cloned
 
     await page.goto(
         BASE_URL
@@ -920,7 +950,7 @@ def verify_migration() -> None:
     plan = json.loads((HOME_DIR / "migration-plan.json").read_text())
     assert plan["classification"] == "B", plan
     assert plan["targetClass"].endswith(
-        "UnifiedMultiChoiceParameterDefinition"
+        "UnifiedChoiceParameterDefinition"
     ), plan
 
 
