@@ -204,8 +204,12 @@ until every applicable column passes.
 - Regression: `make e2e` now types an invalid custom value, presses Enter, and
   asserts that the validation message appears, the field keeps the typed text,
   the form stays on the build page, and the Job's build list is unchanged.
-- Verification: passed 2026-09-12 with `make e2e`; production verification
-  follows the next deployment.
+- Verification: passed on 2026-09-12 with `make e2e` and confirmed in production
+  with `0.3.155-SNAPSHOT`: after pressing Enter on an invalid candidate the page
+  stayed on the build form, the typed text and the `Value must match: custom-[0-9]+`
+  message were preserved, the Job's build list was unchanged, and a valid custom
+  value still selected and generated its hidden value. Evidence:
+  [`results/issue-010-2026-09-12.json`](./results/issue-010-2026-09-12.json).
 
 ## Recording Rule
 
