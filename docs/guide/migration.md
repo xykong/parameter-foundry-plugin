@@ -69,8 +69,55 @@ has to be stated before an equivalent can be generated.
 - Applying a migration writes a record (source Job, parameter, adapter, actor,
   digests, decisions, backup file) that can be rolled back.
 
+## Batch migration
+
+The Job page previews every recognized parameter of the Job, shows the exact
+configuration diff, and can migrate all of them in one atomic write. The batch
+refuses to run when a digest changed after the preview, when a parameter needs a
+decision that nobody accepted, or when a parameter is Class C/D; those
+parameters are listed separately as blocked.
+
+The same flow is scriptable:
+
+```bash
+# Inventory every Job that an installed adapter recognizes
+jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -json
+
+# Dry run for one Job, with its decisions and the exact diff
+jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job
+
+# Apply the batch once the decisions are accepted
+jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job -apply -accept-decisions
+```
+
+Rolling back a batch restores the Job XML captured before the batch. When the
+Job changed after the batch, the rollback is refused, so a manual edit is never
+silently overwritten.
+
+## Verification evidence
+
+A migration is only proven when the same input produces the same result before
+and after the change:
+
+```bash
+jenkins-cli -s "$JENKINS_URL" unified-parameters-migration-verify \
+  -job folder/job -record <record-id>
+```
+
+The command picks the newest build before the migration and the newest build
+after it, compares the canonical value, the environment export, and the sibling
+inputs, and stores the result on the migration record. Exit code `0` means
+verified, `1` means a mismatch, and `2` means the Job still needs a comparable
+build. The Job page shows the stored evidence and can re-run the comparison.
+
 ## Retirement dashboard
 
 Administrators get a dashboard that reports, per source plugin: active Jobs,
 generated sources, queued and running builds, and historical builds that still
 reference it. Use it to prove a source plugin is unused before uninstalling it.
+
+The dashboard also reports what it cannot see: Jobs whose parameters are defined
+in a repository Jenkinsfile, and the multibranch or organization folders that
+generate them. Those definitions are invisible to a configuration scan, so keep
+the source plugins installed until the repository side has been reviewed after a
+full build cycle.

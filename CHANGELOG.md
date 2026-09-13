@@ -15,6 +15,22 @@ Current version: `0.3.155-SNAPSHOT`.
 
 ### Added
 
+- Atomic batch migration: the Job page previews every recognized parameter with
+  the exact configuration diff, applies them in one Job write, and rolls the
+  whole batch back when the Job changed afterwards.
+- `unified-parameters-migration`, a CLI that scans the controller, previews a
+  Job with its decisions and diff, and applies one atomic batch.
+- `unified-parameters-migration-verify` and `MigrationEvidenceService`, which
+  compare the newest build before and after a migration (canonical value,
+  environment export, sibling inputs) and store the result as migration
+  evidence.
+- A repository-side blind-spot report on the retirement dashboard: Jobs that
+  read their Pipeline from SCM, plus the multibranch and organization folders
+  that generate them, with an `unscanned` flag in the JSON report.
+- Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
+  including adapter reasons, decisions, fact labels, and verification cases.
+- `MigrationMessageCoverageTest`, which fails the build when a referenced
+  message key is missing or a locale bundle is incomplete.
 - In-plugin documentation: every configuration field now ships a help popup, so
   the form explains itself while you are filling it in.
 - A user guide covering getting started, the parameter reference, a cookbook,
@@ -26,6 +42,8 @@ Current version: `0.3.155-SNAPSHOT`.
 
 ### Changed
 
+- Migration previews and records report the source default, the resolved sort
+  order, the translated filter, and the blocked parameters of the Job.
 - The plugin About page now describes the parameter types, highlights, and a
   quick example instead of a single sentence.
 

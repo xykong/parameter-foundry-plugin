@@ -37,6 +37,13 @@ Current symbols: `unifiedChoice`, `unifiedForm`
   multiple selection, `json` or `none` plus per-field variables for forms.
 - Typed API: `…/unified-parameters/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
 - Errors carry stable codes such as `UNIFIED_PARAMETER_UNKNOWN_VALUE`.
+- Migration CLI: `unified-parameters-migration` scans the controller, previews a
+  Job with its decisions and exact diff, and applies one atomic batch per Job;
+  `unified-parameters-migration-verify` stores the before/after A/B evidence on
+  the migration record.
+- The migration page, the retirement dashboard, and every adapter reason,
+  decision, fact, and verification case ship in English, Chinese, Japanese, and
+  Korean.
 
 ## Conventions for generated content
 

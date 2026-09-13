@@ -1,6 +1,8 @@
 # Migration Support Gaps and Adjustments
 
 - Date: September 13, 2026
+- Status update: September 14, 2026 — G1–G5 and G8–G11 are implemented; G6
+  and G7 stay documented boundaries
 - Input: the controller-wide replacement readiness inventory
   ([`../testing/replacement-readiness-2026-09-13.md`](../testing/replacement-readiness-2026-09-13.md))
   and a shape analysis of the source parameters actually in use
@@ -9,6 +11,22 @@
 
 Migration happens once, for every Job, after the preparation is complete.
 Nothing below requires a partial migration; each item is a preparation task.
+
+## Status
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| G1 smart sort | Implemented | `sortOrder: smart-ascending \| smart-descending` in the Git refs Provider with a version-aware comparison, mapped from the source `*_SMART` modes, with config help and tests |
+| G2 filter translation | Implemented | `translateFilter()` converts full-ref filters to short-name include patterns and the preview shows both patterns |
+| G3 default facts | Implemented | The preview lists source default, source selected value, resolved target sort, and translated filter per parameter |
+| G4 literal Active Choices | Implemented | `ActiveChoicesScriptAnalysis.literalChoices()` turns literal scripts into inline `choices` with selected markers as defaults; Class A/B instead of Class C |
+| G5 network guidance | Implemented | Redacted endpoint and detected response fields in the facts, a generated Provider skeleton, and explicit Class D items for controller/shell scripts |
+| G6 nested form editing | Documented boundary | Unchanged: nested values are configured through Pipeline, Job DSL, or JCasC |
+| G7 provider matrices | Documented boundary | Unchanged: `providerId` plus `table` remains rejected until a real requirement exists |
+| G8 batch migration | Implemented | `MigrationCoordinator.previewBatch/applyBatch/rollbackBatch`, a Job-page batch section with the exact diff, and the `unified-parameters-migration` CLI |
+| G9 localized surfaces | Implemented | Migration page, retirement dashboard, fact labels, reasons, decisions, and verification cases resolve through `Messages`; English, Chinese, Japanese, and Korean bundles are complete |
+| G10 repository scan | Implemented | `RetirementScanner.scanRepository()` reports Jobs that read their Pipeline from SCM plus multibranch and organization folders; the dashboard, the JSON report, and the Job page state that those definitions are unseen |
+| G11 A/B verification | Implemented | `MigrationEvidenceService` compares source and target builds (canonical value, environment export, sibling inputs) and stores the result on the migration record; `unified-parameters-migration-verify` records it |
 
 ## What is already good enough
 
@@ -126,6 +144,16 @@ all parameters of a Job, runs a dry-run that reports the exact configuration
 diff, applies atomically, and can roll back the batch. A CLI entry point keeps it
 scriptable for the migration window.
 
+Delivered: `MigrationBatchPreview` reports every recognized parameter of a Job
+with a line-level diff of the serialized definition, the decisions that still
+need an owner, and the parameters that must stay manual. `applyBatch` validates
+all digests and decisions first, writes one backup, replaces every parameter in
+a single Job write, and restores the backup when the write fails.
+`rollbackBatch` reverts the whole batch and refuses when the Job changed
+afterwards; a single record of a batch can no longer be rolled back on its own.
+The Job page renders the batch diff and the apply button, and
+`unified-parameters-migration` exposes scanning, dry-run, and apply to scripts.
+
 ### G9. The migration and retirement surfaces are English-only
 
 Evidence: the migration page and the retirement dashboard contain hardcoded
@@ -135,6 +163,15 @@ Korean messages.
 Adjustment: route migration and dashboard text through `Messages` and add at
 least Chinese, so the business owners who must accept decisions read them in
 their own language.
+
+Delivered: the view text lives in per-view bundles
+(`api/UnifiedParametersJobAction/index*.properties` and
+`retirement/RetirementDashboardAction/index*.properties`), and the adapter
+narration moved to `MigrationText`, which resolves the plugin `Messages` bundle
+when a page renders. Adapter reasons, decisions, fact labels, and verification
+cases are translatable with arguments, and English, Chinese, Japanese, and
+Korean are complete. `MigrationMessageCoverageTest` fails the build when a
+referenced key is missing or a locale is incomplete.
 
 ### G10. Parameters defined in repositories are invisible
 
@@ -146,6 +183,13 @@ Adjustment: add a repository-side scan (source classes and Pipeline symbols) or
 an explicit "unscanned" state in the retirement dashboard, and re-run the
 inventory after a full build cycle before uninstalling any source plugin.
 
+Delivered: the retirement dashboard reports the Jobs whose `getDefinition()` is
+SCM-backed and the multibranch or organization folders that generate them, the
+JSON report adds a `repositoryScan` block with `unscanned`, and the Job migration
+page warns that its parameters come from the Jenkinsfile. Uninstalling a source
+plugin still requires a reviewed scan after a full build cycle; the plugin
+reports the state instead of guessing it.
+
 ### G11. Migration verification is manual
 
 Evidence: each migration must be proven by building the source and the target
@@ -154,6 +198,15 @@ control with the same input.
 Adjustment: provide a verification command that builds both controls, compares
 the recorded value, environment export, and downstream consumption, and stores
 the result as the migration record's evidence.
+
+Delivered: `MigrationEvidenceService` selects the newest pre-migration and
+post-migration builds that carry the parameter, compares the canonical value,
+the environment export (the parameter's own variable and any variable that
+carries its name), and the sibling inputs, then stores `PASS`, `FAIL`, or
+`PENDING` on the migration record. `unified-parameters-migration-verify` records
+it from the CLI, and the Job page shows the evidence with a re-run button. The
+plugin never schedules a build: the operator runs the two builds, so no migration
+tool can trigger production work by itself.
 
 ## Verification and process gaps
 
