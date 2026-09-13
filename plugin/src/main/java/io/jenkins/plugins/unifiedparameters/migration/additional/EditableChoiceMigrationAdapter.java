@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class EditableChoiceMigrationAdapter extends AbstractAdditionalMigr
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "Editable Choice maps to a governed choice plus explicit custom-value policy.";
+    protected String reasonKey() {
+        return "MigrationReasonEditableChoice";
     }
 
     @Override
@@ -36,10 +37,10 @@ public final class EditableChoiceMigrationAdapter extends AbstractAdditionalMigr
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Confirm which custom values are legitimate business inputs and define a bounded regex/length policy.",
-                "Confirm whether custom values are persisted as canonical values or only used for one build.",
-                "Compare duplicate, empty, default, Rebuild, and API handling with the source behavior.");
+                MigrationText.of("MigrationDecisionEditableChoice1"),
+                MigrationText.of("MigrationDecisionEditableChoice2"),
+                MigrationText.of("MigrationDecisionEditableChoice3"));
     }
 }

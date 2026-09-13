@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class ExtensibleChoiceMigrationAdapter extends AbstractAdditionalMi
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "Extensible Choice provider-backed or static choice configuration requires a governed Provider mapping.";
+    protected String reasonKey() {
+        return "MigrationReasonExtensibleChoice";
     }
 
     @Override
@@ -34,10 +35,10 @@ public final class ExtensibleChoiceMigrationAdapter extends AbstractAdditionalMi
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Choose static Inline options or a governed Provider; do not copy an unreviewed provider implementation.",
-                "Confirm single/multiple cardinality, order, default, empty, disabled, and unavailable-provider behavior.",
-                "Bind any external source and credentials through an administrator-owned Connection Profile.");
+                MigrationText.of("MigrationDecisionExtensibleChoice1"),
+                MigrationText.of("MigrationDecisionExtensibleChoice2"),
+                MigrationText.of("MigrationDecisionExtensibleChoice3"));
     }
 }

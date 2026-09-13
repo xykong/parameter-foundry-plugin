@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class JsonEditorMigrationAdapter extends AbstractAdditionalMigratio
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "JSON Editor maps to a typed Unified Form Schema rather than an arbitrary editor widget.";
+    protected String reasonKey() {
+        return "MigrationReasonJsonEditor";
     }
 
     @Override
@@ -35,10 +36,10 @@ public final class JsonEditorMigrationAdapter extends AbstractAdditionalMigratio
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Confirm the JSON Schema subset and reject unsupported executable/editor extensions.",
-                "Choose Map versus JSON-string Pipeline output and explicit field-to-environment mappings.",
-                "Verify nested object/array, required/type/range, unknown-field, and canonical serialization behavior.");
+                MigrationText.of("MigrationDecisionJsonEditor1"),
+                MigrationText.of("MigrationDecisionJsonEditor2"),
+                MigrationText.of("MigrationDecisionJsonEditor3"));
     }
 }

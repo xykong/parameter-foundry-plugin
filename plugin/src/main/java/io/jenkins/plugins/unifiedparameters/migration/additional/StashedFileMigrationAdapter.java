@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.util.List;
 
@@ -31,21 +32,18 @@ public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
         }
         return new MigrationPlan(
                 MigrationClassification.D,
-                "Stashed File is a multipart/file transport capability, not an option parameter; ADR 0015 requires retaining its native transport.",
+                MigrationText.of("MigrationReasonStashedFile"),
                 null,
                 List.of(
-                        "Keep the native Stashed File parameter if the business requirement is uploading a file.",
-                        "Do not disable the File Parameters plugin while this Job or its generated source still requires Stashed File.",
-                        "If the requirement is selecting a file-like option rather than uploading content, redesign it as a governed Provider/Form field.",
-                        "Verify stash name, workspace/file retention, credentials, remote triggers, and Rebuild behavior separately."),
+                        MigrationText.of("MigrationDecisionStashedFile1"),
+                        MigrationText.of("MigrationDecisionStashedFile2"),
+                        MigrationText.of("MigrationDecisionStashedFile3"),
+                        MigrationText.of("MigrationDecisionStashedFile4")),
                 null,
                 verificationFixture(definition));
     }
 
-    private static String verificationFixture(ParameterDefinition definition) {
-        return "For "
-                + definition.getName()
-                + ", verify native multipart submission, stash lifecycle, downstream file access, missing-file errors, "
-                + "remote/upstream behavior, and Rebuild without converting it to a choice value.";
+    private static MigrationText verificationFixture(ParameterDefinition definition) {
+        return MigrationText.of("MigrationCaseStashedFile", definition.getName());
     }
 }

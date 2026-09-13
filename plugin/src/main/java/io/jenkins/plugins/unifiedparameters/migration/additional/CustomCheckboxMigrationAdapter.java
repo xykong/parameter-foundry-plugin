@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class CustomCheckboxMigrationAdapter extends AbstractAdditionalMigr
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "Custom Checkbox maps to the Unified multiple-choice model; source-specific styling is not business semantics.";
+    protected String reasonKey() {
+        return "MigrationReasonCustomCheckbox";
     }
 
     @Override
@@ -35,10 +36,10 @@ public final class CustomCheckboxMigrationAdapter extends AbstractAdditionalMigr
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Confirm whether selection order is business-significant; Unified multi-choice canonicalizes membership.",
-                "Map source format/appearance settings to a built-in renderer or reviewed companion renderer only.",
-                "Confirm required, empty, duplicate, disabled, and environment-export behavior.");
+                MigrationText.of("MigrationDecisionCustomCheckbox1"),
+                MigrationText.of("MigrationDecisionCustomCheckbox2"),
+                MigrationText.of("MigrationDecisionCustomCheckbox3"));
     }
 }

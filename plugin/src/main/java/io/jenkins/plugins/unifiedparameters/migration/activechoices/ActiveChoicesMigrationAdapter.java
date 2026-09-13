@@ -5,6 +5,7 @@ import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -76,49 +77,56 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         }
 
         ActiveChoicesScriptAnalysis.ScriptShape shape = ActiveChoicesScriptAnalysis.shape(script);
-        java.util.Map<String, String> facts = new java.util.LinkedHashMap<>();
-        facts.put("Source element", className);
-        facts.put("Source choice type", choiceType.isEmpty() ? "(unset)" : choiceType);
-        facts.put("Source script shape", shape.name().toLowerCase(Locale.ROOT).replace('_', '-'));
-        facts.put("Source filterable", filterable ? "enabled" : "disabled");
+        java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+        facts.put(MigrationText.of("MigrationFactSourceElement"), MigrationText.value(className));
+        facts.put(
+                MigrationText.of("MigrationFactSourceChoiceType"),
+                choiceType.isEmpty() ? MigrationText.of("MigrationValueUnset") : MigrationText.value(choiceType));
+        facts.put(
+                MigrationText.of("MigrationFactSourceScriptShape"),
+                MigrationText.value(shape.name().toLowerCase(Locale.ROOT).replace('_', '-')));
+        facts.put(
+                MigrationText.of("MigrationFactSourceFilterable"),
+                MigrationText.of(filterable ? "MigrationValueEnabled" : "MigrationValueDisabled"));
         ActiveChoicesScriptAnalysis.redactedEndpoint(script)
-                .ifPresent(endpoint -> facts.put("Detected endpoint", endpoint));
+                .ifPresent(endpoint ->
+                        facts.put(MigrationText.of("MigrationFactDetectedEndpoint"), MigrationText.value(endpoint)));
         List<String> detectedFields = ActiveChoicesScriptAnalysis.detectedFields(script);
         if (!detectedFields.isEmpty()) {
-            facts.put("Detected response fields", String.join(", ", detectedFields));
+            facts.put(
+                    MigrationText.of("MigrationFactDetectedResponseFields"),
+                    MigrationText.value(String.join(", ", detectedFields)));
         }
         if (shape == ActiveChoicesScriptAnalysis.ScriptShape.CONTROLLER_OR_SHELL) {
             return new MigrationPlan(
                     MigrationClassification.D,
-                    "The source script touches the controller or a shell command, so no governed Provider equivalent can be inferred without a business redesign.",
+                    MigrationText.of("MigrationReasonActiveChoicesControllerShell"),
                     null,
                     List.of(
-                            "Describe the business input the script produces; do not copy controller, file, or shell access into the target.",
-                            "Replace the script with a governed Provider (REST, Managed Config, or a reviewed domain Provider) or move the work into a Pipeline step.",
-                            "Confirm default, empty, failure, and authorization behavior with the owning team before scheduling the migration."),
+                            MigrationText.of("MigrationDecisionActiveChoicesControllerDescribe"),
+                            MigrationText.of("MigrationDecisionActiveChoicesControllerReplace"),
+                            MigrationText.of("MigrationDecisionActiveChoicesControllerConfirm")),
                     null,
                     verificationFixture(definition, dependencies, false),
                     facts);
         }
         String skeleton = choiceSkeleton(
                 definition, dependencies, shape == ActiveChoicesScriptAnalysis.ScriptShape.NETWORK, filterable);
-        List<String> decisions = new java.util.ArrayList<>(List.of(
-                "Choose a reviewed Script, REST, Managed Config, or domain Provider without executing the source script during migration.",
-                "Confirm default, empty, fallback, and error behavior for the normalized option schema."));
+        List<MigrationText> decisions = new java.util.ArrayList<>(List.of(
+                MigrationText.of("MigrationDecisionActiveChoicesChooseProvider"),
+                MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior")));
         if (shape == ActiveChoicesScriptAnalysis.ScriptShape.NETWORK) {
-            decisions.add(
-                    "Replace the script's HTTP call with a governed REST Provider: bind the authority through an administrator-owned Connection Profile and map the response fields to value, label, description, and group paths.");
+            decisions.add(MigrationText.of("MigrationDecisionActiveChoicesRestProvider"));
             if (!detectedFields.isEmpty()) {
-                decisions.add("The script reads these response fields: " + String.join(", ", detectedFields)
-                        + "; confirm each target path mapping.");
+                decisions.add(MigrationText.of(
+                        "MigrationDecisionActiveChoicesDetectedFields", String.join(", ", detectedFields)));
             }
         } else if (script.strip().length() <= 80) {
-            decisions.add(
-                    "The source script is short but not a literal list; confirm whether it computes a static list that can become inline choices.");
+            decisions.add(MigrationText.of("MigrationDecisionActiveChoicesShortScript"));
         }
         return new MigrationPlan(
                 MigrationClassification.C,
-                "Active Choices script intent requires a governed Provider/Form refactor; source code was not executed.",
+                MigrationText.of("MigrationReasonActiveChoicesScriptRefactor"),
                 null,
                 decisions,
                 skeleton,
@@ -148,22 +156,28 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 target.setDefaultValue(selected.get(0));
             }
         }
-        java.util.Map<String, String> facts = new java.util.LinkedHashMap<>();
-        facts.put("Source element", "Active Choices literal option list");
-        facts.put("Source options", String.valueOf(literal.options().size()));
-        facts.put("Source selection markers", selected.isEmpty() ? "(none)" : String.join(", ", selected));
-        facts.put("Target renderer", target.getRenderer());
-        facts.put("Target default mode", target.getDefaultMode());
-        List<String> decisions = new java.util.ArrayList<>();
+        java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+        facts.put(
+                MigrationText.of("MigrationFactSourceElement"), MigrationText.of("MigrationValueActiveChoicesLiteral"));
+        facts.put(
+                MigrationText.of("MigrationFactSourceOptions"),
+                MigrationText.value(String.valueOf(literal.options().size())));
+        facts.put(
+                MigrationText.of("MigrationFactSourceSelectionMarkers"),
+                selected.isEmpty()
+                        ? MigrationText.of("MigrationValueNone")
+                        : MigrationText.value(String.join(", ", selected)));
+        facts.put(MigrationText.of("MigrationFactTargetRenderer"), MigrationText.value(target.getRenderer()));
+        facts.put(MigrationText.of("MigrationFactTargetDefaultMode"), MigrationText.value(target.getDefaultMode()));
+        List<MigrationText> decisions = new java.util.ArrayList<>();
         if (selected.isEmpty()) {
-            decisions.add(
-                    "The source script marks no selected value while the source form preselects the first option; choose defaultMode first to keep that behavior or none to require an explicit choice.");
+            decisions.add(MigrationText.of("MigrationDecisionActiveChoicesLiteralDefault"));
         }
         return new MigrationPlan(
                 decisions.isEmpty() ? MigrationClassification.A : MigrationClassification.B,
                 decisions.isEmpty()
-                        ? "The source script is a literal option list, so the target choices and defaults are equivalent without executing Groovy."
-                        : "The source script is a literal option list; only the default policy needs an explicit decision.",
+                        ? MigrationText.of("MigrationReasonActiveChoicesLiteralDirect")
+                        : MigrationText.of("MigrationReasonActiveChoicesLiteralDefault"),
                 target,
                 decisions,
                 null,
@@ -250,35 +264,29 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 + ")";
     }
 
-    private static List<String> referenceDecisions(
+    private static List<MigrationText> referenceDecisions(
             ReferenceSemantics semantics, boolean omitValueField, List<String> dependencies) {
-        String dependencyDecision = dependencies.isEmpty()
-                ? "Confirm that the Dynamic Reference has no source parameter dependencies."
-                : "Preserve Dynamic Reference dependencies "
-                        + dependencies
-                        + " as typed field visibility or governed Provider inputs; do not execute the source script.";
-        String valueDecision =
+        MigrationText dependencyDecision = dependencies.isEmpty()
+                ? MigrationText.of("MigrationDecisionActiveChoicesReferenceNoDependencies")
+                : MigrationText.of("MigrationDecisionActiveChoicesReferenceDependencies", String.valueOf(dependencies));
+        MigrationText valueDecision =
                 switch (semantics.type()) {
-                    case TEXT_BOX ->
-                        "Confirm the string default, required/empty behavior, and whether the build receives a raw string or a named form field.";
+                    case TEXT_BOX -> MigrationText.of("MigrationDecisionActiveChoicesReferenceTextBox");
                     case ORDERED_LIST, UNORDERED_LIST ->
-                        "Confirm whether the rendered list is presentation-only; if it is a build input, map it explicitly to a typed choice or multi-choice field.";
-                    case FORMATTED_HTML ->
-                        "Identify business fields in the formatted HTML and replace them with typed Unified Form fields or a reviewed Renderer companion.";
-                    case FORMATTED_HIDDEN_HTML ->
-                        "Confirm whether the hidden HTML carries a real build value; without an explicit field mapping it remains a manual class D redesign.";
-                    default ->
-                        "Confirm the business output and renderer mapping for the unsupported source element type.";
+                        MigrationText.of("MigrationDecisionActiveChoicesReferenceList");
+                    case FORMATTED_HTML -> MigrationText.of("MigrationDecisionActiveChoicesReferenceHtml");
+                    case FORMATTED_HIDDEN_HTML -> MigrationText.of("MigrationDecisionActiveChoicesReferenceHiddenHtml");
+                    default -> MigrationText.of("MigrationDecisionActiveChoicesReferenceOther");
                 };
-        String omitDecision = omitValueField
-                ? "The source omits its value field; do not infer a build value from the rendered markup."
-                : "Confirm whether the source value field is a business input; do not copy generated markup as a value.";
+        MigrationText omitDecision = omitValueField
+                ? MigrationText.of("MigrationDecisionActiveChoicesOmitValueField")
+                : MigrationText.of("MigrationDecisionActiveChoicesKeepValueField");
         return List.of(
-                "Source Dynamic Reference mode: " + semantics.type() + ".",
+                MigrationText.of("MigrationDecisionActiveChoicesReferenceMode", semantics.type()),
                 dependencyDecision,
                 valueDecision,
                 omitDecision,
-                "Verify the canonical output across browser, Typed API, standard build, CLI, remote triggers, and Rebuild.");
+                MigrationText.of("MigrationDecisionActiveChoicesVerifyOutput"));
     }
 
     private static ReferenceSemantics referenceSemantics(String choiceType) {
@@ -287,29 +295,24 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
             return new ReferenceSemantics(
                     normalized,
                     MigrationClassification.D,
-                    "Unknown Active Choices Dynamic Reference element type has no proven typed contract; retain it or document an explicit business-field redesign.");
+                    MigrationText.of("MigrationReasonActiveChoicesUnknownReference"));
         }
         if (FORMATTED_HIDDEN_HTML.equals(normalized)) {
             return new ReferenceSemantics(
-                    normalized,
-                    MigrationClassification.D,
-                    "Formatted hidden HTML has no portable typed value contract; retain it or redesign it with an explicit business-field mapping.");
+                    normalized, MigrationClassification.D, MigrationText.of("MigrationReasonActiveChoicesHiddenHtml"));
         }
         return new ReferenceSemantics(
                 normalized,
                 MigrationClassification.C,
-                "Active Choices Dynamic Reference presentation requires a governed typed Form refactor; source HTML, JavaScript, and scripts were not copied.");
+                MigrationText.of("MigrationReasonActiveChoicesDynamicReference"));
     }
 
-    private static String verificationFixture(ParameterDefinition definition, List<String> dependencies, boolean form) {
-        return "For "
-                + definition.getName()
-                + ", compare each canonical dependency tuple "
-                + dependencies
-                + " across browser resolve, Typed API, standard build, CLI, fallback/error, and Rebuild; "
-                + (form
-                        ? "verify CSP-safe typed rendering and structured output."
-                        : "compare normalized option values and defaults.");
+    private static MigrationText verificationFixture(
+            ParameterDefinition definition, List<String> dependencies, boolean form) {
+        return MigrationText.of(
+                form ? "MigrationCaseActiveChoicesForm" : "MigrationCaseActiveChoicesOptions",
+                definition.getName(),
+                String.valueOf(dependencies));
     }
 
     private static String readString(Object source, String methodName) {
@@ -357,5 +360,5 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
     }
 
-    private record ReferenceSemantics(String type, MigrationClassification classification, String reason) {}
+    private record ReferenceSemantics(String type, MigrationClassification classification, MigrationText reason) {}
 }

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.migration;
 
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.Messages;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
@@ -10,12 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class MigrationPreview {
-
-    private static final List<String> VERIFICATION_CASES = List.of(
-            "Explicit value and default/absent input",
-            "Explicit empty and invalid value rejection",
-            "Standard REST, Typed REST, CLI, and Pipeline build",
-            "Environment export and Rebuild");
 
     private final String sourcePluginId;
     private final String parameterName;
@@ -68,12 +63,14 @@ public final class MigrationPreview {
                 plan.getClassification(),
                 plan.getReason(),
                 plan.getDecisions(),
-                target == null ? "Decision required" : target.getClass().getSimpleName(),
+                target == null
+                        ? Messages.MigrationPreviewDecisionRequired()
+                        : target.getClass().getSimpleName(),
                 target == null && plan.getTargetSkeleton() != null
-                        ? "A governed Provider/Form refactoring skeleton was generated."
+                        ? Messages.MigrationPreviewSkeletonSummary()
                         : summarize(target),
                 plan.getTargetSkeleton() == null ? snippet(target) : plan.getTargetSkeleton(),
-                plan.getVerificationFixture() == null ? VERIFICATION_CASES : List.of(plan.getVerificationFixture()),
+                plan.getVerificationFixture() == null ? verificationCases() : List.of(plan.getVerificationFixture()),
                 target != null,
                 plan.getFacts());
     }
@@ -83,12 +80,12 @@ public final class MigrationPreview {
                 adapter.getSourcePluginId(),
                 source.getName(),
                 MigrationClassification.D,
-                "The source adapter could not produce a safe preview. Review the source definition manually.",
-                List.of("Inspect the business requirement without executing source code."),
-                "Manual redesign",
-                "No target definition was generated.",
-                "// No automatic target was generated.",
-                VERIFICATION_CASES,
+                Messages.MigrationPreviewFailureReason(),
+                List.of(Messages.MigrationPreviewFailureDecision()),
+                Messages.MigrationPreviewManualRedesign(),
+                Messages.MigrationPreviewNoTarget(),
+                Messages.MigrationPreviewNoSnippet(),
+                verificationCases(),
                 false,
                 Map.of());
     }
@@ -135,17 +132,23 @@ public final class MigrationPreview {
 
     private static String summarize(ParameterDefinition target) {
         if (!(target instanceof AbstractUnifiedParameterDefinition unified)) {
-            return "No target definition was generated.";
+            return Messages.MigrationPreviewNoTarget();
         }
-        String cardinality = unified.isMultiple() ? "multiple choice" : "single choice";
-        return unified.getChoices().size()
-                + " inline option(s), "
-                + cardinality
-                + ", renderer "
-                + unified.getRenderer()
-                + ", default mode "
-                + unified.getDefaultMode()
-                + ".";
+        String cardinality =
+                unified.isMultiple() ? Messages.MigrationValueMultipleChoice() : Messages.MigrationValueSingleChoice();
+        return Messages.MigrationPreviewInlineSummary(
+                String.valueOf(unified.getChoices().size()),
+                cardinality,
+                unified.getRenderer(),
+                unified.getDefaultMode());
+    }
+
+    private static List<String> verificationCases() {
+        return List.of(
+                Messages.MigrationCaseDefault1(),
+                Messages.MigrationCaseDefault2(),
+                Messages.MigrationCaseDefault3(),
+                Messages.MigrationCaseDefault4());
     }
 
     private static String snippet(ParameterDefinition target) {

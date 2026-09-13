@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -26,8 +27,8 @@ public final class JsonParameterMigrationAdapter extends AbstractAdditionalMigra
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "JSON Parameter and JSON Parameter Reference map to typed Provider/Form contracts.";
+    protected String reasonKey() {
+        return "MigrationReasonJsonParameter";
     }
 
     @Override
@@ -43,10 +44,10 @@ public final class JsonParameterMigrationAdapter extends AbstractAdditionalMigra
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Separate structured data from reference-driven option discovery and choose Provider versus Form.",
-                "Confirm JSONPath/reference dependency semantics without executing source scripts in core.",
-                "Verify schema/type/default/empty/unknown-field, dependency refresh, and structured-output parity.");
+                MigrationText.of("MigrationDecisionJsonParameter1"),
+                MigrationText.of("MigrationDecisionJsonParameter2"),
+                MigrationText.of("MigrationDecisionJsonParameter3"));
     }
 }

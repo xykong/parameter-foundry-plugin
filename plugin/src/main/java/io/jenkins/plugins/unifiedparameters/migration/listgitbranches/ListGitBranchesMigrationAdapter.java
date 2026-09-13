@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,15 +42,13 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
         if (mapping == null) {
             return new MigrationPlan(
                     MigrationClassification.D,
-                    "List Git Branches mode "
-                            + sourceType
-                            + " is not a known branch, tag, or combined-ref contract; no target value semantics were inferred.",
+                    MigrationText.of("MigrationReasonGitUnknownMode", sourceType),
                     null,
                     List.of(
-                            "Document the source fork's mode and canonical output before selecting a Git refs Provider.",
-                            "Do not copy the repository URL or credential ID into the generated target."),
+                            MigrationText.of("MigrationDecisionGitDocumentMode"),
+                            MigrationText.of("MigrationDecisionGitDoNotCopyCredentials")),
                     null,
-                    "Provide empty, populated, invalid, unavailable-authority, browser, Typed API, CLI, trigger, and Rebuild fixtures after the mode contract is documented.");
+                    MigrationText.of("MigrationCaseGitUnknownMode"));
         }
         String branchFilter = firstNonEmpty(readString(definition, "getBranchFilter"));
         String tagFilter = firstNonEmpty(readString(definition, "getTagFilter"));
@@ -65,72 +64,76 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
         String targetSort = mapSortOrder(sourceSort);
         String skeleton = gitProviderSkeleton(definition, mapping, resolvedInclude, targetSort, quickFilter);
 
-        java.util.Map<String, String> facts = new java.util.LinkedHashMap<>();
-        facts.put("Source mode", mapping.sourceType());
-        facts.put("Source sort", sourceSort.isEmpty() ? "(default)" : sourceSort);
-        facts.put("Target sort", targetSort == null ? "review required" : targetSort);
-        facts.put("Source filter", sourceFilter.isEmpty() ? "(none)" : sourceFilter);
-        facts.put("Target include regex", resolvedInclude == null ? "(none or review required)" : resolvedInclude);
-        facts.put("Source default", sourceDefault.isEmpty() ? "(none)" : sourceDefault);
-        facts.put("Source selected value", selectedValue.isEmpty() ? "(default)" : selectedValue);
-        facts.put("Source quick filter", quickFilter ? "enabled" : "disabled");
+        java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+        facts.put(MigrationText.of("MigrationFactSourceMode"), MigrationText.value(mapping.sourceType()));
+        facts.put(
+                MigrationText.of("MigrationFactSourceSort"),
+                sourceSort.isEmpty() ? MigrationText.of("MigrationValueDefault") : MigrationText.value(sourceSort));
+        facts.put(
+                MigrationText.of("MigrationFactTargetSort"),
+                targetSort == null
+                        ? MigrationText.of("MigrationValueReviewRequired")
+                        : MigrationText.value(targetSort));
+        facts.put(
+                MigrationText.of("MigrationFactSourceFilter"),
+                sourceFilter.isEmpty() ? MigrationText.of("MigrationValueNone") : MigrationText.value(sourceFilter));
+        facts.put(
+                MigrationText.of("MigrationFactTargetIncludeRegex"),
+                resolvedInclude == null
+                        ? MigrationText.of("MigrationValueNoneOrReview")
+                        : MigrationText.value(resolvedInclude));
+        facts.put(
+                MigrationText.of("MigrationFactSourceDefault"),
+                sourceDefault.isEmpty() ? MigrationText.of("MigrationValueNone") : MigrationText.value(sourceDefault));
+        facts.put(
+                MigrationText.of("MigrationFactSourceSelectedValue"),
+                selectedValue.isEmpty()
+                        ? MigrationText.of("MigrationValueDefault")
+                        : MigrationText.value(selectedValue));
+        facts.put(
+                MigrationText.of("MigrationFactSourceQuickFilter"),
+                MigrationText.of(quickFilter ? "MigrationValueEnabled" : "MigrationValueDisabled"));
 
-        List<String> decisions = new java.util.ArrayList<>(
-                List.of(
-                        "Source mode " + mapping.sourceType() + " maps to Git ref type " + mapping.refType() + ".",
-                        "Bind the repository authority and credential through an administrator-owned Connection Profile; repository URLs and credential IDs remain redacted.",
-                        "The Git refs companion accepts HTTP(S) repositories and username/password credentials; select an equivalent reviewed transport if the source uses SSH or certificate credentials.",
-                        "Confirm source default, empty, unavailable-authority, and stale-ref behavior, including whether source SelectedValue.TOP means the first sorted ref.",
-                        "Confirm the target emits one canonical value and that branch/tag filters, sorting, and maximum-result policy are equivalent."));
+        List<MigrationText> decisions = new java.util.ArrayList<>(List.of(
+                MigrationText.of("MigrationDecisionGitModeMapping", mapping.sourceType(), mapping.refType()),
+                MigrationText.of("MigrationDecisionGitAuthority"),
+                MigrationText.of("MigrationDecisionGitTransport"),
+                MigrationText.of("MigrationDecisionGitDefaultSemantics"),
+                MigrationText.of("MigrationDecisionGitCanonicalValue")));
         if (!sourceSort.isEmpty()) {
             decisions.add(
                     targetSort == null
-                            ? "Source sort mode "
-                                    + sourceSort
-                                    + " has no direct target equivalent; choose ascending, descending, smart-ascending, or smart-descending."
-                            : "Source sort mode " + sourceSort + " maps to target sortOrder " + targetSort
-                                    + "; verify the visible order and any first/top default against the current refs.");
+                            ? MigrationText.of("MigrationDecisionGitSortUnknown", sourceSort)
+                            : MigrationText.of("MigrationDecisionGitSortMapped", sourceSort, targetSort));
         }
         if (sourceFilter.isEmpty()) {
-            decisions.add("The source declares no ref filter; confirm that every ref should be offered.");
+            decisions.add(MigrationText.of("MigrationDecisionGitNoFilter"));
         } else if (translatedFilter == null) {
-            decisions.add(
-                    "Source filter "
-                            + sourceFilter
-                            + " could not be translated automatically; author an equivalent full-match regex over the short ref name.");
+            decisions.add(MigrationText.of("MigrationDecisionGitFilterUntranslated", sourceFilter));
         } else {
-            decisions.add("Source filter " + sourceFilter + " was translated to includePattern " + translatedFilter
-                    + "; compare the matched ref count against the source before enabling the Provider.");
+            decisions.add(MigrationText.of("MigrationDecisionGitFilterTranslated", sourceFilter, translatedFilter));
         }
         if (!sourceDefault.isEmpty()) {
-            decisions.add("Source default "
-                    + sourceDefault
-                    + " must exist in the migrated ref list; otherwise choose first, none, or correct the default.");
+            decisions.add(MigrationText.of("MigrationDecisionGitDefaultMustExist", sourceDefault));
         }
         if ("TOP".equalsIgnoreCase(selectedValue)) {
-            decisions.add(
-                    "Source SelectedValue.TOP becomes defaultMode first; with smart sorting the first ref is the highest or lowest version by the chosen order.");
+            decisions.add(MigrationText.of("MigrationDecisionGitTop"));
         }
         if (mapping.organizationSpecific()) {
-            decisions.add(
-                    "ORG_BRANCH is organization-specific: confirm that the build value is one branch string, not an organization, repository, or repository/ref composite.");
-            decisions.add(
-                    "Confirm the organization authority and repository selection flow before enabling the branch candidate.");
+            decisions.add(MigrationText.of("MigrationDecisionGitOrganizationMode"));
+            decisions.add(MigrationText.of("MigrationDecisionGitOrganizationAuthority"));
         } else if (PT_BRANCH_TAG.equals(mapping.sourceType())) {
-            decisions.add(
-                    "PT_BRANCH_TAG maps to full canonical refs; confirm consumers accept refs/heads/... and refs/tags/... rather than the source's shortened names.");
+            decisions.add(MigrationText.of("MigrationDecisionGitCombinedRefs"));
         }
         return new MigrationPlan(
                 MigrationClassification.C,
                 mapping.organizationSpecific()
-                        ? "ORG_BRANCH is not an official List Git Branches mode; it is treated as a branch candidate only after the organization-specific output contract is confirmed."
-                        : "List Git Branches "
-                                + mapping.sourceType()
-                                + " maps to the governed Git refs companion with an explicit canonical value contract.",
+                        ? MigrationText.of("MigrationReasonGitOrganizationSpecific")
+                        : MigrationText.of("MigrationReasonGitMapped", mapping.sourceType()),
                 null,
                 decisions,
                 skeleton,
-                "Resolve representative empty, one-ref, many-ref, renamed/deleted-ref, credential failure, API, CLI, browser, trigger, and Rebuild cases; compare the canonical value and default policy.",
+                MigrationText.of("MigrationCaseGitRefs"),
                 facts);
     }
 

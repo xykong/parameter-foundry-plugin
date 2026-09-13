@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class ValidatingStringMigrationAdapter extends AbstractAdditionalMi
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "Validating String maps to a typed string field in Unified Form with a bounded server-side validator.";
+    protected String reasonKey() {
+        return "MigrationReasonValidatingString";
     }
 
     @Override
@@ -34,10 +35,10 @@ public final class ValidatingStringMigrationAdapter extends AbstractAdditionalMi
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Translate the source validation expression into the safe regex/length subset or report manual redesign.",
-                "Confirm validation timing, error text, required/empty/default behavior, and secret handling.",
-                "Verify standard, Typed API, CLI, Pipeline, remote, and Rebuild error-code parity.");
+                MigrationText.of("MigrationDecisionValidatingString1"),
+                MigrationText.of("MigrationDecisionValidatingString2"),
+                MigrationText.of("MigrationDecisionValidatingString3"));
     }
 }

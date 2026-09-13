@@ -6,6 +6,7 @@ import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.lang.reflect.InvocationTargetException;
@@ -47,9 +48,9 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         if (hasUnsafeOrDynamicConfiguration(definition, type)) {
             return new MigrationPlan(
                     MigrationClassification.C,
-                    "Dynamic, file, Groovy, JavaScript, or JSON behavior requires a governed redesign.",
+                    MigrationText.of("MigrationReasonExtendedChoiceDynamic"),
                     null,
-                    List.of("Choose a governed Provider or Unified Form target."),
+                    List.of(MigrationText.of("MigrationDecisionExtendedChoiceGoverned")),
                     dynamicSkeleton(definition, type),
                     verificationFixture(definition));
         }
@@ -58,9 +59,9 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         if (!single && !multiple) {
             return new MigrationPlan(
                     MigrationClassification.D,
-                    "The source type is not a static choice family.",
+                    MigrationText.of("MigrationReasonExtendedChoiceNotStatic"),
                     null,
-                    List.of("Redesign the parameter using a supported Unified Parameters family."));
+                    List.of(MigrationText.of("MigrationDecisionExtendedChoiceRedesign")));
         }
 
         String delimiter = Util.fixEmptyAndTrim(readString(definition, "getMultiSelectDelimiter"));
@@ -84,21 +85,20 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             target.setDefaultValues(supportedDefaults);
             target.setDelimiter(delimiter);
             target.setStandardApiInputMode("delimited");
-            List<String> decisions = new ArrayList<>();
-            decisions.add("Confirm that selection order is not part of the business requirement.");
+            List<MigrationText> decisions = new ArrayList<>();
+            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceOrder"));
             if (defaults.isEmpty()) {
-                decisions.add("Confirm that the legacy null/no-default state may use the canonical empty list.");
+                decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceNullDefault"));
             }
             if (hasEmptyOption) {
-                decisions.add("Replace the empty source option with optional None behavior or an explicit sentinel.");
+                decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyOption"));
             }
             if (hasUnsupportedDefault) {
-                decisions.add(
-                        "Move non-selectable default text to the description, add it as a real option, or remove it.");
+                decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceStaleDefault"));
             }
             return new MigrationPlan(
                     MigrationClassification.B,
-                    "Extended Choice multi-value output, null defaults, empty options, or stale defaults require explicit semantic decisions.",
+                    MigrationText.of("MigrationReasonExtendedChoiceMulti"),
                     target,
                     decisions);
         }
@@ -110,19 +110,18 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         if (!supportedDefaults.isEmpty()) {
             target.setDefaultValue(supportedDefaults.get(0));
         }
-        List<String> decisions = new ArrayList<>();
+        List<MigrationText> decisions = new ArrayList<>();
         if (hasEmptyOption) {
-            decisions.add("Replace the empty source option with optional None behavior or an explicit sentinel.");
+            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyOption"));
         }
         if (hasUnsupportedDefault) {
-            decisions.add(
-                    "Move non-selectable default text to the description, add it as a real option, or remove it.");
+            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceStaleDefault"));
         }
         return new MigrationPlan(
                 decisions.isEmpty() ? MigrationClassification.A : MigrationClassification.B,
                 decisions.isEmpty()
-                        ? "Static single-choice configuration has a deterministic direct mapping."
-                        : "Static choices map directly after empty-option or stale-default semantics are decided.",
+                        ? MigrationText.of("MigrationReasonExtendedChoiceSingleDirect")
+                        : MigrationText.of("MigrationReasonExtendedChoiceSingleDecided"),
                 target,
                 decisions);
     }
@@ -197,11 +196,8 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                 + ")";
     }
 
-    private static String verificationFixture(ParameterDefinition source) {
-        return "Resolve "
-                + source.getName()
-                + " for each canonical dependency tuple; compare defaults, valid values, empty/error states, "
-                + "Typed API build, browser build, and Rebuild behavior.";
+    private static MigrationText verificationFixture(ParameterDefinition source) {
+        return MigrationText.of("MigrationCaseExtendedChoiceDependencies", source.getName());
     }
 
     private static boolean hasValue(Object source, String methodName) {

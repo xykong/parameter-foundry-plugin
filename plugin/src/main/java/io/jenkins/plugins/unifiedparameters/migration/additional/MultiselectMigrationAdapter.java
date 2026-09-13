@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class MultiselectMigrationAdapter extends AbstractAdditionalMigrati
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "Multiselect maps to the Unified multiple-choice model and a bounded list/chips renderer.";
+    protected String reasonKey() {
+        return "MigrationReasonMultiselect";
     }
 
     @Override
@@ -35,10 +36,10 @@ public final class MultiselectMigrationAdapter extends AbstractAdditionalMigrati
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Choose the standard transport contract: repeated fields, JSON array, or a governed delimiter.",
-                "Confirm ordering, duplicate, minimum/maximum selection, and empty-value semantics.",
-                "Verify Pipeline params, environment export, Rebuild, and remote trigger behavior.");
+                MigrationText.of("MigrationDecisionMultiselect1"),
+                MigrationText.of("MigrationDecisionMultiselect2"),
+                MigrationText.of("MigrationDecisionMultiselect3"));
     }
 }

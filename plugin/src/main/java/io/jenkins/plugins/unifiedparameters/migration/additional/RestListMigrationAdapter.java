@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -18,8 +19,8 @@ public final class RestListMigrationAdapter extends AbstractAdditionalMigrationA
     }
 
     @Override
-    protected String capabilitySummary() {
-        return "REST List maps to the governed REST JSON/XML Provider with Connection Profile and bounded parsing.";
+    protected String reasonKey() {
+        return "MigrationReasonRestList";
     }
 
     @Override
@@ -34,10 +35,10 @@ public final class RestListMigrationAdapter extends AbstractAdditionalMigrationA
     }
 
     @Override
-    protected List<String> decisions(ParameterDefinition definition) {
+    protected List<MigrationText> decisions(ParameterDefinition definition) {
         return List.of(
-                "Bind authority, path allowlists, credentials, timeout, response size, and redirect policy through a Connection Profile.",
-                "Map response value/label paths to the bounded JSONPath/XPath subset.",
-                "Verify SSRF policy, content type, empty/error/fallback, dependency query values, and snapshot behavior.");
+                MigrationText.of("MigrationDecisionRestList1"),
+                MigrationText.of("MigrationDecisionRestList2"),
+                MigrationText.of("MigrationDecisionRestList3"));
     }
 }

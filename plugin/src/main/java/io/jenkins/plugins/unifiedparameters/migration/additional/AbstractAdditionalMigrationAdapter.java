@@ -3,6 +3,7 @@ package io.jenkins.plugins.unifiedparameters.migration.additional;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.util.List;
 
@@ -12,9 +13,9 @@ abstract class AbstractAdditionalMigrationAdapter extends SourceMigrationAdapter
 
     protected abstract String targetSkeleton(ParameterDefinition definition);
 
-    protected abstract List<String> decisions(ParameterDefinition definition);
+    protected abstract List<MigrationText> decisions(ParameterDefinition definition);
 
-    protected abstract String capabilitySummary();
+    protected abstract String reasonKey();
 
     @Override
     public boolean supports(ParameterDefinition definition) {
@@ -29,18 +30,15 @@ abstract class AbstractAdditionalMigrationAdapter extends SourceMigrationAdapter
         }
         return new MigrationPlan(
                 MigrationClassification.C,
-                capabilitySummary() + " The adapter only inspects the definition class and never executes source code.",
+                MigrationText.of(reasonKey()),
                 null,
                 decisions(definition),
                 targetSkeleton(definition),
                 verificationFixture(definition));
     }
 
-    protected String verificationFixture(ParameterDefinition definition) {
-        return "For "
-                + definition.getName()
-                + ", verify browser, standard REST, Typed API, CLI, Pipeline/upstream, remote/webhook, Rebuild, "
-                + "default, empty, invalid, timeout, and source-unavailable behavior.";
+    protected MigrationText verificationFixture(ParameterDefinition definition) {
+        return MigrationText.of("MigrationCaseAdditional", definition.getName());
     }
 
     protected static String quote(String value) {

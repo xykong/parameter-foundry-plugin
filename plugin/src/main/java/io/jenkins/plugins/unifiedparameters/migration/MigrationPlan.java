@@ -9,36 +9,39 @@ import java.util.Map;
 public final class MigrationPlan {
 
     private final MigrationClassification classification;
-    private final String reason;
+    private final MigrationText reason;
     private final ParameterDefinition target;
-    private final List<String> decisions;
+    private final List<MigrationText> decisions;
     private final String targetSkeleton;
-    private final String verificationFixture;
-    private final Map<String, String> facts;
+    private final MigrationText verificationFixture;
+    private final Map<MigrationText, MigrationText> facts;
 
     public MigrationPlan(
-            MigrationClassification classification, String reason, ParameterDefinition target, List<String> decisions) {
+            MigrationClassification classification,
+            MigrationText reason,
+            ParameterDefinition target,
+            List<MigrationText> decisions) {
         this(classification, reason, target, decisions, null, null, Map.of());
     }
 
     public MigrationPlan(
             MigrationClassification classification,
-            String reason,
+            MigrationText reason,
             ParameterDefinition target,
-            List<String> decisions,
+            List<MigrationText> decisions,
             String targetSkeleton,
-            String verificationFixture) {
+            MigrationText verificationFixture) {
         this(classification, reason, target, decisions, targetSkeleton, verificationFixture, Map.of());
     }
 
     public MigrationPlan(
             MigrationClassification classification,
-            String reason,
+            MigrationText reason,
             ParameterDefinition target,
-            List<String> decisions,
+            List<MigrationText> decisions,
             String targetSkeleton,
-            String verificationFixture,
-            Map<String, String> facts) {
+            MigrationText verificationFixture,
+            Map<MigrationText, MigrationText> facts) {
         this.classification = classification;
         this.reason = reason;
         this.target = target;
@@ -48,9 +51,11 @@ public final class MigrationPlan {
         this.facts = facts == null ? Map.of() : Map.copyOf(new LinkedHashMap<>(facts));
     }
 
-    /** Ordered source-versus-target facts shown in the migration preview. */
+    /** Ordered source-versus-target facts shown in the migration preview, labelled in the reader's locale. */
     public Map<String, String> getFacts() {
-        return facts;
+        Map<String, String> rendered = new LinkedHashMap<>();
+        facts.forEach((key, value) -> rendered.put(key.render(), value.render()));
+        return Map.copyOf(rendered);
     }
 
     public MigrationClassification getClassification() {
@@ -58,7 +63,7 @@ public final class MigrationPlan {
     }
 
     public String getReason() {
-        return reason;
+        return reason == null ? null : reason.render();
     }
 
     public ParameterDefinition getTarget() {
@@ -66,7 +71,7 @@ public final class MigrationPlan {
     }
 
     public List<String> getDecisions() {
-        return decisions;
+        return decisions.stream().map(MigrationText::render).toList();
     }
 
     public String getTargetSkeleton() {
@@ -74,6 +79,6 @@ public final class MigrationPlan {
     }
 
     public String getVerificationFixture() {
-        return verificationFixture;
+        return verificationFixture == null ? null : verificationFixture.render();
     }
 }
