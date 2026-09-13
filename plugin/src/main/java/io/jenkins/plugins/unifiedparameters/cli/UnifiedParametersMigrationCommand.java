@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.cli.CLICommand;
 import hudson.model.Item;
 import hudson.model.Job;
+import hudson.model.ParametersDefinitionProperty;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchEntry;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchPreview;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchResult;
@@ -89,9 +90,14 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
         List<MigrationBatchPreview> previews = new ArrayList<>();
         List<String[]> errors = new ArrayList<>();
         int skippedByPermission = 0;
+        int skippedWithoutParameters = 0;
         for (Job<?, ?> candidate : Jenkins.get().getAllItems(Job.class)) {
             if (!candidate.hasPermission(Item.CONFIGURE)) {
                 skippedByPermission++;
+                continue;
+            }
+            if (candidate.getProperty(ParametersDefinitionProperty.class) == null) {
+                skippedWithoutParameters++;
                 continue;
             }
             MigrationBatchPreview preview;
@@ -129,6 +135,7 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
             summary.put("applicableParameters", applicable);
             summary.put("blockedParameters", blocked);
             summary.put("skippedByPermission", skippedByPermission);
+            summary.put("skippedWithoutParameters", skippedWithoutParameters);
             summary.put("scanErrors", errors.size());
             JSONArray encodedErrors = new JSONArray();
             for (String[] error : errors) {
@@ -160,7 +167,8 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
         }
         stdout.println("Summary: " + previews.size() + " Job(s), " + applicable + " applicable parameter(s), " + blocked
                 + " parameter(s) that need a decision.");
-        stdout.println("Skipped: " + skippedByPermission + " Job(s) without Job/Configure permission, " + errors.size()
+        stdout.println("Skipped: " + skippedByPermission + " Job(s) without Job/Configure permission, "
+                + skippedWithoutParameters + " Job(s) without parameter definitions, " + errors.size()
                 + " Job(s) that could not be scanned.");
         for (String[] error : errors) {
             stdout.println("  ! " + error[0] + ": " + error[1]);
