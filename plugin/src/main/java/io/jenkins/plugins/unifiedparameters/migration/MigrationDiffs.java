@@ -11,9 +11,13 @@ import jenkins.model.Jenkins;
  */
 public final class MigrationDiffs {
 
-    private static final int MAX_MATRIX_LINES = 400;
+    /** Bounds the LCS matrix so a pathological definition cannot exhaust the controller. */
+    private static final long MAX_MATRIX_CELLS = 400_000L;
+
+    private static final int MAX_LINES = 5_000;
     private static final int MAX_OUTPUT_LINES = 400;
     private static final int CONTEXT_LINES = 2;
+    private static final int MAX_INLINE_ELEMENT_LENGTH = 400;
 
     private MigrationDiffs() {}
 
@@ -25,7 +29,9 @@ public final class MigrationDiffs {
     }
 
     static String unified(List<String> before, List<String> after) {
-        if (before.size() > MAX_MATRIX_LINES || after.size() > MAX_MATRIX_LINES) {
+        if (before.size() > MAX_LINES
+                || after.size() > MAX_LINES
+                || (long) before.size() * after.size() > MAX_MATRIX_CELLS) {
             return "... definition too large for an inline diff (" + before.size() + " lines before, " + after.size()
                     + " lines after)";
         }
@@ -97,8 +103,119 @@ public final class MigrationDiffs {
         return line.startsWith("  ");
     }
 
-    private static List<String> readable(String xml) {
-        String normalized = xml.replace("\r\n", "\n").replace("><", ">\n<");
-        return List.of(normalized.split("\n", -1));
+    /**
+     * Renders the serialized definition as one line per element, keeping an element whose children
+     * are all values on a single line. A migrated choice option therefore reads as one line instead
+     * of one line per field, which is what makes the diff reviewable for production-sized lists.
+     */
+    static List<String> readable(String xml) {
+        List<String> units = tokenize(xml.replace("\r\n", "\n"));
+        List<String> lines = new ArrayList<>();
+        int[] index = {0};
+        while (index[0] < units.size()) {
+            if (isElement(units.get(index[0]))) {
+                printElement(units, index, 0, lines);
+            } else {
+                index[0]++;
+            }
+        }
+        return List.copyOf(lines);
+    }
+
+    private static void printElement(List<String> units, int[] index, int depth, List<String> lines) {
+        String open = units.get(index[0]);
+        if (open.endsWith("/>")) {
+            lines.add(indent(depth) + open);
+            index[0]++;
+            return;
+        }
+        int close = index[0] + 1;
+        int nesting = 0;
+        boolean nested = false;
+        while (close < units.size()) {
+            String unit = units.get(close);
+            if (isStartTag(unit)) {
+                if (nesting >= 1) {
+                    nested = true;
+                }
+                nesting++;
+            } else if (isEndTag(unit)) {
+                if (nesting == 0) {
+                    break;
+                }
+                nesting--;
+            }
+            close++;
+        }
+        boolean closed = close < units.size();
+        String closeTag = closed ? units.get(close) : "";
+        StringBuilder inline = new StringBuilder(indent(depth)).append(open);
+        for (int position = index[0] + 1; position < close; position++) {
+            inline.append(units.get(position));
+        }
+        if (!nested && inline.length() + closeTag.length() <= MAX_INLINE_ELEMENT_LENGTH) {
+            lines.add(inline.append(closeTag).toString());
+            index[0] = close + 1;
+            return;
+        }
+        lines.add(indent(depth) + open);
+        int[] child = {index[0] + 1};
+        while (child[0] < close) {
+            if (isElement(units.get(child[0])) && !isEndTag(units.get(child[0]))) {
+                printElement(units, child, depth + 1, lines);
+            } else {
+                child[0]++;
+            }
+        }
+        if (closed) {
+            lines.add(indent(depth) + closeTag);
+        }
+        index[0] = close + 1;
+    }
+
+    private static boolean isStartTag(String unit) {
+        return unit.startsWith("<") && !unit.startsWith("</") && !unit.endsWith("/>");
+    }
+
+    private static boolean isEndTag(String unit) {
+        return unit.startsWith("</");
+    }
+
+    private static boolean isElement(String unit) {
+        return unit.startsWith("<");
+    }
+
+    private static String indent(int depth) {
+        return "  ".repeat(Math.max(0, depth));
+    }
+
+    /** Splits the XML into tags and text so the printer never has to parse attributes. */
+    private static List<String> tokenize(String xml) {
+        List<String> units = new ArrayList<>();
+        int position = 0;
+        while (position < xml.length()) {
+            int open = xml.indexOf('<', position);
+            if (open < 0) {
+                addText(units, xml.substring(position));
+                break;
+            }
+            if (open > position) {
+                addText(units, xml.substring(position, open));
+            }
+            int close = xml.indexOf('>', open);
+            if (close < 0) {
+                addText(units, xml.substring(open));
+                break;
+            }
+            units.add(xml.substring(open, close + 1));
+            position = close + 1;
+        }
+        return units;
+    }
+
+    private static void addText(List<String> units, String text) {
+        if (!text.isBlank()) {
+            units.add(text);
+        }
     }
 }

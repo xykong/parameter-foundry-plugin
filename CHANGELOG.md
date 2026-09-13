@@ -49,6 +49,10 @@ Current version: `0.3.164-SNAPSHOT`.
 
 ### Fixed
 
+- A batch preview could not show the configuration diff of a parameter with
+  many options: the serialized target exceeded the inline diff limit. The diff
+  now keeps element values on one line, so a production-sized choice list is
+  reviewable, and the comparison is bounded by size instead of by line count.
 - A choice table now honours `selectedDisplay`: it shows the selected chips and a
   selection summary, and removing a chip clears the matching cell.
 - Enter in a searchable choice field no longer submits the build form when the
