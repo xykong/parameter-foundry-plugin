@@ -1,10 +1,12 @@
 package io.jenkins.plugins.unifiedparameters.migration.activechoices;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
+import java.util.List;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
@@ -13,6 +15,68 @@ import org.junit.jupiter.api.Test;
 class ActiveChoicesMigrationAdapterTest {
 
     private final ActiveChoicesMigrationAdapter adapter = new ActiveChoicesMigrationAdapter();
+
+    @Test
+    void literalListWithSelectedMarkersBecomesInlineChoices() {
+        ChoiceParameter source = new ChoiceParameter("CHANNEL");
+        source.setScript("return ['staging', 'production:selected']");
+        source.setFilterable(true);
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.A, plan.getClassification());
+        var target =
+                (io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition) plan.getTarget();
+        assertEquals("single", target.getSelectionMode());
+        assertEquals("searchable", target.getRenderer());
+        assertEquals("explicit", target.getDefaultMode());
+        assertEquals("production", target.getDefaultValue());
+        assertEquals(
+                List.of("staging", "production"),
+                target.getChoices().stream().map(option -> option.getValue()).toList());
+        assertEquals("2", plan.getFacts().get("Source options"));
+    }
+
+    @Test
+    void literalListWithoutMarkersOnlyNeedsTheDefaultDecision() {
+        ChoiceParameter source = new ChoiceParameter("CHANNEL");
+        source.setScript("return [value: 'a', label: 'A']");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.B, plan.getClassification());
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("preselects the first option")));
+    }
+
+    @Test
+    void networkScriptProducesRestProviderGuidanceWithRedactedEndpoint() {
+        ChoiceParameter source = new ChoiceParameter("PLATFORMS");
+        source.setScript("def response = new URL('https://internal.example.test/api/platforms?env=prod').getText()\n"
+                + "def json = new groovy.json.JsonSlurper().parseText(response)\n"
+                + "return json.collect { [value: it.value, label: it.label] }");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.C, plan.getClassification());
+        assertTrue(plan.getTargetSkeleton().contains("unifiedRestProvider"));
+        assertTrue(plan.getTargetSkeleton().contains("relativePath: '<reviewed-source-path>'"));
+        assertFalse(plan.getTargetSkeleton().contains("internal.example.test"));
+        assertEquals("https://<host>/api/platforms", plan.getFacts().get("Detected endpoint"));
+        assertTrue(plan.getFacts().get("Detected response fields").contains("value"));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("REST Provider")));
+    }
+
+    @Test
+    void controllerScriptIsAnExplicitRedesign() {
+        ChoiceParameter source = new ChoiceParameter("PLATFORMS");
+        source.setScript("return Jenkins.instance.getItem('seed').getBuilds().collect { it.number }");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.D, plan.getClassification());
+        assertNull(plan.getTargetSkeleton());
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("controller")));
+    }
 
     @Test
     void choiceProducesGovernedProviderSkeletonWithoutExecutingScript() {
