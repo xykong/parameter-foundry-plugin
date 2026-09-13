@@ -64,4 +64,43 @@ class ListGitBranchesMigrationAdapterTest {
         assertTrue(plan.getReason().contains("CUSTOM_MODE"));
         assertNull(plan.getTargetSkeleton());
     }
+
+    @Test
+    void translatesSourceFiltersIntoShortNamePatterns() {
+        assertEquals(
+                "(?!release/).*",
+                ListGitBranchesMigrationAdapter.translateFilter(".*refs/heads/(?!release/)(.*)", "branch"));
+        assertEquals("v.*", ListGitBranchesMigrationAdapter.translateFilter("refs/tags/v.*", "tag"));
+        assertEquals("main|develop", ListGitBranchesMigrationAdapter.translateFilter("main|develop", "branch"));
+        assertNull(ListGitBranchesMigrationAdapter.translateFilter("*", "branch"));
+        assertNull(ListGitBranchesMigrationAdapter.translateFilter("", "branch"));
+        assertNull(ListGitBranchesMigrationAdapter.translateFilter("refs/heads/dev|refs/tags/x", "branch"));
+    }
+
+    @Test
+    void mapsSourceSortModesAndKeepsThemInTheSkeleton() {
+        assertEquals("smart-descending", ListGitBranchesMigrationAdapter.mapSortOrder("DESCENDING_SMART"));
+        assertEquals("smart-ascending", ListGitBranchesMigrationAdapter.mapSortOrder("ASCENDING_SMART"));
+        assertEquals("ascending", ListGitBranchesMigrationAdapter.mapSortOrder("NONE"));
+        assertNull(ListGitBranchesMigrationAdapter.mapSortOrder("SOMETHING_ELSE"));
+
+        ListGitBranchesParameterDefinition source = new ListGitBranchesParameterDefinition("REF", "PT_BRANCH");
+        source.setBranchFilter(".*refs/heads/(?!release/)(.*)");
+        source.setSortMode("DESCENDING_SMART");
+        source.setDefaultValue("master");
+        source.setSelectedValue("TOP");
+        source.setQuickFilterEnabled(true);
+
+        var plan = new ListGitBranchesMigrationAdapter().inspect(source);
+
+        assertTrue(plan.getTargetSkeleton().contains("includePattern: '(?!release/).*'"));
+        assertTrue(plan.getTargetSkeleton().contains("sortOrder: 'smart-descending'"));
+        assertTrue(plan.getTargetSkeleton().contains("renderer: 'searchable'"));
+        assertEquals("DESCENDING_SMART", plan.getFacts().get("Source sort"));
+        assertEquals("smart-descending", plan.getFacts().get("Target sort"));
+        assertEquals("master", plan.getFacts().get("Source default"));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("smart-descending")));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Source default master")));
+        assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("SelectedValue.TOP")));
+    }
 }

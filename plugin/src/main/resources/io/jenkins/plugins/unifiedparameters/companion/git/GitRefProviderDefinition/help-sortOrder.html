@@ -1,3 +1,10 @@
 <div>
-  <p><code>ascending</code> or <code>descending</code> order for the returned refs.</p>
+  <p>Order of the returned refs:</p>
+  <ul>
+    <li><code>ascending</code> / <code>descending</code> compare names as text.</li>
+    <li><code>smart-ascending</code> / <code>smart-descending</code> compare numeric runs by value, so
+      <code>1.9</code> sorts before <code>1.10</code>. Use these to match the source plugin's
+      <code>*_SMART</code> sort modes.</li>
+  </ul>
+  <p>The order decides which ref the parameter uses when its default mode is <code>first</code>.</p>
 </div>

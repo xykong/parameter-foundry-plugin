@@ -4,7 +4,9 @@ import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.model.Option;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class MigrationPreview {
@@ -25,6 +27,7 @@ public final class MigrationPreview {
     private final String pipelineSnippet;
     private final List<String> verificationCases;
     private final boolean automaticallyApplicable;
+    private final Map<String, String> facts;
 
     private MigrationPreview(
             String sourcePluginId,
@@ -36,7 +39,8 @@ public final class MigrationPreview {
             String targetSummary,
             String pipelineSnippet,
             List<String> verificationCases,
-            boolean automaticallyApplicable) {
+            boolean automaticallyApplicable,
+            Map<String, String> facts) {
         this.sourcePluginId = sourcePluginId;
         this.parameterName = parameterName;
         this.classification = classification;
@@ -47,6 +51,12 @@ public final class MigrationPreview {
         this.pipelineSnippet = pipelineSnippet;
         this.verificationCases = verificationCases;
         this.automaticallyApplicable = automaticallyApplicable;
+        this.facts = facts == null ? Map.of() : Map.copyOf(new LinkedHashMap<>(facts));
+    }
+
+    /** Ordered source-versus-target facts rendered next to the classification. */
+    public Map<String, String> getFacts() {
+        return facts;
     }
 
     public static MigrationPreview from(
@@ -64,7 +74,8 @@ public final class MigrationPreview {
                         : summarize(target),
                 plan.getTargetSkeleton() == null ? snippet(target) : plan.getTargetSkeleton(),
                 plan.getVerificationFixture() == null ? VERIFICATION_CASES : List.of(plan.getVerificationFixture()),
-                target != null);
+                target != null,
+                plan.getFacts());
     }
 
     public static MigrationPreview failed(SourceMigrationAdapter adapter, ParameterDefinition source) {
@@ -78,7 +89,8 @@ public final class MigrationPreview {
                 "No target definition was generated.",
                 "// No automatic target was generated.",
                 VERIFICATION_CASES,
-                false);
+                false,
+                Map.of());
     }
 
     public String getSourcePluginId() {

@@ -38,6 +38,9 @@
                   <dl class="up-migration-facts">
                     <div><dt>Target</dt><dd>${preview.targetType}</dd></div>
                     <div><dt>Behavior</dt><dd>${preview.targetSummary}</dd></div>
+                    <j:forEach var="fact" items="${preview.facts}">
+                      <div><dt>${fact.key}</dt><dd>${fact.value}</dd></div>
+                    </j:forEach>
                   </dl>
                   <j:if test="${!empty(preview.decisions)}">
                     <h3>Decisions before migration</h3>

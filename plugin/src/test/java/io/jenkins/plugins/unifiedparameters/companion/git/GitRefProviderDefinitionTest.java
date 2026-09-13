@@ -58,6 +58,35 @@ class GitRefProviderDefinitionTest {
     }
 
     @Test
+    void smartSortOrdersCompareNumericRunsByValue() {
+        Map<String, String> versions = new LinkedHashMap<>();
+        versions.put("refs/heads/1.9", "a");
+        versions.put("refs/heads/1.10", "b");
+        versions.put("refs/heads/1.2", "c");
+
+        GitRefProviderDefinition ascending = new GitRefProviderDefinition("versions", "git", ignored -> versions);
+        ascending.setRefType("branch");
+        ascending.setSortOrder("smart-ascending");
+        assertEquals(
+                List.of("1.2", "1.9", "1.10"),
+                ascending.load(context(ascending)).stream()
+                        .map(option -> option.getValue())
+                        .toList());
+
+        GitRefProviderDefinition descending = new GitRefProviderDefinition("versions", "git", ignored -> versions);
+        descending.setRefType("branch");
+        descending.setSortOrder("smart-descending");
+        assertEquals(
+                List.of("1.10", "1.9", "1.2"),
+                descending.load(context(descending)).stream()
+                        .map(option -> option.getValue())
+                        .toList());
+
+        assertEquals(0, GitRefProviderDefinition.compareSmart("release-01", "release-1"));
+        assertThrows(IllegalArgumentException.class, () -> ascending.setSortOrder("sideways"));
+    }
+
+    @Test
     void rejectsInvalidConfigurationAndOversizedResults() {
         GitRefProviderDefinition provider = new GitRefProviderDefinition("branches", "git", ignored -> REFS);
         assertThrows(IllegalArgumentException.class, () -> provider.setRefType("commit"));

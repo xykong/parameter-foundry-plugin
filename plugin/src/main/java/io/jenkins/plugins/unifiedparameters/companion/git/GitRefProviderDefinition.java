@@ -92,8 +92,10 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
 
     @DataBoundSetter
     public void setSortOrder(String sortOrder) {
-        if (!Set.of("ascending", "descending").contains(sortOrder)) {
-            throw new IllegalArgumentException("Git ref sort order must be ascending or descending.");
+        if (!Set.of("ascending", "descending", "smart-ascending", "smart-descending")
+                .contains(sortOrder)) {
+            throw new IllegalArgumentException(
+                    "Git ref sort order must be ascending, descending, smart-ascending, or smart-descending.");
         }
         this.sortOrder = sortOrder;
     }
@@ -125,6 +127,56 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
                 getMaximumRefs());
     }
 
+    /**
+     * Version-aware ordering: numeric runs compare by value, so {@code 1.9} sorts before
+     * {@code 1.10}, which is what the source plugin's SMART sort modes do.
+     */
+    static int compareSmart(String left, String right) {
+        int leftIndex = 0;
+        int rightIndex = 0;
+        while (leftIndex < left.length() && rightIndex < right.length()) {
+            char leftChar = left.charAt(leftIndex);
+            char rightChar = right.charAt(rightIndex);
+            if (Character.isDigit(leftChar) && Character.isDigit(rightChar)) {
+                int leftEnd = leftIndex;
+                while (leftEnd < left.length() && Character.isDigit(left.charAt(leftEnd))) {
+                    leftEnd++;
+                }
+                int rightEnd = rightIndex;
+                while (rightEnd < right.length() && Character.isDigit(right.charAt(rightEnd))) {
+                    rightEnd++;
+                }
+                String leftNumber = stripLeadingZeros(left.substring(leftIndex, leftEnd));
+                String rightNumber = stripLeadingZeros(right.substring(rightIndex, rightEnd));
+                int comparison = Integer.compare(leftNumber.length(), rightNumber.length());
+                if (comparison != 0) {
+                    return comparison;
+                }
+                comparison = leftNumber.compareTo(rightNumber);
+                if (comparison != 0) {
+                    return comparison;
+                }
+                leftIndex = leftEnd;
+                rightIndex = rightEnd;
+                continue;
+            }
+            if (leftChar != rightChar) {
+                return Character.compare(leftChar, rightChar);
+            }
+            leftIndex++;
+            rightIndex++;
+        }
+        return Integer.compare(left.length() - leftIndex, right.length() - rightIndex);
+    }
+
+    private static String stripLeadingZeros(String value) {
+        int index = 0;
+        while (index < value.length() - 1 && value.charAt(index) == '0') {
+            index++;
+        }
+        return value.substring(index);
+    }
+
     static List<Option> normalize(
             Map<String, String> refs,
             String providerId,
@@ -145,10 +197,12 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
             }
             names.add(name);
         }
-        names.sort(Comparator.naturalOrder());
-        if ("descending".equals(sortOrder)) {
-            names.sort(Comparator.reverseOrder());
+        boolean smart = sortOrder != null && sortOrder.startsWith("smart-");
+        Comparator<String> order = smart ? GitRefProviderDefinition::compareSmart : Comparator.naturalOrder();
+        if (sortOrder != null && sortOrder.endsWith("descending")) {
+            order = order.reversed();
         }
+        names.sort(order);
         if (names.size() > maximumRefs) {
             throw new ProviderException(
                     ErrorCode.PROVIDER_UNAVAILABLE,
