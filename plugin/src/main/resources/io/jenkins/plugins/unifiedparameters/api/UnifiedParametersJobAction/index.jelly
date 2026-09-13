@@ -1,24 +1,58 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
-  <l:layout title="Unified Parameters Migration">
+  <l:layout title="${%MigrationPageTitle}">
     <st:adjunct includes="io.jenkins.plugins.unifiedparameters.migration-preview"/>
     <l:main-panel>
       <div class="up-migration-page">
         <header class="up-migration-hero">
           <div>
-            <p class="up-migration-eyebrow">Business-requirement migration</p>
-            <h1>Unified Parameters Migration Preview</h1>
-            <p>
-              Review equivalent target behavior, explicit semantic decisions, and
-              verification cases. This preview does not modify the Job.
-            </p>
+            <p class="up-migration-eyebrow">${%MigrationPageEyebrow}</p>
+            <h1>${%MigrationPageHeading}</h1>
+            <p>${%MigrationPageIntro}</p>
           </div>
         </header>
+        <j:if test="${it.parametersDefinedInRepository}">
+          <div class="jenkins-alert jenkins-alert-warning">${%MigrationPageRepositoryNotice}</div>
+        </j:if>
+        <j:set var="batch" value="${it.batchPreview}"/>
+        <section class="up-migration-batch">
+          <h2>${%MigrationBatchHeading}</h2>
+          <p>${%MigrationBatchIntro}</p>
+          <p>
+            <strong>${batch.applicableCount}</strong>
+            <span>${%MigrationBatchApplicable}</span>
+            <strong>${batch.blockedCount}</strong>
+            <span>${%MigrationBatchBlocked}</span>
+          </p>
+          <j:if test="${!empty(batch.entries)}">
+            <h3>${%MigrationBatchDiff}</h3>
+            <pre class="up-migration-code">${batch.diff}</pre>
+            <f:form method="post" action="applyBatch">
+              <j:if test="${!empty(batch.requiredDecisions)}">
+                <label>
+                  <input type="checkbox" name="acceptDecisions" value="true" />
+                  <span>${%MigrationBatchAcceptDecisions}</span>
+                </label>
+              </j:if>
+              <button class="jenkins-button jenkins-button--primary" type="submit">
+                ${%MigrationBatchApply}
+              </button>
+            </f:form>
+          </j:if>
+          <j:if test="${!empty(batch.blocked)}">
+            <h3>${%MigrationBatchBlockedHeading}</h3>
+            <ul>
+              <j:forEach var="entry" items="${batch.blocked}">
+                <li>${entry.parameterName}: ${entry.reason}</li>
+              </j:forEach>
+            </ul>
+          </j:if>
+        </section>
         <j:set var="previews" value="${it.migrationPreviews}"/>
         <j:choose>
           <j:when test="${empty(previews)}">
             <div class="jenkins-alert jenkins-alert-info">
-              No installed migration adapter recognizes this Job's current parameter definitions.
+              ${%MigrationPageNoAdapter}
             </div>
           </j:when>
           <j:otherwise>
@@ -31,28 +65,28 @@
                       <h2>${preview.parameterName}</h2>
                     </div>
                     <span class="up-migration-class up-migration-class-${preview.classification}">
-                      Class ${preview.classification}
+                      ${%MigrationClass} ${preview.classification}
                     </span>
                   </div>
                   <p>${preview.reason}</p>
                   <dl class="up-migration-facts">
-                    <div><dt>Target</dt><dd>${preview.targetType}</dd></div>
-                    <div><dt>Behavior</dt><dd>${preview.targetSummary}</dd></div>
+                    <div><dt>${%MigrationTarget}</dt><dd>${preview.targetType}</dd></div>
+                    <div><dt>${%MigrationBehavior}</dt><dd>${preview.targetSummary}</dd></div>
                     <j:forEach var="fact" items="${preview.facts}">
                       <div><dt>${fact.key}</dt><dd>${fact.value}</dd></div>
                     </j:forEach>
                   </dl>
                   <j:if test="${!empty(preview.decisions)}">
-                    <h3>Decisions before migration</h3>
+                    <h3>${%MigrationDecisions}</h3>
                     <ul>
                       <j:forEach var="decision" items="${preview.decisions}">
                         <li>${decision}</li>
                       </j:forEach>
                     </ul>
                   </j:if>
-                  <h3>Generated Pipeline definition</h3>
+                  <h3>${%MigrationGenerated}</h3>
                   <pre class="up-migration-code">${preview.pipelineSnippet}</pre>
-                  <h3>Verification fixture</h3>
+                  <h3>${%MigrationVerification}</h3>
                   <ul>
                     <j:forEach var="verification" items="${preview.verificationCases}">
                       <li>${verification}</li>
@@ -63,18 +97,18 @@
                       <f:form method="post" action="cloneMigration">
                         <input type="hidden" name="parameterName" value="${preview.parameterName}" />
                         <label>
-                          <span>Clone name</span>
+                          <span>${%MigrationCloneName}</span>
                           <input class="jenkins-input" name="cloneName"
                                  value="${it.job.name}-${preview.parameterName}-unified" />
                         </label>
                         <j:if test="${!empty(preview.decisions)}">
                           <label>
                             <input type="checkbox" name="acceptDecisions" value="true" />
-                            <span>I accept the semantic decisions shown above.</span>
+                            <span>${%MigrationAcceptDecisions}</span>
                           </label>
                         </j:if>
                         <button class="jenkins-button jenkins-button--primary" type="submit">
-                          Clone and apply
+                          ${%MigrationCloneAndApply}
                         </button>
                       </f:form>
                       <f:form method="post" action="applyMigration">
@@ -82,11 +116,11 @@
                         <j:if test="${!empty(preview.decisions)}">
                           <label>
                             <input type="checkbox" name="acceptDecisions" value="true" />
-                            <span>I accept the semantic decisions shown above.</span>
+                            <span>${%MigrationAcceptDecisions}</span>
                           </label>
                         </j:if>
                         <button class="jenkins-button jenkins-button--danger" type="submit">
-                          Apply in place
+                          ${%MigrationApplyInPlace}
                         </button>
                       </f:form>
                     </div>
@@ -96,20 +130,51 @@
             </div>
           </j:otherwise>
         </j:choose>
+        <j:if test="${!empty(it.migrationBatches)}">
+          <section class="up-migration-records">
+            <h2>${%MigrationBatchRecordsHeading}</h2>
+            <j:forEach var="batchView" items="${it.migrationBatches}">
+              <article class="up-migration-record">
+                <div>
+                  <strong>${batchView.batchId}</strong>
+                  <span>${%MigrationBatchApplied} ${batchView.recordCount} · ${batchView.createdAt} · ${batchView.actor}</span>
+                </div>
+                <j:if test="${batchView.applied}">
+                  <f:form method="post" action="rollbackBatch">
+                    <input type="hidden" name="batchId" value="${batchView.batchId}" />
+                    <button class="jenkins-button" type="submit">${%MigrationBatchRollback}</button>
+                  </f:form>
+                </j:if>
+              </article>
+            </j:forEach>
+          </section>
+        </j:if>
         <j:if test="${!empty(it.migrationRecords)}">
           <section class="up-migration-records">
-            <h2>Migration records</h2>
+            <h2>${%MigrationRecordsHeading}</h2>
             <j:forEach var="record" items="${it.migrationRecords}">
               <article class="up-migration-record">
                 <div>
                   <strong>${record.parameterName}</strong>
                   <span>${record.status} · ${record.createdAt} · ${record.actor}</span>
                 </div>
-                <j:if test="${record.status == 'APPLIED'}">
-                  <f:form method="post" action="rollbackMigration">
+                <div class="up-migration-evidence">
+                  <span>${%MigrationRecordEvidence}: ${record.evidenceStatus}</span>
+                  <j:if test="${!empty(record.evidenceSummary)}">
+                    <p>${record.evidenceSummary}</p>
+                  </j:if>
+                  <f:form method="post" action="verifyMigration">
                     <input type="hidden" name="recordId" value="${record.id}" />
-                    <button class="jenkins-button" type="submit">Rollback</button>
+                    <button class="jenkins-button" type="submit">${%MigrationVerifyEvidence}</button>
                   </f:form>
+                </div>
+                <j:if test="${record.status == 'APPLIED'}">
+                  <j:if test="${empty(record.batchId)}">
+                    <f:form method="post" action="rollbackMigration">
+                      <input type="hidden" name="recordId" value="${record.id}" />
+                      <button class="jenkins-button" type="submit">${%MigrationRollback}</button>
+                    </f:form>
+                  </j:if>
                 </j:if>
               </article>
             </j:forEach>

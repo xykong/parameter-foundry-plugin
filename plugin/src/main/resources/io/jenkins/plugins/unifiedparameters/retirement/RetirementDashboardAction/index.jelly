@@ -1,22 +1,53 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
-  <l:layout title="Unified Parameters Retirement">
+  <l:layout title="${%RetirementPageTitle}">
     <st:adjunct includes="io.jenkins.plugins.unifiedparameters.retirement"/>
     <l:main-panel>
       <div class="up-retirement">
         <header>
-          <p class="up-retirement-eyebrow">Source-plugin retirement</p>
-          <h1>Unified Parameters Retirement Dashboard</h1>
-          <p>
-            Active configuration, generated sources, queued/running work, and historical
-            build records are reported independently. Functional migration does not by
-            itself authorize plugin uninstall.
-          </p>
+          <p class="up-retirement-eyebrow">${%RetirementEyebrow}</p>
+          <h1>${%RetirementHeading}</h1>
+          <p>${%RetirementIntro}</p>
         </header>
+        <j:set var="repository" value="${it.repositoryScan}"/>
+        <section class="up-retirement-repository">
+          <h2>${%RetirementUnscannedHeading}</h2>
+          <j:choose>
+            <j:when test="${repository.unscanned}">
+              <div class="jenkins-alert jenkins-alert-warning">
+                ${%RetirementUnscannedWarning}
+              </div>
+              <dl>
+                <div><dt>${%RetirementMaterializedJobs}</dt><dd>${repository.materializedJobs}</dd></div>
+                <div><dt>${%RetirementUnscannedJobs}</dt><dd>${repository.unscannedJobCount}</dd></div>
+                <div><dt>${%RetirementMultibranchProjects}</dt><dd>${repository.multibranchProjectCount}</dd></div>
+              </dl>
+              <j:if test="${!empty(repository.pipelineFromScmJobs)}">
+                <h3>${%RetirementUnscannedJobs}</h3>
+                <ul>
+                  <j:forEach var="job" items="${repository.pipelineFromScmJobs}">
+                    <li>${job}</li>
+                  </j:forEach>
+                </ul>
+              </j:if>
+              <j:if test="${!empty(repository.multibranchProjects)}">
+                <h3>${%RetirementMultibranchProjects}</h3>
+                <ul>
+                  <j:forEach var="project" items="${repository.multibranchProjects}">
+                    <li>${project}</li>
+                  </j:forEach>
+                </ul>
+              </j:if>
+            </j:when>
+            <j:otherwise>
+              <div class="jenkins-alert jenkins-alert-success">${%RetirementUnscannedClear}</div>
+            </j:otherwise>
+          </j:choose>
+        </section>
         <j:choose>
           <j:when test="${empty(it.findings)}">
             <div class="jenkins-alert jenkins-alert-success">
-              No non-core source parameter classes were detected.
+              ${%RetirementNoFindings}
             </div>
           </j:when>
           <j:otherwise>
@@ -28,25 +59,33 @@
                     <h2>${finding.sourceClass}</h2>
                   </div>
                   <dl>
-                    <div><dt>Active Jobs</dt><dd>${finding.activeJobs.size()}</dd></div>
-                    <div><dt>Generated sources</dt><dd>${finding.generatedSources.size()}</dd></div>
-                    <div><dt>Queued builds</dt><dd>${finding.queuedBuilds}</dd></div>
-                    <div><dt>Running builds</dt><dd>${finding.runningBuilds}</dd></div>
-                    <div><dt>Historical builds</dt><dd>${finding.historicalBuilds}</dd></div>
-                    <div><dt>Migration adapter</dt><dd>${finding.adapterInstalled ? 'Installed' : 'Missing'}</dd></div>
+                    <div><dt>${%RetirementActiveJobs}</dt><dd>${finding.activeJobs.size()}</dd></div>
+                    <div><dt>${%RetirementGeneratedSources}</dt><dd>${finding.generatedSources.size()}</dd></div>
+                    <div><dt>${%RetirementQueuedBuilds}</dt><dd>${finding.queuedBuilds}</dd></div>
+                    <div><dt>${%RetirementRunningBuilds}</dt><dd>${finding.runningBuilds}</dd></div>
+                    <div><dt>${%RetirementHistoricalBuilds}</dt><dd>${finding.historicalBuilds}</dd></div>
+                    <div>
+                      <dt>${%RetirementAdapter}</dt>
+                      <dd>
+                        <j:choose>
+                          <j:when test="${finding.adapterInstalled}">${%RetirementAdapterInstalled}</j:when>
+                          <j:otherwise>${%RetirementAdapterMissing}</j:otherwise>
+                        </j:choose>
+                      </dd>
+                    </div>
                   </dl>
                   <j:choose>
                     <j:when test="${finding.safeToUninstall}">
-                      <div class="jenkins-alert jenkins-alert-success">No detected references block uninstall.</div>
+                      <div class="jenkins-alert jenkins-alert-success">${%RetirementSafe}</div>
                     </j:when>
                     <j:otherwise>
                       <div class="jenkins-alert jenkins-alert-warning">
-                        Retain the source plugin or make an explicit historical-data decision.
+                        ${%RetirementUnsafe}
                       </div>
                     </j:otherwise>
                   </j:choose>
                   <j:if test="${!empty(finding.activeJobs)}">
-                    <h3>Active Jobs</h3>
+                    <h3>${%RetirementActiveJobs}</h3>
                     <ul><j:forEach var="job" items="${finding.activeJobs}"><li>${job}</li></j:forEach></ul>
                   </j:if>
                 </article>

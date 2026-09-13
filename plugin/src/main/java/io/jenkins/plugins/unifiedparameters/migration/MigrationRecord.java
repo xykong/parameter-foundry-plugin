@@ -21,7 +21,9 @@ public final class MigrationRecord implements Serializable {
     private final String targetDigest;
     private final String backupFile;
     private final List<String> decisions;
+    private final String batchId;
     private String status;
+    private MigrationEvidence evidence;
 
     MigrationRecord(
             String id,
@@ -36,6 +38,36 @@ public final class MigrationRecord implements Serializable {
             String backupFile,
             List<String> decisions,
             String status) {
+        this(
+                id,
+                sourceJob,
+                targetJob,
+                parameterName,
+                adapterId,
+                actor,
+                createdAt,
+                sourceDigest,
+                targetDigest,
+                backupFile,
+                decisions,
+                status,
+                null);
+    }
+
+    MigrationRecord(
+            String id,
+            String sourceJob,
+            String targetJob,
+            String parameterName,
+            String adapterId,
+            String actor,
+            Instant createdAt,
+            String sourceDigest,
+            String targetDigest,
+            String backupFile,
+            List<String> decisions,
+            String status,
+            String batchId) {
         this.id = id;
         this.sourceJob = sourceJob;
         this.targetJob = targetJob;
@@ -48,6 +80,7 @@ public final class MigrationRecord implements Serializable {
         this.backupFile = backupFile;
         this.decisions = List.copyOf(decisions);
         this.status = status;
+        this.batchId = batchId;
     }
 
     public String getId() {
@@ -98,7 +131,28 @@ public final class MigrationRecord implements Serializable {
         return status;
     }
 
+    /** Id of the atomic batch that created this record, or {@code null} for a single migration. */
+    public String getBatchId() {
+        return batchId;
+    }
+
+    public MigrationEvidence getEvidence() {
+        return evidence;
+    }
+
+    public String getEvidenceStatus() {
+        return evidence == null ? MigrationEvidence.UNVERIFIED : evidence.getStatus();
+    }
+
+    public String getEvidenceSummary() {
+        return evidence == null ? null : evidence.getSummary();
+    }
+
     void setStatus(String status) {
         this.status = status;
+    }
+
+    void setEvidence(MigrationEvidence evidence) {
+        this.evidence = evidence;
     }
 }

@@ -13,9 +13,18 @@ import org.kohsuke.stapler.verb.GET;
 @Extension
 public final class RetirementDashboardAction implements RootAction {
 
-    public List<RetirementFinding> getFindings() {
+    /** One scan per page render: findings, repository-side blind spot, and JSON export. */
+    public RetirementReport getReport() {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        return new RetirementScanner().scan();
+        return new RetirementScanner().scanAll();
+    }
+
+    public List<RetirementFinding> getFindings() {
+        return getReport().getFindings();
+    }
+
+    public RepositoryScan getRepositoryScan() {
+        return getReport().getRepositoryScan();
     }
 
     public boolean isEmpty() {
@@ -25,8 +34,9 @@ public final class RetirementDashboardAction implements RootAction {
     @GET
     public void doReport(StaplerResponse2 response) throws IOException {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        RetirementReport report = new RetirementScanner().scanAll();
         JSONArray findings = new JSONArray();
-        for (RetirementFinding finding : new RetirementScanner().scan()) {
+        for (RetirementFinding finding : report.findings()) {
             JSONObject encoded = new JSONObject();
             encoded.put("sourcePluginId", finding.sourcePluginId());
             encoded.put("sourceClass", finding.sourceClass());
@@ -39,8 +49,15 @@ public final class RetirementDashboardAction implements RootAction {
             encoded.put("safeToUninstall", finding.safeToUninstall());
             findings.add(encoded);
         }
+        RepositoryScan repository = report.repositoryScan();
+        JSONObject repositoryScan = new JSONObject();
+        repositoryScan.put("unscanned", repository.isUnscanned());
+        repositoryScan.put("materializedJobs", repository.getMaterializedJobs());
+        repositoryScan.put("pipelineFromScmJobs", JSONArray.fromObject(repository.getPipelineFromScmJobs()));
+        repositoryScan.put("multibranchProjects", JSONArray.fromObject(repository.getMultibranchProjects()));
         JSONObject body = new JSONObject();
         body.put("findings", findings);
+        body.put("repositoryScan", repositoryScan);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(body.toString());
     }

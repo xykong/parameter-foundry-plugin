@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.retirement;
 
 import hudson.PluginWrapper;
+import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
@@ -11,6 +12,8 @@ import hudson.model.Run;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -25,17 +28,72 @@ public final class RetirementScanner {
     private static final int MAX_HISTORICAL_BUILDS_PER_JOB = 100;
 
     public List<RetirementFinding> scan() {
+        return scanAll().findings();
+    }
+
+    /** One pass over the controller: parameter findings and the repository-side blind spot. */
+    public RetirementReport scanAll() {
         Map<Key, MutableFinding> findings = new LinkedHashMap<>();
         for (Job<?, ?> job : Jenkins.get().getAllItems(Job.class)) {
             scanActive(job, findings);
             scanBuilds(job, findings);
         }
         scanQueue(findings);
-        return findings.values().stream()
+        List<RetirementFinding> frozen = findings.values().stream()
                 .map(MutableFinding::freeze)
                 .sorted(Comparator.comparing(RetirementFinding::sourcePluginId)
                         .thenComparing(RetirementFinding::sourceClass))
                 .toList();
+        return new RetirementReport(frozen, scanRepository());
+    }
+
+    /**
+     * Finds the Jobs whose parameters cannot be seen in the Job configuration because the
+     * Jenkinsfile lives in a repository, and the multibranch or organization folders that
+     * generate them.
+     */
+    public RepositoryScan scanRepository() {
+        List<String> fromScm = new ArrayList<>();
+        List<String> containers = new ArrayList<>();
+        int materialized = 0;
+        for (Item item : Jenkins.get().getAllItems(Item.class)) {
+            if (isMultibranchContainer(item)) {
+                containers.add(item.getFullName());
+                continue;
+            }
+            if (!(item instanceof Job<?, ?> job)) {
+                continue;
+            }
+            if (definesParametersInRepository(job)) {
+                fromScm.add(job.getFullName());
+            } else if (job.getProperty(ParametersDefinitionProperty.class) != null) {
+                materialized++;
+            }
+        }
+        fromScm.sort(String::compareTo);
+        containers.sort(String::compareTo);
+        return new RepositoryScan(fromScm, containers, materialized, !fromScm.isEmpty() || !containers.isEmpty());
+    }
+
+    /** True when the Job reads its Pipeline definition, including its parameters, from SCM. */
+    public static boolean definesParametersInRepository(Job<?, ?> job) {
+        Object definition = invoke(job, "getDefinition");
+        String className = definition == null ? "" : definition.getClass().getName();
+        return className.contains("Scm") || className.contains("SCM");
+    }
+
+    private static boolean isMultibranchContainer(Item item) {
+        String className = item.getClass().getName();
+        return className.contains("MultiBranchProject") || className.contains("OrganizationFolder");
+    }
+
+    private static Object invoke(Object target, String methodName) {
+        try {
+            Method method = target.getClass().getMethod(methodName);
+            return method.invoke(target);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
+            return null;
+        }
     }
 
     private static void scanActive(Job<?, ?> job, Map<Key, MutableFinding> findings) {

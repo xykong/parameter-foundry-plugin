@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.migration;
 
 import hudson.Extension;
+import io.jenkins.plugins.unifiedparameters.Messages;
 import java.util.ArrayList;
 import java.util.List;
 import jenkins.model.GlobalConfiguration;
@@ -29,6 +30,13 @@ public final class MigrationRecordStore extends GlobalConfiguration {
         save();
     }
 
+    synchronized void addAll(List<MigrationRecord> newRecords) {
+        List<MigrationRecord> updated = new ArrayList<>(records);
+        updated.addAll(newRecords);
+        records = List.copyOf(updated);
+        save();
+    }
+
     synchronized void update(MigrationRecord record) {
         save();
     }
@@ -37,7 +45,17 @@ public final class MigrationRecordStore extends GlobalConfiguration {
         return records.stream()
                 .filter(record -> record.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown migration record: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(Messages.MigrationErrorUnknownRecord(id)));
+    }
+
+    /** Every record created by one atomic batch, in creation order. */
+    public List<MigrationRecord> findBatch(String batchId) {
+        if (batchId == null) {
+            return List.of();
+        }
+        return records.stream()
+                .filter(record -> batchId.equals(record.getBatchId()))
+                .toList();
     }
 
     @Override
