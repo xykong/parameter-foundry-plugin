@@ -90,6 +90,10 @@ jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job
 jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job -apply -accept-decisions
 ```
 
+The inventory is scoped to the Jobs the CLI user may configure; it reports how
+many Jobs were skipped for permissions or because they could not be scanned, so
+an incomplete inventory is never mistaken for a complete one.
+
 Rolling back a batch restores the Job XML captured before the batch. When the
 Job changed after the batch, the rollback is refused, so a manual edit is never
 silently overwritten.

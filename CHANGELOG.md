@@ -19,7 +19,10 @@ Current version: `0.3.166-SNAPSHOT`.
   the exact configuration diff, applies them in one Job write, and rolls the
   whole batch back when the Job changed afterwards.
 - `unified-parameters-migration`, a CLI that scans the controller, previews a
-  Job with its decisions and diff, and applies one atomic batch.
+  Job with its decisions and diff, and applies one atomic batch. The inventory
+  is permission-scoped and reports the Jobs it skipped or could not scan, and a
+  target that fails validation is listed as blocked instead of aborting the
+  preview.
 - `unified-parameters-migration-verify` and `MigrationEvidenceService`, which
   compare the newest build before and after a migration (canonical value,
   environment export, sibling inputs) and store the result as migration

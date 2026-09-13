@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
+import example.invalid.InvalidTargetParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
@@ -91,6 +92,20 @@ class MigrationBatchCoordinatorTest {
         EvaluationException unknown = assertThrows(
                 EvaluationException.class, () -> MigrationCoordinator.previewBatch(job, List.of("MISSING_PARAMETER")));
         assertEquals(ErrorCode.CONFIGURATION_INVALID, unknown.getCode());
+    }
+
+    @Test
+    void reportsAnInvalidGeneratedTargetAsBlockedInsteadOfFailing(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("invalid-target");
+        job.addProperty(new ParametersDefinitionProperty(new InvalidTargetParameterDefinition("INVALID_TARGET")));
+
+        MigrationBatchPreview preview = MigrationCoordinator.previewBatch(job, List.of());
+
+        assertEquals(0, preview.getApplicableCount());
+        assertEquals(1, preview.getBlockedCount());
+        assertTrue(
+                preview.getBlocked().get(0).reason().contains("generated target is invalid"),
+                preview.getBlocked().get(0).reason());
     }
 
     private static ParameterDefinition definition(FreeStyleProject project, String name) {

@@ -87,14 +87,20 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
 
     private int scan() {
         List<MigrationBatchPreview> previews = new ArrayList<>();
+        List<String[]> errors = new ArrayList<>();
+        int skippedByPermission = 0;
         for (Job<?, ?> candidate : Jenkins.get().getAllItems(Job.class)) {
             if (!candidate.hasPermission(Item.CONFIGURE)) {
+                skippedByPermission++;
                 continue;
             }
             MigrationBatchPreview preview;
             try {
                 preview = MigrationCoordinator.previewBatch(candidate, List.of());
             } catch (RuntimeException exception) {
+                if (errors.size() < 20) {
+                    errors.add(new String[] {candidate.getFullName(), String.valueOf(exception.getMessage())});
+                }
                 continue;
             }
             if (preview.isApplicable() || preview.getBlockedCount() > 0) {
@@ -122,6 +128,16 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
             summary.put("jobs", previews.size());
             summary.put("applicableParameters", applicable);
             summary.put("blockedParameters", blocked);
+            summary.put("skippedByPermission", skippedByPermission);
+            summary.put("scanErrors", errors.size());
+            JSONArray encodedErrors = new JSONArray();
+            for (String[] error : errors) {
+                JSONObject item = new JSONObject();
+                item.put("job", error[0]);
+                item.put("error", error[1]);
+                encodedErrors.add(item);
+            }
+            summary.put("errors", encodedErrors);
             JSONObject body = new JSONObject();
             body.put("summary", summary);
             body.put("jobs", jobs);
@@ -144,6 +160,11 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
         }
         stdout.println("Summary: " + previews.size() + " Job(s), " + applicable + " applicable parameter(s), " + blocked
                 + " parameter(s) that need a decision.");
+        stdout.println("Skipped: " + skippedByPermission + " Job(s) without Job/Configure permission, " + errors.size()
+                + " Job(s) that could not be scanned.");
+        for (String[] error : errors) {
+            stdout.println("  ! " + error[0] + ": " + error[1]);
+        }
         return 0;
     }
 

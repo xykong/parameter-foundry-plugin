@@ -88,7 +88,13 @@ public final class MigrationCoordinator {
                 blocked.add(MigrationBatchEntry.blocked(definition, adapter, plan));
                 continue;
             }
-            DefinitionValidationService.requireValid(target);
+            try {
+                DefinitionValidationService.requireValid(target);
+            } catch (EvaluationException exception) {
+                blocked.add(MigrationBatchEntry.failed(
+                        definition, adapter, Messages.MigrationBatchBlockedInvalidTarget(exception.getSafeMessage())));
+                continue;
+            }
             entries.add(MigrationBatchEntry.applicable(
                     definition,
                     adapter,
