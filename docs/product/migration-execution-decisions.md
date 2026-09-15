@@ -138,3 +138,12 @@ need their Provider or Form completed, 6 have no recorded value yet, and 6 need
 a business redesign or stay native. The wave therefore has three preparation
 lists and no unknown conversion risk: Providers to create for 61 Jobs, a
 representative build for 5 Jobs, and 6 redesign/native items.
+
+September 16, 2026 on `0.3.187-SNAPSHOT` extended this to a per-Job verification
+with definition and default checks: 208 Jobs, 277 parameters, 2,238 replayed
+values, **0 `MISMATCH`**, every one of the 173 Extended Choice parameters with a
+matching option set, 138 parameters `EQUIVALENT`, 3 `EQUIVALENT_WITH_HISTORY`,
+3 `EQUIVALENT_DEFAULT_ONLY`, 28 `NEEDS_DEFAULT_DECISION`, 98 `NEEDS_PROVIDER`,
+1 `UNVERIFIED`, and 6 `MANUAL_REDESIGN`. The Connection Profile inventory is
+four Profiles across two hosts and two credential references for 43 Jobs, and the
+per-Job manifest carries each parameter's target snippet and value contract.
