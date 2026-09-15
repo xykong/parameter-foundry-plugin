@@ -16,6 +16,9 @@ import io.jenkins.plugins.unifiedparameters.migration.MigrationRecord;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationRecordStore;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.unifiedparameters.retirement.RetirementScanner;
+import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulation;
+import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulationJson;
+import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulationService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -120,6 +123,16 @@ public final class UnifiedParametersJobAction implements Action {
     /** The parameters of an SCM-defined Pipeline cannot be read from the Job configuration. */
     public boolean isParametersDefinedInRepository() {
         return RetirementScanner.definesParametersInRepository(job);
+    }
+
+    /** Read-only simulated replacement of this Job's source parameters. */
+    @GET
+    public void doSimulation(StaplerResponse2 response, @QueryParameter int builds) throws java.io.IOException {
+        job.checkPermission(Item.READ);
+        int maxBuilds = builds <= 0 ? ReplacementSimulationService.DEFAULT_BUILDS : builds;
+        ReplacementSimulation simulation = ReplacementSimulationService.simulate(job, maxBuilds);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(ReplacementSimulationJson.encode(simulation).toString());
     }
 
     @GET

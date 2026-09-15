@@ -30,6 +30,12 @@ Current version: `0.3.171-SNAPSHOT`.
 - A repository-side blind-spot report on the retirement dashboard: Jobs that
   read their Pipeline from SCM, plus the multibranch and organization folders
   that generate them, with an `unscanned` flag in the JSON report.
+- Read-only replacement simulation
+  (`…/unified-parameters-replacement-simulation/report` and
+  `<job>/unified-parameters/simulation`): it rebuilds every source parameter's
+  target, replays the values production builds recorded, and compares the
+  canonical value and environment export, so a lossless replacement can be
+  proven for every Job before the wave starts.
 - Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
   including adapter reasons, decisions, fact labels, and verification cases.
 - `MigrationMessageCoverageTest`, which fails the build when a referenced

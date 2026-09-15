@@ -115,6 +115,36 @@ inputs, and stores the result on the migration record. Exit code `0` means
 verified, `1` means a mismatch, and `2` means the Job still needs a comparable
 build. The Job page shows the stored evidence and can re-run the comparison.
 
+## Simulated replacement of every Job
+
+Before the wave starts, prove the replacement against the values production
+already recorded. The simulation is read-only: it builds the migrated definition,
+takes the values the Job's builds actually used, and compares what the source
+control produced with what the target control would produce for the same input.
+
+```bash
+curl -u "$USER:$TOKEN" "$JENKINS_URL/unified-parameters-replacement-simulation/report?builds=5"
+```
+
+Per parameter the report answers:
+
+- `verdict`: `EQUIVALENT`, `EQUIVALENT_ADDED_ENV` (the target also exports an
+  environment variable the source never set), `MISMATCH` (a recorded value is no
+  longer representable, or the export changed), `NEEDS_PROVIDER` (the target
+  resolves through a Provider, so the value contract needs the Provider in
+  place), `NEEDS_MANUAL_CHECK`, `MANUAL_REDESIGN`, `UNVERIFIED` (the Job never
+  recorded a value) or `BLOCKED`.
+- `observations`: one row per recorded build with the source value, the source
+  environment export, the simulated target value, the target environment export,
+  and a note when they differ.
+- `decisions`: the semantic decisions that still need an owner before the
+  parameter can be migrated.
+
+The Job page exposes the same simulation at
+`<job>/unified-parameters/simulation`, and a controller-wide run only needs
+administrative read access, so a Job that the migration operator cannot
+configure is still verified.
+
 ## Retirement dashboard
 
 Administrators get a dashboard that reports, per source plugin: active Jobs,

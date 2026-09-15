@@ -166,8 +166,30 @@ public final class MigrationEvidenceService {
         if (value == null) {
             return null;
         }
+        return canonicalValue(value);
+    }
+
+    /** Canonical string of a recorded value: the scalar, or the sorted set for a multi-selection. */
+    public static String canonicalValue(ParameterValue value) {
+        if (value == null) {
+            return null;
+        }
         Object raw = invoke(value, "getValue");
         return canonical(raw == null ? value : raw);
+    }
+
+    /** Environment export of one value for one build, or {@code null} when the value exports none. */
+    public static String environmentOf(ParameterValue value, Run<?, ?> run, String parameterName) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            EnvVars environment = new EnvVars();
+            value.buildEnvironment(run, environment);
+            return environment.get(parameterName);
+        } catch (RuntimeException exception) {
+            return null;
+        }
     }
 
     private static String canonical(Object raw) {

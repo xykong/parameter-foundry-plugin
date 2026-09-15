@@ -41,6 +41,10 @@ Current symbols: `unifiedChoice`, `unifiedForm`
   Job with its decisions and exact diff, and applies one atomic batch per Job;
   `unified-parameters-migration-verify` stores the before/after A/B evidence on
   the migration record.
+- Read-only replacement simulation: `…/unified-parameters-replacement-simulation/report`
+  compares every production Job's recorded values and environment exports with
+  the simulated unified control and reports `EQUIVALENT`, `MISMATCH`,
+  `NEEDS_PROVIDER`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter.
 - The migration page, the retirement dashboard, and every adapter reason,
   decision, fact, and verification case ship in English, Chinese, Japanese, and
   Korean.

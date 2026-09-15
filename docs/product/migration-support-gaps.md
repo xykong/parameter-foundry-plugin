@@ -27,6 +27,7 @@ Nothing below requires a partial migration; each item is a preparation task.
 | G9 localized surfaces | Implemented | Migration page, retirement dashboard, fact labels, reasons, decisions, and verification cases resolve through `Messages`; English, Chinese, Japanese, and Korean bundles are complete |
 | G10 repository scan | Implemented | `RetirementScanner.scanRepository()` reports Jobs that read their Pipeline from SCM plus multibranch and organization folders; the dashboard, the JSON report, and the Job page state that those definitions are unseen |
 | G11 A/B verification | Implemented | `MigrationEvidenceService` compares source and target builds (canonical value, environment export, sibling inputs) and stores the result on the migration record; `unified-parameters-migration-verify` records it |
+| G11b pre-wave simulation | Implemented | `ReplacementSimulationService` replays every recorded production value against the rebuilt target and reports `EQUIVALENT`, `EQUIVALENT_ADDED_ENV`, `MISMATCH`, `NEEDS_PROVIDER`, `NEEDS_MANUAL_CHECK`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter for the whole controller through a read-only endpoint |
 
 ## What is already good enough
 
