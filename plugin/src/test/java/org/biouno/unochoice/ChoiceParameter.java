@@ -3,11 +3,13 @@ package org.biouno.unochoice;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import net.sf.json.JSONObject;
+import org.biouno.unochoice.model.GroovyScript;
+import org.biouno.unochoice.model.SecureScript;
 import org.kohsuke.stapler.StaplerRequest2;
 
 public class ChoiceParameter extends ParameterDefinition {
 
-    private String script = "";
+    private GroovyScript script = new GroovyScript(new SecureScript(""));
     private String choiceType = "PT_SINGLE_SELECT";
     private boolean filterable;
 
@@ -15,12 +17,13 @@ public class ChoiceParameter extends ParameterDefinition {
         super(name);
     }
 
-    public String getScript() {
+    /** Mirrors the real element: the script is a model object, not a plain string. */
+    public GroovyScript getScript() {
         return script;
     }
 
     public void setScript(String script) {
-        this.script = script;
+        this.script = new GroovyScript(new SecureScript(script));
     }
 
     public String getChoiceType() {

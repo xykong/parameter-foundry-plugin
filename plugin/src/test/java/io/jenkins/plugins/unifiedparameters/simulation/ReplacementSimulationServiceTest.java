@@ -141,10 +141,29 @@ class ReplacementSimulationServiceTest {
         ReplacementSimulationEntry entry =
                 ReplacementSimulationService.simulate(job, 5).entries().get(0);
 
-        assertEquals(ReplacementSimulationService.NEEDS_DEFAULT_DECISION, entry.verdict());
+        assertEquals(ReplacementSimulationService.DECIDED_NO_DEFAULT, entry.verdict());
         assertEquals(ReplacementSimulationService.COMPARISON_MISMATCH, entry.getDefaultCheck());
         assertEquals("removed-channel", entry.getSourceDefault());
         assertEquals(ReplacementSimulationService.COMPARISON_MATCH, entry.getOptionSetComparison());
+    }
+
+    @Test
+    void aStaleDefaultThatBuildsActuallyUsedStaysADecision(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("simulated-used-stale-default");
+        ExtendedChoiceParameterDefinition source = new ExtendedChoiceParameterDefinition(
+                "LEGACY_CHANNEL",
+                ExtendedChoiceParameterDefinition.PARAMETER_TYPE_SINGLE_SELECT,
+                "staging,production",
+                "removed-channel",
+                null);
+        job.addProperty(new ParametersDefinitionProperty(source));
+        run(job, "LEGACY_CHANNEL", "removed-channel");
+
+        ReplacementSimulationEntry entry =
+                ReplacementSimulationService.simulate(job, 5).entries().get(0);
+
+        assertEquals(ReplacementSimulationService.NEEDS_DEFAULT_DECISION, entry.verdict());
+        assertEquals(ReplacementSimulationService.COMPARISON_MISMATCH, entry.getDefaultCheck());
     }
 
     @Test

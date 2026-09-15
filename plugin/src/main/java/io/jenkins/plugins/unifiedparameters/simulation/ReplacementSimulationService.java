@@ -68,6 +68,12 @@ public final class ReplacementSimulationService {
     /** The recorded value path is equivalent, but the source default is no longer selectable. */
     public static final String NEEDS_DEFAULT_DECISION = "NEEDS_DEFAULT_DECISION";
 
+    /**
+     * The stale source default never appeared in any recorded build, so the migration keeps the
+     * option list unchanged and drops the unused default. The decision is evidence-based.
+     */
+    public static final String DECIDED_NO_DEFAULT = "DECIDED_NO_DEFAULT";
+
     /** Tri-state result of a definition-level comparison. */
     public static final String COMPARISON_MATCH = "MATCH";
 
@@ -168,7 +174,7 @@ public final class ReplacementSimulationService {
             List<ParameterObservation> observations = compareChoice(job, choice, sourceValues, maxBuilds);
             String optionSetComparison = optionSetComparison(choice, sourceValues);
             String defaultCheck = defaultCheck(choice, sourceDefault);
-            String verdict = verdictFor(observations, optionSetComparison, defaultCheck);
+            String verdict = verdictFor(observations, optionSetComparison, defaultCheck, sourceDefault);
             return entry(
                     definition,
                     adapter,
@@ -281,13 +287,35 @@ public final class ReplacementSimulationService {
         return represents(choice, sourceDefault) ? COMPARISON_MATCH : COMPARISON_MISMATCH;
     }
 
+    /** True when a recorded build actually carried the stale default, so the value must survive. */
+    private static boolean staleDefaultUsedByBuilds(List<ParameterObservation> observations, String sourceDefault) {
+        if (sourceDefault == null || sourceDefault.isBlank()) {
+            return false;
+        }
+        for (ParameterObservation observation : observations) {
+            String value = observation.sourceValue();
+            if (value == null) {
+                continue;
+            }
+            for (String part : value.split(",", -1)) {
+                if (sourceDefault.equals(part.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static String verdictFor(
-            List<ParameterObservation> observations, String optionSetComparison, String defaultCheck) {
+            List<ParameterObservation> observations,
+            String optionSetComparison,
+            String defaultCheck,
+            String sourceDefault) {
         if (COMPARISON_MISMATCH.equals(optionSetComparison)) {
             return OPTION_SET_MISMATCH;
         }
         if (COMPARISON_MISMATCH.equals(defaultCheck)) {
-            return NEEDS_DEFAULT_DECISION;
+            return staleDefaultUsedByBuilds(observations, sourceDefault) ? NEEDS_DEFAULT_DECISION : DECIDED_NO_DEFAULT;
         }
         if (observations.isEmpty()) {
             return COMPARISON_MATCH.equals(defaultCheck) ? EQUIVALENT_DEFAULT_ONLY : UNVERIFIED;

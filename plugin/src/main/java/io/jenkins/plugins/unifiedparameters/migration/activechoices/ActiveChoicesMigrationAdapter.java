@@ -65,7 +65,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                             : referenceSkeleton(definition, semantics, dependencies),
                     verificationFixture(definition, dependencies, true));
         }
-        String script = readString(definition, "getScript");
+        String script = readScript(definition);
         String choiceType = firstNonEmpty(readString(definition, "getChoiceType"));
         boolean filterable = Boolean.parseBoolean(firstNonEmpty(readString(definition, "getFilterable")));
         boolean multiple = PT_MULTI_SELECT.equals(choiceType);
@@ -325,6 +325,49 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         } catch (IllegalAccessException | InvocationTargetException exception) {
             return "";
         }
+    }
+
+    /**
+     * Reads the script body of a source element. Active Choices returns a model object
+     * ({@code GroovyScript}) whose script is a script-security {@code SecureScript}, and a plain
+     * {@code toString()} of that object is not the script text, so the literal-list detection has to
+     * unwrap it. The fallback script is used when the main script cannot be read.
+     */
+    private static String readScript(ParameterDefinition definition) {
+        String script = scriptText(readObject(definition, "getScript"));
+        if (script.isBlank()) {
+            script = scriptText(readObject(definition, "getFallbackScript"));
+        }
+        return script;
+    }
+
+    private static Object readObject(Object source, String methodName) {
+        try {
+            Method method = source.getClass().getMethod(methodName);
+            return method.invoke(source);
+        } catch (NoSuchMethodException exception) {
+            return null;
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            return null;
+        }
+    }
+
+    private static String scriptText(Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof CharSequence text) {
+            return text.toString();
+        }
+        Object nested = readObject(value, "getScript");
+        if (nested == null || nested == value) {
+            return String.valueOf(value);
+        }
+        if (nested instanceof CharSequence text) {
+            return text.toString();
+        }
+        Object body = readObject(nested, "getScript");
+        return body instanceof CharSequence text ? text.toString() : String.valueOf(value);
     }
 
     private static List<String> parseDependencies(String value) {
