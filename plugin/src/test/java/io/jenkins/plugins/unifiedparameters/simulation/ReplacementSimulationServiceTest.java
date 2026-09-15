@@ -51,7 +51,7 @@ class ReplacementSimulationServiceTest {
         assertEquals(ReplacementSimulationService.EQUIVALENT_WITH_HISTORY, entry.verdict());
         assertTrue(entry.observations().get(0).historicalValue());
         assertTrue(
-                entry.observations().get(0).note().contains("no longer offered by the source control either"),
+                entry.observations().get(0).note().contains("no longer offers"),
                 entry.observations().get(0).note());
     }
 

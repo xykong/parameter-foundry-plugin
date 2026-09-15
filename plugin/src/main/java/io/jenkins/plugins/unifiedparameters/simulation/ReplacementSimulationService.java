@@ -202,8 +202,12 @@ public final class ReplacementSimulationService {
             String sourceEnvironment = MigrationEvidenceService.environmentOf(value, run, choice.getName());
             List<String> parts = parts(choice, sourceValue);
             boolean representable = parts.stream().allMatch(part -> represents(choice, part));
-            boolean historical =
-                    !representable && !sourceValues.isEmpty() && parts.stream().noneMatch(sourceValues::contains);
+            List<String> droppedBySource = sourceValues.isEmpty()
+                    ? List.of()
+                    : parts.stream()
+                            .filter(part -> !sourceValues.contains(part))
+                            .toList();
+            boolean historical = !representable && !droppedBySource.isEmpty();
             UnifiedChoiceParameterValue targetValue = targetValue(choice, parts);
             String targetEnvironment =
                     representable ? MigrationEvidenceService.environmentOf(targetValue, run, choice.getName()) : null;
@@ -230,7 +234,7 @@ public final class ReplacementSimulationService {
                             targetEnvironment,
                             representable,
                             environmentMatches,
-                            historical)));
+                            droppedBySource)));
         }
         return List.copyOf(observations);
     }
@@ -275,11 +279,14 @@ public final class ReplacementSimulationService {
             String targetEnvironment,
             boolean representable,
             boolean environmentMatches,
-            boolean historical) {
+            List<String> droppedBySource) {
         if (!representable) {
-            if (historical) {
-                return "Recorded value '" + sourceValue
-                        + "' is no longer offered by the source control either; the current behavior is unchanged.";
+            if (!droppedBySource.isEmpty()) {
+                return "The source control no longer offers "
+                        + droppedBySource.size()
+                        + " of the recorded value(s) ("
+                        + String.join(", ", droppedBySource.subList(0, Math.min(3, droppedBySource.size())))
+                        + "), so the difference comes from the source's own option list, not from the migration.";
             }
             return "Recorded value '" + sourceValue + "' is not among the migrated options.";
         }
