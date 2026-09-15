@@ -11,7 +11,7 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-Current version: `0.3.182-SNAPSHOT`.
+Current version: `0.3.185-SNAPSHOT`.
 
 ### Added
 
@@ -43,6 +43,11 @@ Current version: `0.3.182-SNAPSHOT`.
 - The replacement simulation separates a dropped option from build history:
   `EQUIVALENT_WITH_HISTORY` marks parameters whose older builds used values the
   source control no longer offers either, so only a real loss stays `MISMATCH`.
+- The simulation now verifies every parameter, not only the ones with build
+  history: it compares the migrated option set with the source's current option
+  set (`OPTION_SET_MISMATCH` when an option is lost), checks that the source
+  default stays selectable (`EQUIVALENT_DEFAULT_ONLY` for a parameter that never
+  built), and reports the target snippet and the value contract per parameter.
 - Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
   including adapter reasons, decisions, fact labels, and verification cases.
 - `MigrationMessageCoverageTest`, which fails the build when a referenced
