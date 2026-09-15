@@ -128,3 +128,13 @@ so the work continues without waiting:
 - Readiness inventory and its correction:
   [`../testing/replacement-readiness-2026-09-13.md`](../testing/replacement-readiness-2026-09-13.md)
 - Preparation gaps: [`migration-support-gaps.md`](migration-support-gaps.md)
+
+## Simulation Result
+
+September 15, 2026 on `0.3.182-SNAPSHOT`: 208 Jobs, 277 parameters, 1,244
+replayed production values, **0 `MISMATCH`**. 167 parameters are equivalent
+(including four whose older builds used values the source no longer offers), 98
+need their Provider or Form completed, 6 have no recorded value yet, and 6 need
+a business redesign or stay native. The wave therefore has three preparation
+lists and no unknown conversion risk: Providers to create for 61 Jobs, a
+representative build for 5 Jobs, and 6 redesign/native items.
