@@ -11,7 +11,7 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-Current version: `0.3.171-SNAPSHOT`.
+Current version: `0.3.174-SNAPSHOT`.
 
 ### Added
 
