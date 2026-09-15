@@ -103,6 +103,21 @@ public final class ReplacementSimulationService {
         ParameterDefinition target = plan.getTarget();
         String targetType = target == null ? "" : target.getClass().getSimpleName();
         if (target == null) {
+            String skeleton = plan.getTargetSkeleton();
+            if (skeleton != null && !skeleton.isBlank()) {
+                boolean providerSkeleton =
+                        skeleton.toLowerCase(java.util.Locale.ROOT).contains("provider");
+                return new ReplacementSimulationEntry(
+                        definition.getName(),
+                        definition.getClass().getName(),
+                        adapter.getSourcePluginId(),
+                        plan.getClassification().name(),
+                        providerSkeleton ? "Provider (skeleton)" : "Unified Form (skeleton)",
+                        providerSkeleton ? NEEDS_PROVIDER : NEEDS_MANUAL_CHECK,
+                        plan.getReason(),
+                        plan.getDecisions(),
+                        observe(job, definition.getName(), maxBuilds));
+            }
             return new ReplacementSimulationEntry(
                     definition.getName(),
                     definition.getClass().getName(),

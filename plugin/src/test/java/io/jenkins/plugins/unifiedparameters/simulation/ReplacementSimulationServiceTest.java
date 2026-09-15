@@ -53,7 +53,7 @@ class ReplacementSimulationServiceTest {
     }
 
     @Test
-    void aScriptSourceNeedsAManualRedesignAndKeepsItsRecordedContract(JenkinsRule jenkins) throws Exception {
+    void aScriptSourceNeedsAProviderAndKeepsItsRecordedContract(JenkinsRule jenkins) throws Exception {
         FreeStyleProject job = jenkins.createFreeStyleProject("simulated-script");
         ExtendedChoiceParameterDefinition source = new ExtendedChoiceParameterDefinition(
                 "DYNAMIC", ExtendedChoiceParameterDefinition.PARAMETER_TYPE_SINGLE_SELECT, "a,b", null, "return ['a']");
@@ -63,11 +63,26 @@ class ReplacementSimulationServiceTest {
         ReplacementSimulationEntry entry =
                 ReplacementSimulationService.simulate(job, 5).entries().get(0);
 
-        assertEquals(ReplacementSimulationService.MANUAL_REDESIGN, entry.verdict());
+        assertEquals(ReplacementSimulationService.NEEDS_PROVIDER, entry.verdict());
         assertEquals("C", entry.classification());
+        assertEquals("Provider (skeleton)", entry.targetType());
         assertTrue(entry.getDecisions().size() >= 1);
         assertEquals(1, entry.observationCount());
         assertEquals("a", entry.observations().get(0).sourceValue());
+    }
+
+    @Test
+    void aSourceWithoutATargetShapeNeedsAManualRedesign(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("simulated-unknown-type");
+        ExtendedChoiceParameterDefinition source =
+                new ExtendedChoiceParameterDefinition("UNKNOWN_TYPE", "PT_UNKNOWN_SHAPE", "a,b", null, null);
+        job.addProperty(new ParametersDefinitionProperty(source));
+
+        ReplacementSimulationEntry entry =
+                ReplacementSimulationService.simulate(job, 5).entries().get(0);
+
+        assertEquals(ReplacementSimulationService.MANUAL_REDESIGN, entry.verdict());
+        assertEquals("D", entry.classification());
     }
 
     @Test
