@@ -147,3 +147,15 @@ matching option set, 138 parameters `EQUIVALENT`, 3 `EQUIVALENT_WITH_HISTORY`,
 1 `UNVERIFIED`, and 6 `MANUAL_REDESIGN`. The Connection Profile inventory is
 four Profiles across two hosts and two credential references for 43 Jobs, and the
 per-Job manifest carries each parameter's target snippet and value contract.
+
+September 16, 2026 on `0.3.191-SNAPSHOT`: the Connection Profiles and Providers
+the wave needs are prepared and verified. 10 Profiles (one per repository plus
+two REST endpoints) and 27 Providers were created in the plugin configuration;
+26 of them resolved and satisfied the recorded contract, and every uncovered Git
+value is provably absent from its repository (deleted refs). One REST endpoint
+answers 401 and needs a credential. The same round fixed the Active Choices
+script-body read, which moved 8 parameters to `EQUIVALENT`, and decided 27 of the
+28 stale defaults by evidence. Simulation totals: 146 `EQUIVALENT`, 3
+`EQUIVALENT_WITH_HISTORY`, 3 `EQUIVALENT_DEFAULT_ONLY`, 27 `DECIDED_NO_DEFAULT`,
+90 `NEEDS_PROVIDER`, 1 `NEEDS_DEFAULT_DECISION`, 1 `UNVERIFIED`,
+6 `MANUAL_REDESIGN`, and 0 `MISMATCH`.
