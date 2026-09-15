@@ -36,6 +36,10 @@ Current version: `0.3.174-SNAPSHOT`.
   target, replays the values production builds recorded, and compares the
   canonical value and environment export, so a lossless replacement can be
   proven for every Job before the wave starts.
+- `environmentExportOrder` (`canonical`, the default, or `submitted`) for
+  multiple-choice parameters. The canonical value stays the sorted set; the
+  setting decides how it is written into the environment variable, so a migrated
+  Job whose source control exported the submitted order keeps the same string.
 - Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
   including adapter reasons, decisions, fact labels, and verification cases.
 - `MigrationMessageCoverageTest`, which fails the build when a referenced

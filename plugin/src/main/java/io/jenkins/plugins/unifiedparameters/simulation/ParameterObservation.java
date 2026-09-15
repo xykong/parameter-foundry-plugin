@@ -13,6 +13,7 @@ public record ParameterObservation(
         String targetEnvironment,
         boolean representable,
         boolean environmentMatches,
+        boolean orderOnlyDifference,
         String note) {
 
     public int getBuildNumber() {
@@ -41,6 +42,10 @@ public record ParameterObservation(
 
     public boolean isEnvironmentMatches() {
         return environmentMatches;
+    }
+
+    public boolean isOrderOnlyDifference() {
+        return orderOnlyDifference;
     }
 
     public String getNote() {

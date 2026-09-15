@@ -1,0 +1,15 @@
+<div>
+  Order used for the environment variable of a multiple-choice parameter. The canonical value is
+  always the sorted, unordered set; this setting only decides how the set is written into the
+  environment.
+  <dl>
+    <dt>Canonical (sorted) order</dt>
+    <dd>The default. The environment variable lists the values in machine order, which keeps builds
+      reproducible and comparable.</dd>
+    <dt>Submitted order</dt>
+    <dd>Keeps the order the caller submitted. Use it when a migrated Job's downstream scripts depend
+      on the exact string the source control exported.</dd>
+  </dl>
+  A missing value is treated as <code>canonical</code>, so definitions and build records created
+  before this setting existed keep their behavior.
+</div>

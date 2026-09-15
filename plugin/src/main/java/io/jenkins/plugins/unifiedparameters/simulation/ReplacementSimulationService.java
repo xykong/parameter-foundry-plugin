@@ -17,10 +17,10 @@ import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Read-only replacement simulation for one Job: for every source parameter the service builds the
@@ -51,6 +51,9 @@ public final class ReplacementSimulationService {
 
     /** The source cannot be converted automatically and needs a redesign before migration. */
     public static final String MANUAL_REDESIGN = "MANUAL_REDESIGN";
+
+    /** The environment export differs only by the order of the same values. */
+    public static final String NEEDS_ORDER_DECISION = "NEEDS_ORDER_DECISION";
 
     /** The Job never recorded a value for the parameter, so behavior could not be compared. */
     public static final String UNVERIFIED = "UNVERIFIED";
@@ -158,6 +161,7 @@ public final class ReplacementSimulationService {
                     null,
                     true,
                     false,
+                    false,
                     null));
         }
         return List.copyOf(observations);
@@ -182,6 +186,11 @@ public final class ReplacementSimulationService {
             String targetEnvironment =
                     representable ? MigrationEvidenceService.environmentOf(targetValue, run, choice.getName()) : null;
             boolean environmentMatches = representable && Objects.equals(sourceEnvironment, targetEnvironment);
+            boolean orderOnly = !environmentMatches
+                    && representable
+                    && sourceEnvironment != null
+                    && targetEnvironment != null
+                    && sameValues(choice, sourceEnvironment, targetEnvironment);
             observations.add(new ParameterObservation(
                     run.getNumber(),
                     sourceValue,
@@ -190,6 +199,7 @@ public final class ReplacementSimulationService {
                     targetEnvironment,
                     representable,
                     environmentMatches,
+                    orderOnly,
                     note(
                             choice,
                             sourceValue,
@@ -207,10 +217,13 @@ public final class ReplacementSimulationService {
         }
         boolean mismatch = false;
         boolean added = false;
+        boolean orderOnly = false;
         for (ParameterObservation observation : observations) {
             if (!observation.representable() || !observation.environmentMatches()) {
                 if (observation.representable() && observation.sourceEnvironment() == null) {
                     added = true;
+                } else if (observation.orderOnlyDifference()) {
+                    orderOnly = true;
                 } else {
                     mismatch = true;
                 }
@@ -218,6 +231,9 @@ public final class ReplacementSimulationService {
         }
         if (mismatch) {
             return MISMATCH;
+        }
+        if (orderOnly) {
+            return NEEDS_ORDER_DECISION;
         }
         return added ? EQUIVALENT_ADDED_ENV : EQUIVALENT;
     }
@@ -273,7 +289,7 @@ public final class ReplacementSimulationService {
         if (!choice.isMultiple()) {
             return List.of(sourceValue);
         }
-        Set<String> parts = new TreeSet<>();
+        Set<String> parts = new LinkedHashSet<>();
         for (String part : sourceValue.split(",", -1)) {
             if (!part.isBlank()) {
                 parts.add(part.trim());
@@ -282,11 +298,31 @@ public final class ReplacementSimulationService {
         return List.copyOf(parts);
     }
 
+    /** True when both exports carry the same values in a different order. */
+    private static boolean sameValues(
+            UnifiedChoiceParameterDefinition choice, String sourceEnvironment, String targetEnvironment) {
+        if (!choice.isMultiple()) {
+            return false;
+        }
+        List<String> source = new ArrayList<>(parts(choice, sourceEnvironment));
+        List<String> target = new ArrayList<>(parts(choice, targetEnvironment));
+        source.sort(String::compareTo);
+        target.sort(String::compareTo);
+        return source.equals(target);
+    }
+
     private static UnifiedChoiceParameterValue targetValue(
             UnifiedChoiceParameterDefinition choice, List<String> parts) {
         if (choice.isMultiple()) {
             return UnifiedChoiceParameterValue.multiple(
-                    choice.getName(), parts, null, choice.getEnvironmentExport(), choice.getDelimiter(), null);
+                    choice.getName(),
+                    parts,
+                    parts,
+                    null,
+                    choice.getEnvironmentExport(),
+                    choice.getDelimiter(),
+                    choice.getEnvironmentExportOrder(),
+                    null);
         }
         String value = parts.isEmpty() ? null : parts.get(0);
         return UnifiedChoiceParameterValue.single(choice.getName(), value, null, choice.getEnvironmentExport(), null);

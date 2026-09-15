@@ -98,6 +98,12 @@
       <f:entry title="Delimiter" field="delimiter">
         <f:textbox name="parameter.delimiter" value="${instance.delimiter}" />
       </f:entry>
+      <f:entry title="Environment export order" field="environmentExportOrder">
+        <select class="jenkins-select__input" name="parameter.environmentExportOrder">
+          <option value="canonical" selected="${instance.environmentExportOrder == 'canonical' ? 'selected' : null}">Canonical (sorted) order</option>
+          <option value="submitted" selected="${instance.environmentExportOrder == 'submitted' ? 'selected' : null}">Submitted order</option>
+        </select>
+      </f:entry>
     </j:when>
     <j:otherwise>
       <f:entry title="Renderer" field="renderer">

@@ -83,19 +83,41 @@ class ReplacementSimulationServiceTest {
     }
 
     @Test
+    void aMultiSelectionKeepsTheSubmittedOrderInItsEnvironmentExport(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("simulated-multi-order");
+        ExtendedChoiceParameterDefinition source = new ExtendedChoiceParameterDefinition(
+                "TARGETS", ExtendedChoiceParameterDefinition.PARAMETER_TYPE_CHECK_BOX, "android,web", "android", null);
+        job.addProperty(new ParametersDefinitionProperty(source));
+        run(job, "TARGETS", "web,android");
+
+        ReplacementSimulationEntry entry =
+                ReplacementSimulationService.simulate(job, 5).entries().get(0);
+
+        assertEquals(
+                ReplacementSimulationService.EQUIVALENT,
+                entry.verdict(),
+                entry.observations().toString());
+        ParameterObservation observation = entry.observations().get(0);
+        assertTrue(observation.representable());
+        assertEquals("web,android", observation.sourceEnvironment());
+        assertEquals("web,android", observation.targetEnvironment());
+        assertEquals("android,web", observation.targetValue());
+    }
+
+    @Test
     void verdictsSeparateMismatchesFromAnAddedEnvironmentExport() {
         assertEquals(
                 ReplacementSimulationService.EQUIVALENT,
                 ReplacementSimulationService.verdictOf(
-                        List.of(new ParameterObservation(1, "a", "a", "a", "a", true, true, null))));
+                        List.of(new ParameterObservation(1, "a", "a", "a", "a", true, true, false, null))));
         assertEquals(
                 ReplacementSimulationService.EQUIVALENT_ADDED_ENV,
                 ReplacementSimulationService.verdictOf(
-                        List.of(new ParameterObservation(1, "a", null, "a", "a", true, false, "added"))));
+                        List.of(new ParameterObservation(1, "a", null, "a", "a", true, false, false, "added"))));
         assertEquals(
                 ReplacementSimulationService.MISMATCH,
-                ReplacementSimulationService.verdictOf(
-                        List.of(new ParameterObservation(1, "a", "a", null, null, false, false, "not representable"))));
+                ReplacementSimulationService.verdictOf(List.of(
+                        new ParameterObservation(1, "a", "a", null, null, false, false, false, "not representable"))));
         assertEquals(ReplacementSimulationService.UNVERIFIED, ReplacementSimulationService.verdictOf(List.of()));
     }
 

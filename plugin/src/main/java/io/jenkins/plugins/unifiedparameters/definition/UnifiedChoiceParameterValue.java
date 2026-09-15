@@ -30,15 +30,17 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
     private final List<String> values;
     private final String exportMode;
     private final String delimiter;
+    private final List<String> submittedValues;
+    private final String exportOrder;
     private final ProviderSnapshotMetadata providerSnapshot;
 
     @DataBoundConstructor
     public UnifiedChoiceParameterValue(String name, Object value) {
-        this(name, modeFor(value), value, null, null, null, null);
+        this(name, modeFor(value), value, null, null, null, null, null, null);
     }
 
     public UnifiedChoiceParameterValue(String name, String value, String description, String exportMode) {
-        this(name, "single", value, description, exportMode, null, null);
+        this(name, "single", value, description, exportMode, null, null, null, null);
     }
 
     public static UnifiedChoiceParameterValue single(
@@ -47,7 +49,8 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
             String description,
             String exportMode,
             ProviderSnapshotMetadata providerSnapshot) {
-        return new UnifiedChoiceParameterValue(name, "single", value, description, exportMode, null, providerSnapshot);
+        return new UnifiedChoiceParameterValue(
+                name, "single", value, description, exportMode, null, providerSnapshot, null, null);
     }
 
     public static UnifiedChoiceParameterValue multiple(
@@ -57,8 +60,33 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
             String exportMode,
             String delimiter,
             ProviderSnapshotMetadata providerSnapshot) {
+        return multiple(name, values, values, description, exportMode, delimiter, "canonical", providerSnapshot);
+    }
+
+    /**
+     * Canonical value plus the order the caller submitted. The canonical value stays the sorted set;
+     * the submitted order is only used when the definition exports the environment variable in the
+     * order the source control used.
+     */
+    public static UnifiedChoiceParameterValue multiple(
+            String name,
+            List<String> values,
+            List<String> submittedValues,
+            String description,
+            String exportMode,
+            String delimiter,
+            String exportOrder,
+            ProviderSnapshotMetadata providerSnapshot) {
         return new UnifiedChoiceParameterValue(
-                name, "multiple", values, description, exportMode, delimiter, providerSnapshot);
+                name,
+                "multiple",
+                values,
+                description,
+                exportMode,
+                delimiter,
+                providerSnapshot,
+                submittedValues,
+                exportOrder);
     }
 
     private UnifiedChoiceParameterValue(
@@ -68,7 +96,9 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
             String description,
             String exportMode,
             String delimiter,
-            ProviderSnapshotMetadata providerSnapshot) {
+            ProviderSnapshotMetadata providerSnapshot,
+            List<String> submittedValues,
+            String exportOrder) {
         super(name, description);
         boolean multiple = "multiple".equals(selectionMode);
         this.selectionMode = multiple ? "multiple" : "single";
@@ -77,6 +107,21 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
         this.exportMode = exportMode == null ? (multiple ? "delimited" : "string") : exportMode;
         this.delimiter = delimiter == null || delimiter.isEmpty() ? "," : delimiter;
         this.providerSnapshot = providerSnapshot;
+        this.submittedValues = multiple ? ordered(submittedValues) : null;
+        this.exportOrder = exportOrder == null || exportOrder.isBlank() ? "canonical" : exportOrder;
+    }
+
+    private static List<String> ordered(List<String> values) {
+        if (values == null) {
+            return List.of();
+        }
+        List<String> collected = new ArrayList<>();
+        for (String value : values) {
+            if (value != null) {
+                collected.add(value);
+            }
+        }
+        return List.copyOf(collected);
     }
 
     private static String modeFor(Object value) {
@@ -146,6 +191,21 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
         return delimiter == null || delimiter.isEmpty() ? "," : delimiter;
     }
 
+    /** Order the caller submitted, which the environment export can preserve for migrated Jobs. */
+    public List<String> getSubmittedValues() {
+        if (!isMultiple()) {
+            return getValues();
+        }
+        if (submittedValues == null || submittedValues.size() != getValues().size()) {
+            return getValues();
+        }
+        return submittedValues;
+    }
+
+    public String getExportOrder() {
+        return exportOrder == null || exportOrder.isBlank() ? "canonical" : exportOrder;
+    }
+
     @Exported
     public ProviderSnapshotMetadata getProviderSnapshot() {
         return providerSnapshot;
@@ -163,11 +223,12 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
             }
             return;
         }
+        List<String> exported = "submitted".equals(getExportOrder()) ? getSubmittedValues() : getValues();
         if ("json".equals(mode)) {
-            environment.put(getName(), JSONArray.fromObject(getValues()).toString());
+            environment.put(getName(), JSONArray.fromObject(exported).toString());
             return;
         }
-        environment.put(getName(), String.join(getDelimiter(), getValues()));
+        environment.put(getName(), String.join(getDelimiter(), exported));
     }
 
     @Override

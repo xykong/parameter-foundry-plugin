@@ -23,7 +23,9 @@ import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationServi
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -39,6 +41,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     private String selectionMode = "single";
     private String defaultValue;
+    private String environmentExportOrder = "canonical";
     private boolean allowCustomValue;
     private String customValuePattern;
     private int customValueMaxLength = 256;
@@ -55,6 +58,25 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     @DataBoundSetter
     public void setSelectionMode(String selectionMode) {
         this.selectionMode = selectionMode;
+    }
+
+    /**
+     * {@code canonical} exports the sorted canonical set (the default). {@code submitted} exports
+     * the values in the order the caller submitted them, which keeps the environment variable of a
+     * migrated Job byte-identical to the source control.
+     */
+    public String getEnvironmentExportOrder() {
+        return environmentExportOrder == null || environmentExportOrder.isBlank()
+                ? "canonical"
+                : environmentExportOrder;
+    }
+
+    @DataBoundSetter
+    public void setEnvironmentExportOrder(String environmentExportOrder) {
+        if (!java.util.Set.of("canonical", "submitted").contains(environmentExportOrder)) {
+            throw new IllegalArgumentException("Environment export order must be canonical or submitted.");
+        }
+        this.environmentExportOrder = environmentExportOrder;
     }
 
     public String getDefaultValue() {
@@ -119,10 +141,9 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         try {
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null);
             if (isMultiple()) {
-                return toMultiValue(
-                        ParameterEvaluationService.evaluateMultiple(
-                                this, InputDecoders.fromStandardRequest(this, request), resolved.options()),
-                        resolved.metadata());
+                DecodedInput input = InputDecoders.fromStandardRequest(this, request);
+                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
@@ -138,10 +159,9 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         try {
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted);
             if (isMultiple()) {
-                return toMultiValue(
-                        ParameterEvaluationService.evaluateMultiple(
-                                this, InputDecoders.fromSubmittedJson(this, submitted), resolved.options()),
-                        resolved.metadata());
+                DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
+                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
@@ -160,10 +180,9 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
                             ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
                     : new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
             if (isMultiple()) {
-                return toMultiValue(
-                        ParameterEvaluationService.evaluateMultiple(
-                                this, InputDecoders.fromCli(this, value), resolved.options()),
-                        resolved.metadata());
+                DecodedInput input = InputDecoders.fromCli(this, value);
+                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
                     ParameterEvaluationService.evaluateSingle(
@@ -350,8 +369,35 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     }
 
     private UnifiedChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
+        return toMultiValue(values, values, metadata);
+    }
+
+    private UnifiedChoiceParameterValue toMultiValue(
+            List<String> values, List<String> submittedOrder, ProviderSnapshotMetadata metadata) {
         return UnifiedChoiceParameterValue.multiple(
-                getName(), values, getDescription(), getEnvironmentExport(), getDelimiter(), metadata);
+                getName(),
+                values,
+                submittedOrder,
+                getDescription(),
+                getEnvironmentExport(),
+                getDelimiter(),
+                getEnvironmentExportOrder(),
+                metadata);
+    }
+
+    /** Keeps the submitted order for the values the canonical evaluation accepted. */
+    private static List<String> submittedOrder(List<String> canonical, List<String> submitted) {
+        if (submitted == null || submitted.isEmpty() || submitted.size() == canonical.size()) {
+            return submitted == null || submitted.isEmpty() ? canonical : submitted;
+        }
+        Set<String> remaining = new HashSet<>(canonical);
+        List<String> ordered = new ArrayList<>();
+        for (String value : submitted) {
+            if (value != null && remaining.remove(value)) {
+                ordered.add(value);
+            }
+        }
+        return ordered.size() == canonical.size() ? List.copyOf(ordered) : canonical;
     }
 
     @Extension

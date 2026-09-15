@@ -85,6 +85,13 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             target.setDefaultValues(supportedDefaults);
             target.setDelimiter(delimiter);
             target.setStandardApiInputMode("delimited");
+            // The source control exported the submitted order, so the migrated Job keeps it while
+            // the canonical value stays the sorted set.
+            target.setEnvironmentExportOrder("submitted");
+            java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+            facts.put(
+                    MigrationText.of("MigrationFactTargetExportOrder"),
+                    MigrationText.of("MigrationValueExportOrderSubmitted"));
             List<MigrationText> decisions = new ArrayList<>();
             decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceOrder"));
             if (defaults.isEmpty()) {
@@ -100,7 +107,10 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                     MigrationClassification.B,
                     MigrationText.of("MigrationReasonExtendedChoiceMulti"),
                     target,
-                    decisions);
+                    decisions,
+                    null,
+                    null,
+                    facts);
         }
 
         UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition(definition.getName());

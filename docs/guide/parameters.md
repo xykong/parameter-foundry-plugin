@@ -46,6 +46,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `customValuePattern` | regex | empty | Full-match rule for custom values |
 | `customValueMaxLength` | 1–4096 | `256` | Length bound for custom values |
 | `environmentExport` | `string`, `delimited`, `json`, `none` | `string` / `delimited` | Environment variable format |
+| `environmentExportOrder` | `canonical`, `submitted` | `canonical` | Multiple selection: order used for the environment export. `canonical` writes the sorted set, `submitted` keeps the caller's order so a migrated Job exports the same string as its source control. The canonical value itself is always the sorted set |
 | `table` | matrix | empty | Rows, columns, cells; cells are selectable values |
 
 ### Renderers
@@ -103,6 +104,10 @@ silently empty.
 | `delimited` | not applicable | values joined by `delimiter` |
 | `json` | not applicable | JSON array |
 | `none` | nothing exported | nothing exported |
+
+`environmentExportOrder` only changes the string written to the environment; the canonical value
+stays the unordered, sorted set. Migrations from a control that exported the submitted order set it
+to `submitted`, and a value without the field behaves as `canonical`.
 
 ### Input decoding
 

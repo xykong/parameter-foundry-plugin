@@ -74,6 +74,9 @@ public final class DefinitionValidationService {
             } else {
                 validateSingle(choice, errors);
             }
+            if (!Set.of("canonical", "submitted").contains(choice.getEnvironmentExportOrder())) {
+                errors.add("Unsupported environment export order: " + choice.getEnvironmentExportOrder());
+            }
         }
         return new DefinitionValidationResult(errors, warnings);
     }

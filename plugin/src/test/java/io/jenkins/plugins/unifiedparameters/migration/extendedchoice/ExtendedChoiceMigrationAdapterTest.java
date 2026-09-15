@@ -47,6 +47,8 @@ class ExtendedChoiceMigrationAdapterTest {
         assertEquals("checkbox", target.getRenderer());
         assertEquals("delimited", target.getStandardApiInputMode());
         assertEquals(List.of("web", "android"), target.getDefaultValues());
+        assertEquals("submitted", target.getEnvironmentExportOrder());
+        assertEquals("submitted source order", plan.getFacts().get("Target export order"));
         assertEquals(1, plan.getDecisions().size());
     }
 
