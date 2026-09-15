@@ -14,6 +14,7 @@ public record ParameterObservation(
         boolean representable,
         boolean environmentMatches,
         boolean orderOnlyDifference,
+        boolean historicalValue,
         String note) {
 
     public int getBuildNumber() {
@@ -46,6 +47,11 @@ public record ParameterObservation(
 
     public boolean isOrderOnlyDifference() {
         return orderOnlyDifference;
+    }
+
+    /** The recorded value is not offered by the source control either, so it is history, not a loss. */
+    public boolean isHistoricalValue() {
+        return historicalValue;
     }
 
     public String getNote() {

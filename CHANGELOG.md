@@ -40,6 +40,9 @@ Current version: `0.3.178-SNAPSHOT`.
   multiple-choice parameters. The canonical value stays the sorted set; the
   setting decides how it is written into the environment variable, so a migrated
   Job whose source control exported the submitted order keeps the same string.
+- The replacement simulation separates a dropped option from build history:
+  `EQUIVALENT_WITH_HISTORY` marks parameters whose older builds used values the
+  source control no longer offers either, so only a real loss stays `MISMATCH`.
 - Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
   including adapter reasons, decisions, fact labels, and verification cases.
 - `MigrationMessageCoverageTest`, which fails the build when a referenced

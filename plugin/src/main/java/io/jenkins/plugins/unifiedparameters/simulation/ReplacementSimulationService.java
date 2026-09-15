@@ -55,6 +55,9 @@ public final class ReplacementSimulationService {
     /** The environment export differs only by the order of the same values. */
     public static final String NEEDS_ORDER_DECISION = "NEEDS_ORDER_DECISION";
 
+    /** The current behavior is equivalent; older builds used values the source no longer offers. */
+    public static final String EQUIVALENT_WITH_HISTORY = "EQUIVALENT_WITH_HISTORY";
+
     /** The Job never recorded a value for the parameter, so behavior could not be compared. */
     public static final String UNVERIFIED = "UNVERIFIED";
 
@@ -130,7 +133,8 @@ public final class ReplacementSimulationService {
                     observe(job, definition.getName(), maxBuilds));
         }
         if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isProviderBacked()) {
-            List<ParameterObservation> observations = compareChoice(job, choice, maxBuilds);
+            List<ParameterObservation> observations =
+                    compareChoice(job, choice, adapter.currentSourceValues(definition), maxBuilds);
             return new ReplacementSimulationEntry(
                     definition.getName(),
                     definition.getClass().getName(),
@@ -177,13 +181,14 @@ public final class ReplacementSimulationService {
                     true,
                     false,
                     false,
+                    false,
                     null));
         }
         return List.copyOf(observations);
     }
 
     private static List<ParameterObservation> compareChoice(
-            Job<?, ?> job, UnifiedChoiceParameterDefinition choice, int maxBuilds) {
+            Job<?, ?> job, UnifiedChoiceParameterDefinition choice, List<String> sourceValues, int maxBuilds) {
         List<ParameterObservation> observations = new ArrayList<>();
         for (Run<?, ?> run : job.getBuilds()) {
             if (observations.size() >= maxBuilds) {
@@ -197,6 +202,8 @@ public final class ReplacementSimulationService {
             String sourceEnvironment = MigrationEvidenceService.environmentOf(value, run, choice.getName());
             List<String> parts = parts(choice, sourceValue);
             boolean representable = parts.stream().allMatch(part -> represents(choice, part));
+            boolean historical =
+                    !representable && !sourceValues.isEmpty() && parts.stream().noneMatch(sourceValues::contains);
             UnifiedChoiceParameterValue targetValue = targetValue(choice, parts);
             String targetEnvironment =
                     representable ? MigrationEvidenceService.environmentOf(targetValue, run, choice.getName()) : null;
@@ -215,13 +222,15 @@ public final class ReplacementSimulationService {
                     representable,
                     environmentMatches,
                     orderOnly,
+                    historical,
                     note(
                             choice,
                             sourceValue,
                             sourceEnvironment,
                             targetEnvironment,
                             representable,
-                            environmentMatches)));
+                            environmentMatches,
+                            historical)));
         }
         return List.copyOf(observations);
     }
@@ -233,12 +242,15 @@ public final class ReplacementSimulationService {
         boolean mismatch = false;
         boolean added = false;
         boolean orderOnly = false;
+        boolean historical = false;
         for (ParameterObservation observation : observations) {
             if (!observation.representable() || !observation.environmentMatches()) {
                 if (observation.representable() && observation.sourceEnvironment() == null) {
                     added = true;
                 } else if (observation.orderOnlyDifference()) {
                     orderOnly = true;
+                } else if (observation.historicalValue()) {
+                    historical = true;
                 } else {
                     mismatch = true;
                 }
@@ -250,6 +262,9 @@ public final class ReplacementSimulationService {
         if (orderOnly) {
             return NEEDS_ORDER_DECISION;
         }
+        if (historical) {
+            return EQUIVALENT_WITH_HISTORY;
+        }
         return added ? EQUIVALENT_ADDED_ENV : EQUIVALENT;
     }
 
@@ -259,8 +274,13 @@ public final class ReplacementSimulationService {
             String sourceEnvironment,
             String targetEnvironment,
             boolean representable,
-            boolean environmentMatches) {
+            boolean environmentMatches,
+            boolean historical) {
         if (!representable) {
+            if (historical) {
+                return "Recorded value '" + sourceValue
+                        + "' is no longer offered by the source control either; the current behavior is unchanged.";
+            }
             return "Recorded value '" + sourceValue + "' is not among the migrated options.";
         }
         if (sourceEnvironment == null && targetEnvironment != null) {

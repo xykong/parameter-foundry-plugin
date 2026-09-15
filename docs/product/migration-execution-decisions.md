@@ -19,6 +19,12 @@ task, not silently skipped.
 2. Every parameter of those Jobs is in one of these states:
    - `EQUIVALENT` or `EQUIVALENT_ADDED_ENV`: the replacement reproduces the
      recorded value and the environment export.
+   - `EQUIVALENT_WITH_HISTORY`: the current behavior is reproduced; older builds
+     used values the source control no longer offers either.
+   - `NEEDS_ORDER_DECISION`: the environment export carries the same values in a
+     different order. The Extended Choice migration sets
+     `environmentExportOrder: submitted`, which removes this state for that
+     family; the verdict stays as a safety net for other families.
    - `NEEDS_PROVIDER`: the target is a governed Provider; the recorded values
      become the Provider's required value contract before it is enabled.
    - `MANUAL_REDESIGN`: the source cannot be converted automatically; the Job

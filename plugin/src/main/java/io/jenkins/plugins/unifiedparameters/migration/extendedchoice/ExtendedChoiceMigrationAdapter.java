@@ -136,6 +136,16 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                 decisions);
     }
 
+    /** The static option list of a single/multi select or checkbox source, without executing code. */
+    @Override
+    public List<String> currentSourceValues(ParameterDefinition definition) {
+        if (!supports(definition) || hasUnsafeOrDynamicConfiguration(definition, readString(definition, "getType"))) {
+            return List.of();
+        }
+        String delimiter = Util.fixEmptyAndTrim(readString(definition, "getMultiSelectDelimiter"));
+        return parseValues(readString(definition, "getValue"), delimiter == null ? "," : delimiter);
+    }
+
     private static void copyCommon(
             ParameterDefinition source,
             io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition target,

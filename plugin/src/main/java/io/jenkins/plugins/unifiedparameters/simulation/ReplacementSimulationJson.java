@@ -56,6 +56,7 @@ public final class ReplacementSimulationJson {
         encoded.put("representable", observation.representable());
         encoded.put("environmentMatches", observation.environmentMatches());
         encoded.put("orderOnlyDifference", observation.orderOnlyDifference());
+        encoded.put("historicalValue", observation.historicalValue());
         encoded.put("note", observation.note());
         return encoded;
     }

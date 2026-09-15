@@ -13,6 +13,16 @@ public abstract class SourceMigrationAdapter implements ExtensionPoint {
 
     public abstract MigrationPlan inspect(ParameterDefinition definition);
 
+    /**
+     * Values the source control offers today, when the adapter can read them without executing
+     * source code. An empty list means "unknown", not "no values". The replacement simulation uses
+     * it to tell a dropped option apart from a build record that the source itself can no longer
+     * produce.
+     */
+    public java.util.List<String> currentSourceValues(ParameterDefinition definition) {
+        return java.util.List.of();
+    }
+
     public boolean isEnabled() {
         return UnifiedParametersGlobalConfiguration.migrationAdaptersFeatureEnabled();
     }
