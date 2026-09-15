@@ -146,6 +146,12 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         return parseValues(readString(definition, "getValue"), delimiter == null ? "," : delimiter);
     }
 
+    /** The source default, which must stay selectable after the migration. */
+    @Override
+    public String currentSourceDefault(ParameterDefinition definition) {
+        return supports(definition) ? Util.fixEmptyAndTrim(readString(definition, "getDefaultValue")) : "";
+    }
+
     private static void copyCommon(
             ParameterDefinition source,
             io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition target,

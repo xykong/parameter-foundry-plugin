@@ -38,6 +38,11 @@ public final class ReplacementSimulationJson {
         encoded.put("verdict", entry.verdict());
         encoded.put("reason", entry.reason());
         encoded.put("decisions", JSONArray.fromObject(entry.decisions()));
+        encoded.put("targetSnippet", entry.targetSnippet());
+        encoded.put("requiredValues", JSONArray.fromObject(entry.requiredValues()));
+        encoded.put("optionSetComparison", entry.optionSetComparison());
+        encoded.put("defaultCheck", entry.defaultCheck());
+        encoded.put("sourceDefault", entry.sourceDefault());
         JSONArray observations = new JSONArray();
         for (ParameterObservation observation : entry.observations()) {
             observations.add(encodeObservation(observation));

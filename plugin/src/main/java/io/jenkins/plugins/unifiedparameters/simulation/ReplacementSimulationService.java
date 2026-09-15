@@ -14,6 +14,7 @@ import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidenceService;
 import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.unifiedparameters.migration.MigrationSnippets;
 import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.ArrayList;
@@ -58,6 +59,19 @@ public final class ReplacementSimulationService {
     /** The current behavior is equivalent; older builds used values the source no longer offers. */
     public static final String EQUIVALENT_WITH_HISTORY = "EQUIVALENT_WITH_HISTORY";
 
+    /** The migrated option list differs from the source's current option list. */
+    public static final String OPTION_SET_MISMATCH = "OPTION_SET_MISMATCH";
+
+    /** No build history, but the source default is still selectable in the target. */
+    public static final String EQUIVALENT_DEFAULT_ONLY = "EQUIVALENT_DEFAULT_ONLY";
+
+    /** Tri-state result of a definition-level comparison. */
+    public static final String COMPARISON_MATCH = "MATCH";
+
+    public static final String COMPARISON_MISMATCH = "MISMATCH";
+
+    public static final String COMPARISON_UNKNOWN = "UNKNOWN";
+
     /** The Job never recorded a value for the parameter, so behavior could not be compared. */
     public static final String UNVERIFIED = "UNVERIFIED";
 
@@ -92,17 +106,24 @@ public final class ReplacementSimulationService {
         try {
             plan = adapter.inspect(definition);
         } catch (RuntimeException exception) {
-            return new ReplacementSimulationEntry(
-                    definition.getName(),
-                    definition.getClass().getName(),
-                    adapter.getSourcePluginId(),
+            return entry(
+                    definition,
+                    adapter,
                     MigrationClassification.D.name(),
                     "",
                     BLOCKED,
                     "The source adapter could not inspect the definition.",
                     List.of(),
-                    List.of());
+                    List.of(),
+                    "",
+                    List.of(),
+                    null,
+                    null,
+                    "");
         }
+        List<ParameterObservation> recorded = observe(job, definition.getName(), maxBuilds);
+        List<String> sourceValues = adapter.currentSourceValues(definition);
+        String sourceDefault = adapter.currentSourceDefault(definition);
         ParameterDefinition target = plan.getTarget();
         String targetType = target == null ? "" : target.getClass().getSimpleName();
         if (target == null) {
@@ -110,55 +131,162 @@ public final class ReplacementSimulationService {
             if (skeleton != null && !skeleton.isBlank()) {
                 boolean providerSkeleton =
                         skeleton.toLowerCase(java.util.Locale.ROOT).contains("provider");
-                return new ReplacementSimulationEntry(
-                        definition.getName(),
-                        definition.getClass().getName(),
-                        adapter.getSourcePluginId(),
+                return entry(
+                        definition,
+                        adapter,
                         plan.getClassification().name(),
                         providerSkeleton ? "Provider (skeleton)" : "Unified Form (skeleton)",
                         providerSkeleton ? NEEDS_PROVIDER : NEEDS_MANUAL_CHECK,
                         plan.getReason(),
                         plan.getDecisions(),
-                        observe(job, definition.getName(), maxBuilds));
+                        recorded,
+                        skeleton,
+                        requiredValues(null, recorded, sourceValues),
+                        null,
+                        null,
+                        sourceDefault);
             }
-            return new ReplacementSimulationEntry(
-                    definition.getName(),
-                    definition.getClass().getName(),
-                    adapter.getSourcePluginId(),
+            return entry(
+                    definition,
+                    adapter,
                     plan.getClassification().name(),
                     targetType,
                     MANUAL_REDESIGN,
                     plan.getReason(),
                     plan.getDecisions(),
-                    observe(job, definition.getName(), maxBuilds));
+                    recorded,
+                    "",
+                    requiredValues(null, recorded, sourceValues),
+                    null,
+                    null,
+                    sourceDefault);
         }
         if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isProviderBacked()) {
-            List<ParameterObservation> observations =
-                    compareChoice(job, choice, adapter.currentSourceValues(definition), maxBuilds);
-            return new ReplacementSimulationEntry(
-                    definition.getName(),
-                    definition.getClass().getName(),
-                    adapter.getSourcePluginId(),
+            List<ParameterObservation> observations = compareChoice(job, choice, sourceValues, maxBuilds);
+            String optionSetComparison = optionSetComparison(choice, sourceValues);
+            String defaultCheck = defaultCheck(choice, sourceDefault);
+            String verdict = verdictFor(observations, optionSetComparison, defaultCheck);
+            return entry(
+                    definition,
+                    adapter,
                     plan.getClassification().name(),
                     targetType,
-                    verdictOf(observations),
+                    verdict,
                     plan.getReason(),
                     plan.getDecisions(),
-                    observations);
+                    observations,
+                    MigrationSnippets.forTarget(target),
+                    requiredValues(choice, observations, sourceValues),
+                    optionSetComparison,
+                    defaultCheck,
+                    sourceDefault);
         }
         String verdict = target instanceof AbstractUnifiedParameterDefinition unified && unified.isProviderBacked()
                 ? NEEDS_PROVIDER
                 : NEEDS_MANUAL_CHECK;
-        return new ReplacementSimulationEntry(
-                definition.getName(),
-                definition.getClass().getName(),
-                adapter.getSourcePluginId(),
+        return entry(
+                definition,
+                adapter,
                 plan.getClassification().name(),
                 targetType,
                 verdict,
                 plan.getReason(),
                 plan.getDecisions(),
-                observe(job, definition.getName(), maxBuilds));
+                recorded,
+                MigrationSnippets.forTarget(target),
+                requiredValues(null, recorded, sourceValues),
+                null,
+                null,
+                sourceDefault);
+    }
+
+    private static ReplacementSimulationEntry entry(
+            ParameterDefinition definition,
+            SourceMigrationAdapter adapter,
+            String classification,
+            String targetType,
+            String verdict,
+            String reason,
+            List<String> decisions,
+            List<ParameterObservation> observations,
+            String targetSnippet,
+            List<String> requiredValues,
+            String optionSetComparison,
+            String defaultCheck,
+            String sourceDefault) {
+        return new ReplacementSimulationEntry(
+                definition.getName(),
+                definition.getClass().getName(),
+                adapter.getSourcePluginId(),
+                classification,
+                targetType,
+                verdict,
+                reason,
+                decisions,
+                observations,
+                targetSnippet,
+                requiredValues,
+                optionSetComparison,
+                defaultCheck,
+                sourceDefault);
+    }
+
+    /** Values that must stay selectable: the target's options, or the recorded source values. */
+    private static List<String> requiredValues(
+            UnifiedChoiceParameterDefinition choice,
+            List<ParameterObservation> observations,
+            List<String> sourceValues) {
+        Set<String> values = new LinkedHashSet<>();
+        if (choice != null) {
+            for (Option option : choice.getChoices()) {
+                values.add(option.getValue());
+            }
+        }
+        if (values.isEmpty()) {
+            values.addAll(sourceValues);
+        }
+        if (values.isEmpty()) {
+            for (ParameterObservation observation : observations) {
+                if (observation.sourceValue() != null
+                        && !observation.sourceValue().isBlank()) {
+                    values.add(observation.sourceValue());
+                }
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    /** Compares the source's current option list with the migrated one, when both are readable. */
+    private static String optionSetComparison(UnifiedChoiceParameterDefinition choice, List<String> sourceValues) {
+        if (sourceValues.isEmpty()) {
+            return COMPARISON_UNKNOWN;
+        }
+        List<String> targetValues =
+                choice.getChoices().stream().map(Option::getValue).toList();
+        List<String> sortedSource = new ArrayList<>(sourceValues);
+        List<String> sortedTarget = new ArrayList<>(targetValues);
+        sortedSource.sort(String::compareTo);
+        sortedTarget.sort(String::compareTo);
+        return sortedSource.equals(sortedTarget) ? COMPARISON_MATCH : COMPARISON_MISMATCH;
+    }
+
+    /** Checks that the source default stays selectable, when the source declares one. */
+    private static String defaultCheck(UnifiedChoiceParameterDefinition choice, String sourceDefault) {
+        if (sourceDefault == null || sourceDefault.isBlank()) {
+            return COMPARISON_UNKNOWN;
+        }
+        return represents(choice, sourceDefault) ? COMPARISON_MATCH : COMPARISON_MISMATCH;
+    }
+
+    private static String verdictFor(
+            List<ParameterObservation> observations, String optionSetComparison, String defaultCheck) {
+        if (COMPARISON_MISMATCH.equals(optionSetComparison)) {
+            return OPTION_SET_MISMATCH;
+        }
+        if (observations.isEmpty()) {
+            return COMPARISON_MATCH.equals(defaultCheck) ? EQUIVALENT_DEFAULT_ONLY : UNVERIFIED;
+        }
+        return verdictOf(observations);
     }
 
     /** Values recorded by production builds, without a target to compare against. */

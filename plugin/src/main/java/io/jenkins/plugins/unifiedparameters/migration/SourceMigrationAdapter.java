@@ -23,6 +23,15 @@ public abstract class SourceMigrationAdapter implements ExtensionPoint {
         return java.util.List.of();
     }
 
+    /**
+     * Default value of the source control, when the adapter can read it without executing source
+     * code. An empty string means "unknown". The simulation uses it to verify the absent-input path
+     * of a parameter that has no recorded build yet.
+     */
+    public String currentSourceDefault(ParameterDefinition definition) {
+        return "";
+    }
+
     public boolean isEnabled() {
         return UnifiedParametersGlobalConfiguration.migrationAdaptersFeatureEnabled();
     }

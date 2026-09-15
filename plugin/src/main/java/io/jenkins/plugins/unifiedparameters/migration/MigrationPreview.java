@@ -3,12 +3,9 @@ package io.jenkins.plugins.unifiedparameters.migration;
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.Messages;
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public final class MigrationPreview {
 
@@ -69,7 +66,7 @@ public final class MigrationPreview {
                 target == null && plan.getTargetSkeleton() != null
                         ? Messages.MigrationPreviewSkeletonSummary()
                         : summarize(target),
-                plan.getTargetSkeleton() == null ? snippet(target) : plan.getTargetSkeleton(),
+                plan.getTargetSkeleton() == null ? MigrationSnippets.forTarget(target) : plan.getTargetSkeleton(),
                 plan.getVerificationFixture() == null ? verificationCases() : List.of(plan.getVerificationFixture()),
                 target != null,
                 plan.getFacts());
@@ -149,72 +146,5 @@ public final class MigrationPreview {
                 Messages.MigrationCaseDefault2(),
                 Messages.MigrationCaseDefault3(),
                 Messages.MigrationCaseDefault4());
-    }
-
-    private static String snippet(ParameterDefinition target) {
-        if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isMultiple()) {
-            return "unifiedChoice(\n"
-                    + "  name: "
-                    + quote(choice.getName())
-                    + ",\n"
-                    + "  choices: "
-                    + choices(choice.getChoices())
-                    + ",\n"
-                    + "  renderer: "
-                    + quote(choice.getRenderer())
-                    + ",\n"
-                    + "  defaultMode: "
-                    + quote(choice.getDefaultMode())
-                    + ("explicit".equals(choice.getDefaultMode())
-                            ? ",\n  defaultValue: " + quote(choice.getDefaultValue())
-                            : "")
-                    + "\n)";
-        }
-        if (target instanceof AbstractUnifiedParameterDefinition multiple && multiple.isMultiple()) {
-            return "unifiedChoice(\n"
-                    + "  name: "
-                    + quote(multiple.getName())
-                    + ",\n"
-                    + "  selectionMode: 'multiple',\n"
-                    + "  choices: "
-                    + choices(multiple.getChoices())
-                    + ",\n"
-                    + "  renderer: "
-                    + quote(multiple.getRenderer())
-                    + ",\n"
-                    + "  defaultMode: "
-                    + quote(multiple.getDefaultMode())
-                    + ("explicit".equals(multiple.getDefaultMode())
-                            ? ",\n  defaultValues: ["
-                                    + multiple.getDefaultValues().stream()
-                                            .map(MigrationPreview::quote)
-                                            .collect(Collectors.joining(", "))
-                                    + "]"
-                            : "")
-                    + ",\n  standardApiInputMode: "
-                    + quote(multiple.getStandardApiInputMode())
-                    + ",\n  delimiter: "
-                    + quote(multiple.getDelimiter())
-                    + "\n)";
-        }
-        return "// No automatic target was generated.";
-    }
-
-    private static String choices(List<Option> options) {
-        int limit = Math.min(options.size(), 200);
-        String encoded = options.subList(0, limit).stream()
-                .map(option -> "[value: " + quote(option.getValue()) + "]")
-                .collect(Collectors.joining(", "));
-        if (limit < options.size()) {
-            encoded += ", /* " + (options.size() - limit) + " more options omitted */";
-        }
-        return "[" + encoded + "]";
-    }
-
-    private static String quote(String value) {
-        if (value == null) {
-            return "null";
-        }
-        return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
     }
 }

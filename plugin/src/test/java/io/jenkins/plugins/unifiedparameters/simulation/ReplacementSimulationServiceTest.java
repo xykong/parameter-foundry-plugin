@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
+import example.partial.PartialOptionParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
@@ -32,6 +33,9 @@ class ReplacementSimulationServiceTest {
         assertEquals(ReplacementSimulationService.EQUIVALENT, entry.verdict());
         assertEquals(2, entry.observationCount());
         assertEquals("UnifiedChoiceParameterDefinition", entry.targetType());
+        assertTrue(entry.getTargetSnippet().contains("unifiedChoice("), entry.getTargetSnippet());
+        assertTrue(entry.getRequiredValues().containsAll(List.of("staging", "production")));
+        assertEquals(ReplacementSimulationService.COMPARISON_MATCH, entry.getOptionSetComparison());
         for (ParameterObservation observation : entry.observations()) {
             assertTrue(observation.representable(), observation.note());
             assertTrue(observation.environmentMatches(), observation.note());
@@ -89,15 +93,50 @@ class ReplacementSimulationServiceTest {
     }
 
     @Test
-    void aJobWithoutRecordedValuesIsUnverified(JenkinsRule jenkins) throws Exception {
+    void aJobWithoutRecordedValuesIsVerifiedThroughItsDefault(JenkinsRule jenkins) throws Exception {
         FreeStyleProject job = jenkins.createFreeStyleProject("simulated-no-builds");
         job.addProperty(new ParametersDefinitionProperty(staticSingle()));
 
         ReplacementSimulationEntry entry =
                 ReplacementSimulationService.simulate(job, 5).entries().get(0);
 
-        assertEquals(ReplacementSimulationService.UNVERIFIED, entry.verdict());
+        assertEquals(ReplacementSimulationService.EQUIVALENT_DEFAULT_ONLY, entry.verdict());
+        assertEquals(ReplacementSimulationService.COMPARISON_MATCH, entry.getDefaultCheck());
+        assertEquals("staging", entry.getSourceDefault());
         assertTrue(entry.observations().isEmpty());
+    }
+
+    @Test
+    void aSourceWithoutADefaultStaysUnverifiedWithoutBuildHistory(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("simulated-no-default");
+        ExtendedChoiceParameterDefinition source = new ExtendedChoiceParameterDefinition(
+                "LEGACY_CHANNEL",
+                ExtendedChoiceParameterDefinition.PARAMETER_TYPE_SINGLE_SELECT,
+                "staging,production",
+                null,
+                null);
+        job.addProperty(new ParametersDefinitionProperty(source));
+
+        ReplacementSimulationEntry entry =
+                ReplacementSimulationService.simulate(job, 5).entries().get(0);
+
+        assertEquals(ReplacementSimulationService.UNVERIFIED, entry.verdict());
+        assertEquals(ReplacementSimulationService.COMPARISON_UNKNOWN, entry.getDefaultCheck());
+        assertEquals(ReplacementSimulationService.COMPARISON_MATCH, entry.getOptionSetComparison());
+        assertTrue(entry.observations().isEmpty());
+    }
+
+    @Test
+    void aDroppedOptionIsReportedEvenWithoutBuildHistory(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("simulated-dropped-option");
+        job.addProperty(new ParametersDefinitionProperty(new PartialOptionParameterDefinition("PARTIAL")));
+
+        ReplacementSimulationEntry entry =
+                ReplacementSimulationService.simulate(job, 5).entries().get(0);
+
+        assertEquals(ReplacementSimulationService.OPTION_SET_MISMATCH, entry.verdict());
+        assertEquals(ReplacementSimulationService.COMPARISON_MISMATCH, entry.getOptionSetComparison());
+        assertTrue(entry.getRequiredValues().containsAll(List.of("alpha", "beta")));
     }
 
     @Test
