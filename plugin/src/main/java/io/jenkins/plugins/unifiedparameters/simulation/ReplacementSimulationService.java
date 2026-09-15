@@ -65,6 +65,9 @@ public final class ReplacementSimulationService {
     /** No build history, but the source default is still selectable in the target. */
     public static final String EQUIVALENT_DEFAULT_ONLY = "EQUIVALENT_DEFAULT_ONLY";
 
+    /** The recorded value path is equivalent, but the source default is no longer selectable. */
+    public static final String NEEDS_DEFAULT_DECISION = "NEEDS_DEFAULT_DECISION";
+
     /** Tri-state result of a definition-level comparison. */
     public static final String COMPARISON_MATCH = "MATCH";
 
@@ -142,8 +145,8 @@ public final class ReplacementSimulationService {
                         recorded,
                         skeleton,
                         requiredValues(null, recorded, sourceValues),
-                        null,
-                        null,
+                        COMPARISON_UNKNOWN,
+                        COMPARISON_UNKNOWN,
                         sourceDefault);
             }
             return entry(
@@ -157,8 +160,8 @@ public final class ReplacementSimulationService {
                     recorded,
                     "",
                     requiredValues(null, recorded, sourceValues),
-                    null,
-                    null,
+                    COMPARISON_UNKNOWN,
+                    COMPARISON_UNKNOWN,
                     sourceDefault);
         }
         if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isProviderBacked()) {
@@ -195,8 +198,8 @@ public final class ReplacementSimulationService {
                 recorded,
                 MigrationSnippets.forTarget(target),
                 requiredValues(null, recorded, sourceValues),
-                null,
-                null,
+                COMPARISON_UNKNOWN,
+                COMPARISON_UNKNOWN,
                 sourceDefault);
     }
 
@@ -282,6 +285,9 @@ public final class ReplacementSimulationService {
             List<ParameterObservation> observations, String optionSetComparison, String defaultCheck) {
         if (COMPARISON_MISMATCH.equals(optionSetComparison)) {
             return OPTION_SET_MISMATCH;
+        }
+        if (COMPARISON_MISMATCH.equals(defaultCheck)) {
+            return NEEDS_DEFAULT_DECISION;
         }
         if (observations.isEmpty()) {
             return COMPARISON_MATCH.equals(defaultCheck) ? EQUIVALENT_DEFAULT_ONLY : UNVERIFIED;
