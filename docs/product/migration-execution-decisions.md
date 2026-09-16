@@ -159,3 +159,12 @@ script-body read, which moved 8 parameters to `EQUIVALENT`, and decided 27 of th
 `EQUIVALENT_WITH_HISTORY`, 3 `EQUIVALENT_DEFAULT_ONLY`, 27 `DECIDED_NO_DEFAULT`,
 90 `NEEDS_PROVIDER`, 1 `NEEDS_DEFAULT_DECISION`, 1 `UNVERIFIED`,
 6 `MANUAL_REDESIGN`, and 0 `MISMATCH`.
+
+September 17, 2026: the per-parameter targets were built from the prepared
+Profiles — 16 Git refs Providers covering all 47 List Git Branches parameters
+(each with the adapter's translated filter, the mapped sort order, and the ref
+type that matches the recorded value shape) and 31 Active Choices parameters
+mapped onto the three verified REST Providers. Ten cascades that branch on
+another parameter still need a reviewed script Provider, one REST endpoint needs
+its credential, one parameter needs a representative build, and one stale
+default needs its recorded value added as a real option.
