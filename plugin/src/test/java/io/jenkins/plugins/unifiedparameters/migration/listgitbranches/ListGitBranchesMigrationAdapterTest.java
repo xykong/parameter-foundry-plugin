@@ -103,4 +103,11 @@ class ListGitBranchesMigrationAdapterTest {
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Source default master")));
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("SelectedValue.TOP")));
     }
+
+    @Test
+    void anInvalidSourceFilterIsReportedInsteadOfCopied() {
+        // A source fork filter such as .*refs/heads/(*) is not a valid full-match regex.
+        assertNull(ListGitBranchesMigrationAdapter.translateFilter(".*refs/heads/(*)", "branch"));
+        assertNull(ListGitBranchesMigrationAdapter.translateFilter("refs/heads/(*)/x", "branch"));
+    }
 }

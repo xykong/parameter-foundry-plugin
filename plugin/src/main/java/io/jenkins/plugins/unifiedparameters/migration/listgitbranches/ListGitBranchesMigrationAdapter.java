@@ -182,10 +182,17 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
         if (value.isEmpty() || ".*".equals(value) || ".+".equals(value)) {
             value = "";
         }
-        if (lookaheads.length() == 0) {
-            return value.isEmpty() ? null : value;
+        String translated = lookaheads.length() == 0 ? value : lookaheads + (value.isEmpty() ? ".*" : value);
+        if (translated.isEmpty()) {
+            return null;
         }
-        return lookaheads + (value.isEmpty() ? ".*" : value);
+        // A filter such as .*refs/heads/(*) cannot be expressed as a full-match regex at all.
+        try {
+            java.util.regex.Pattern.compile(translated);
+        } catch (java.util.regex.PatternSyntaxException exception) {
+            return null;
+        }
+        return translated;
     }
 
     /** Maps the source sort mode onto a supported Provider sort order, or {@code null} to review. */

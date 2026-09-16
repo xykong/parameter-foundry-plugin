@@ -48,6 +48,12 @@ Current version: `0.3.191-SNAPSHOT`.
   set (`OPTION_SET_MISMATCH` when an option is lost), checks that the source
   default stays selectable (`EQUIVALENT_DEFAULT_ONLY` for a parameter that never
   built), and reports the target snippet and the value contract per parameter.
+- Active Choices script bodies are read through the model object and the
+  script-security wrapper, so literal-list scripts convert to inline choices in
+  production instead of being treated as redesign work.
+- A stale source default that no recorded build ever carried is decided as
+  `DECIDED_NO_DEFAULT`; the option list stays identical and the unused default is
+  dropped.
 - Migration and retirement surfaces in English, Chinese, Japanese, and Korean,
   including adapter reasons, decisions, fact labels, and verification cases.
 - `MigrationMessageCoverageTest`, which fails the build when a referenced
