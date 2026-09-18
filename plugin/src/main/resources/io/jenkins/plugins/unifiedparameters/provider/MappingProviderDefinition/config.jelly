@@ -1,0 +1,34 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Provider ID" field="id">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Display name" field="displayName">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Available to nested Folders" field="usableByChildren">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Dependency parameter" field="dependencyParameter">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Options for every other value" field="defaultOptions">
+    <f:repeatableProperty field="defaultOptions" add="Add option" header="Option" />
+  </f:entry>
+  <f:entry title="Cases" field="cases">
+    <f:repeatableProperty field="cases" add="Add case" header="Dependency value" />
+  </f:entry>
+  <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
+    <f:number min="0" max="86400" />
+  </f:entry>
+  <f:entry title="Failure policy" field="failurePolicy">
+    <select name="_.failurePolicy" class="jenkins-select__input select">
+      <option value="fail-closed" selected="${instance.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${instance.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${instance.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+    </select>
+  </f:entry>
+  <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
+    <f:number min="0" max="604800" />
+  </f:entry>
+</j:jelly>

@@ -15,6 +15,12 @@ Current version: `0.3.194-SNAPSHOT`.
 
 ### Added
 
+- Dependency mapping Provider (`unifiedMappingProvider`): a declarative dependency value → option
+  list mapping for parameters whose options depend on another parameter's value, with a default
+  list for every other value. It executes nothing, so an Active Choices cascade that branches on a
+  parameter converts without a script engine.
+- The Active Choices migration recognises `if (DEP == "value") { return [...] } else { return [...] }`
+  and proposes the mapping with the literal option lists it found, instead of a manual redesign.
 - Atomic batch migration: the Job page previews every recognized parameter with
   the exact configuration diff, applies them in one Job write, and rolls the
   whole batch back when the Job changed afterwards.

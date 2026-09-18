@@ -75,6 +75,11 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         if (literal.isPresent() && !choiceType.startsWith("ET_")) {
             return literalPlan(definition, dependencies, literal.get(), choiceType, multiple, filterable);
         }
+        java.util.Optional<ActiveChoicesScriptAnalysis.ConditionalChoices> conditional =
+                ActiveChoicesScriptAnalysis.conditionalChoices(script);
+        if (conditional.isPresent() && !choiceType.startsWith("ET_")) {
+            return conditionalPlan(definition, conditional.get());
+        }
 
         ActiveChoicesScriptAnalysis.ScriptShape shape = ActiveChoicesScriptAnalysis.shape(script);
         java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
@@ -132,6 +137,67 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 skeleton,
                 verificationFixture(definition, dependencies, false),
                 facts);
+    }
+
+    /**
+     * A cascade that branches on one parameter becomes a declarative dependency mapping: the same
+     * options per dependency value, without executing the source script.
+     */
+    private static MigrationPlan conditionalPlan(
+            ParameterDefinition definition, ActiveChoicesScriptAnalysis.ConditionalChoices conditional) {
+        String providerId = "TODO-mapping-provider";
+        StringBuilder cases = new StringBuilder();
+        cases.append("unifiedMappingCase(\n")
+                .append("    value: ")
+                .append(quote(conditional.caseValue()))
+                .append(",\n    options: ")
+                .append(optionSnippet(conditional.caseOptions()))
+                .append("\n)");
+        String skeleton = "unifiedMappingProvider(\n"
+                + "    id: '"
+                + providerId
+                + "',\n    dependencyParameter: "
+                + quote(conditional.dependency())
+                + ",\n    defaultOptions: "
+                + optionSnippet(conditional.otherOptions())
+                + ",\n    cases: [\n"
+                + cases
+                + "\n    ]\n)\n"
+                + "unifiedChoice(\n"
+                + "    name: "
+                + quote(definition.getName())
+                + ",\n    providerId: '"
+                + providerId
+                + "',\n    dependsOn: ["
+                + quote(conditional.dependency())
+                + "]\n)";
+        java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+        facts.put(
+                MigrationText.of("MigrationFactSourceElement"), MigrationText.value("Active Choices conditional list"));
+        facts.put(
+                MigrationText.of("MigrationFactSourceOptions"),
+                MigrationText.value(String.valueOf(conditional.caseOptions().size()
+                        + conditional.otherOptions().size())));
+        facts.put(MigrationText.of("MigrationFactMappingDependency"), MigrationText.value(conditional.dependency()));
+        List<MigrationText> decisions = List.of(
+                MigrationText.of("MigrationDecisionActiveChoicesMappingConfirm", conditional.dependency()),
+                MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior"));
+        return new MigrationPlan(
+                MigrationClassification.B,
+                MigrationText.of("MigrationReasonActiveChoicesConditional", conditional.dependency()),
+                null,
+                decisions,
+                skeleton,
+                verificationFixture(definition, List.of(conditional.dependency()), false),
+                facts);
+    }
+
+    private static String optionSnippet(List<io.jenkins.plugins.unifiedparameters.model.Option> options) {
+        return options.stream()
+                .map(option -> "[value: " + quote(option.getValue()) + "]")
+                .reduce((left, right) -> left + ", " + right)
+                .map(encoded -> "[" + encoded + "]")
+                .orElse("[]");
     }
 
     /** Deterministic conversion of a literal-only script into inline choices. */

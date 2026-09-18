@@ -30,6 +30,10 @@ final class ActiveChoicesScriptAnalysis {
 
     record LiteralChoices(List<Option> options, List<String> selectedValues) {}
 
+    /** A script that branches on one parameter and returns a literal list per branch. */
+    record ConditionalChoices(
+            String dependency, String caseValue, List<Option> caseOptions, List<Option> otherOptions) {}
+
     enum ScriptShape {
         LITERAL_LIST,
         NETWORK,
@@ -86,6 +90,35 @@ final class ActiveChoicesScriptAnalysis {
             options.add(parsed.get());
         }
         return Optional.of(new LiteralChoices(List.copyOf(options), List.copyOf(selected)));
+    }
+
+    private static final Pattern CONDITIONAL = Pattern.compile(
+            "if\\s*\\(\\s*([A-Za-z_][A-Za-z0-9_.-]*)\\s*==\\s*['\"]([^'\"]*)['\"]\\s*\\)\\s*\\{\\s*return\\s*(\\[[^\\]]*])\\s*}\\s*else\\s*\\{\\s*return\\s*(\\[[^\\]]*])\\s*}",
+            Pattern.DOTALL);
+
+    /**
+     * Recognises {@code if (DEP == "value") { return [...] } else { return [...] }} — the shape the
+     * production cascades use — so the migration can propose a declarative dependency mapping
+     * instead of a script.
+     */
+    static Optional<ConditionalChoices> conditionalChoices(String script) {
+        if (script == null || script.isBlank()) {
+            return Optional.empty();
+        }
+        Matcher matcher = CONDITIONAL.matcher(script);
+        if (!matcher.find()) {
+            return Optional.empty();
+        }
+        Optional<LiteralChoices> caseChoices = literalChoices("return " + matcher.group(3));
+        Optional<LiteralChoices> otherChoices = literalChoices("return " + matcher.group(4));
+        if (caseChoices.isEmpty() || otherChoices.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ConditionalChoices(
+                matcher.group(1),
+                matcher.group(2),
+                caseChoices.get().options(),
+                otherChoices.get().options()));
     }
 
     /** Returns a redacted endpoint shape such as {@code https://<host>/api/platforms}. */

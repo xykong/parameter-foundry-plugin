@@ -19,6 +19,7 @@ through a snapshot, and reject values that are no longer valid.
 | Type | Use it when | Key fields |
 |---|---|---|
 | Static | The list rarely changes and belongs to Jenkins | Options |
+| Dependency mapping | The option list depends on the selected value of another parameter (the governed replacement for an Active Choices cascade that branches on a parameter) | Dependency parameter, cases (value → options), options for every other value |
 | Managed config | The list lives in a Config File Provider file (YAML or JSON) | Config ID, format, path mapping |
 | REST | The list comes from an HTTP API | Connection Profile, relative path, query parameters, format, path mapping |
 | Script | The list needs logic, but must stay governed | Engine ID (`sandbox-groovy`), catalog source reference |
@@ -74,6 +75,28 @@ Script Security sandbox, and is bounded in time and output size. Disable the
 feature switch to make such parameters fail closed.
 
 ## Reactive Providers
+
+`dependsOn` makes a parameter re-resolve when another parameter changes. A **Dependency
+mapping** Provider is the declarative way to change the *option list itself* per dependency
+value:
+
+```groovy
+unifiedMappingProvider(
+    id: 'build-type',
+    dependencyParameter: 'BUILD_MODE',
+    defaultOptions: [[value: 'debug'], [value: 'release']],
+    cases: [
+        unifiedMappingCase(value: 'production', options: [[value: 'store']])
+    ]
+)
+unifiedChoice(name: 'BUILD_TYPE', providerId: 'build-type', dependsOn: ['BUILD_MODE'])
+```
+
+The parameter offers the case options while the dependency has that value, and the default list
+otherwise (including when the build form has no dependency value yet). Nothing is executed: the
+mapping is configured data that an administrator reviews. An Active Choices script of the form
+`if (DEP == "value") { return [...] } else { return [...] }` migrates to exactly this shape, and
+the migration preview proposes the mapping with the literal option lists the script returned.
 
 Set **Depends on** on the parameter to send other parameters' canonical values to
 the Provider. The form reloads options when a dependency changes, keeps a

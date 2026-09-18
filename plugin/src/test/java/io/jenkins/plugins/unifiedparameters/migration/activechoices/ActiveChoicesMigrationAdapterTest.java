@@ -17,6 +17,28 @@ class ActiveChoicesMigrationAdapterTest {
     private final ActiveChoicesMigrationAdapter adapter = new ActiveChoicesMigrationAdapter();
 
     @Test
+    void aConditionalLiteralCascadeBecomesADeclarativeDependencyMapping() {
+        CascadeChoiceParameter source = new CascadeChoiceParameter("BUILD_TYPE", "BUILD_MODE");
+        source.setScript("if (BUILD_MODE == \"production\") {\n"
+                + "    return [\"store\"]\n"
+                + "} else {\n"
+                + "    return [\"debug\", \"release\"]\n"
+                + "}");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.B, plan.getClassification());
+        assertNull(plan.getTarget());
+        String skeleton = plan.getTargetSkeleton();
+        assertTrue(skeleton.contains("unifiedMappingProvider"), skeleton);
+        assertTrue(skeleton.contains("dependencyParameter: 'BUILD_MODE'"), skeleton);
+        assertTrue(skeleton.contains("[value: 'store']"), skeleton);
+        assertTrue(skeleton.contains("[value: 'debug'], [value: 'release']"), skeleton);
+        assertTrue(skeleton.contains("dependsOn: ['BUILD_MODE']"), skeleton);
+        assertEquals("BUILD_MODE", plan.getFacts().get("Mapping dependency"));
+    }
+
+    @Test
     void literalListWithSelectedMarkersBecomesInlineChoices() {
         ChoiceParameter source = new ChoiceParameter("CHANNEL");
         source.setScript("return ['staging', 'production:selected']");

@@ -33,6 +33,10 @@ Current symbols: `unifiedChoice`, `unifiedForm`
   makes the parameter reactive.
 - Providers resolve through Connection Profiles that declare base URL, credentials, path and query
   allow-lists, timeouts, and response size bounds.
+- Provider types: `unifiedStaticProvider`, `unifiedManagedConfigProvider`, `unifiedRestProvider`,
+  `unifiedGitRefProvider`, `unifiedScriptProvider` (reviewed companion engine), and
+  `unifiedMappingProvider` for a dependency value → option list mapping with a default list; the
+  mapping executes nothing.
 - Environment export: `string` or `none` for single selection, `delimited`, `json`, or `none` for
   multiple selection, `json` or `none` plus per-field variables for forms.
 - Typed API: `…/unified-parameters/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
