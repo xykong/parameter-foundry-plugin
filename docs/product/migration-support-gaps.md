@@ -28,6 +28,7 @@ Nothing below requires a partial migration; each item is a preparation task.
 | G10 repository scan | Implemented | `RetirementScanner.scanRepository()` reports Jobs that read their Pipeline from SCM plus multibranch and organization folders; the dashboard, the JSON report, and the Job page state that those definitions are unseen |
 | G11 A/B verification | Implemented | `MigrationEvidenceService` compares source and target builds (canonical value, environment export, sibling inputs) and stores the result on the migration record; `unified-parameters-migration-verify` records it |
 | G11b pre-wave simulation | Implemented | `ReplacementSimulationService` replays every recorded production value against the rebuilt target and reports `EQUIVALENT`, `EQUIVALENT_ADDED_ENV`, `MISMATCH`, `NEEDS_PROVIDER`, `NEEDS_MANUAL_CHECK`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter for the whole controller through a read-only endpoint |
+| G12 conditional cascades | Implemented | `unifiedMappingProvider` expresses a dependency value → option list mapping as reviewed data (no code execution), the Active Choices analysis recognises `if (DEP == "value") { return [...] } else { return [...] }`, and the migration tooling derives each mapping from the recorded production builds |
 
 ## What is already good enough
 
