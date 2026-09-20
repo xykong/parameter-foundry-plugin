@@ -15,10 +15,10 @@ Current version: `0.3.220-SNAPSHOT`.
 
 ### Added
 
-- A choice table fills in one click: the row and column captions are buttons that select or clear
-  the whole line, and a toolbar selects every row or clears the table. A rank constraint still
-  holds - filling a row picks its first selectable cell - and every shortcut keeps the chips, the
-  summary, and the submitted values in sync.
+- A choice table fills in one click: the row and column captions are buttons that fill or clear the
+  whole line, and a toolbar selects every cell, inverts the selection, or clears the table. Every
+  shortcut keeps the chips, the summary, and the submitted values in sync, and a row that carries a
+  rank constraint fills its rank instead of breaking the rule.
 - Matrix Provider (`unifiedMatrixProvider`): a table that crosses two governed lists, each axis
   either an inline list or another Provider, with `{row}`/`{column}` cell templates, axis captions,
   and a per-row selection constraint (`any`, `at-most-one`, `exactly-one`) enforced in the browser

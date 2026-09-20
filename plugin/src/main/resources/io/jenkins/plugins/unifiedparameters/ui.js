@@ -370,25 +370,67 @@
      */
     function toggleRow(rowModel) {
       var caption = rowModel.label || rowModel.value;
-      if (rowHasSelection(rowModel.value)) {
+      var values = selectableRowValues(rowModel.value);
+      if (!values.length) {
+        return;
+      }
+      var allSelected = values.every(function (value) {
+        return selected.has(value);
+      });
+      if (allSelected) {
         rowCellValues(rowModel.value).forEach(function (value) {
           selected.delete(value);
         });
         sync(formatMessage(localized(field, "rowSelectionCleared", "Row {0} cleared."), [caption]));
         return;
       }
-      var values = selectableRowValues(rowModel.value);
-      if (!values.length) {
-        return;
-      }
       if (rowSelectionMode === "any") {
         values.forEach(function (value) {
           selected.add(value);
         });
-      } else {
-        selected.add(values[0]);
+        sync(formatMessage(localized(field, "rowSelectionUpdated", "Row {0} selected."), [caption]));
+        return;
       }
-      sync(formatMessage(localized(field, "rowSelectionUpdated", "Row {0} selected."), [caption]));
+      // A rank constraint allows one cell per row, so the shortcut fills the row's rank instead of
+      // breaking the rule the definition asked for.
+      selected = clearRow(selected, rowModel.value, values[0]);
+      selected.add(values[0]);
+      sync(
+        formatMessage(
+          localized(field, "rowSelectionLimited", "Row {0}: one cell per row, the first available is selected."),
+          [caption],
+        ),
+      );
+    }
+
+    /** Toggles every selectable cell of the table, which is the fastest way to reach a complement. */
+    function invertSelection() {
+      var changed = 0;
+      tableModel.cells.forEach(function (cell) {
+        if (cell.disabled) {
+          return;
+        }
+        if (selected.has(cell.value)) {
+          selected.delete(cell.value);
+        } else {
+          selected.add(cell.value);
+        }
+        changed += 1;
+      });
+      if (rowSelectionMode !== "any") {
+        // Keep the table submittable: a rank constraint allows one cell per row.
+        var rank = new Set();
+        tableModel.rows.forEach(function (row) {
+          var picked = selectableRowValues(row.value).filter(function (value) {
+            return selected.has(value);
+          });
+          if (picked.length) {
+            rank.add(picked[0]);
+          }
+        });
+        selected = rank;
+      }
+      sync(formatMessage(localized(field, "selectionInverted", "Selection inverted. {0} cells changed."), [changed]));
     }
 
     /** Fills one column, replacing the cell of a row that already had one. A second click clears it. */
@@ -515,6 +557,11 @@
     toolbar.appendChild(
       toolbarButton(localized(field, "selectAllCells", "Select all"), function () {
         selectAllRows();
+      }),
+    );
+    toolbar.appendChild(
+      toolbarButton(localized(field, "invertSelection", "Invert"), function () {
+        invertSelection();
       }),
     );
     toolbar.appendChild(

@@ -177,6 +177,18 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.AllCellsSelected();
     }
 
+    public String getUiInvertSelection() {
+        return Messages.InvertSelection();
+    }
+
+    public String getUiSelectionInverted() {
+        return Messages.SelectionInverted("{0}");
+    }
+
+    public String getUiRowSelectionLimited() {
+        return Messages.RowSelectionLimited("{0}");
+    }
+
     public String getUiLimitedSingleMatches() {
         return Messages.LimitedSingleMatches("{0}", "{1}");
     }

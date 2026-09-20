@@ -43,7 +43,7 @@ registryAgents.setRowsText('registry.example.com|Registry A\harbor-n.example.net
 registryAgents.setColumnsProviderId('shared-environments')
 registryAgents.setRowAxisLabel('DOCKER_REGISTRIES')
 registryAgents.setColumnAxisLabel('BUILD_NODE')
-registryAgents.setRowSelectionMode('at-most-one')
+registryAgents.setRowSelectionMode('any')
 
 UnifiedParametersGlobalConfiguration.get().setProviders([sharedEnvironments, registryAgents])
 

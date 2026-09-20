@@ -679,17 +679,20 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         "Registry B",
     ]
     assert await login_table.locator('input[type="checkbox"]').count() == 6
+    # A plain grid accepts any combination: a second cell in the same row does not clear the first.
     first_row = login_table.locator("tbody tr").nth(0).locator('input[type="checkbox"]')
     await first_row.nth(0).check()
     await first_row.nth(2).check()
-    assert await first_row.nth(0).is_checked() is False
+    assert await first_row.nth(0).is_checked() is True
     assert await first_row.nth(2).is_checked() is True
     assert await logins.locator(
         'input[data-up-generated-value][value="registry.example.com@production"]'
     ).count() == 1
 
-    # One-click row, column, and whole-table selection: a header click fills the line, the toolbar
-    # fills or clears every row, and the rank constraint still keeps one cell per row.
+    # One-click row, column, and whole-table selection, then invert and clear.
+    await logins.get_by_role("button", name="Clear all").click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 0
+
     await login_table.locator("thead th button", has_text="staging").first.click()
     assert await logins.locator("input[data-up-generated-value]").count() == 2
     assert await login_table.locator('input[value="registry.example.com@staging"]').is_checked()
@@ -698,17 +701,32 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         ".unified-parameters-status"
     ).inner_text()
 
+    # A row caption fills every cell of that row, and a second click clears the row again.
+    await login_table.locator("tbody th button").nth(0).click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 4
+    for column in ("development", "staging", "production"):
+        assert await login_table.locator(
+            f'input[value="registry.example.com@{column}"]'
+        ).is_checked()
+    assert "Row Registry A selected" in await logins.locator(
+        ".unified-parameters-status"
+    ).inner_text()
     await login_table.locator("tbody th button").nth(0).click()
     assert await logins.locator("input[data-up-generated-value]").count() == 1
-    await login_table.locator("tbody th button").nth(0).click()
-    assert await login_table.locator('input[value="registry.example.com@development"]').is_checked()
 
     await logins.get_by_role("button", name="Select all").click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 2
+    assert await logins.locator("input[data-up-generated-value]").count() == 6
     assert "Every row is filled" in await logins.locator(
         ".unified-parameters-status"
     ).inner_text()
 
+    await logins.get_by_role("button", name="Invert").click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 0
+    assert "Selection inverted" in await logins.locator(
+        ".unified-parameters-status"
+    ).inner_text()
+    await logins.get_by_role("button", name="Invert").click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 6
     await logins.get_by_role("button", name="Clear all").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
 
