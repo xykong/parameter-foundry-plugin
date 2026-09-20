@@ -23,6 +23,9 @@ final class ActiveChoicesScriptAnalysis {
     private static final Set<String> OPTION_KEYS = Set.of("value", "label", "description", "group");
     private static final List<String> NETWORK_MARKERS =
             List.of("://", ".getText(", "readjson", "jsonslurper", "httpurlconnection", "curl", "wget", "new url(");
+    private static final List<String> NODE_MARKERS = List.of(
+            "jenkins.instance.nodes", "getselflabel(", "getcomputers(", "computer.name", "listnodes(", "nodenames");
+
     private static final List<String> CONTROLLER_MARKERS =
             List.of("jenkins.instance", ".getitem(", "sh(", "sh ", "bat(", "run(");
 
@@ -39,6 +42,15 @@ final class ActiveChoicesScriptAnalysis {
         NETWORK,
         CONTROLLER_OR_SHELL,
         OTHER
+    }
+
+    /** True when the script reads the controller's nodes or labels, which the Node Provider covers. */
+    static boolean listsNodesOrLabels(String script) {
+        if (script == null || script.isBlank()) {
+            return false;
+        }
+        String normalized = script.toLowerCase(Locale.ROOT);
+        return NODE_MARKERS.stream().anyMatch(normalized::contains);
     }
 
     static ScriptShape shape(String script) {

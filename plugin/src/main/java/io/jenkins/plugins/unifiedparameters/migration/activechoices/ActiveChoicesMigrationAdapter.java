@@ -102,6 +102,9 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                     MigrationText.of("MigrationFactDetectedResponseFields"),
                     MigrationText.value(String.join(", ", detectedFields)));
         }
+        if (ActiveChoicesScriptAnalysis.listsNodesOrLabels(script)) {
+            return nodePlan(definition, script);
+        }
         if (shape == ActiveChoicesScriptAnalysis.ScriptShape.CONTROLLER_OR_SHELL) {
             return new MigrationPlan(
                     MigrationClassification.D,
@@ -136,6 +139,48 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 decisions,
                 skeleton,
                 verificationFixture(definition, dependencies, false),
+                facts);
+    }
+
+    /**
+     * A script that lists controller nodes or labels becomes a Node/Label Provider, which reads the
+     * Jenkins model instead of executing Job-supplied code.
+     */
+    private static MigrationPlan nodePlan(ParameterDefinition definition, String script) {
+        String normalized = script.toLowerCase(Locale.ROOT);
+        boolean labels = normalized.contains("getassignedlabels")
+                || normalized.contains("getlabels(")
+                || normalized.contains("assignedlabels");
+        if (normalized.contains("nodes") || normalized.contains("getselflabel")) {
+            labels = false;
+        }
+        String source = labels ? "labels" : "nodes";
+        String providerId = "TODO-node-provider";
+        String skeleton = "unifiedNodeProvider(\n"
+                + "    id: '"
+                + providerId
+                + "',\n    source: '"
+                + source
+                + "'\n)\n"
+                + "unifiedChoice(\n"
+                + "    name: "
+                + quote(definition.getName())
+                + ",\n    providerId: '"
+                + providerId
+                + "',\n    renderer: 'searchable'\n)";
+        java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
+        facts.put(MigrationText.of("MigrationFactSourceElement"), MigrationText.value("Active Choices node list"));
+        facts.put(MigrationText.of("MigrationFactNodeListing"), MigrationText.value(source));
+        List<MigrationText> decisions = List.of(
+                MigrationText.of("MigrationDecisionActiveChoicesNodeProvider", source),
+                MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior"));
+        return new MigrationPlan(
+                MigrationClassification.B,
+                MigrationText.of("MigrationReasonActiveChoicesNodeListing"),
+                null,
+                decisions,
+                skeleton,
+                verificationFixture(definition, List.of(), false),
                 facts);
     }
 

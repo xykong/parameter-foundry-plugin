@@ -17,6 +17,40 @@ class ActiveChoicesMigrationAdapterTest {
     private final ActiveChoicesMigrationAdapter adapter = new ActiveChoicesMigrationAdapter();
 
     @Test
+    void aNodeListingScriptBecomesTheNodeProvider() {
+        ChoiceParameter source = new ChoiceParameter("BUILD_NODE");
+        source.setScript("import jenkins.model.*\n"
+                + "def nodeNames = []\n"
+                + "nodeNames << Jenkins.instance.getSelfLabel().getName()\n"
+                + "nodeNames.addAll(Jenkins.instance.nodes.collect { it.nodeName })\n"
+                + "return nodeNames.findAll { it?.trim() }");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.B, plan.getClassification());
+        assertNull(plan.getTarget());
+        assertTrue(plan.getTargetSkeleton().contains("unifiedNodeProvider"), plan.getTargetSkeleton());
+        assertTrue(plan.getTargetSkeleton().contains("source: 'nodes'"), plan.getTargetSkeleton());
+        assertEquals("nodes", plan.getFacts().get("Offered node source"));
+    }
+
+    @Test
+    void aSharedLibraryNodeHelperBecomesTheNodeProvider() {
+        CascadeChoiceParameter source = new CascadeChoiceParameter("BUILD_NODE", "");
+        source.setScript("try {\n"
+                + "    def result = listNodes()\n"
+                + "    return [\"SUCCESS: ${result.size()} nodes found\"] + result\n"
+                + "} catch (Exception e) {\n"
+                + "    return [e.message, \"built-in\"]\n"
+                + "}");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.B, plan.getClassification());
+        assertTrue(plan.getTargetSkeleton().contains("unifiedNodeProvider"), plan.getTargetSkeleton());
+    }
+
+    @Test
     void aConditionalLiteralCascadeBecomesADeclarativeDependencyMapping() {
         CascadeChoiceParameter source = new CascadeChoiceParameter("BUILD_TYPE", "BUILD_MODE");
         source.setScript("if (BUILD_MODE == \"production\") {\n"
