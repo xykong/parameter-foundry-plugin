@@ -189,6 +189,14 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.RowSelectionLimited("{0}");
     }
 
+    public String getUiHideSelected() {
+        return Messages.HideSelected();
+    }
+
+    public String getUiShowSelected() {
+        return Messages.ShowSelected("{0}");
+    }
+
     public String getUiLimitedSingleMatches() {
         return Messages.LimitedSingleMatches("{0}", "{1}");
     }

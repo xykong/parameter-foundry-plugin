@@ -3,6 +3,7 @@
 
   var MAX_RENDERED_OPTIONS = 160;
   var MAX_RADIO_OPTIONS = 60;
+  var CHIP_COLLAPSE_THRESHOLD = 12;
   var REACTIVE_DEBOUNCE_MS = 250;
   var nextId = 0;
   var refreshStates = new Map();
@@ -202,6 +203,48 @@
     return input;
   }
 
+  /**
+   * A selected-value list is a convenience, not the control: a table that is filled in one click can
+   * produce dozens of chips, which used to push the table off screen. The region scrolls inside a
+   * bounded box and collapses itself above the threshold, with the toggle keeping the full list one
+   * click away.
+   */
+  function chipsRegion(field) {
+    var region = document.createElement("div");
+    region.className = "unified-parameters-chips-region";
+    region.dataset.upExpanded = "true";
+    var chips = document.createElement("div");
+    chips.className = "unified-parameters-chips";
+    chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
+    var toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "jenkins-button unified-parameters-group-select unified-parameters-chips-toggle";
+    toggle.hidden = true;
+    toggle.addEventListener("click", function () {
+      region.dataset.upTouched = "true";
+      region.dataset.upExpanded = region.dataset.upExpanded === "true" ? "false" : "true";
+      syncChipRegion(field, region);
+    });
+    region.appendChild(chips);
+    region.appendChild(toggle);
+    return {region: region, chips: chips};
+  }
+
+  function syncChipRegion(field, region) {
+    var chips = region.querySelector(".unified-parameters-chips");
+    var toggle = region.querySelector(".unified-parameters-chips-toggle");
+    var count = chips.childElementCount;
+    if (!region.dataset.upTouched) {
+      region.dataset.upExpanded = String(count <= CHIP_COLLAPSE_THRESHOLD);
+    }
+    var expanded = region.dataset.upExpanded === "true";
+    chips.hidden = !expanded;
+    toggle.hidden = count === 0;
+    toggle.textContent = expanded
+      ? localized(field, "hideSelected", "Hide selected")
+      : formatMessage(localized(field, "showSelected", "Show selected ({0})"), [count]);
+  }
+
   function createStatus() {
     var status = document.createElement("div");
     status.id = uniqueId("up-status");
@@ -278,9 +321,8 @@
     var enhanced = document.createElement("div");
     enhanced.className = "unified-parameters-enhanced unified-parameters-table-enhanced";
     var status = createStatus();
-    var chips = document.createElement("div");
-    chips.className = "unified-parameters-chips";
-    chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
+    var chipRegion = chipsRegion(field);
+    var chips = chipRegion.chips;
     var inputsByValue = new Map();
     var rowsByValue = new Map(
       tableModel.rows.map(function (row) {
@@ -544,6 +586,7 @@
         chip.appendChild(remove);
         chips.appendChild(chip);
       });
+      syncChipRegion(field, chipRegion.region);
     }
 
     function updateStatus(message) {
@@ -657,7 +700,7 @@
     table.appendChild(body);
     enhanced.appendChild(toolbar);
     if (field.dataset.selectedDisplay === "chips") {
-      enhanced.appendChild(chips);
+      enhanced.appendChild(chipRegion.region);
     }
     enhanced.appendChild(table);
     enhanced.appendChild(status);
@@ -1142,9 +1185,8 @@
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
     var search = createSearch(field, status.id);
-    var chips = document.createElement("div");
-    chips.className = "unified-parameters-chips";
-    chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
+    var chipRegion = chipsRegion(field);
+    var chips = chipRegion.chips;
     var toolbar = document.createElement("div");
     toolbar.className = "unified-parameters-toolbar";
     toolbar.setAttribute("aria-label", "Selection actions");
@@ -1185,6 +1227,7 @@
         chip.appendChild(remove);
         chips.appendChild(chip);
       });
+      syncChipRegion(field, chipRegion.region);
     }
 
     function updateStatus(message) {
@@ -1394,7 +1437,7 @@
     });
 
     if (field.dataset.selectedDisplay === "chips") {
-      enhanced.appendChild(chips);
+      enhanced.appendChild(chipRegion.region);
     }
     enhanced.appendChild(search);
     enhanced.appendChild(toolbar);

@@ -15,6 +15,9 @@ Current version: `0.3.223-SNAPSHOT`.
 
 ### Added
 
+- Selected values stay out of the way: the chip list scrolls inside a bounded box and collapses to a
+  `Show selected (n)` toggle once a selection is long, so filling a table no longer pushes it off
+  screen. The toggle is four languages and remembers whether the reader expanded it.
 - A choice table fills in one click: the row and column captions are buttons that fill or clear the
   whole line, and a toolbar selects every cell, inverts the selection, or clears the table. Every
   shortcut keeps the chips, the summary, and the submitted values in sync, and a row that carries a

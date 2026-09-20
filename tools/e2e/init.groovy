@@ -39,7 +39,7 @@ sharedEnvironments.setOptions([
 // cross them without freezing either axis in the Job definition.
 def registryAgents = new MatrixProviderDefinition('registries-on-agents')
 registryAgents.setDisplayName('Registries on agents')
-registryAgents.setRowsText('registry.example.com|Registry A\harbor-n.example.net|Registry B')
+registryAgents.setRowsText('registry.example.com|Registry A\harbor-n.example.net|Registry B\swr.example.cloud|Registry C\registry-n.example.net|Registry D\registry-auto-n.example.org|Registry Auto')
 registryAgents.setColumnsProviderId('shared-environments')
 registryAgents.setRowAxisLabel('DOCKER_REGISTRIES')
 registryAgents.setColumnAxisLabel('BUILD_NODE')

@@ -48,6 +48,8 @@
          data-up-invert-selection="${it.uiInvertSelection}"
          data-up-selection-inverted="${it.uiSelectionInverted}"
          data-up-row-selection-limited="${it.uiRowSelectionLimited}"
+         data-up-hide-selected="${it.uiHideSelected}"
+         data-up-show-selected="${it.uiShowSelected}"
          data-up-limited-single-matches="${it.uiLimitedSingleMatches}"
          data-up-limited-matches="${it.uiLimitedMatches}"
          data-up-none-option="${it.uiNoneOption}"

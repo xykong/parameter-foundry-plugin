@@ -65,6 +65,10 @@ unifiedChoice(
 | Cell label template | Cell caption; empty means "row caption / column caption" |
 | Row axis label | Caption of the row axis, shown in the table corner |
 
+A long selected-value list collapses itself: above twelve chips the list is replaced by a
+`Show selected (n)` toggle, and an expanded list scrolls inside a bounded box, so a filled table
+stays visible.
+
 A rendered table can be filled in one click: click a row or column caption to fill
 every cell of that line, click it again to clear the line, and use **Select all** /
 **Invert** / **Clear all** above the table for the whole grid. With `at-most-one` or

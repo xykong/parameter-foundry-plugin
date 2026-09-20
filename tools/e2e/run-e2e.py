@@ -677,8 +677,11 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     assert await login_table.locator("tbody th[scope=row]").all_inner_texts() == [
         "Registry A",
         "Registry B",
+        "Registry C",
+        "Registry D",
+        "Registry Auto",
     ]
-    assert await login_table.locator('input[type="checkbox"]').count() == 6
+    assert await login_table.locator('input[type="checkbox"]').count() == 15
     # A plain grid accepts any combination: a second cell in the same row does not clear the first.
     first_row = login_table.locator("tbody tr").nth(0).locator('input[type="checkbox"]')
     await first_row.nth(0).check()
@@ -690,20 +693,24 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     ).count() == 1
 
     # One-click row, column, and whole-table selection, then invert and clear.
+    chip_toggle = logins.locator(".unified-parameters-chips-toggle")
+    chip_list = logins.locator(".unified-parameters-chips")
     await logins.get_by_role("button", name="Clear all").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
 
     await login_table.locator("thead th button", has_text="staging").first.click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 2
+    assert await logins.locator("input[data-up-generated-value]").count() == 5
     assert await login_table.locator('input[value="registry.example.com@staging"]').is_checked()
-    assert await login_table.locator('input[value="harbor.example.net@staging"]').is_checked()
+    assert await login_table.locator(
+        'input[value="registry-auto.example.org@staging"]'
+    ).is_checked()
     assert "Column staging selected" in await logins.locator(
         ".unified-parameters-status"
     ).inner_text()
 
     # A row caption fills every cell of that row, and a second click clears the row again.
     await login_table.locator("tbody th button").nth(0).click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 4
+    assert await logins.locator("input[data-up-generated-value]").count() == 7
     for column in ("development", "staging", "production"):
         assert await login_table.locator(
             f'input[value="registry.example.com@{column}"]'
@@ -712,13 +719,21 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         ".unified-parameters-status"
     ).inner_text()
     await login_table.locator("tbody th button").nth(0).click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 1
+    assert await logins.locator("input[data-up-generated-value]").count() == 4
 
+    # Selecting everything collapses the chip list so the table stays visible.
     await logins.get_by_role("button", name="Select all").click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 6
-    assert "Every row is filled" in await logins.locator(
-        ".unified-parameters-status"
-    ).inner_text()
+    assert await logins.locator("input[data-up-generated-value]").count() == 15
+    assert await chip_list.is_visible() is False
+    assert await chip_toggle.inner_text() == "Show selected (15)"
+    await chip_toggle.click()
+    assert await chip_list.is_visible() is True
+    chip_box = await chip_list.bounding_box()
+    assert chip_box["height"] <= 100, chip_box
+    assert await chip_list.evaluate("(node) => node.scrollHeight > node.clientHeight")
+    assert await chip_toggle.inner_text() == "Hide selected"
+    await chip_toggle.click()
+    assert await chip_list.is_visible() is False
 
     await logins.get_by_role("button", name="Invert").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
@@ -726,16 +741,17 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         ".unified-parameters-status"
     ).inner_text()
     await logins.get_by_role("button", name="Invert").click()
-    assert await logins.locator("input[data-up-generated-value]").count() == 6
+    assert await logins.locator("input[data-up-generated-value]").count() == 15
     await logins.get_by_role("button", name="Clear all").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
+    assert await chip_toggle.is_visible() is False
 
     # Restore the selection the build assertions expect: production for the first row, staging for
     # the second one.
-    await login_table.locator("thead th button", has_text="production").first.click()
-    second_row = login_table.locator("tbody tr").nth(1).locator('input[type="checkbox"]')
-    await second_row.nth(2).uncheck()
-    await second_row.nth(1).check()
+    rows = login_table.locator("tbody tr")
+    await rows.nth(0).locator('input[type="checkbox"]').nth(2).check()
+    await rows.nth(1).locator('input[type="checkbox"]').nth(1).check()
+    assert await logins.locator("input[data-up-generated-value]").count() == 2
 
     # Above the radio limit the renderer degrades to the searchable list and says so.
     wide_radio = page.locator('[data-parameter-name="WIDE_RADIO"]')
