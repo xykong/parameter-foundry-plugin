@@ -67,11 +67,28 @@ public final class ParameterEvaluationService {
             DecodedInput input,
             List<Option> options,
             ChoiceMatrix matrix) {
+        return evaluateMultiple(definition, input, options, matrix, true);
+    }
+
+    /**
+     * Evaluates a multiple selection. {@code enforceConstraints} is false while the form is being
+     * rendered: a definition that demands a minimum number of selections, or one cell per row, must
+     * still resolve an empty default, otherwise the build form could never load. Every submitted
+     * value goes through the enforcing path.
+     */
+    private static List<String> evaluateMultiple(
+            AbstractUnifiedParameterDefinition definition,
+            DecodedInput input,
+            List<Option> options,
+            ChoiceMatrix matrix,
+            boolean enforceConstraints) {
         DefinitionValidationService.requireValid(definition);
         List<String> values = input.present() ? input.values() : resolveMultipleDefault(definition, options);
         if (values.isEmpty()) {
-            validateRowConstraint(definition, matrix, List.of());
-            validateSelectionCount(definition, 0);
+            if (enforceConstraints) {
+                validateRowConstraint(definition, matrix, List.of());
+                validateSelectionCount(definition, 0);
+            }
             return List.of();
         }
 
@@ -92,8 +109,10 @@ public final class ParameterEvaluationService {
             normalized.add(value);
         }
         normalized.sort(String::compareTo);
-        validateRowConstraint(definition, matrix, normalized);
-        validateSelectionCount(definition, normalized.size());
+        if (enforceConstraints) {
+            validateRowConstraint(definition, matrix, normalized);
+            validateSelectionCount(definition, normalized.size());
+        }
         return List.copyOf(normalized);
     }
 
@@ -150,7 +169,8 @@ public final class ParameterEvaluationService {
      */
     public static Object defaultFor(AbstractUnifiedParameterDefinition definition, List<Option> options) {
         if (definition.isMultiple()) {
-            return evaluateMultiple(definition, DecodedInput.absent(), options);
+            ChoiceMatrix matrix = definition.getTable();
+            return evaluateMultiple(definition, DecodedInput.absent(), options, matrix, false);
         }
         if (definition instanceof UnifiedChoiceParameterDefinition choice) {
             return evaluateSingle(choice, DecodedInput.absent(), options);

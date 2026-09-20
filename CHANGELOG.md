@@ -87,6 +87,10 @@ Current version: `0.3.214-SNAPSHOT`.
 
 ### Fixed
 
+- A multiple-choice parameter with `minSelections` (or a table with a per-row constraint) and no
+  default could not render its build form: resolving the empty default was rejected as if it were a
+  submission. Constraints now apply to submitted values, so the form loads and the user can fill it
+  in.
 - A single-choice parameter with `renderer: radio` now renders a native radio
   group even when a shared Provider supplies the options or a dependency
   refreshes them. Optional parameters keep an explicit None entry, required ones

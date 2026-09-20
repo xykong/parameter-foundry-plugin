@@ -138,6 +138,28 @@ class MatrixProviderDefinitionTest {
         assertTrue(missingRow.getMessage().contains("requires exactly one"), missingRow.getMessage());
     }
 
+    @Test
+    void aMinimumSelectionDoesNotBlockTheDefaultSoTheFormCanRender() {
+        MatrixProviderDefinition provider = matrix("registries-on-agents");
+        provider.setRowSelectionMode("at-most-one");
+        List<Option> options = provider.loadMatrix(context()).selectableOptions();
+        io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition definition =
+                new io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition("DOCKER_LOGINS");
+        definition.setSelectionMode("multiple");
+        definition.setRenderer("table");
+        definition.setProviderId("registries-on-agents");
+        definition.setDefaultMode("none");
+        definition.setMinSelections(1);
+
+        assertEquals(List.of(), ParameterEvaluationService.defaultFor(definition, options));
+
+        EvaluationException required = assertThrows(
+                EvaluationException.class,
+                () -> ParameterEvaluationService.evaluateMultiple(
+                        definition, DecodedInput.present(List.of()), options, provider.loadMatrix(context())));
+        assertTrue(required.getMessage().contains("at least 1 value"), required.getMessage());
+    }
+
     private static MatrixProviderDefinition matrix(String id) {
         MatrixProviderDefinition provider = new MatrixProviderDefinition(id);
         provider.setRows(List.of(
