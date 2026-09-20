@@ -17,6 +17,26 @@ class ActiveChoicesMigrationAdapterTest {
     private final ActiveChoicesMigrationAdapter adapter = new ActiveChoicesMigrationAdapter();
 
     @Test
+    void aConditionalCascadeWithAnEmptyOptionStillBecomesAMapping() {
+        CascadeChoiceParameter source = new CascadeChoiceParameter("CPPFLAGS", "BUILD_MODE");
+        source.setScript("if (BUILD_MODE == \"production\") {\n"
+                + "    return [\"\"]\n"
+                + "} else {\n"
+                + "    return [\"-Dsample-project_TRACY=1\", \"\"]\n"
+                + "}");
+
+        var plan = adapter.inspect(source);
+
+        assertEquals(MigrationClassification.B, plan.getClassification());
+        String skeleton = plan.getTargetSkeleton();
+        assertTrue(skeleton.contains("unifiedMappingProvider"), skeleton);
+        assertTrue(skeleton.contains("[value: '-Dsample-project_TRACY=1']"), skeleton);
+        assertTrue(
+                plan.getDecisions().stream().anyMatch(decision -> decision.contains("empty source option")),
+                plan.getDecisions().toString());
+    }
+
+    @Test
     void aNodeListingScriptBecomesTheNodeProvider() {
         ChoiceParameter source = new ChoiceParameter("BUILD_NODE");
         source.setScript("import jenkins.model.*\n"

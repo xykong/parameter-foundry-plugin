@@ -35,7 +35,11 @@ final class ActiveChoicesScriptAnalysis {
 
     /** A script that branches on one parameter and returns a literal list per branch. */
     record ConditionalChoices(
-            String dependency, String caseValue, List<Option> caseOptions, List<Option> otherOptions) {}
+            String dependency,
+            String caseValue,
+            List<Option> caseOptions,
+            List<Option> otherOptions,
+            boolean emptyOption) {}
 
     enum ScriptShape {
         LITERAL_LIST,
@@ -73,6 +77,18 @@ final class ActiveChoicesScriptAnalysis {
 
     /** Parses a literal-only script such as {@code return ['a', 'b']} or a list of option maps. */
     static Optional<LiteralChoices> literalChoices(String script) {
+        return literalChoices(script, false);
+    }
+
+    /**
+     * Same parse, but keeps empty string options. The target cannot hold an empty option value, so
+     * the migration drops it and asks for the None/optional decision instead of failing the parse.
+     */
+    static Optional<LiteralChoices> literalChoicesLenient(String script) {
+        return literalChoices(script, true);
+    }
+
+    private static Optional<LiteralChoices> literalChoices(String script, boolean allowEmpty) {
         if (script == null || script.isBlank()) {
             return Optional.empty();
         }
@@ -95,7 +111,7 @@ final class ActiveChoicesScriptAnalysis {
         List<Option> options = new ArrayList<>();
         List<String> selected = new ArrayList<>();
         for (String element : candidates) {
-            Optional<Option> parsed = parseElement(element.trim(), selected);
+            Optional<Option> parsed = parseElement(element.trim(), selected, allowEmpty);
             if (parsed.isEmpty()) {
                 return Optional.empty();
             }
@@ -121,16 +137,33 @@ final class ActiveChoicesScriptAnalysis {
         if (!matcher.find()) {
             return Optional.empty();
         }
+        boolean emptyOption = false;
         Optional<LiteralChoices> caseChoices = literalChoices("return " + matcher.group(3));
         Optional<LiteralChoices> otherChoices = literalChoices("return " + matcher.group(4));
+        if (caseChoices.isEmpty() || otherChoices.isEmpty()) {
+            caseChoices = literalChoicesLenient("return " + matcher.group(3));
+            otherChoices = literalChoicesLenient("return " + matcher.group(4));
+            emptyOption = true;
+        }
         if (caseChoices.isEmpty() || otherChoices.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(new ConditionalChoices(
                 matcher.group(1),
                 matcher.group(2),
-                caseChoices.get().options(),
-                otherChoices.get().options()));
+                withoutEmpty(caseChoices.get().options()),
+                withoutEmpty(otherChoices.get().options()),
+                emptyOption));
+    }
+
+    private static List<Option> withoutEmpty(List<Option> options) {
+        List<Option> filtered = new ArrayList<>();
+        for (Option option : options) {
+            if (option.getValue() != null && !option.getValue().isEmpty()) {
+                filtered.add(option);
+            }
+        }
+        return List.copyOf(filtered);
     }
 
     /** Returns a redacted endpoint shape such as {@code https://<host>/api/platforms}. */
@@ -176,7 +209,7 @@ final class ActiveChoicesScriptAnalysis {
         return List.copyOf(new LinkedHashSet<>(fields));
     }
 
-    private static Optional<Option> parseElement(String element, List<String> selected) {
+    private static Optional<Option> parseElement(String element, List<String> selected, boolean allowEmpty) {
         if (element.startsWith("[") && element.endsWith("]")) {
             String body = element.substring(1, element.length() - 1);
             String value = null;
@@ -216,7 +249,7 @@ final class ActiveChoicesScriptAnalysis {
                     }
                 }
             }
-            if (value == null || value.isEmpty()) {
+            if (value == null || (value.isEmpty() && !allowEmpty)) {
                 return Optional.empty();
             }
             Option option = new Option(value);
@@ -232,7 +265,7 @@ final class ActiveChoicesScriptAnalysis {
             return Optional.of(option);
         }
         Optional<String> text = literalText(element);
-        if (text.isEmpty() || text.get().isEmpty()) {
+        if (text.isEmpty() || (text.get().isEmpty() && !allowEmpty)) {
             return Optional.empty();
         }
         String raw = text.get();

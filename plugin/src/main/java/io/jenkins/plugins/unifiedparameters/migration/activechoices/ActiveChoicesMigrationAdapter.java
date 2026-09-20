@@ -224,9 +224,12 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 MigrationText.value(String.valueOf(conditional.caseOptions().size()
                         + conditional.otherOptions().size())));
         facts.put(MigrationText.of("MigrationFactMappingDependency"), MigrationText.value(conditional.dependency()));
-        List<MigrationText> decisions = List.of(
+        List<MigrationText> decisions = new java.util.ArrayList<>(List.of(
                 MigrationText.of("MigrationDecisionActiveChoicesMappingConfirm", conditional.dependency()),
-                MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior"));
+                MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior")));
+        if (conditional.emptyOption()) {
+            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyOption"));
+        }
         return new MigrationPlan(
                 MigrationClassification.B,
                 MigrationText.of("MigrationReasonActiveChoicesConditional", conditional.dependency()),
