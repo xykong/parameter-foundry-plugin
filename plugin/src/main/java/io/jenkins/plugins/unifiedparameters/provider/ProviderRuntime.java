@@ -257,6 +257,16 @@ public final class ProviderRuntime {
             ProviderRequest request,
             ProviderException exception,
             Instant now) {
+        if (!provider.getFallbackOptions().isEmpty()) {
+            CacheEntry fallback = CacheEntry.create(
+                    provider.getFallbackOptions(),
+                    request.providerDigest(),
+                    now,
+                    now,
+                    0,
+                    request.ownerId() + "/" + provider.getId());
+            return fallback.toResolution(false, true, exception.getMessage());
+        }
         if ("last-known-good".equals(provider.getFailurePolicy())
                 && cached != null
                 && Duration.between(cached.generatedAt, now).getSeconds() <= provider.getMaximumStalenessSeconds()) {

@@ -166,6 +166,32 @@ final class ActiveChoicesScriptAnalysis {
         return List.copyOf(filtered);
     }
 
+    /**
+     * Literal values the script returns from a {@code catch} block. Those are the values the source
+     * offered whenever its call failed, so the migrated Provider keeps them as fallback options.
+     */
+    static List<String> catchFallbackLiterals(String script) {
+        if (script == null || script.isBlank()) {
+            return List.of();
+        }
+        List<String> values = new ArrayList<>();
+        Matcher catchBlock = Pattern.compile("catch\\s*\\([^)]*\\)\\s*\\{(.*?)}", Pattern.DOTALL)
+                .matcher(script);
+        while (catchBlock.find()) {
+            Matcher returned = Pattern.compile("return\\s*(\\[[^\\]]*])").matcher(catchBlock.group(1));
+            while (returned.find()) {
+                Matcher literal = Pattern.compile("['\"]([^'\"]*)['\"]").matcher(returned.group(1));
+                while (literal.find()) {
+                    String value = literal.group(1);
+                    if (!value.isEmpty() && !value.contains("${") && !values.contains(value)) {
+                        values.add(value);
+                    }
+                }
+            }
+        }
+        return List.copyOf(values);
+    }
+
     /** Returns a redacted endpoint shape such as {@code https://<host>/api/platforms}. */
     static Optional<String> redactedEndpoint(String script) {
         if (script == null) {

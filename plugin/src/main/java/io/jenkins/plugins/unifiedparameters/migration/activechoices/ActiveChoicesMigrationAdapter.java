@@ -118,13 +118,22 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                     verificationFixture(definition, dependencies, false),
                     facts);
         }
+        List<String> fallbackLiterals = ActiveChoicesScriptAnalysis.catchFallbackLiterals(script);
         String skeleton = choiceSkeleton(
-                definition, dependencies, shape == ActiveChoicesScriptAnalysis.ScriptShape.NETWORK, filterable);
+                definition,
+                dependencies,
+                shape == ActiveChoicesScriptAnalysis.ScriptShape.NETWORK,
+                filterable,
+                fallbackLiterals);
         List<MigrationText> decisions = new java.util.ArrayList<>(List.of(
                 MigrationText.of("MigrationDecisionActiveChoicesChooseProvider"),
                 MigrationText.of("MigrationDecisionActiveChoicesConfirmBehavior")));
         if (shape == ActiveChoicesScriptAnalysis.ScriptShape.NETWORK) {
             decisions.add(MigrationText.of("MigrationDecisionActiveChoicesRestProvider"));
+            if (!fallbackLiterals.isEmpty()) {
+                decisions.add(MigrationText.of(
+                        "MigrationDecisionActiveChoicesFallback", String.join(", ", fallbackLiterals)));
+            }
             if (!detectedFields.isEmpty()) {
                 decisions.add(MigrationText.of(
                         "MigrationDecisionActiveChoicesDetectedFields", String.join(", ", detectedFields)));
@@ -310,7 +319,11 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
     }
 
     private static String choiceSkeleton(
-            ParameterDefinition definition, List<String> dependencies, boolean network, boolean filterable) {
+            ParameterDefinition definition,
+            List<String> dependencies,
+            boolean network,
+            boolean filterable,
+            List<String> fallbackLiterals) {
         String dependencyLine = dependencies.isEmpty()
                 ? ""
                 : "    dependsOn: ["
@@ -319,6 +332,14 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                                 .reduce((left, right) -> left + ", " + right)
                                 .orElse("")
                         + "],\n";
+        String fallbackLine = fallbackLiterals.isEmpty()
+                ? ""
+                : "    fallbackOptions: "
+                        + fallbackLiterals.stream()
+                                .map(value -> "[value: " + quote(value) + "]")
+                                .reduce((left, right) -> left + ", " + right)
+                                .map(encoded -> "[" + encoded + "],\n")
+                                .orElse("");
         String providerSkeleton = network
                 ? "unifiedRestProvider(\n"
                         + "    id: 'TODO-rest-provider',\n"
@@ -326,7 +347,9 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                         + "    relativePath: '<reviewed-source-path>',\n"
                         + "    format: 'json',\n"
                         + "    valuePath: '<reviewed-value-path>',\n"
-                        + "    labelPath: '<reviewed-label-path>'\n"
+                        + "    labelPath: '<reviewed-label-path>',\n"
+                        + fallbackLine
+                        + "    timeoutSeconds: 5\n"
                         + ")\n"
                 : "unifiedStaticProvider(\n"
                         + "    id: 'TODO-governed-provider',\n"

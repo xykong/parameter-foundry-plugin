@@ -71,6 +71,25 @@ class ActiveChoicesMigrationAdapterTest {
     }
 
     @Test
+    void aNetworkScriptKeepsItsCatchFallbackAsFallbackOptions() {
+        ChoiceParameter source = new ChoiceParameter("PLATFORMS");
+        source.setScript("try {\n"
+                + "    def response = new URL('https://internal.example.test/api/platforms').getText()\n"
+                + "    return [response]\n"
+                + "} catch (Exception e) {\n"
+                + "    return [\"changeset_dev\"]\n"
+                + "}");
+
+        var plan = adapter.inspect(source);
+
+        String skeleton = plan.getTargetSkeleton();
+        assertTrue(skeleton.contains("fallbackOptions: [[value: 'changeset_dev']]"), skeleton);
+        assertTrue(
+                plan.getDecisions().stream().anyMatch(decision -> decision.contains("changeset_dev")),
+                plan.getDecisions().toString());
+    }
+
+    @Test
     void aConditionalLiteralCascadeBecomesADeclarativeDependencyMapping() {
         CascadeChoiceParameter source = new CascadeChoiceParameter("BUILD_TYPE", "BUILD_MODE");
         source.setScript("if (BUILD_MODE == \"production\") {\n"

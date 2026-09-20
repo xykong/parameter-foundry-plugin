@@ -1,6 +1,7 @@
 package io.jenkins.plugins.unifiedparameters.provider;
 
 import hudson.model.AbstractDescribableImpl;
+import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
     private int maximumStalenessSeconds;
     private int timeoutSeconds = 5;
     private List<TransformStep> transforms = List.of();
+    private List<Option> fallbackOptions = List.of();
 
     protected SharedProviderDefinition(String id) {
         this.id = requireId(id);
@@ -105,6 +107,20 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
         this.transforms = transforms == null ? List.of() : List.copyOf(new ArrayList<>(transforms));
     }
 
+    /**
+     * Options served when the Provider cannot answer. This is the governed replacement for the
+     * {@code catch { return [fallback] }} idiom that Active Choices scripts use around a network
+     * call: the parameter keeps offering a reviewed list instead of failing the build form.
+     */
+    public List<Option> getFallbackOptions() {
+        return fallbackOptions == null ? List.of() : fallbackOptions;
+    }
+
+    @DataBoundSetter
+    public void setFallbackOptions(List<Option> fallbackOptions) {
+        this.fallbackOptions = fallbackOptions == null ? List.of() : List.copyOf(new ArrayList<>(fallbackOptions));
+    }
+
     public final String configurationDigest() {
         return Digests.sha256(getClass().getName()
                 + '\u0000'
@@ -119,6 +135,8 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
                 + maximumStalenessSeconds
                 + '\u0000'
                 + TransformChain.digest(getTransforms())
+                + '\u0000'
+                + Digests.options(getFallbackOptions())
                 + '\u0000'
                 + providerFingerprint());
     }

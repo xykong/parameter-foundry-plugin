@@ -2,6 +2,7 @@ package io.jenkins.plugins.unifiedparameters.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,6 +81,40 @@ class ProviderRuntimeTest {
                 runtime.resolve(job, located, ProviderOperation.RESOLVE, Map.of("version", "new"), "builder");
         assertTrue(empty.fallback());
         assertTrue(empty.options().isEmpty());
+    }
+
+    @Test
+    void declaredFallbackOptionsAreServedWhenTheProviderFails(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("provider-declared-fallback");
+        CountingProvider provider = new CountingProvider("declared-fallback");
+        provider.setOptions(List.of(new Option("live")));
+        provider.setFallbackOptions(List.of(new Option("release/prod")));
+        provider.setCacheTtlSeconds(0);
+        ProviderRegistry.LocatedProvider located =
+                new ProviderRegistry.LocatedProvider(provider, ProviderScope.GLOBAL, "jenkins");
+        ProviderRuntime runtime = runtime(new ProviderRateLimiter());
+
+        ProviderResolution fresh = runtime.resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder");
+        provider.fail = true;
+        ProviderResolution fallback = runtime.resolve(job, located, ProviderOperation.BUILD, Map.of(), "builder");
+
+        assertFalse(fresh.fallback());
+        assertEquals(
+                List.of("live"), fresh.options().stream().map(Option::getValue).toList());
+        assertTrue(fallback.fallback());
+        assertEquals(
+                List.of("release/prod"),
+                fallback.options().stream().map(Option::getValue).toList());
+        assertTrue(fallback.fallbackReason().contains("Synthetic provider failure"));
+    }
+
+    @Test
+    void theConfigurationDigestTracksTheFallbackOptions() {
+        CountingProvider without = new CountingProvider("fallback-digest");
+        CountingProvider with = new CountingProvider("fallback-digest");
+        with.setFallbackOptions(List.of(new Option("release/prod")));
+
+        assertNotEquals(without.configurationDigest(), with.configurationDigest());
     }
 
     @Test
