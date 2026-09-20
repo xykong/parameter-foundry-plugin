@@ -480,6 +480,17 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return getSelectableOptions().size();
     }
 
+    /**
+     * Rows a single-choice list box shows without scrolling. The source Active Choices parameter in a
+     * node-listing Job used {@code visibleItemCount}; four rows keep the control readable while a
+     * long node list stays bounded.
+     */
+    public int getListVisibleRows() {
+        int configured = getFallbackChoices().size();
+        int rows = Math.max(4, Math.min(12, configured));
+        return isRequired() ? rows : rows + 1;
+    }
+
     public List<String> getAvailableExternalRenderers() {
         return TrustedRendererRegistry.externalRendererIds(getRendererFamily());
     }

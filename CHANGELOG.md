@@ -15,6 +15,9 @@ Current version: `0.3.226-SNAPSHOT`.
 
 ### Added
 
+- A single choice can use `renderer: list` as well, which renders the options as a list box (the
+  equivalent of the Active Choices `PT_SINGLE_SELECT` control with a visible item count). Required
+  parameters have no None entry.
 - Selected values stay out of the way: the chip list scrolls inside a bounded box and collapses to a
   `Show selected (n)` toggle once a selection is long, so filling a table no longer pushes it off
   screen. The toggle is four languages and remembers whether the reader expanded it.

@@ -17,7 +17,7 @@ public final class TrustedRendererRegistry {
             "select", Set.of(FAMILY_SINGLE_CHOICE),
             "searchable", Set.of(FAMILY_SINGLE_CHOICE),
             "radio", Set.of(FAMILY_SINGLE_CHOICE),
-            "list", Set.of(FAMILY_MULTI_CHOICE),
+            "list", Set.of(FAMILY_MULTI_CHOICE, FAMILY_SINGLE_CHOICE),
             "chips", Set.of(FAMILY_MULTI_CHOICE),
             "checkbox", Set.of(FAMILY_MULTI_CHOICE),
             "schema", Set.of(FAMILY_FORM),

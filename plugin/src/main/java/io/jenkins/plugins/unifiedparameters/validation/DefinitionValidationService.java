@@ -20,7 +20,7 @@ import java.util.Set;
 public final class DefinitionValidationService {
 
     private static final Set<String> DEFAULT_MODES = Set.of("none", "first", "explicit");
-    private static final Set<String> SINGLE_RENDERERS = Set.of("select", "searchable", "radio");
+    private static final Set<String> SINGLE_RENDERERS = Set.of("select", "searchable", "radio", "list");
     private static final Set<String> MULTI_RENDERERS = Set.of("list", "checkbox", "table");
     private static final Set<String> MULTI_SELECTED_DISPLAYS = Set.of("none", "chips");
     private static final Set<String> MULTI_API_MODES = Set.of("repeated", "json-array", "delimited");

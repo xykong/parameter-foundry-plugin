@@ -659,6 +659,21 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         ).count()
         == 3
     )
+    # A single choice with renderer=list is a list box: options visible, no dropdown, no multiple.
+    node_list = page.locator('[data-parameter-name="NODE_LIST"] select.unified-parameters-native-list')
+    await page.wait_for_selector(
+        '[data-parameter-name="NODE_LIST"][data-up-interactive="true"]'
+    )
+    await node_list.wait_for()
+    assert await node_list.get_attribute("multiple") is None
+    assert int(await node_list.get_attribute("size")) >= 4
+    assert await node_list.locator("option").all_inner_texts() == [
+        "development",
+        "staging",
+        "production",
+    ]
+    assert await node_list.input_value() == "staging"
+
     # A Provider-supplied matrix renders both axes: the rows come from one Provider, the columns
     # from another, and the constraint keeps at most one cell per row.
     logins = page.locator('[data-parameter-name="DOCKER_LOGINS"]')

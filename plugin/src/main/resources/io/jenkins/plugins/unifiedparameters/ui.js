@@ -986,6 +986,9 @@
       });
       if (searchable) {
         select.size = Math.min(8, Math.max(2, select.options.length));
+      } else if (field.dataset.renderer === "list") {
+        // A list box keeps the options visible, which is what the migrated node parameter wants.
+        select.size = Math.min(12, Math.max(4, select.options.length));
       } else {
         // A plain select renderer stays a dropdown; only the searchable renderer lists matches.
         select.removeAttribute("size");

@@ -193,6 +193,14 @@ wideRadio.setChoices((0..<70).collect { index ->
 })
 wideRadio.setRenderer('radio')
 wideRadio.setDefaultMode('first')
+// A single choice can be shown as a list box too, which is what Active Choices called
+// PT_SINGLE_SELECT with visibleItemCount.
+def nodeList = new UnifiedChoiceParameterDefinition('NODE_LIST')
+nodeList.setRenderer('list')
+nodeList.setProviderId('shared-environments')
+nodeList.setRequired(true)
+nodeList.setDefaultMode('explicit')
+nodeList.setDefaultValue('staging')
 def registryLogins = new UnifiedChoiceParameterDefinition('DOCKER_LOGINS')
 registryLogins.setSelectionMode('multiple')
 registryLogins.setRenderer('table')
@@ -202,7 +210,7 @@ registryLogins.setDefaultMode('explicit')
 registryLogins.setDefaultValues(['registry.example.com@staging'])
 registryLogins.setMinSelections(1)
 providerJob.addProperty(new ParametersDefinitionProperty(
-    providerEnvironment, environments, artifact, targetNode, lockedNode, wideRadio, registryLogins))
+    providerEnvironment, environments, artifact, targetNode, lockedNode, wideRadio, nodeList, registryLogins))
 providerJob.save()
 
 def formJob = jenkins.getItem('unified-parameters-form-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-form-e2e')

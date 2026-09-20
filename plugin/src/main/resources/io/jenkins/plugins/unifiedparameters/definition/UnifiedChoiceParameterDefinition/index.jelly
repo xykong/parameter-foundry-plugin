@@ -154,7 +154,8 @@
               </j:when>
               <j:otherwise>
                 <div class="jenkins-select">
-                  <select class="jenkins-select__input" name="${it.name}" data-up-native-value="true">
+                  <select class="jenkins-select__input" name="${it.name}" data-up-native-value="true"
+                          size="${it.renderer == 'list' ? it.listVisibleRows : null}">
                     <j:if test="${!it.required}">
                       <option value="" selected="${it.defaultParameterValue.value == null ? 'selected' : null}">None</option>
                     </j:if>

@@ -111,6 +111,7 @@
           <option value="select" selected="${instance.renderer == 'select' ? 'selected' : null}">Select</option>
           <option value="searchable" selected="${instance.renderer == 'searchable' ? 'selected' : null}">Searchable</option>
           <option value="radio" selected="${instance.renderer == 'radio' ? 'selected' : null}">Radio</option>
+          <option value="list" selected="${instance.renderer == 'list' ? 'selected' : null}">List box</option>
           <j:forEach var="rendererId" items="${instance.availableExternalRenderers}">
             <option value="${rendererId}" selected="${instance.renderer == rendererId ? 'selected' : null}">${rendererId}</option>
           </j:forEach>
