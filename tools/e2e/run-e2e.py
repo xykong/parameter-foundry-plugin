@@ -688,6 +688,37 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         'input[data-up-generated-value][value="registry.example.com@production"]'
     ).count() == 1
 
+    # One-click row, column, and whole-table selection: a header click fills the line, the toolbar
+    # fills or clears every row, and the rank constraint still keeps one cell per row.
+    await login_table.locator("thead th button", has_text="staging").first.click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 2
+    assert await login_table.locator('input[value="registry.example.com@staging"]').is_checked()
+    assert await login_table.locator('input[value="harbor.example.net@staging"]').is_checked()
+    assert "Column staging selected" in await logins.locator(
+        ".unified-parameters-status"
+    ).inner_text()
+
+    await login_table.locator("tbody th button").nth(0).click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 1
+    await login_table.locator("tbody th button").nth(0).click()
+    assert await login_table.locator('input[value="registry.example.com@development"]').is_checked()
+
+    await logins.get_by_role("button", name="Select all").click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 2
+    assert "Every row is filled" in await logins.locator(
+        ".unified-parameters-status"
+    ).inner_text()
+
+    await logins.get_by_role("button", name="Clear all").click()
+    assert await logins.locator("input[data-up-generated-value]").count() == 0
+
+    # Restore the selection the build assertions expect: production for the first row, staging for
+    # the second one.
+    await login_table.locator("thead th button", has_text="production").first.click()
+    second_row = login_table.locator("tbody tr").nth(1).locator('input[type="checkbox"]')
+    await second_row.nth(2).uncheck()
+    await second_row.nth(1).check()
+
     # Above the radio limit the renderer degrades to the searchable list and says so.
     wide_radio = page.locator('[data-parameter-name="WIDE_RADIO"]')
     assert (
@@ -724,7 +755,6 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     await target_node.locator(
         '.unified-parameters-enhanced input[type="radio"][value="development"]'
     ).check()
-    await login_table.locator("tbody tr").nth(1).locator('input[type="checkbox"]').nth(1).check()
     assert (
         await target_node.locator(
             'input[data-up-generated-value][value="development"]'

@@ -64,6 +64,11 @@ unifiedChoice(
 | Cell value template | Cell value from `{row}`, `{rowLabel}`, `{column}`, and `{columnLabel}`; the default is `{row}@{column}` |
 | Cell label template | Cell caption; empty means "row caption / column caption" |
 | Row axis label | Caption of the row axis, shown in the table corner |
+
+A rendered table can be filled in one click: click a row or column caption to select
+or clear that whole line, and use **Select all** / **Clear all** above the table for
+the whole grid. With `at-most-one` or `exactly-one` a row keeps a single cell, so
+filling a row selects its first selectable cell instead of breaking the rule.
 | Column axis label | Caption above the table, so the columns read as the values of another parameter |
 | Cells per row | `any`, `at-most-one`, or `exactly-one`; the server rejects a violation before the build is scheduled |
 

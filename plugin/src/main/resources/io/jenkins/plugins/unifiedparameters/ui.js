@@ -297,6 +297,11 @@
         return [cell.value, cellCaption(cell)];
       }),
     );
+    var cellsByValue = new Map(
+      tableModel.cells.map(function (cell) {
+        return [cell.value, cell];
+      }),
+    );
     var rowSelectionMode = tableModel.rowSelectionMode || "any";
 
     function rowCellValues(rowValue) {
@@ -309,6 +314,36 @@
         });
     }
 
+    function cellAt(rowValue, columnValue) {
+      return cells.get(rowValue + "\u0000" + columnValue) || null;
+    }
+
+    function selectableRowValues(rowValue) {
+      return rowCellValues(rowValue).filter(function (value) {
+        var cell = cellsByValue.get(value);
+        return cell && !cell.disabled;
+      });
+    }
+
+    function columnCellValues(columnValue) {
+      return tableModel.rows
+        .map(function (row) {
+          return cellAt(row.value, columnValue);
+        })
+        .filter(function (cell) {
+          return cell && !cell.disabled;
+        })
+        .map(function (cell) {
+          return cell.value;
+        });
+    }
+
+    function rowHasSelection(rowValue) {
+      return rowCellValues(rowValue).some(function (value) {
+        return selected.has(value);
+      });
+    }
+
     function clearRow(values, rowValue, keepValue) {
       var next = new Set(values);
       rowCellValues(rowValue).forEach(function (value) {
@@ -319,16 +354,119 @@
       return next;
     }
 
-    function syncRowInputs(rowValue, keepValue) {
-      rowCellValues(rowValue).forEach(function (value) {
-        var control = inputsByValue.get(value);
-        if (control) {
-          control.checked = value === keepValue;
-        }
+    /** Repaints every control, the chips, and the summary from the current selection. */
+    function sync(message) {
+      inputsByValue.forEach(function (input, value) {
+        input.checked = selected.has(value);
       });
+      setSubmittedValues(field, selected, true);
+      renderChips();
+      updateStatus(message);
     }
 
-    function cellCaption(cell) {
+    /**
+     * Fills one row. With a rank constraint a row keeps a single cell, so the shortcut picks its
+     * first selectable cell instead of violating the rule; a second click clears the row again.
+     */
+    function toggleRow(rowModel) {
+      var caption = rowModel.label || rowModel.value;
+      if (rowHasSelection(rowModel.value)) {
+        rowCellValues(rowModel.value).forEach(function (value) {
+          selected.delete(value);
+        });
+        sync(formatMessage(localized(field, "rowSelectionCleared", "Row {0} cleared."), [caption]));
+        return;
+      }
+      var values = selectableRowValues(rowModel.value);
+      if (!values.length) {
+        return;
+      }
+      if (rowSelectionMode === "any") {
+        values.forEach(function (value) {
+          selected.add(value);
+        });
+      } else {
+        selected.add(values[0]);
+      }
+      sync(formatMessage(localized(field, "rowSelectionUpdated", "Row {0} selected."), [caption]));
+    }
+
+    /** Fills one column, replacing the cell of a row that already had one. A second click clears it. */
+    function toggleColumn(columnModel) {
+      var caption = columnModel.label || columnModel.value;
+      var values = columnCellValues(columnModel.value);
+      if (!values.length) {
+        return;
+      }
+      var allSelected = values.every(function (value) {
+        return selected.has(value);
+      });
+      values.forEach(function (value) {
+        if (allSelected) {
+          selected.delete(value);
+          return;
+        }
+        if (rowSelectionMode !== "any") {
+          selected = clearRow(selected, cellsByValue.get(value).row, value);
+        }
+        selected.add(value);
+      });
+      sync(
+        allSelected
+          ? formatMessage(localized(field, "columnSelectionCleared", "Column {0} cleared."), [caption])
+          : formatMessage(localized(field, "columnSelectionUpdated", "Column {0} selected."), [caption]),
+      );
+    }
+
+    /** Fills every row that has a selectable cell, keeping the cells a user already picked. */
+    function selectAllRows() {
+      tableModel.rows.forEach(function (row) {
+        var values = selectableRowValues(row.value);
+        if (!values.length) {
+          return;
+        }
+        if (rowSelectionMode === "any") {
+          values.forEach(function (value) {
+            selected.add(value);
+          });
+        } else if (!rowHasSelection(row.value)) {
+          selected.add(values[0]);
+        }
+      });
+      sync(localized(field, "allCellsSelected", "Every row is filled."));
+    }
+
+    function clearAllCells() {
+      var cleared = selected.size;
+      selected.clear();
+      sync(formatMessage(localized(field, "allSelectionsCleared", "All selections cleared. {0} changed."), [cleared]));
+    }
+
+    function toolbarButton(label, onClick) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "jenkins-button unified-parameters-group-select";
+    button.textContent = label;
+    button.addEventListener("click", onClick);
+    return button;
+  }
+
+  /**
+   * Header cell of a table that is also a one-click shortcut: the caption keeps naming the row or
+   * column, and the button selects or clears the whole line.
+   */
+  function headerAction(caption, ariaLabel, onClick) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "unified-parameters-table-header-action";
+    button.textContent = caption;
+    button.setAttribute("aria-label", ariaLabel);
+    button.title = ariaLabel;
+    button.addEventListener("click", onClick);
+    return button;
+  }
+
+  function cellCaption(cell) {
       if (cell.label && cell.label !== cell.value) {
         return cell.label;
       }
@@ -371,6 +509,19 @@
         (message ? message + " " : "") + selectedSummary(field, selected.size, tableModel.cells.length);
     }
 
+    var toolbar = document.createElement("div");
+    toolbar.className = "unified-parameters-toolbar";
+    toolbar.setAttribute("aria-label", "Table actions");
+    toolbar.appendChild(
+      toolbarButton(localized(field, "selectAllCells", "Select all"), function () {
+        selectAllRows();
+      }),
+    );
+    toolbar.appendChild(
+      toolbarButton(localized(field, "clearAll", "Clear all"), function () {
+        clearAllCells();
+      }),
+    );
     var table = document.createElement("table");
     table.className = "unified-parameters-table";
     if (tableModel.columnAxisLabel) {
@@ -389,7 +540,15 @@
     tableModel.columns.forEach(function (column) {
       var th = document.createElement("th");
       th.scope = "col";
-      th.textContent = column.label || column.value;
+      th.appendChild(
+        headerAction(
+          column.label || column.value,
+          formatMessage(localized(field, "selectColumn", "Select column {0}"), [column.label || column.value]),
+          function () {
+            toggleColumn(column);
+          },
+        ),
+      );
       headerRow.appendChild(th);
     });
     head.appendChild(headerRow);
@@ -402,7 +561,15 @@
       var tr = document.createElement("tr");
       var rowHeader = document.createElement("th");
       rowHeader.scope = "row";
-      rowHeader.textContent = rowModel.label || rowModel.value;
+      rowHeader.appendChild(
+        headerAction(
+          rowModel.label || rowModel.value,
+          formatMessage(localized(field, "selectRow", "Select row {0}"), [rowModel.label || rowModel.value]),
+          function () {
+            toggleRow(rowModel);
+          },
+        ),
+      );
       tr.appendChild(rowHeader);
       tableModel.columns.forEach(function (column) {
         var cell = cells.get(rowModel.value + "\u0000" + column.value);
@@ -429,12 +596,9 @@
             }
             if (input.checked && rowSelectionMode !== "any") {
               selected = clearRow(selected, rowModel.value, cell.value);
-              syncRowInputs(rowModel.value, cell.value);
             }
             if (input.checked) selected.add(cell.value); else selected.delete(cell.value);
-            setSubmittedValues(field, selected, true);
-            renderChips();
-            updateStatus(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
+            sync(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
           });
           inputsByValue.set(cell.value, input);
           td.appendChild(input);
@@ -444,6 +608,7 @@
       body.appendChild(tr);
     });
     table.appendChild(body);
+    enhanced.appendChild(toolbar);
     if (field.dataset.selectedDisplay === "chips") {
       enhanced.appendChild(chips);
     }

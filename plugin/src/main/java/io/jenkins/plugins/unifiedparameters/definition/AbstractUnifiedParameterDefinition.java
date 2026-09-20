@@ -145,6 +145,38 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.RadioDegraded("{0}");
     }
 
+    public String getUiSelectAllCells() {
+        return Messages.SelectAllCells();
+    }
+
+    public String getUiSelectRow() {
+        return Messages.SelectRow("{0}");
+    }
+
+    public String getUiSelectColumn() {
+        return Messages.SelectColumn("{0}");
+    }
+
+    public String getUiRowSelectionUpdated() {
+        return Messages.RowSelectionUpdated("{0}");
+    }
+
+    public String getUiRowSelectionCleared() {
+        return Messages.RowSelectionCleared("{0}");
+    }
+
+    public String getUiColumnSelectionUpdated() {
+        return Messages.ColumnSelectionUpdated("{0}");
+    }
+
+    public String getUiColumnSelectionCleared() {
+        return Messages.ColumnSelectionCleared("{0}");
+    }
+
+    public String getUiAllCellsSelected() {
+        return Messages.AllCellsSelected();
+    }
+
     public String getUiLimitedSingleMatches() {
         return Messages.LimitedSingleMatches("{0}", "{1}");
     }
