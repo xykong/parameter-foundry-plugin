@@ -175,10 +175,12 @@ final class ActiveChoicesScriptAnalysis {
             return List.of();
         }
         List<String> values = new ArrayList<>();
-        Matcher catchBlock = Pattern.compile("catch\\s*\\([^)]*\\)\\s*\\{(.*?)}", Pattern.DOTALL)
+        // The catch body may contain braces inside GString expressions such as ${e.message}, so scan a
+        // window after the catch instead of matching a balanced block.
+        Matcher catchBlock = Pattern.compile("catch\\s*\\([^)]*\\)[\\s\\S]{0,600}?return\\s*(\\[[^\\]]*])")
                 .matcher(script);
         while (catchBlock.find()) {
-            Matcher returned = Pattern.compile("return\\s*(\\[[^\\]]*])").matcher(catchBlock.group(1));
+            Matcher returned = Pattern.compile("^(\\[[^\\]]*])").matcher(catchBlock.group(1));
             while (returned.find()) {
                 Matcher literal = Pattern.compile("['\"]([^'\"]*)['\"]").matcher(returned.group(1));
                 while (literal.find()) {

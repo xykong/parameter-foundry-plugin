@@ -37,6 +37,26 @@ class ActiveChoicesMigrationAdapterTest {
     }
 
     @Test
+    void aCatchBlockWithAGStringStillYieldsTheFallbackList() {
+        // Production shape: the catch prints a GString, whose braces must not hide the return list.
+        ChoiceParameter source = new ChoiceParameter("BRANCH");
+        source.setScript("try {\n"
+                + "   def url = new URL(\"https://internal.example.test/whitelist\")\n"
+                + "   return [url.getText()]\n"
+                + "} catch (Exception e) {\n"
+                + "   println \"request failed: ${e.message}\"\n"
+                + "   e.printStackTrace()\n"
+                + "   return [e.message, \"release/prod\"]\n"
+                + "}");
+
+        var plan = adapter.inspect(source);
+
+        assertTrue(
+                plan.getTargetSkeleton().contains("fallbackOptions: [[value: 'release/prod']]"),
+                plan.getTargetSkeleton());
+    }
+
+    @Test
     void aNodeListingScriptBecomesTheNodeProvider() {
         ChoiceParameter source = new ChoiceParameter("BUILD_NODE");
         source.setScript("import jenkins.model.*\n"
