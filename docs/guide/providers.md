@@ -101,6 +101,38 @@ params.DOCKER_LOGINS.each { cell ->
 Fallbacks are never silent: a response that used a fallback is marked as such and
 the reason is shown next to the parameter.
 
+## Provider or inline choices?
+
+A Provider is **not required**. Every renderer, transport, validation rule, and Pipeline
+binding works the same whether the options come from a Provider or from the parameter's own
+list, so the question is only *where the list lives*:
+
+| | Inline choices | Provider |
+|---|---|---|
+| Declared in | The Job (parameter configuration, Job DSL, or the Pipeline's `parameters` block) | Manage Jenkins -> System -> Unified Parameters, or a Folder property |
+| Changes when an agent, branch, or environment is added | The Job must be edited | Nothing to change; the next resolve returns the new list |
+| Shared by several Jobs | No; each Job keeps its own copy | Yes, one definition for every Job that references it |
+| Can be live | No, the list is whatever the Job says | Yes: nodes, labels, Git refs, REST, a reviewed script, a config file |
+| Needs an administrator to maintain | No | Yes, for a Global or Folder definition |
+| Needs a Jenkins shared library | No | No |
+
+```groovy
+// Inline: the list is part of the Job configuration.
+unifiedChoice(
+  name: 'BUILD_NODE',
+  choices: [[value: 'agent-a.example.net'], [value: 'agent-b.example.net']],
+  renderer: 'list',
+  required: true
+)
+
+// Provider: the list lives outside the Job and stays live.
+unifiedChoice(name: 'BUILD_NODE', providerId: 'agent-nodes', renderer: 'list', required: true)
+```
+
+`demo-node-choice` deliberately carries both: `BUILD_NODE` is backed by a
+Node/Label Provider and `BUILD_NODE_INLINE` repeats the same list inline, so the two can be
+compared side by side.
+
 ## Connection Profiles
 
 REST and Git Providers call the network through a Connection Profile, which is

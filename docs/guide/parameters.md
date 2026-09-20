@@ -53,7 +53,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 
 | Mode | Built-in renderers | Notes |
 |---|---|---|
-| `single` | `select`, `searchable`, `radio` | `searchable` adds search, grouping, and custom values |
+| `single` | `select`, `searchable`, `radio`, `list` | `searchable` adds search, grouping, and custom values; `list` shows the options in a list box |
 | `multiple` | `list`, `checkbox`, `table` | `table` renders the matrix model |
 | either | `accessible-choice-grid`, trusted external IDs | Reviewed companion renderers only |
 
