@@ -9,9 +9,13 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## Unreleased
+## 0.3.233 - 2026-09-21
 
-Current version: `0.3.229-SNAPSHOT`.
+Released as a controlled custom plugin for the Jenkins image: the HPI is built
+from this commit (`git rev-list --count master` = 233) with SHA-256 recorded in
+[`docs/testing/production-release-2026-09-21.md`](docs/testing/production-release-2026-09-21.md),
+so an image rebuild no longer depends on a private snapshot in
+`JENKINS_HOME/plugins`.
 
 ### Added
 
