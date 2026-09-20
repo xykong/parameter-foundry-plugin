@@ -52,4 +52,17 @@ public final class Digests {
         }
         return sha256(encoded.toString());
     }
+
+    public static String axis(List<io.jenkins.plugins.unifiedparameters.model.AxisOption> axis) {
+        StringBuilder encoded = new StringBuilder();
+        if (axis != null) {
+            for (io.jenkins.plugins.unifiedparameters.model.AxisOption option : axis) {
+                encoded.append(option.getValue())
+                        .append('\u0000')
+                        .append(option.getLabel())
+                        .append('\u0001');
+            }
+        }
+        return sha256(encoded.toString());
+    }
 }

@@ -116,6 +116,11 @@ public final class V1Api {
             result.put("parameter", name);
             result.put("version", body.containsKey("version") ? body.get("version") : null);
             result.put("options", options);
+            if (resolution.matrix() != null) {
+                // A Provider-supplied matrix travels with the resolved options so the table renders
+                // the axes the Provider just reported instead of a stale definition copy.
+                result.put("table", JSONObject.fromObject(resolution.matrix()));
+            }
             Object defaultValue = ParameterEvaluationService.defaultFor(unified, resolution.options());
             result.put("default", defaultValue);
             result.put(

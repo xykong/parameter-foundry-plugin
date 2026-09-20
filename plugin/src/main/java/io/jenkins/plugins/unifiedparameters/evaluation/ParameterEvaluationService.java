@@ -2,11 +2,16 @@ package io.jenkins.plugins.unifiedparameters.evaluation;
 
 import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
+import io.jenkins.plugins.unifiedparameters.model.MatrixCell;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class ParameterEvaluationService {
@@ -48,9 +53,24 @@ public final class ParameterEvaluationService {
 
     public static List<String> evaluateMultiple(
             AbstractUnifiedParameterDefinition definition, DecodedInput input, List<Option> options) {
+        return evaluateMultiple(definition, input, options, null);
+    }
+
+    /**
+     * Evaluates a multiple selection against the resolved options and, when the parameter is a
+     * table, against its row constraint. A matrix cell belongs to exactly one row, so
+     * {@code at-most-one} and {@code exactly-one} are checked here, before the build is queued or
+     * scheduled.
+     */
+    public static List<String> evaluateMultiple(
+            AbstractUnifiedParameterDefinition definition,
+            DecodedInput input,
+            List<Option> options,
+            ChoiceMatrix matrix) {
         DefinitionValidationService.requireValid(definition);
         List<String> values = input.present() ? input.values() : resolveMultipleDefault(definition, options);
         if (values.isEmpty()) {
+            validateRowConstraint(definition, matrix, List.of());
             validateSelectionCount(definition, 0);
             return List.of();
         }
@@ -72,8 +92,55 @@ public final class ParameterEvaluationService {
             normalized.add(value);
         }
         normalized.sort(String::compareTo);
+        validateRowConstraint(definition, matrix, normalized);
         validateSelectionCount(definition, normalized.size());
         return List.copyOf(normalized);
+    }
+
+    private static void validateRowConstraint(
+            AbstractUnifiedParameterDefinition definition, ChoiceMatrix matrix, List<String> values) {
+        if (matrix == null
+                || "any".equals(matrix.getRowSelectionMode())
+                || matrix.getCells().isEmpty()) {
+            return;
+        }
+        Map<String, String> rowByValue = new LinkedHashMap<>();
+        Set<String> rowsWithSelectableCell = new LinkedHashSet<>();
+        for (MatrixCell cell : matrix.getCells()) {
+            if (cell == null || cell.getValue() == null) {
+                continue;
+            }
+            rowByValue.put(cell.getValue(), cell.getRow());
+            if (!cell.isDisabled()) {
+                rowsWithSelectableCell.add(cell.getRow());
+            }
+        }
+        Map<String, Integer> selectedPerRow = new LinkedHashMap<>();
+        for (String value : values) {
+            String row = rowByValue.get(value);
+            if (row != null) {
+                selectedPerRow.merge(row, 1, Integer::sum);
+            }
+        }
+        for (Map.Entry<String, Integer> entry : selectedPerRow.entrySet()) {
+            if (entry.getValue() > 1) {
+                throw error(
+                        ErrorCode.MALFORMED_INPUT,
+                        definition,
+                        "Row " + ChoiceMatrix.caption(matrix.findRow(entry.getKey()))
+                                + " accepts at most one selection.");
+            }
+        }
+        if ("exactly-one".equals(matrix.getRowSelectionMode())) {
+            for (String row : rowsWithSelectableCell) {
+                if (!selectedPerRow.containsKey(row)) {
+                    throw error(
+                            ErrorCode.MALFORMED_INPUT,
+                            definition,
+                            "Row " + ChoiceMatrix.caption(matrix.findRow(row)) + " requires exactly one selection.");
+                }
+            }
+        }
     }
 
     /**

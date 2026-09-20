@@ -15,6 +15,11 @@ Current version: `0.3.210-SNAPSHOT`.
 
 ### Added
 
+- Matrix Provider (`unifiedMatrixProvider`): a table that crosses two governed lists, each axis
+  either an inline list or another Provider, with `{row}`/`{column}` cell templates, axis captions,
+  and a per-row selection constraint (`any`, `at-most-one`, `exactly-one`) enforced in the browser
+  and again before the build is scheduled. This is the declarative replacement for a parameter
+  pair that meant "these registries on these agents".
 - Dependency mapping Provider (`unifiedMappingProvider`): a declarative dependency value → option
   list mapping for parameters whose options depend on another parameter's value, with a default
   list for every other value. It executes nothing, so an Active Choices cascade that branches on a
@@ -82,6 +87,14 @@ Current version: `0.3.210-SNAPSHOT`.
 
 ### Fixed
 
+- A single-choice parameter with `renderer: radio` now renders a native radio
+  group even when a shared Provider supplies the options or a dependency
+  refreshes them. Optional parameters keep an explicit None entry, required ones
+  do not, and a group above 60 options says why it falls back to the searchable
+  list.
+- `renderer: select` is a dropdown again instead of a multi-row list; only
+  `renderer: searchable` (or an option set that exceeds the render limits) lists
+  matching options.
 - A batch preview could not show the configuration diff of a parameter with
   many options: the serialized target exceeded the inline diff limit. The diff
   now keeps element values on one line, so a production-sized choice list is

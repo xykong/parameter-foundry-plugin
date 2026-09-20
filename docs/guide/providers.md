@@ -19,6 +19,8 @@ through a snapshot, and reject values that are no longer valid.
 | Type | Use it when | Key fields |
 |---|---|---|
 | Static | The list rarely changes and belongs to Jenkins | Options |
+| Node / label | The list is the controller's agents or labels (the governed replacement for an Active Choices script that reads `Jenkins.instance.nodes`) | Source (agent or label names), include/exclude pattern, built-in node, online only |
+| Matrix | A table crosses two governed lists, for example the registries of a Job against the agents that must log into them | Rows, columns, cell templates, cells per row |
 | Dependency mapping | The option list depends on the selected value of another parameter (the governed replacement for an Active Choices cascade that branches on a parameter) | Dependency parameter, cases (value → options), options for every other value |
 | Managed config | The list lives in a Config File Provider file (YAML or JSON) | Config ID, format, path mapping |
 | REST | The list comes from an HTTP API | Connection Profile, relative path, query parameters, format, path mapping |
@@ -29,6 +31,51 @@ Path mapping (`rootPath`, `valuePath`, `labelPath`, `descriptionPath`,
 `groupPath`, `disabledPath`, `disabledReasonPath`, `tagsPath`) decides which part
 of the payload becomes which option attribute. Only `valuePath` is required;
 entries without a value are skipped.
+
+## Matrix Providers
+
+A **Matrix** Provider builds a table from two axes. Each axis is either an inline
+list or the options of another Provider, so a column list can stay live:
+
+```groovy
+unifiedMatrixProvider(
+    id: 'registries-on-agents',
+    rowAxisLabel: 'DOCKER_REGISTRIES',
+    rows: [[value: 'harbor.example.net', label: 'Registry B']],
+    columnsProviderId: 'agent-nodes',
+    columnAxisLabel: 'BUILD_NODE',
+    cellValueTemplate: '{row}@{column}',
+    rowSelectionMode: 'at-most-one'
+)
+
+unifiedChoice(
+    name: 'DOCKER_LOGINS',
+    selectionMode: 'multiple',
+    renderer: 'table',
+    providerId: 'registries-on-agents',
+    selectedDisplay: 'chips'
+)
+```
+
+| Field | Meaning |
+|---|---|
+| Rows / Rows Provider ID | One row per entry; the Provider ID wins over the inline list when both are set |
+| Columns / Columns Provider ID | One column per entry |
+| Cell value template | Cell value from `{row}`, `{rowLabel}`, `{column}`, and `{columnLabel}`; the default is `{row}@{column}` |
+| Cell label template | Cell caption; empty means "row caption / column caption" |
+| Row axis label | Caption of the row axis, shown in the table corner |
+| Column axis label | Caption above the table, so the columns read as the values of another parameter |
+| Cells per row | `any`, `at-most-one`, or `exactly-one`; the server rejects a violation before the build is scheduled |
+
+Because a cell value is an ordinary option value, the Pipeline sees the selected
+cells as a list and can act on both coordinates:
+
+```groovy
+params.DOCKER_LOGINS.each { cell ->
+    def (registry, agent) = cell.split('@', 2)
+    // node(agent) { ... docker login registry ... }
+}
+```
 
 ## Shared runtime settings
 

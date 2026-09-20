@@ -142,7 +142,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null);
             if (isMultiple()) {
                 DecodedInput input = InputDecoders.fromStandardRequest(this, request);
-                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                List<String> canonical =
+                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -160,7 +161,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted);
             if (isMultiple()) {
                 DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
-                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                List<String> canonical =
+                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -178,10 +180,11 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             ResolvedProviderOptions resolved = isProviderBacked()
                     ? ProviderSubmission.resolveForCli(
                             ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
-                    : new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
+                    : new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
             if (isMultiple()) {
                 DecodedInput input = InputDecoders.fromCli(this, value);
-                List<String> canonical = ParameterEvaluationService.evaluateMultiple(this, input, resolved.options());
+                List<String> canonical =
+                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -199,7 +202,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             ResolvedProviderOptions resolved = ProviderSubmission.resolveForDefault(this);
             if (isMultiple()) {
                 return toMultiValue(
-                        ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options()),
+                        ParameterEvaluationService.evaluateMultiple(
+                                this, DecodedInput.absent(), resolved.options(), resolved.matrix()),
                         resolved.metadata());
             }
             String value = ParameterEvaluationService.evaluateSingle(this, DecodedInput.absent(), resolved.options());
@@ -219,7 +223,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             if (value instanceof UnifiedChoiceParameterValue choiceValue) {
                 if (isMultiple()) {
                     ParameterEvaluationService.evaluateMultiple(
-                            this, DecodedInput.present(choiceValue.getValues()), resolved.options());
+                            this, DecodedInput.present(choiceValue.getValues()), resolved.options(), resolved.matrix());
                 } else {
                     String submitted = choiceValue.getScalarValue();
                     ParameterEvaluationService.evaluateSingle(
@@ -239,7 +243,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
                         this,
                         DecodedInput.present(InputDecoders.fromCli(this, stringValue.getValue())
                                 .values()),
-                        resolved.options());
+                        resolved.options(),
+                        resolved.matrix());
             } else {
                 String submitted = stringValue.getValue();
                 ParameterEvaluationService.evaluateSingle(
@@ -272,7 +277,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         if (isMultiple()) {
             try {
                 ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.RESOLVE);
-                return ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options())
+                return ParameterEvaluationService.evaluateMultiple(
+                                this, DecodedInput.absent(), resolved.options(), resolved.matrix())
                         .contains(value);
             } catch (EvaluationException exception) {
                 return false;
@@ -305,7 +311,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         if (isMultiple()) {
             try {
                 ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.RESOLVE);
-                return ParameterEvaluationService.evaluateMultiple(this, DecodedInput.absent(), resolved.options());
+                return ParameterEvaluationService.evaluateMultiple(
+                        this, DecodedInput.absent(), resolved.options(), resolved.matrix());
             } catch (EvaluationException exception) {
                 return List.of();
             }
@@ -348,7 +355,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     private ResolvedProviderOptions optionsFor(
             StaplerRequest2 request, ProviderOperation operation, JSONObject submitted) {
         if (!isProviderBacked()) {
-            return new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
+            return new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
         }
         Job<?, ?> job = request.findAncestorObject(Job.class);
         if (job == null) {
@@ -359,7 +366,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     private ResolvedProviderOptions optionsForOwner(ProviderOperation operation) {
         if (!isProviderBacked()) {
-            return new ResolvedProviderOptions(getSelectableOptions(), null, null, false);
+            return new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
         }
         return ProviderSubmission.resolveWithoutSubmission(ProviderSubmission.requireOwningJob(this), this, operation);
     }

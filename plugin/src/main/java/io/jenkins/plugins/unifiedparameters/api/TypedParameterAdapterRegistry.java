@@ -169,7 +169,10 @@ final class TypedParameterAdapterRegistry {
         ResolvedProviderOptions resolved =
                 ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
         List<String> canonical = ParameterEvaluationService.evaluateMultiple(
-                definition, present ? DecodedInput.present(values) : DecodedInput.absent(), resolved.options());
+                definition,
+                present ? DecodedInput.present(values) : DecodedInput.absent(),
+                resolved.options(),
+                resolved.matrix());
         return UnifiedChoiceParameterValue.multiple(
                 definition.getName(),
                 canonical,

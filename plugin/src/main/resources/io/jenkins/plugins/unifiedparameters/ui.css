@@ -69,6 +69,12 @@
   color: var(--up-muted);
 }
 
+.unified-parameters-notice {
+  margin: 0;
+  color: var(--up-muted);
+  font-size: 0.85rem;
+}
+
 .unified-parameters-status {
   min-height: 1.2rem;
 }
@@ -147,6 +153,14 @@
   border-collapse: collapse;
   min-width: 32rem;
   width: 100%;
+}
+
+.unified-parameters-table-caption {
+  caption-side: top;
+  padding: 0 0.7rem 0.35rem;
+  text-align: start;
+  color: var(--up-muted);
+  font-size: 0.8rem;
 }
 
 .unified-parameters-table th,

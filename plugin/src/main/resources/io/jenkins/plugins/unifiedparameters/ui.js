@@ -2,6 +2,7 @@
   "use strict";
 
   var MAX_RENDERED_OPTIONS = 160;
+  var MAX_RADIO_OPTIONS = 60;
   var REACTIVE_DEBOUNCE_MS = 250;
   var nextId = 0;
   var refreshStates = new Map();
@@ -138,6 +139,7 @@
         updateProviderContext(field, dependencies, body.snapshotId);
         return {
           options: body.options || [],
+          table: body.table || null,
           defaultValue: body.default,
           snapshotId: body.snapshotId,
           fallback: Boolean(body.fallback),
@@ -268,7 +270,7 @@
   }
 
   function enhanceTable(field, options, initialValues) {
-    var tableModel = parseJson(field.dataset.table || "", null);
+    var tableModel = parseJson(field.dataset.upResolvedTable || field.dataset.table || "", null);
     if (!tableModel || !tableModel.rows || !tableModel.columns || !tableModel.cells) {
       return false;
     }
@@ -295,6 +297,36 @@
         return [cell.value, cellCaption(cell)];
       }),
     );
+    var rowSelectionMode = tableModel.rowSelectionMode || "any";
+
+    function rowCellValues(rowValue) {
+      return tableModel.cells
+        .filter(function (cell) {
+          return cell.row === rowValue;
+        })
+        .map(function (cell) {
+          return cell.value;
+        });
+    }
+
+    function clearRow(values, rowValue, keepValue) {
+      var next = new Set(values);
+      rowCellValues(rowValue).forEach(function (value) {
+        if (value !== keepValue) {
+          next.delete(value);
+        }
+      });
+      return next;
+    }
+
+    function syncRowInputs(rowValue, keepValue) {
+      rowCellValues(rowValue).forEach(function (value) {
+        var control = inputsByValue.get(value);
+        if (control) {
+          control.checked = value === keepValue;
+        }
+      });
+    }
 
     function cellCaption(cell) {
       if (cell.label && cell.label !== cell.value) {
@@ -341,9 +373,19 @@
 
     var table = document.createElement("table");
     table.className = "unified-parameters-table";
+    if (tableModel.columnAxisLabel) {
+      // The column caption names the axis, so the header row stays the machine values it offers.
+      var caption = document.createElement("caption");
+      caption.className = "unified-parameters-table-caption";
+      caption.textContent = tableModel.columnAxisLabel;
+      table.appendChild(caption);
+    }
     var head = document.createElement("thead");
     var headerRow = document.createElement("tr");
-    headerRow.appendChild(document.createElement("th"));
+    var corner = document.createElement("th");
+    corner.scope = "col";
+    corner.textContent = tableModel.rowAxisLabel || "";
+    headerRow.appendChild(corner);
     tableModel.columns.forEach(function (column) {
       var th = document.createElement("th");
       th.scope = "col";
@@ -384,6 +426,10 @@
           input.addEventListener("change", function () {
             if (field.dataset.multiple !== "true") {
               selected.clear();
+            }
+            if (input.checked && rowSelectionMode !== "any") {
+              selected = clearRow(selected, rowModel.value, cell.value);
+              syncRowInputs(rowModel.value, cell.value);
             }
             if (input.checked) selected.add(cell.value); else selected.delete(cell.value);
             setSubmittedValues(field, selected, true);
@@ -498,21 +544,29 @@
     return details;
   }
 
-  function optionRow(field, option, selected, onChange) {
+  function optionRow(field, option, selected, onChange, control) {
+    var controlType = control && control.type ? control.type : "checkbox";
+    var hasDetails =
+      !option.pseudo &&
+      (option.description || option.disabledReason || option.label !== option.value);
     var row = document.createElement("div");
     row.className = "unified-parameters-option";
     row.setAttribute("aria-disabled", String(Boolean(option.disabled)));
     var label = document.createElement("label");
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = selected.has(option.value);
-    checkbox.disabled = option.disabled;
-    var detailsId = uniqueId("up-option-details");
-    if (option.description || option.disabledReason || option.label !== option.value) {
-      checkbox.setAttribute("aria-describedby", detailsId);
+    var input = document.createElement("input");
+    input.type = controlType;
+    input.value = option.value;
+    if (control && control.name) {
+      input.name = control.name;
     }
-    checkbox.addEventListener("change", function () {
-      onChange(option.value, checkbox.checked);
+    input.checked = selected.has(option.value);
+    input.disabled = Boolean(option.disabled);
+    var detailsId = uniqueId("up-option-details");
+    if (hasDetails) {
+      input.setAttribute("aria-describedby", detailsId);
+    }
+    input.addEventListener("change", function () {
+      onChange(option.value, input.checked);
     });
     var copy = document.createElement("span");
     copy.className = "unified-parameters-option-copy";
@@ -524,16 +578,85 @@
       reason.textContent = option.disabledReason;
       copy.appendChild(reason);
     }
-    label.appendChild(checkbox);
+    label.appendChild(input);
     label.appendChild(copy);
     row.appendChild(label);
-    if (option.description || option.disabledReason || option.label !== option.value) {
+    if (hasDetails) {
       row.appendChild(detailsFor(option, detailsId, field));
     }
     return row;
   }
 
+  /**
+   * Single-choice radio group for the enhanced path. The fallback markup already renders radios,
+   * so Provider-backed and reactive parameters keep the renderer the definition asked for instead
+   * of silently degrading to a select list.
+   */
+  function enhanceSingleRadio(field, options, initialValues) {
+    var enhanced = document.createElement("div");
+    enhanced.className = "unified-parameters-enhanced unified-parameters-radio";
+    enhanced.dataset.upEnhanced = "true";
+    enhanced.setAttribute("role", "radiogroup");
+    enhanced.setAttribute(
+      "aria-label",
+      field.dataset.parameterName || "Select an option",
+    );
+    var status = createStatus();
+    enhanced.setAttribute("aria-describedby", status.id);
+    var groupName = uniqueId("up-radio-group");
+    var selected = new Set(initialValues.slice(0, 1));
+    var list = document.createElement("div");
+    list.className = "unified-parameters-options";
+
+    function update(message) {
+      setSubmittedValues(field, selected, true);
+      status.textContent =
+        (message ? message + " " : "") +
+        selectedSummary(field, selected.size, options.length);
+    }
+
+    function select(value) {
+      selected = new Set([value]);
+      update(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
+    }
+
+    if (field.dataset.required !== "true") {
+      list.appendChild(
+        optionRow(
+          field,
+          {
+            value: "",
+            label: localized(field, "noneOption", "None"),
+            pseudo: true,
+          },
+          selected,
+          select,
+          {type: "radio", name: groupName},
+        ),
+      );
+    }
+    options.forEach(function (option) {
+      list.appendChild(
+        optionRow(field, option, selected, select, {
+          type: "radio",
+          name: groupName,
+        }),
+      );
+    });
+    enhanced.appendChild(list);
+    enhanced.appendChild(status);
+    disableFallback(field);
+    field.appendChild(enhanced);
+    update();
+  }
+
   function enhanceSingle(field, options, initialValues) {
+    var allowCustom = field.dataset.allowCustom === "true";
+    var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
+    if (wantsRadio && options.length <= MAX_RADIO_OPTIONS) {
+      enhanceSingleRadio(field, options, initialValues);
+      return;
+    }
     var enhanced = document.createElement("div");
     enhanced.className = "unified-parameters-enhanced";
     enhanced.dataset.upEnhanced = "true";
@@ -546,15 +669,29 @@
       field.dataset.parameterName || "Select an option",
     );
     select.setAttribute("aria-describedby", status.id);
-    var allowCustom = field.dataset.allowCustom === "true";
     var searchable =
       field.dataset.renderer === "searchable" ||
+      wantsRadio ||
       options.length > MAX_RENDERED_OPTIONS ||
       allowCustom;
     var customButton = null;
     var customValidation = null;
     if (searchable) {
       enhanced.appendChild(search);
+    }
+    if (wantsRadio) {
+      // A radio group above the render limit degrades to the searchable list on purpose.
+      var degraded = document.createElement("p");
+      degraded.className = "unified-parameters-notice";
+      degraded.textContent = formatMessage(
+        localized(
+          field,
+          "radioDegraded",
+          "{0} options; using the searchable list instead of radio buttons.",
+        ),
+        [options.length],
+      );
+      enhanced.appendChild(degraded);
     }
     var selected = new Set(initialValues);
 
@@ -592,7 +729,12 @@
         element.selected = selected.has(option.value);
         select.appendChild(element);
       });
-      select.size = Math.min(8, Math.max(1, select.options.length));
+      if (searchable) {
+        select.size = Math.min(8, Math.max(2, select.options.length));
+      } else {
+        // A plain select renderer stays a dropdown; only the searchable renderer lists matches.
+        select.removeAttribute("size");
+      }
       status.textContent =
         matches.length > MAX_RENDERED_OPTIONS
           ? formatMessage(
@@ -1126,6 +1268,12 @@
           return;
         }
         var modelAvailableAt = performance.now();
+        if (resolved.table) {
+          // A Provider-supplied matrix replaces the definition copy for this render.
+          field.dataset.upResolvedTable = JSON.stringify(resolved.table);
+        } else {
+          delete field.dataset.upResolvedTable;
+        }
         var options = resolved.options.map(function (option) {
           option.search = normalizedSearch(option);
           return option;
@@ -1248,8 +1396,12 @@
       function (field) {
         bridgeFallbackValues(field);
         updateBuildAvailability(field.closest("form"));
+        var radioOverflow =
+          field.dataset.renderer === "radio" &&
+          Number(field.dataset.optionCount || "0") > MAX_RADIO_OPTIONS;
         if (
           field.dataset.renderer !== "radio" ||
+          radioOverflow ||
           field.dataset.providerBacked === "true" ||
           dependencyNames(field).length
         ) {

@@ -54,7 +54,8 @@ public final class ProviderSubmission {
 
     public static ResolvedProviderOptions resolveForDefault(AbstractUnifiedParameterDefinition definition) {
         if (!definition.isProviderBacked()) {
-            return new ResolvedProviderOptions(definition.getSelectableOptions(), null, null, false);
+            return new ResolvedProviderOptions(
+                    definition.getSelectableOptions(), definition.getTable(), null, null, false);
         }
         Job<?, ?> owningJob = requireOwningJob(definition);
         CliBuildContext context = UnifiedParametersCliListener.currentBuild();

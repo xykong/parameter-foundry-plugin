@@ -1,0 +1,64 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Provider ID" field="id">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Display name" field="displayName">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Available to nested Folders" field="usableByChildren">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="Row axis label" field="rowAxisLabel"
+           description="Name shown on the row axis, for example the parameter that used to hold the rows.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Rows Provider ID" field="rowsProviderId"
+           description="Leave empty to use the inline rows below.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Inline rows" field="rowsText"
+           description="One row per line as value|label. The label is optional.">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="Column axis label" field="columnAxisLabel"
+           description="Name shown above the columns, for example the parameter that used to hold the columns.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Columns Provider ID" field="columnsProviderId"
+           description="Leave empty to use the inline columns below.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Inline columns" field="columnsText"
+           description="One column per line as value|label. The label is optional.">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="Cell value template" field="cellValueTemplate"
+           description="Placeholders: {row}, {rowLabel}, {column}, {columnLabel}.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Cell label template" field="cellLabelTemplate"
+           description="Leave empty to label each cell with its row and column caption.">
+    <f:textbox />
+  </f:entry>
+  <f:entry title="Cells per row" field="rowSelectionMode">
+    <select name="_.rowSelectionMode" class="jenkins-select__input select">
+      <option value="any" selected="${instance.rowSelectionMode == 'any' ? 'selected' : null}">Any number</option>
+      <option value="at-most-one" selected="${instance.rowSelectionMode == 'at-most-one' ? 'selected' : null}">At most one</option>
+      <option value="exactly-one" selected="${instance.rowSelectionMode == 'exactly-one' ? 'selected' : null}">Exactly one</option>
+    </select>
+  </f:entry>
+  <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
+    <f:number min="0" max="86400" />
+  </f:entry>
+  <f:entry title="Failure policy" field="failurePolicy">
+    <select name="_.failurePolicy" class="jenkins-select__input select">
+      <option value="fail-closed" selected="${instance.failurePolicy == 'fail-closed' ? 'selected' : null}">Fail closed</option>
+      <option value="last-known-good" selected="${instance.failurePolicy == 'last-known-good' ? 'selected' : null}">Last known good</option>
+      <option value="empty" selected="${instance.failurePolicy == 'empty' ? 'selected' : null}">Empty result</option>
+    </select>
+  </f:entry>
+  <f:entry title="Maximum staleness seconds" field="maximumStalenessSeconds">
+    <f:number min="0" max="604800" />
+  </f:entry>
+</j:jelly>

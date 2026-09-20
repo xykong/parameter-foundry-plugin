@@ -43,7 +43,9 @@ until every applicable column passes.
 | UP-AC-018 | Simulated replacement | Run the controller-wide simulation for a Job that recorded values under the source control. The report must rebuild the target, replay every recorded value, and mark the parameter `EQUIVALENT` when the value is representable and the environment export matches, `MISMATCH` when a recorded value is no longer offered, and `MANUAL_REDESIGN` for a script source while keeping the recorded value contract. | Passed 2026-09-15: `ReplacementSimulationServiceTest` covers the equivalent, stale-value, script-source, no-recorded-build, verdict-matrix, and controller-report cases; the report endpoint requires only administrative read access |
 | UP-AC-019 | Multiple-choice export order | Migrate an Extended Choice multi-select whose downstream reads the environment variable. The migrated parameter must accept `environmentExportOrder: submitted` and export exactly the string the source control exported, while the canonical value stays the sorted set; a definition without the field must keep exporting the sorted set. | Passed 2026-09-15: `EnvironmentExportOrderTest` covers the canonical default, the submitted order for delimited and JSON export, validation of an unknown order, and the unchanged canonical value; `ExtendedChoiceMigrationAdapterTest` asserts the migration selects `submitted`; `ReplacementSimulationServiceTest` proves a submitted-order build value is `EQUIVALENT` |
 | UP-AC-020 | Per-Job definition and default verification | For a Job with no recorded value, the simulation must still verify the definition and the absent-input path: the migrated option set must equal the source's current option set, the source default must stay selectable, and a dropped option must be reported instead of passing silently. | Passed 2026-09-16: `ReplacementSimulationServiceTest` reports `OPTION_SET_MISMATCH` for a target that loses an option the source still offers, `NEEDS_DEFAULT_DECISION` when the source default is no longer selectable, `EQUIVALENT_DEFAULT_ONLY` when it is, and `UNVERIFIED` when there is neither history nor a default; `MigrationSnippets` provides the per-parameter target snippet. Production: 208 Jobs, 277 parameters, 2,238 replayed values, 173 of 173 Extended Choice option sets `MATCH`, 28 stale defaults listed as decisions, 0 `MISMATCH` |
-| UP-AC-021 | Matrix migration of a production Job | Migrate a Job whose string parameter feeds a loop into a table selection: the table rows must become the loop's values, the previous comma-separated input must keep working, and a build with the same input must behave the same. | Passed 2026-09-20 on `demo-matrix`: `DOCKER_REGISTRIES` is a multiple-choice `renderer: table` (5 rows, 1 column, 5 cells, chips, delimited export, all rows preselected) and `BUILD_NODE` is a radio backed by the verified Node/Label Provider; build `#37` repeated build `#36`'s input and finished `SUCCESS` with `Login Succeeded` for all five registries. Browser check pending: the controller's HTML pages sit behind the company SSO |
+| UP-AC-021 | Matrix migration of a production Job | Migrate a Job whose string parameter feeds a loop into a table selection: the table rows must become the loop's values, the Job definition must stay the single source of truth for the parameters, and a build must act on exactly the selected rows. | Passed 2026-09-20 on `demo-matrix`: `DOCKER_REGISTRIES` is a multiple-choice `renderer: table` (5 rows, 1 column, 5 cells, chips, delimited export, all rows preselected) and `BUILD_NODE` is a radio backed by the verified Node/Label Provider. The first attempt failed because the Pipeline re-declared the string parameter (UP-ISSUE-011); after deleting that `parameters {}` block and re-posting the Job XML, the controller-rendered build form shows the five-row `Docker login` table, five chips, and `Selected 5 of 5`, and build `#39` submitted a two-registry subset and logged in to exactly those two registries |
+| UP-AC-023 | Provider-supplied matrix | Configure a table whose rows come from one Provider list and whose columns come from another, with `rowSelectionMode: at-most-one`. The form must render the live axes with their captions, allow at most one cell per row, reject a second cell in the same row, and record exactly the selected cells. | Passed 2026-09-20 with `make e2e` on plugin `0.3.214-SNAPSHOT`: `DOCKER_LOGINS` renders the `BUILD_NODE` caption, the `DOCKER_REGISTRIES` corner header, two rows, three columns, six cells; selecting a second cell of a row clears the first; the build records `["registry.example.com@production", "harbor.example.net@staging"]`. Unit coverage: `MatrixProviderDefinitionTest` asserts the cross product, the templates, the fingerprint, the missing axis, the self reference, and both row constraints |
+| UP-AC-022 | Renderer fidelity | Configure Provider-backed single choices with `renderer: radio` (one optional, one required) and a radio group above the render limit. The optional field must render a radio group that includes an explicit None, the required field must render radios without None, the clicked radio must be the submitted value, and the oversized group must degrade to the searchable list with a visible explanation. | Passed 2026-09-20 with `make e2e` on plugin `0.3.214-SNAPSHOT`: `TARGET_NODE` renders four radios (None plus three options) with no select, `LOCKED_NODE` renders three radios, clicking `development` writes the hidden value and the build records `TARGET_NODE=development`, and `WIDE_RADIO` reports `70 options; using the searchable list instead of radio buttons.` |
 
 ## Platform and Device Cases
 
@@ -221,6 +223,55 @@ until every applicable column passes.
   message were preserved, the Job's build list was unchanged, and a valid custom
   value still selected and generated its hidden value. Evidence:
   [`results/issue-010-2026-09-12.json`](./results/issue-010-2026-09-12.json).
+
+### UP-ISSUE-011: The migrated table definition was overwritten by the Pipeline
+
+- Reproduction: after migrating `demo-matrix`, open the build form.
+- Actual: `DOCKER_REGISTRIES` was a plain text input holding the old
+  comma-separated default, so the table never appeared; only `BUILD_NODE`, which
+  had no Pipeline counterpart, still came from the migrated definition.
+- Cause: the Job is a `WorkflowJob` whose inline Pipeline declares
+  `parameters { string(...) }`. Declarative Pipeline re-applies every parameter
+  it declares to the Job's `ParametersDefinitionProperty` when a build runs, so
+  the first post-migration build replaced the table definition with the string
+  definition the Pipeline declared. The earlier check only read the Job XML
+  before that build, so it reported success while the definition had already
+  been reset.
+- Fix: delete the `parameters {}` block so the Job's parameter definitions stay
+  the single source of truth, clear the declarative parameter tracker, and
+  re-post the Job XML. Parameter definitions inside an inline Pipeline must be
+  reconciled before a Job is marked migrated; the migration tooling reads the
+  Job definition and cannot see this Pipeline block yet.
+- Detection: read the controller-rendered build form, not only the Job XML; the
+  rendered form shows which definition the controller actually serves.
+- Verification: passed 2026-09-20. The saved Job XML keeps both
+  `UnifiedChoiceParameterDefinition` entries after a build, the rendered form
+  contains the five-row table with the `Docker login` column, five chips, and
+  `Selected 5 of 5`, and a submitted subset build logged in to exactly the
+  selected registries.
+
+### UP-ISSUE-012: Provider-backed single choice ignored `renderer: radio`
+
+- Reproduction: configure a single-choice parameter with a shared Provider and
+  `renderer: radio`, then open the build form (`BUILD_NODE` in production).
+- Actual: the field rendered as a searchable multi-row select list under
+  `8 matching options.` The configured renderer had no effect; `renderer: select`
+  had the same problem and also produced a multi-row list instead of a dropdown.
+- Cause: the enhanced single-choice path had exactly one control (a search field
+  plus a size-N `<select>`), and every Provider-backed or reactive single choice
+  was routed to it, so the renderer was only honoured by the server-rendered
+  fallback that JavaScript replaces.
+- Fix: the enhanced path builds a native radio group for `renderer: radio`
+  (optional fields get an explicit None, required fields do not), keeps `select`
+  a real dropdown, and only falls back to the searchable list when the
+  definition asks for searching, allows custom values, or the group exceeds 60
+  options - in that case the field states why.
+- Regression: `tools/e2e/init.groovy` adds `TARGET_NODE` (optional radio),
+  `LOCKED_NODE` (required radio), and `WIDE_RADIO` (70 options); `make e2e`
+  asserts the control type, the None rule, the generated value after a click,
+  the recorded build value, and the degradation notice.
+- Verification: passed 2026-09-20 with `make e2e` against the containerized
+  Jenkins and re-checked on the production build form after the deployment.
 
 ## Recording Rule
 

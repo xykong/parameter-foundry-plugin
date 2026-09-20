@@ -218,6 +218,9 @@ public final class DefinitionValidationService {
         ChoiceMatrix table = definition.getTable();
         if (table != null) {
             validateMatrix(table, definition, errors);
+            if (definition.isProviderBacked()) {
+                errors.add("A Provider-backed table uses the matrix the Provider returns; remove the inline table");
+            }
         }
         if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())) {
             errors.add("Unsupported standard API input mode: " + definition.getStandardApiInputMode());
@@ -260,6 +263,9 @@ public final class DefinitionValidationService {
 
     private static void validateMatrix(
             ChoiceMatrix matrix, AbstractUnifiedParameterDefinition definition, List<String> errors) {
+        if (!Set.of("any", "at-most-one", "exactly-one").contains(matrix.getRowSelectionMode())) {
+            errors.add("Unsupported matrix row selection mode: " + matrix.getRowSelectionMode());
+        }
         if (matrix.getRows().isEmpty() || matrix.getColumns().isEmpty()) {
             errors.add("Choice matrix requires at least one row and column");
             return;

@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.model.Job;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import java.time.Duration;
 import java.time.Instant;
@@ -197,7 +198,10 @@ public final class ProviderRuntime {
                     SharedProviderDefinition provider = located.provider();
                     try {
                         ProviderLoadContext context = new ProviderLoadContext(request, connectionProfile);
-                        List<Option> loaded = provider.load(context);
+                        ChoiceMatrix matrix = provider instanceof MatrixProvider matrixProvider
+                                ? matrixProvider.loadMatrix(context)
+                                : null;
+                        List<Option> loaded = matrix != null ? matrix.selectableOptions() : provider.load(context);
                         if (loaded.size() > 10_000) {
                             throw new ProviderException(
                                     ErrorCode.PROVIDER_UNAVAILABLE,
@@ -209,6 +213,7 @@ public final class ProviderRuntime {
                         Instant generated = Instant.now();
                         CacheEntry entry = CacheEntry.create(
                                 transformed,
+                                matrix,
                                 request.providerDigest(),
                                 generated,
                                 generated.plusSeconds(provider.getCacheTtlSeconds()),
@@ -260,6 +265,7 @@ public final class ProviderRuntime {
         if (!provider.getFallbackOptions().isEmpty()) {
             CacheEntry fallback = CacheEntry.create(
                     provider.getFallbackOptions(),
+                    null,
                     request.providerDigest(),
                     now,
                     now,
@@ -274,7 +280,7 @@ public final class ProviderRuntime {
         }
         if ("empty".equals(provider.getFailurePolicy())) {
             CacheEntry empty = CacheEntry.create(
-                    List.of(), request.providerDigest(), now, now, 0, request.ownerId() + "/" + provider.getId());
+                    List.of(), null, request.providerDigest(), now, now, 0, request.ownerId() + "/" + provider.getId());
             return empty.toResolution(false, true, exception.getMessage());
         }
         throw exception;
@@ -285,6 +291,7 @@ public final class ProviderRuntime {
 
     private record CacheEntry(
             List<Option> options,
+            ChoiceMatrix matrix,
             String providerDigest,
             String optionSetDigest,
             Instant generatedAt,
@@ -294,6 +301,7 @@ public final class ProviderRuntime {
 
         static CacheEntry create(
                 List<Option> options,
+                ChoiceMatrix matrix,
                 String providerDigest,
                 Instant generatedAt,
                 Instant expiresAt,
@@ -302,6 +310,7 @@ public final class ProviderRuntime {
             List<Option> normalized = List.copyOf(options);
             return new CacheEntry(
                     normalized,
+                    matrix,
                     providerDigest,
                     Digests.options(normalized),
                     generatedAt,
@@ -313,6 +322,7 @@ public final class ProviderRuntime {
         ProviderResolution toResolution(boolean cacheHit, boolean fallback, String fallbackReason) {
             return new ProviderResolution(
                     options,
+                    matrix,
                     providerDigest,
                     optionSetDigest,
                     generatedAt,

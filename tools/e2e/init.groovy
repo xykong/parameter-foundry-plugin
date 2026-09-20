@@ -13,6 +13,7 @@ import io.jenkins.plugins.unifiedparameters.model.AxisOption
 import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix
 import io.jenkins.plugins.unifiedparameters.model.MatrixCell
 import io.jenkins.plugins.unifiedparameters.model.Option
+import io.jenkins.plugins.unifiedparameters.provider.MatrixProviderDefinition
 import io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition
 import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration
 import jenkins.model.Jenkins
@@ -33,7 +34,18 @@ sharedEnvironments.setOptions([
     new Option('staging'),
     new Option('production'),
 ])
-UnifiedParametersGlobalConfiguration.get().setProviders([sharedEnvironments])
+
+// Provider-supplied matrix: the rows are one governed list, the columns another, so a table can
+// cross them without freezing either axis in the Job definition.
+def registryAgents = new MatrixProviderDefinition('registries-on-agents')
+registryAgents.setDisplayName('Registries on agents')
+registryAgents.setRowsText('registry.example.com|Registry A\harbor-n.example.net|Registry B')
+registryAgents.setColumnsProviderId('shared-environments')
+registryAgents.setRowAxisLabel('DOCKER_REGISTRIES')
+registryAgents.setColumnAxisLabel('BUILD_NODE')
+registryAgents.setRowSelectionMode('at-most-one')
+
+UnifiedParametersGlobalConfiguration.get().setProviders([sharedEnvironments, registryAgents])
 
 def staticJob = jenkins.getItem('unified-parameters-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-e2e')
 staticJob.removeProperty(ParametersDefinitionProperty)
@@ -162,7 +174,35 @@ artifact.setProviderId('shared-environments')
 artifact.setDependsOn(['ENVIRONMENT'])
 artifact.setRenderer('searchable')
 artifact.setDefaultMode('first')
-providerJob.addProperty(new ParametersDefinitionProperty(providerEnvironment, environments, artifact))
+// Renderer regression fixtures: a Provider-backed single choice must render the renderer it was
+// configured with, and a radio group above the render limit must degrade explicitly.
+def targetNode = new UnifiedChoiceParameterDefinition('TARGET_NODE')
+targetNode.setProviderId('shared-environments')
+targetNode.setRenderer('radio')
+targetNode.setDefaultMode('explicit')
+targetNode.setDefaultValue('staging')
+def lockedNode = new UnifiedChoiceParameterDefinition('LOCKED_NODE')
+lockedNode.setProviderId('shared-environments')
+lockedNode.setRenderer('radio')
+lockedNode.setRequired(true)
+lockedNode.setDefaultMode('explicit')
+lockedNode.setDefaultValue('production')
+def wideRadio = new UnifiedChoiceParameterDefinition('WIDE_RADIO')
+wideRadio.setChoices((0..<70).collect { index ->
+    new Option(String.format('narrow-%03d', index))
+})
+wideRadio.setRenderer('radio')
+wideRadio.setDefaultMode('first')
+def registryLogins = new UnifiedChoiceParameterDefinition('DOCKER_LOGINS')
+registryLogins.setSelectionMode('multiple')
+registryLogins.setRenderer('table')
+registryLogins.setProviderId('registries-on-agents')
+registryLogins.setSelectedDisplay('chips')
+registryLogins.setDefaultMode('explicit')
+registryLogins.setDefaultValues(['registry.example.com@staging'])
+registryLogins.setMinSelections(1)
+providerJob.addProperty(new ParametersDefinitionProperty(
+    providerEnvironment, environments, artifact, targetNode, lockedNode, wideRadio, registryLogins))
 providerJob.save()
 
 def formJob = jenkins.getItem('unified-parameters-form-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-form-e2e')

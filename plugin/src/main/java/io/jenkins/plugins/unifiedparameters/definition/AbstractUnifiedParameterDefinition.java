@@ -141,6 +141,10 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
         return Messages.MatchesSummary("{0}");
     }
 
+    public String getUiRadioDegraded() {
+        return Messages.RadioDegraded("{0}");
+    }
+
     public String getUiLimitedSingleMatches() {
         return Messages.LimitedSingleMatches("{0}", "{1}");
     }
@@ -208,29 +212,13 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
                 continue;
             }
             Option option = new Option(cell.getValue());
-            option.setLabel(cellLabel(matrix, cell));
+            option.setLabel(matrix.labelFor(cell));
             option.setDescription(cell.getDescription());
             option.setDisabled(cell.isDisabled());
             option.setDisabledReason(cell.getDisabledReason());
             merged.put(cell.getValue(), option);
         }
         return List.copyOf(merged.values());
-    }
-
-    private static String cellLabel(ChoiceMatrix matrix, io.jenkins.plugins.unifiedparameters.model.MatrixCell cell) {
-        if (cell.getLabel() != null && !cell.getLabel().equals(cell.getValue())) {
-            return cell.getLabel();
-        }
-        return axisLabel(matrix.getRows(), cell.getRow()) + " / " + axisLabel(matrix.getColumns(), cell.getColumn());
-    }
-
-    private static String axisLabel(List<io.jenkins.plugins.unifiedparameters.model.AxisOption> axis, String value) {
-        for (var option : axis) {
-            if (option != null && option.getValue() != null && option.getValue().equals(value)) {
-                return option.getLabel();
-            }
-        }
-        return value == null ? "" : value;
     }
 
     public String getRenderer() {

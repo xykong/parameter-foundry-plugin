@@ -7,6 +7,7 @@ import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterD
 import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
 import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
 import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
 import io.jenkins.plugins.unifiedparameters.model.Option;
 import io.jenkins.plugins.unifiedparameters.provider.Digests;
 import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
@@ -38,7 +39,7 @@ public final class ProviderSnapshotStore {
             ProviderResolution resolution,
             SnapshotAudience audience) {
         if (!definition.isProviderBacked()) {
-            return new ResolvedProviderOptions(resolution.options(), null, null, false);
+            return new ResolvedProviderOptions(resolution.options(), resolution.matrix(), null, null, false);
         }
         evictExpired();
         if (snapshots.size() >= MAX_SNAPSHOTS) {
@@ -61,7 +62,8 @@ public final class ProviderSnapshotStore {
                 resolution.fallback(),
                 resolution.fallbackReason(),
                 resolution.redactedProvenance(),
-                resolution.options());
+                resolution.options(),
+                resolution.matrix());
         snapshots.put(id, snapshot);
         return snapshot.toResolved(false);
     }
@@ -74,7 +76,7 @@ public final class ProviderSnapshotStore {
             ProviderOperation operation) {
         if (!definition.isProviderBacked()) {
             ProviderResolution resolution = ProviderResolutionService.resolve(job, definition, operation, dependencies);
-            return new ResolvedProviderOptions(resolution.options(), null, null, false);
+            return new ResolvedProviderOptions(resolution.options(), resolution.matrix(), null, null, false);
         }
         if (submittedSnapshotId != null && !submittedSnapshotId.isBlank()) {
             Snapshot snapshot = snapshots.get(submittedSnapshotId);
@@ -89,7 +91,8 @@ public final class ProviderSnapshotStore {
         ProviderResolution refreshed = ProviderResolutionService.resolve(job, definition, operation, dependencies);
         ResolvedProviderOptions created =
                 create(job, definition, dependencies, refreshed, SnapshotAudience.BUILD_VALUE);
-        return new ResolvedProviderOptions(created.options(), created.metadata(), created.snapshotId(), true);
+        return new ResolvedProviderOptions(
+                created.options(), created.matrix(), created.metadata(), created.snapshotId(), true);
     }
 
     public void clear() {
@@ -185,7 +188,8 @@ public final class ProviderSnapshotStore {
             boolean fallback,
             String fallbackReason,
             String redactedProvenance,
-            List<Option> options) {
+            List<Option> options,
+            ChoiceMatrix matrix) {
 
         Snapshot {
             options = List.copyOf(options);
@@ -203,7 +207,7 @@ public final class ProviderSnapshotStore {
                     fallback,
                     fallbackReason,
                     redactedProvenance);
-            return new ResolvedProviderOptions(options, metadata, id, refreshed);
+            return new ResolvedProviderOptions(options, matrix, metadata, id, refreshed);
         }
     }
 }

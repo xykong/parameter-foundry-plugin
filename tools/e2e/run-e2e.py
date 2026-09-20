@@ -630,6 +630,71 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     await page.wait_for_selector(
         '[data-parameter-name="ARTIFACT"][data-up-interactive="true"]'
     )
+    await page.wait_for_selector(
+        '[data-parameter-name="TARGET_NODE"][data-up-interactive="true"]'
+    )
+    # A Provider-backed single choice keeps renderer=radio: a native radio group, not a select
+    # list, and an explicit None entry because the parameter is optional.
+    target_node = page.locator('[data-parameter-name="TARGET_NODE"]')
+    assert (
+        await target_node.locator(
+            '.unified-parameters-enhanced input[type="radio"]'
+        ).count()
+        == 4
+    ), "optional radio group renders None plus the three options"
+    assert await target_node.locator(".unified-parameters-enhanced select").count() == 0
+    assert await target_node.locator(
+        '.unified-parameters-enhanced input[type="radio"][value="staging"]'
+    ).is_checked()
+    assert await target_node.get_attribute("role") is None
+    assert (
+        await target_node.locator('.unified-parameters-enhanced[role="radiogroup"]').count()
+        == 1
+    )
+    # A required radio group has no None entry, so the submitted value stays mandatory.
+    locked_node = page.locator('[data-parameter-name="LOCKED_NODE"]')
+    assert (
+        await locked_node.locator(
+            '.unified-parameters-enhanced input[type="radio"]'
+        ).count()
+        == 3
+    )
+    # A Provider-supplied matrix renders both axes: the rows come from one Provider, the columns
+    # from another, and the constraint keeps at most one cell per row.
+    logins = page.locator('[data-parameter-name="DOCKER_LOGINS"]')
+    await page.wait_for_selector(
+        '[data-parameter-name="DOCKER_LOGINS"][data-up-interactive="true"]'
+    )
+    login_table = logins.locator("table.unified-parameters-table")
+    await login_table.wait_for()
+    assert await login_table.locator("caption").inner_text() == "BUILD_NODE"
+    assert await login_table.locator("thead th").all_inner_texts() == [
+        "DOCKER_REGISTRIES",
+        "development",
+        "staging",
+        "production",
+    ]
+    assert await login_table.locator("tbody th[scope=row]").all_inner_texts() == [
+        "Registry A",
+        "Registry B",
+    ]
+    assert await login_table.locator('input[type="checkbox"]').count() == 6
+    first_row = login_table.locator("tbody tr").nth(0).locator('input[type="checkbox"]')
+    await first_row.nth(0).check()
+    await first_row.nth(2).check()
+    assert await first_row.nth(0).is_checked() is False
+    assert await first_row.nth(2).is_checked() is True
+    assert await logins.locator(
+        'input[data-up-generated-value][value="registry.example.com@production"]'
+    ).count() == 1
+
+    # Above the radio limit the renderer degrades to the searchable list and says so.
+    wide_radio = page.locator('[data-parameter-name="WIDE_RADIO"]')
+    assert (
+        await wide_radio.locator(".unified-parameters-enhanced select").count() == 1
+    )
+    wide_notice = await wide_radio.locator(".unified-parameters-notice").inner_text()
+    assert "instead of radio buttons" in wide_notice, wide_notice
     field = page.locator('[data-parameter-name="ENVIRONMENTS"]')
     assert "staging" in " ".join(
         await field.locator(".unified-parameters-chip").all_inner_texts()
@@ -656,6 +721,16 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         "[data-up-dependencies-json]"
     ).input_value()
     assert json.loads(dependencies_json) == {"ENVIRONMENT": "production"}
+    await target_node.locator(
+        '.unified-parameters-enhanced input[type="radio"][value="development"]'
+    ).check()
+    await login_table.locator("tbody tr").nth(1).locator('input[type="checkbox"]').nth(1).check()
+    assert (
+        await target_node.locator(
+            'input[data-up-generated-value][value="development"]'
+        ).count()
+        == 1
+    ), "the radio group submits the selected value"
     await page.screenshot(path=GALLERY_DIR / "provider.png", full_page=True)
     await page.get_by_role("button", name="Build").click()
     await page.wait_for_url(
@@ -674,6 +749,12 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     assert build_parameters["ARTIFACT"]["providerSnapshot"]["providerId"] == (
         "shared-environments"
     )
+    assert build_parameters["TARGET_NODE"]["value"] == "development"
+    assert build_parameters["LOCKED_NODE"]["value"] == "production"
+    assert build_parameters["DOCKER_LOGINS"]["value"] == [
+        "registry.example.com@production",
+        "harbor.example.net@staging",
+    ]
 
     health = await page.request.get(
         BASE_URL

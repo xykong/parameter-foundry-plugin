@@ -36,6 +36,7 @@
          data-up-all-selections-cleared="${it.uiAllSelectionsCleared}"
          data-up-custom-value-selected="${it.uiCustomValueSelected}"
          data-up-matches-summary="${it.uiMatchesSummary}"
+         data-up-radio-degraded="${it.uiRadioDegraded}"
          data-up-limited-single-matches="${it.uiLimitedSingleMatches}"
          data-up-limited-matches="${it.uiLimitedMatches}"
          data-up-none-option="${it.uiNoneOption}"

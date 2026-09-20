@@ -23,6 +23,7 @@ public final class ProviderResolutionService {
             Instant generated = Instant.now();
             return new ProviderResolution(
                     definition.getSelectableOptions(),
+                    definition.getTable(),
                     Digests.sha256("inline\u0000" + definition.getName()),
                     Digests.options(definition.getSelectableOptions()),
                     generated,
