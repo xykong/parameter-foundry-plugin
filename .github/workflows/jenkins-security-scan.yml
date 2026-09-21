@@ -17,6 +17,10 @@ permissions:
 
 jobs:
   security-scan:
+    # Code scanning needs GitHub Advanced Security while this repository is
+    # private, and its absence fails the upload step. The job starts running as
+    # soon as the repository is public, where code scanning is free.
+    if: ${{ !github.event.repository.private }}
     uses: jenkins-infra/jenkins-security-scan/.github/workflows/jenkins-security-scan.yaml@v2
     with:
       java-cache: 'maven'  # Optionally enable use of a build dependency cache. Specify 'maven' or 'gradle' as appropriate.

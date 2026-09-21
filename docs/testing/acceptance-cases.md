@@ -27,7 +27,7 @@ until every applicable column passes.
 | UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
 | UP-AC-011 | Foundry fixtures | Every acceptance Job configures choice parameters through `foundryChoice` (+ `selectionMode: multiple` where needed), and the deprecated definition and symbol no longer exist. | Passed 2026-09-11 on `0.2.15-SNAPSHOT`: 32 of 32 Jobs migrated and built, 55 of 55 resolve calls returned `200`, a controller-wide scan of 688 Jobs found no remaining reference, every Job loaded without a class-loading error, and the configuration UI offers only the foundry entry |
-| UP-AC-012 | Replacement readiness | Inventory every Job on the controller, classify each source parameter with the deployed migration adapters, and state whether lossless replacement is automatic, needs decisions, or is blocked. | Passed 2026-09-13 on `0.3.155-SNAPSHOT`: 688 Jobs scanned; 112 use a source family; 3 Jobs fully automatic, 43 need recorded decisions, 66 are blocked by Class C/D. Report: [`replacement-readiness-2026-09-13.md`](./replacement-readiness-2026-09-13.md) |
+| UP-AC-012 | Replacement readiness | Inventory every Job on the controller, classify each source parameter with the deployed migration adapters, and state whether lossless replacement is automatic, needs decisions, or is blocked. | Passed 2026-09-13 on `0.3.155-SNAPSHOT`: 688 Jobs scanned; 112 use a source family; 3 Jobs fully automatic, 43 need recorded decisions, 66 are blocked by Class C/D. Report kept in the maintainer's lab overlay ([ADR 0018](../decisions/0018-public-hygiene-and-private-lab-overlay.md)) |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
 | UP-AC-006 | Localization | Test English, Chinese, Japanese, and Korean. No user-visible hardcoded English appears in the selected locale. | English/Chinese production desktop verified; Japanese/Korean pending |
@@ -222,8 +222,9 @@ until every applicable column passes.
   with `0.3.155-SNAPSHOT`: after pressing Enter on an invalid candidate the page
   stayed on the build form, the typed text and the `Value must match: custom-[0-9]+`
   message were preserved, the Job's build list was unchanged, and a valid custom
-  value still selected and generated its hidden value. Evidence:
-  [`results/issue-010-2026-09-12.json`](./results/issue-010-2026-09-12.json).
+  value still selected and generated its hidden value. The raw evidence is kept
+  in the maintainer's lab overlay
+  ([ADR 0018](../decisions/0018-public-hygiene-and-private-lab-overlay.md)).
 
 ### UP-ISSUE-011: The migrated table definition was overwritten by the Pipeline
 

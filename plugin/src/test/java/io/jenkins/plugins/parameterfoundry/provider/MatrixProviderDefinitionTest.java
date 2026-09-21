@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.jenkins.plugins.parameterfoundry.LabFixtures;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
@@ -29,10 +30,10 @@ class MatrixProviderDefinitionTest {
         ChoiceMatrix matrix = provider.loadMatrix(context());
 
         assertEquals(
-                List.of("registry.example.com", "harbor.example.net"),
+                List.of(LabFixtures.get("registry.primary"), LabFixtures.get("registry.secondary")),
                 matrix.getRows().stream().map(AxisOption::getValue).toList());
         assertEquals(
-                List.of("built-in", "agent-a.example.net"),
+                List.of(LabFixtures.get("node.builtin"), LabFixtures.get("agent.primary")),
                 matrix.getColumns().stream().map(AxisOption::getValue).toList());
         assertEquals(4, matrix.getCells().size());
         assertEquals("DOCKER_REGISTRIES", matrix.getRowAxisLabel());
@@ -40,13 +41,13 @@ class MatrixProviderDefinitionTest {
         assertEquals("exactly-one", matrix.getRowSelectionMode());
         assertEquals(
                 List.of(
-                        "registry.example.com@built-in",
-                        "registry.example.com@agent-a.example.net",
-                        "harbor.example.net@built-in",
-                        "harbor.example.net@agent-a.example.net"),
+                        LabFixtures.cell("registry.primary", "node.builtin"),
+                        LabFixtures.cell("registry.primary", "agent.primary"),
+                        LabFixtures.cell("registry.secondary", "node.builtin"),
+                        LabFixtures.cell("registry.secondary", "agent.primary")),
                 provider.load(context()).stream().map(Option::getValue).toList());
         assertEquals(
-                "registry.example.com / agent-a.example.net",
+                LabFixtures.get("registry.primary") + " / " + LabFixtures.get("agent.primary"),
                 matrix.labelFor(matrix.getCells().get(1)));
     }
 
@@ -109,16 +110,20 @@ class MatrixProviderDefinitionTest {
         definition.setDefaultMode("none");
 
         assertEquals(
-                List.of("harbor.example.net@built-in"),
+                List.of(LabFixtures.cell("registry.secondary", "node.builtin")),
                 ParameterEvaluationService.evaluateMultiple(
-                        definition, DecodedInput.present(List.of("harbor.example.net@built-in")), options, matrix));
+                        definition,
+                        DecodedInput.present(List.of(LabFixtures.cell("registry.secondary", "node.builtin"))),
+                        options,
+                        matrix));
 
         EvaluationException sameRow = assertThrows(
                 EvaluationException.class,
                 () -> ParameterEvaluationService.evaluateMultiple(
                         definition,
-                        DecodedInput.present(
-                                List.of("harbor.example.net@built-in", "harbor.example.net@agent-a.example.net")),
+                        DecodedInput.present(List.of(
+                                LabFixtures.cell("registry.secondary", "node.builtin"),
+                                LabFixtures.cell("registry.secondary", "agent.primary"))),
                         options,
                         matrix));
         assertTrue(sameRow.getMessage().contains("at most one"), sameRow.getMessage());
@@ -128,7 +133,10 @@ class MatrixProviderDefinitionTest {
         EvaluationException missingRow = assertThrows(
                 EvaluationException.class,
                 () -> ParameterEvaluationService.evaluateMultiple(
-                        definition, DecodedInput.present(List.of("harbor.example.net@built-in")), options, exactlyOne));
+                        definition,
+                        DecodedInput.present(List.of(LabFixtures.cell("registry.secondary", "node.builtin"))),
+                        options,
+                        exactlyOne));
         assertTrue(missingRow.getMessage().contains("requires exactly one"), missingRow.getMessage());
     }
 
@@ -157,10 +165,11 @@ class MatrixProviderDefinitionTest {
     private static MatrixProviderDefinition matrix(String id) {
         MatrixProviderDefinition provider = new MatrixProviderDefinition(id);
         provider.setRows(List.of(
-                new AxisOption("registry.example.com", "registry.example.com"),
-                new AxisOption("harbor.example.net", "harbor.example.net")));
+                new AxisOption(LabFixtures.get("registry.primary"), LabFixtures.get("registry.primary")),
+                new AxisOption(LabFixtures.get("registry.secondary"), LabFixtures.get("registry.secondary"))));
         provider.setColumns(List.of(
-                new AxisOption("built-in", "built-in"), new AxisOption("agent-a.example.net", "agent-a.example.net")));
+                new AxisOption(LabFixtures.get("node.builtin"), LabFixtures.get("node.builtin")),
+                new AxisOption(LabFixtures.get("agent.primary"), LabFixtures.get("agent.primary"))));
         return provider;
     }
 

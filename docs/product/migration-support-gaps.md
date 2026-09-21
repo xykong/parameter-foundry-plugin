@@ -3,8 +3,9 @@
 - Date: September 13, 2026
 - Status update: September 14, 2026 — G1–G5 and G8–G11 are implemented; G6
   and G7 stay documented boundaries
-- Input: the controller-wide replacement readiness inventory
-  ([`../testing/replacement-readiness-2026-09-13.md`](../testing/replacement-readiness-2026-09-13.md))
+- Input: the controller-wide replacement readiness inventory kept in the
+  maintainer's lab overlay
+  ([ADR 0018](../decisions/0018-public-hygiene-and-private-lab-overlay.md))
   and a shape analysis of the source parameters actually in use
 - Purpose: list what the plugin does not yet support well enough for a
   single-wave, lossless replacement, and what to adjust before that wave starts

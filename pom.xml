@@ -16,7 +16,7 @@
 
   <name>Parameter Foundry Reactor</name>
   <description>Parameter Foundry core plugin and migration adapters.</description>
-  <url>https://github.com/jenkinsci/parameter-foundry-plugin</url>
+  <url>https://github.com/xykong/parameter-foundry-plugin</url>
 
   <licenses>
     <license>
@@ -50,7 +50,7 @@
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.528</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-    <gitHubRepo>jenkinsci/parameter-foundry-plugin</gitHubRepo>
+    <gitHubRepo>xykong/parameter-foundry-plugin</gitHubRepo>
 
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>

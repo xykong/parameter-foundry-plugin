@@ -39,7 +39,7 @@ sharedEnvironments.setOptions([
 // cross them without freezing either axis in the Job definition.
 def registryAgents = new MatrixProviderDefinition('registries-on-agents')
 registryAgents.setDisplayName('Registries on agents')
-registryAgents.setRowsText('registry.example.com|Registry A\harbor-n.example.net|Registry B\swr.example.cloud|Registry C\registry-n.example.net|Registry D\registry-auto-n.example.org|Registry Auto')
+registryAgents.setRowsText('@@registry.primary@@|@@registry.primary.label@@\@@registry.secondary@@|@@registry.secondary.label@@\@@registry.tertiary@@|@@registry.tertiary.label@@\@@registry.quaternary@@|@@registry.quaternary.label@@\@@registry.quinary@@|@@registry.quinary.label@@')
 registryAgents.setColumnsProviderId('shared-environments')
 registryAgents.setRowAxisLabel('DOCKER_REGISTRIES')
 registryAgents.setColumnAxisLabel('BUILD_NODE')
@@ -207,7 +207,7 @@ registryLogins.setRenderer('table')
 registryLogins.setProviderId('registries-on-agents')
 registryLogins.setSelectedDisplay('chips')
 registryLogins.setDefaultMode('explicit')
-registryLogins.setDefaultValues(['registry.example.com@staging'])
+registryLogins.setDefaultValues(['@@registry.primary@@@staging'])
 registryLogins.setMinSelections(1)
 providerJob.addProperty(new ParametersDefinitionProperty(
     providerEnvironment, environments, artifact, targetNode, lockedNode, wideRadio, nodeList, registryLogins))

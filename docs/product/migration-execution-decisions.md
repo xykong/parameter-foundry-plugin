@@ -123,10 +123,10 @@ so the work continues without waiting:
 
 ## Evidence
 
-- Simulation report: `../testing/results/replacement-simulation-2026-09-15.json`
-- Simulation summary: `../testing/replacement-simulation-2026-09-15.md`
-- Readiness inventory and its correction:
-  [`../testing/replacement-readiness-2026-09-13.md`](../testing/replacement-readiness-2026-09-13.md)
+- Simulation report, simulation summary, and the readiness inventory with its
+  correction: kept in the maintainer's lab overlay, because they name the
+  deployment they were measured on
+  ([ADR 0018](../decisions/0018-public-hygiene-and-private-lab-overlay.md))
 - Preparation gaps: [`migration-support-gaps.md`](migration-support-gaps.md)
 
 ## Simulation Result

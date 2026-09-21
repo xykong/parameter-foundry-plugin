@@ -13,6 +13,8 @@ import json
 import math
 import platform
 import shutil
+import os
+import re
 import subprocess
 import time
 import urllib.request
@@ -39,6 +41,46 @@ PROVIDER_BUILD_URL = (
 FORM_BUILD_URL = BASE_URL + "/job/parameter-foundry-form-e2e/build?delay=0sec"
 OPTION_COUNT = 10_000
 MAX_RENDERED_OPTIONS = 200
+FIXTURE_DEFAULTS = ROOT / "plugin" / "src" / "test" / "resources" / "lab-fixtures.properties"
+RENDERED_INIT = CACHE_DIR / "init-rendered.groovy"
+
+
+def load_fixtures() -> dict[str, str]:
+    """Synthetic defaults, overridden by the file named in PF_LAB_FIXTURES."""
+    values: dict[str, str] = {}
+    for candidate in (FIXTURE_DEFAULTS, os.environ.get("PF_LAB_FIXTURES")):
+        if not candidate:
+            continue
+        path = Path(candidate)
+        if not path.is_file():
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                values[key.strip()] = value.strip()
+    return values
+
+
+FIXTURES = load_fixtures()
+
+
+def fixture(key: str) -> str:
+    try:
+        return FIXTURES[key]
+    except KeyError:  # pragma: no cover - a mistyped key is a test bug
+        raise KeyError(f"unknown lab fixture: {key}") from None
+
+
+def render_init_groovy() -> Path:
+    """Substitute @@key@@ placeholders so one script serves any environment."""
+    text = (E2E_DIR / "init.groovy").read_text(encoding="utf-8")
+    text = re.sub(r"@@([A-Za-z0-9._]+)@@", lambda m: fixture(m.group(1)), text)
+    RENDERED_INIT.parent.mkdir(parents=True, exist_ok=True)
+    RENDERED_INIT.write_text(text, encoding="utf-8")
+    return RENDERED_INIT
+
+
 EXTERNAL_SOURCE_ERRORS = (
     "jQuery is not defined",
     "Cannot read properties of undefined (reading 'extend')",
@@ -130,7 +172,7 @@ def start() -> None:
             "--volume",
             f"{PLUGINS_DIR}:/usr/share/jenkins/ref/plugins:ro",
             "--volume",
-            f"{E2E_DIR / 'init.groovy'}:/usr/share/jenkins/ref/init.groovy.d/01-e2e.groovy:ro",
+            f"{render_init_groovy()}:/usr/share/jenkins/ref/init.groovy.d/01-e2e.groovy:ro",
             JENKINS_IMAGE,
         ]
     )
@@ -690,11 +732,11 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         "production",
     ]
     assert await login_table.locator("tbody th[scope=row]").all_inner_texts() == [
-        "Registry A",
-        "Registry B",
-        "Registry C",
-        "Registry D",
-        "Registry Auto",
+        fixture("registry.primary.label"),
+        fixture("registry.secondary.label"),
+        fixture("registry.tertiary.label"),
+        fixture("registry.quaternary.label"),
+        fixture("registry.quinary.label"),
     ]
     assert await login_table.locator('input[type="checkbox"]').count() == 15
     # A plain grid accepts any combination: a second cell in the same row does not clear the first.
@@ -704,7 +746,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     assert await first_row.nth(0).is_checked() is True
     assert await first_row.nth(2).is_checked() is True
     assert await logins.locator(
-        'input[data-up-generated-value][value="registry.example.com@production"]'
+        f'input[data-up-generated-value][value="{fixture("registry.primary")}@production"]'
     ).count() == 1
 
     # One-click row, column, and whole-table selection, then invert and clear.
@@ -715,9 +757,10 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
 
     await login_table.locator("thead th button", has_text="staging").first.click()
     assert await logins.locator("input[data-up-generated-value]").count() == 5
-    assert await login_table.locator('input[value="registry.example.com@staging"]').is_checked()
     assert await login_table.locator(
-        'input[value="registry-auto.example.org@staging"]'
+        f'input[value="{fixture("registry.primary")}@staging"]').is_checked()
+    assert await login_table.locator(
+        f'input[value="{fixture("registry.quinary")}@staging"]'
     ).is_checked()
     assert "Column staging selected" in await logins.locator(
         ".parameter-foundry-status"
@@ -728,9 +771,9 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     assert await logins.locator("input[data-up-generated-value]").count() == 7
     for column in ("development", "staging", "production"):
         assert await login_table.locator(
-            f'input[value="registry.example.com@{column}"]'
+            f'input[value="{fixture("registry.primary")}@{column}"]'
         ).is_checked()
-    assert "Row Registry A selected" in await logins.locator(
+    assert f"Row {fixture('registry.primary.label')} selected" in await logins.locator(
         ".parameter-foundry-status"
     ).inner_text()
     await login_table.locator("tbody th button").nth(0).click()
@@ -831,8 +874,8 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     assert build_parameters["TARGET_NODE"]["value"] == "development"
     assert build_parameters["LOCKED_NODE"]["value"] == "production"
     assert build_parameters["DOCKER_LOGINS"]["value"] == [
-        "registry.example.com@production",
-        "harbor.example.net@staging",
+        f"{fixture('registry.primary')}@production",
+        f"{fixture('registry.secondary')}@staging",
     ]
 
     health = await page.request.get(

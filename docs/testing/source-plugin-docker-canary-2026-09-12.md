@@ -44,5 +44,6 @@ definition, and the upstream Pipeline passes `UnifiedChoiceParameterValue`.
 - This canary proves the plugin behaves correctly against a disposable Jenkins
   with the source plugins installed; it does not replace a real-organization
   migration pilot.
-- Production verification of the same commit is recorded in
-  [`production-e2e-2026-09-11.md`](./production-e2e-2026-09-11.md).
+- Production verification of the same commit is recorded in the maintainer's
+  lab overlay
+  ([ADR 0018](../decisions/0018-public-hygiene-and-private-lab-overlay.md)).

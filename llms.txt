@@ -5,7 +5,7 @@
 > canonical, providers are governed, and the core never executes Job-supplied
 > code.
 
-Repository: https://github.com/jenkinsci/parameter-foundry-plugin
+Repository: https://github.com/xykong/parameter-foundry-plugin
 Plugin short name: `parameter-foundry`
 Current symbols: `foundryChoice`, `foundryForm`
 

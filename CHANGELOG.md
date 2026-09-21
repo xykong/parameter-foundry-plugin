@@ -29,7 +29,8 @@ so Chinese was the last locale still showing the working name.
 The HPI is `dist/parameter-foundry-0.4.245.hpi` (SHA-256
 `4d774c42659ddf39faf2e3a713eb1b0c0bd23bce42b4095573b395a51f76c403`), built from
 commit `75eefac` and installed on the shared controller over `0.4.242`; see
-[`docs/testing/production-release-2026-09-21-parameter-foundry.md`](docs/testing/production-release-2026-09-21-parameter-foundry.md).
+the 0.4.245 release record in the maintainer's lab overlay
+([ADR 0018](docs/decisions/0018-public-hygiene-and-private-lab-overlay.md)).
 
 ## 0.4.242 - 2026-09-21
 
@@ -40,8 +41,8 @@ configuration reference to the plugin.
 
 Deployed as an in-place replacement on the shared controller, including the
 persisted-state migration for 98 Job configurations and 305 historical build
-records; see
-[`docs/testing/production-release-2026-09-21-parameter-foundry.md`](docs/testing/production-release-2026-09-21-parameter-foundry.md).
+records; the release record lives in the maintainer's lab overlay
+([ADR 0018](docs/decisions/0018-public-hygiene-and-private-lab-overlay.md)).
 
 ### Changed
 
@@ -80,8 +81,8 @@ records; see
 
 Released as a controlled custom plugin for the Jenkins image: the HPI is built
 from this commit (`git rev-list --count master` = 233) with SHA-256 recorded in
-[`docs/testing/production-release-2026-09-21.md`](docs/testing/production-release-2026-09-21.md),
-so an image rebuild no longer depends on a private snapshot in
+the matching lab-overlay release record, so an image rebuild no longer depends
+on a private snapshot in
 `JENKINS_HOME/plugins`.
 
 ### Added
