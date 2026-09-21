@@ -38,10 +38,16 @@ value is ever a literal; fixtures use a reserved example namespace.
 
 ### Private lab overlay
 
-A private repository that holds the real values, the placeholder-to-real
-mapping, the dated acceptance and regression records, and the deployment
-wiring. It contains no product source, so the two repositories never diverge
-in code and the overlay cannot drift into a fork.
+A private repository, `private-lab-overlay`, that holds the real
+values, the placeholder-to-real mapping, the dated acceptance and regression
+records, and the denylist. It contains no product source, so the two
+repositories never diverge in code and the overlay cannot drift into a fork.
+
+The overlay is never published and is never a dependency of the public build:
+it contributes data at run time and nothing at build time. Access to it is
+granted separately from public repository access, so a future co-maintainer of
+the published plugin does not automatically gain access to the maintainer's
+environment data.
 
 ```text
 private-lab-overlay/          (private, never published)

@@ -21,3 +21,8 @@ tools/e2e/.cache
 
 # macOS Finder metadata
 .DS_Store
+
+# Private lab overlay checkout (ADR 0018): never commit real fixture values
+lab/
+*.lab.properties
+*.lab-profile.json
