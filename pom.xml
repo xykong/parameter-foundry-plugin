@@ -25,6 +25,14 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <id>xy.kong</id>
+      <name>xy.kong</name>
+      <email>xy.kong@gmail.com</email>
+    </developer>
+  </developers>
+
   <modules>
     <module>plugin</module>
   </modules>

@@ -9,6 +9,28 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.4.245 - 2026-09-21
+
+The Chinese user interface now uses the product name recorded in the naming
+evaluation. The English and Japanese resources already read Parameter Foundry,
+so Chinese was the last locale still showing the working name.
+
+### Changed
+
+- The migration page is titled 参数工场迁移 and headed 参数工场迁移预览.
+- The retirement dashboard is titled 参数工场退役 and headed 参数工场退役看板.
+- The acceptance Folder and its 14 demonstration Jobs describe themselves as
+  参数工场 instead of 统一参数 on the controller.
+
+### Fixed
+
+- No Chinese page, help popup, or Job description shows 统一参数 any more.
+
+The HPI is `dist/parameter-foundry-0.4.245.hpi` (SHA-256
+`4d774c42659ddf39faf2e3a713eb1b0c0bd23bce42b4095573b395a51f76c403`), built from
+commit `75eefac` and installed on the shared controller over `0.4.242`; see
+[`docs/testing/production-release-2026-09-21-parameter-foundry.md`](docs/testing/production-release-2026-09-21-parameter-foundry.md).
+
 ## 0.4.242 - 2026-09-21
 
 The product identity moves from the working name "Unified Parameters" to
