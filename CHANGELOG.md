@@ -9,6 +9,21 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.4.255 - 2026-09-21
+
+No user-visible behaviour change: the plugin behaves exactly as `0.4.245`. This
+release exists so that the published artifact matches the artifact running on
+the maintainer's controller and carries the completed repository hygiene work.
+
+### Changed
+
+- Test fixtures resolve deployment-specific values at run time through
+  `PF_LAB_FIXTURES` instead of hard-coding them, so one suite serves a public
+  build and a maintainer run
+  ([ADR 0018](docs/decisions/0018-public-hygiene-and-private-lab-overlay.md)).
+- The repository no longer carries records or tooling that name the maintainer
+  environment; those live in a private overlay.
+
 ## 0.4.245 - 2026-09-21
 
 The Chinese user interface now uses the product name recorded in the naming
