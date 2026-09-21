@@ -111,10 +111,7 @@ class MatrixProviderDefinitionTest {
         assertEquals(
                 List.of("harbor.example.net@built-in"),
                 ParameterEvaluationService.evaluateMultiple(
-                        definition,
-                        DecodedInput.present(List.of("harbor.example.net@built-in")),
-                        options,
-                        matrix));
+                        definition, DecodedInput.present(List.of("harbor.example.net@built-in")), options, matrix));
 
         EvaluationException sameRow = assertThrows(
                 EvaluationException.class,
@@ -131,10 +128,7 @@ class MatrixProviderDefinitionTest {
         EvaluationException missingRow = assertThrows(
                 EvaluationException.class,
                 () -> ParameterEvaluationService.evaluateMultiple(
-                        definition,
-                        DecodedInput.present(List.of("harbor.example.net@built-in")),
-                        options,
-                        exactlyOne));
+                        definition, DecodedInput.present(List.of("harbor.example.net@built-in")), options, exactlyOne));
         assertTrue(missingRow.getMessage().contains("requires exactly one"), missingRow.getMessage());
     }
 
@@ -165,7 +159,8 @@ class MatrixProviderDefinitionTest {
         provider.setRows(List.of(
                 new AxisOption("registry.example.com", "registry.example.com"),
                 new AxisOption("harbor.example.net", "harbor.example.net")));
-        provider.setColumns(List.of(new AxisOption("built-in", "built-in"), new AxisOption("agent-a.example.net", "agent-a.example.net")));
+        provider.setColumns(List.of(
+                new AxisOption("built-in", "built-in"), new AxisOption("agent-a.example.net", "agent-a.example.net")));
         return provider;
     }
 
