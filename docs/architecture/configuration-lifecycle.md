@@ -8,6 +8,23 @@ version unless a migration is explicitly reported and tested.
 Compatibility applies to Parameter Foundry configuration and build records.
 It does not imply compatibility with source-plugin Java classes or XML.
 
+### Product Rename Boundary
+
+The rename to Parameter Foundry
+([ADR 0017](../decisions/0017-product-renaming-to-parameter-foundry.md)) moved
+every persisted class into `io.jenkins.plugins.parameterfoundry`, so the
+promise above starts at the first release published under the new coordinates.
+
+- Job configuration and build records written by a `unified-parameters`
+  release name the former classes and cannot be deserialized by Parameter
+  Foundry.
+- A controller that must keep those records readable migrates the Job XML to
+  the new class names, keeps the former plugin installed for historical
+  rendering, or archives that history. [ADR 0008](../decisions/0008-rebuild-and-historical-compatibility.md)
+  already defines those choices for records that outlive their defining
+  plugin.
+- Records written under the new coordinates follow the rules below unchanged.
+
 ## 2. Persisted Model Version
 
 Every public ParameterDefinition and shared Provider record stores a positive
