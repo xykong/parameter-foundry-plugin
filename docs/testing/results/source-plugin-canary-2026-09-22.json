@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-09-22T00:22:16.691225+08:00",
+  "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
+  "targetCommit": "423b2df3b1251b4aef756dc0ad4266ab2876060f",
+  "scope": "synthetic Docker canary only",
+  "checks": {
+    "pluginLoad": {
+      "requiredActive": [
+        "extended-choice-parameter",
+        "file-parameters",
+        "list-git-branches-parameter",
+        "parameter-foundry",
+        "uno-choice"
+      ],
+      "passed": true
+    },
+    "companions": {
+      "rendererId": "accessible-choice-grid",
+      "rendererExposed": true,
+      "schemaStatus": 200,
+      "scriptEngineId": "sandbox-groovy",
+      "resolvedOptions": [
+        "release-a",
+        "release-b"
+      ],
+      "resolveStatus": 200,
+      "buildStatus": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "passed": true
+    },
+    "migrationPreviews": {
+      "extendedChoiceClassB": true,
+      "activeChoicesClassC": true,
+      "activeChoicesCascadeDependency": true,
+      "listGitBranchesClassC": true,
+      "listGitBranchesGitRefMapping": true,
+      "stashedFileClassD": true,
+      "sensitiveSourceRedacted": true,
+      "passed": true
+    },
+    "extendedChoiceClone": {
+      "status": 200,
+      "targetPersisted": true,
+      "auditRecord": true,
+      "passed": true
+    },
+    "standardRestDelimited": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "webhookStyleStandardRest": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 2,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "ios",
+        "web"
+      ],
+      "passed": true
+    },
+    "typedRestArray": {
+      "validateStatus": 200,
+      "buildStatus": 201,
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 3,
+        "result": "SUCCESS"
+      },
+      "passed": true
+    },
+    "cliJsonArray": {
+      "returnCode": 0,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 4,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "pipelineUpstream": {
+      "status": 201,
+      "upstreamBuild": {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "downstreamBuild": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 5,
+        "result": "SUCCESS"
+      },
+      "canonicalValue": [
+        "android",
+        "web"
+      ],
+      "passed": true
+    },
+    "typedInvalidNoQueue": {
+      "status": 400,
+      "code": "PARAMETER_FOUNDRY_UNKNOWN_VALUE",
+      "buildNumberUnchanged": true,
+      "queueLengthUnchanged": true,
+      "passed": true
+    },
+    "webhookInvalidNoQueue": {
+      "status": 400,
+      "code": "PARAMETER_FOUNDRY_UNKNOWN_VALUE",
+      "buildNumberUnchanged": true,
+      "queueLengthUnchanged": true,
+      "passed": true
+    },
+    "rebuild": {
+      "status": 200,
+      "parameterPresent": true,
+      "passed": true
+    },
+    "stashedFileMultipart": {
+      "status": 201,
+      "build": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "building": false,
+        "number": 1,
+        "result": "SUCCESS"
+      },
+      "nativeTransport": true,
+      "passed": true
+    },
+    "migrationRollback": {
+      "status": 200,
+      "sourceDefinitionRestored": true,
+      "recordRolledBack": true,
+      "passed": true
+    },
+    "controllerLogs": {
+      "unexpectedSevereErrors": 0,
+      "passed": true
+    }
+  },
+  "result": "passed"
+}
