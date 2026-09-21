@@ -45,9 +45,10 @@ repositories never diverge in code and the overlay cannot drift into a fork.
 
 The overlay is never published and is never a dependency of the public build:
 it contributes data at run time and nothing at build time. Access to it is
-granted separately from public repository access, so a future co-maintainer of
-the published plugin does not automatically gain access to the maintainer's
-environment data.
+deliberately closed: the overlay has a single owner, no collaborators, and is
+never shared or transferred. Maintaining it does not depend on the public
+repository's collaborator list, and publishing the plugin never grants anyone
+access to the environment data behind it.
 
 ```text
 private-lab-overlay/          (private, never published)
