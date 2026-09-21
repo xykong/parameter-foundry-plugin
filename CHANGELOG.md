@@ -9,12 +9,17 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## Unreleased
+## 0.4.242 - 2026-09-21
 
 The product identity moves from the working name "Unified Parameters" to
 **Parameter Foundry** ([ADR 0017](docs/decisions/0017-product-renaming-to-parameter-foundry.md)).
 This is a breaking change for every Pipeline, Job DSL, REST, CLI, and
 configuration reference to the plugin.
+
+Deployed as an in-place replacement on the shared controller, including the
+persisted-state migration for 98 Job configurations and 305 historical build
+records; see
+[`docs/testing/production-release-2026-09-21-parameter-foundry.md`](docs/testing/production-release-2026-09-21-parameter-foundry.md).
 
 ### Changed
 
