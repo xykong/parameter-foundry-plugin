@@ -18,3 +18,6 @@ tools/e2e/.cache
 .settings
 .classpath
 .project
+
+# macOS Finder metadata
+.DS_Store
