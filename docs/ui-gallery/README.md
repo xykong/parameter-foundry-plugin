@@ -344,10 +344,6 @@ current HPI on Jenkins `2.568.2-lts-jdk21`.
 
 [![Parameter Foundry migration preview](images/parameter-foundry/migration-preview.png)](images/parameter-foundry/migration-preview.png)
 
-### Governed Provider and reactive snapshot
-
-[![Parameter Foundry Provider](images/parameter-foundry/provider.png)](images/parameter-foundry/provider.png)
-
 ### Foundry Form
 
 [![Parameter Foundry form](images/parameter-foundry/foundry-form.png)](images/parameter-foundry/foundry-form.png)

@@ -106,7 +106,6 @@ Generated evidence:
 - `docs/ui-gallery/images/parameter-foundry/high-contrast.png`
 - `docs/ui-gallery/images/parameter-foundry/configuration-preview.png`
 - `docs/ui-gallery/images/parameter-foundry/migration-preview.png`
-- `docs/ui-gallery/images/parameter-foundry/provider.png`
 - `docs/ui-gallery/images/parameter-foundry/foundry-form.png`
 - `docs/ui-gallery/images/parameter-foundry/retirement-dashboard.png`
 - `docs/testing/results/1.0-e2e-benchmark.json`
