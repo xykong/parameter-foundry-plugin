@@ -4,7 +4,7 @@
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 }
 
-.up-accessible-choice-grid__options .unified-parameters-option {
+.up-accessible-choice-grid__options .parameter-foundry-option {
   min-height: 100%;
 }
 

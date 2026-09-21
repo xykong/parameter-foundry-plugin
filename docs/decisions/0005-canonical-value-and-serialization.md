@@ -48,10 +48,10 @@ Browser forms and form-encoded API clients use a reserved repeated metadata
 field:
 
 ```text
-__unified_parameters_presence=TARGETS
+__parameter_foundry_presence=TARGETS
 ```
 
-The browser emits one marker for every rendered Unified parameter. Presence is
+The browser emits one marker for every rendered Foundry parameter. Presence is
 decoded as:
 
 1. one or more value fields means `PRESENT`;
@@ -60,7 +60,7 @@ decoded as:
 
 The marker is never included in `rawValues`, so a selected checkbox cannot
 accidentally become `["", "android"]`. Duplicate or unknown marker values are
-malformed input. `__unified_parameters_presence` is reserved: a Job containing
+malformed input. `__parameter_foundry_presence` is reserved: a Job containing
 a conflicting parameter definition is configuration-invalid until renamed.
 Typed JSON, CLI, Pipeline, and Rebuild carry presence structurally and do not
 use the form marker.
@@ -117,7 +117,7 @@ the parameter ...` error before queue scheduling; no build is created.
 
 ### Multiple-Selection Ordering and Duplicates
 
-`unifiedChoice` in multiple mode models an unordered selection set. Order is not part of
+`foundryChoice` in multiple mode models an unordered selection set. Order is not part of
 its business value in `1.x`.
 
 The `List<String>` exposed to Pipeline and stored in a build is a deterministic
@@ -135,7 +135,7 @@ Jobs for which order is business-significant must use a future ordered
 collection/Form field rather than a multiple-mode choice.
 
 Duplicate submitted values are rejected by default with
-`UNIFIED_PARAMETER_DUPLICATE_VALUE`. A definition may opt into `deduplicate`;
+`PARAMETER_FOUNDRY_DUPLICATE_VALUE`. A definition may opt into `deduplicate`;
 deduplication occurs before deterministic serialization.
 
 Migration adapters may classify a source as A only when source order is not

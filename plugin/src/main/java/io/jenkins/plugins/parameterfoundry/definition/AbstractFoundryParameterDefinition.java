@@ -1,13 +1,13 @@
-package io.jenkins.plugins.unifiedparameters.definition;
+package io.jenkins.plugins.parameterfoundry.definition;
 
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.Messages;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.Messages;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,12 +18,12 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 
-public abstract class AbstractUnifiedParameterDefinition extends ParameterDefinition {
+public abstract class AbstractFoundryParameterDefinition extends ParameterDefinition {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final String PRESENCE_FIELD = "__unified_parameters_presence";
+    public static final String PRESENCE_FIELD = "__parameter_foundry_presence";
     public static final int NO_JAVASCRIPT_OPTION_LIMIT = 200;
 
     private List<Option> choices = List.of();
@@ -45,7 +45,7 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
     private ChoiceMatrix table;
     private int modelVersion = 1;
 
-    protected AbstractUnifiedParameterDefinition(String name) {
+    protected AbstractFoundryParameterDefinition(String name) {
         super(name);
     }
 
@@ -529,12 +529,12 @@ public abstract class AbstractUnifiedParameterDefinition extends ParameterDefini
             return true;
         }
         for (ParameterDefinition definition : property.getParameterDefinitions()) {
-            if (definition instanceof AbstractUnifiedParameterDefinition unified && unified.isProviderBacked()) {
+            if (definition instanceof AbstractFoundryParameterDefinition foundry && foundry.isProviderBacked()) {
                 return false;
             }
         }
         for (ParameterDefinition definition : property.getParameterDefinitions()) {
-            if (definition instanceof AbstractUnifiedParameterDefinition) {
+            if (definition instanceof AbstractFoundryParameterDefinition) {
                 return definition.getName().equals(getName());
             }
         }

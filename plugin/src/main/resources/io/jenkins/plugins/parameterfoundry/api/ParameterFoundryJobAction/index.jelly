@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
   <l:layout title="${%MigrationPageTitle}">
-    <st:adjunct includes="io.jenkins.plugins.unifiedparameters.migration-preview"/>
+    <st:adjunct includes="io.jenkins.plugins.parameterfoundry.migration-preview"/>
     <l:main-panel>
       <div class="up-migration-page">
         <header class="up-migration-hero">
@@ -99,7 +99,7 @@
                         <label>
                           <span>${%MigrationCloneName}</span>
                           <input class="jenkins-input" name="cloneName"
-                                 value="${it.job.name}-${preview.parameterName}-unified" />
+                                 value="${it.job.name}-${preview.parameterName}-foundry" />
                         </label>
                         <j:if test="${!empty(preview.decisions)}">
                           <label>

@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.model.OptionImportService;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.OptionImportService;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -193,11 +193,11 @@ public final class ManagedConfigProviderDefinition extends SharedProviderDefinit
     }
 
     @Extension
-    @Symbol("unifiedManagedConfigProvider")
+    @Symbol("foundryManagedConfigProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Managed Config Provider";
+            return "Parameter Foundry Managed Config Provider";
         }
     }
 }

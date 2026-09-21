@@ -1,16 +1,16 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
-import io.jenkins.plugins.unifiedparameters.model.AxisOption;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
+import io.jenkins.plugins.parameterfoundry.model.AxisOption;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -101,8 +101,8 @@ class MatrixProviderDefinitionTest {
         provider.setRowSelectionMode("at-most-one");
         ChoiceMatrix matrix = provider.loadMatrix(context());
         List<Option> options = matrix.selectableOptions();
-        io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition definition =
-                new io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition("DOCKER_LOGINS");
+        io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition definition =
+                new io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition("DOCKER_LOGINS");
         definition.setSelectionMode("multiple");
         definition.setRenderer("table");
         definition.setProviderId("registries-on-agents");
@@ -143,8 +143,8 @@ class MatrixProviderDefinitionTest {
         MatrixProviderDefinition provider = matrix("registries-on-agents");
         provider.setRowSelectionMode("at-most-one");
         List<Option> options = provider.loadMatrix(context()).selectableOptions();
-        io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition definition =
-                new io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition("DOCKER_LOGINS");
+        io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition definition =
+                new io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition("DOCKER_LOGINS");
         definition.setSelectionMode("multiple");
         definition.setRenderer("table");
         definition.setProviderId("registries-on-agents");

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.additional;
+package io.jenkins.plugins.parameterfoundry.migration.additional;
 
 import hudson.cli.CLICommand;
 import hudson.model.ParameterDefinition;

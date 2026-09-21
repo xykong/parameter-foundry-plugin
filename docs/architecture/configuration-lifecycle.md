@@ -2,10 +2,10 @@
 
 ## 1. Compatibility Promise
 
-Unified Parameters preserves configurations created by an earlier supported
+Parameter Foundry preserves configurations created by an earlier supported
 version unless a migration is explicitly reported and tested.
 
-Compatibility applies to Unified Parameters configuration and build records.
+Compatibility applies to Parameter Foundry configuration and build records.
 It does not imply compatibility with source-plugin Java classes or XML.
 
 ## 2. Persisted Model Version

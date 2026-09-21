@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.form;
+package io.jenkins.plugins.parameterfoundry.form;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -6,9 +6,9 @@ import hudson.cli.CLICommand;
 import hudson.model.Descriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
-import io.jenkins.plugins.unifiedparameters.Messages;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.parameterfoundry.Messages;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest2;
 
-public final class UnifiedFormParameterDefinition extends ParameterDefinition {
+public final class FoundryFormParameterDefinition extends ParameterDefinition {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -36,7 +36,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     private transient String rebuildDefaultJson;
 
     @DataBoundConstructor
-    public UnifiedFormParameterDefinition(String name) {
+    public FoundryFormParameterDefinition(String name) {
         super(name);
     }
 
@@ -141,7 +141,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         String[] raw = request.getParameterValues(getName());
         boolean present = raw != null;
         if (present && raw.length != 1) {
-            throw HttpResponses.errorWithoutStack(400, "Unified Form accepts exactly one JSON object.");
+            throw HttpResponses.errorWithoutStack(400, "Foundry Form accepts exactly one JSON object.");
         }
         Object value = present ? raw[0] : null;
         return evaluate(value, present);
@@ -153,7 +153,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         Object value = present ? submitted.get("value") : null;
         if (value instanceof net.sf.json.JSONArray array) {
             if (array.size() != 1) {
-                throw HttpResponses.errorWithoutStack(400, "Unified Form accepts exactly one JSON object.");
+                throw HttpResponses.errorWithoutStack(400, "Foundry Form accepts exactly one JSON object.");
             }
             value = array.get(0);
         }
@@ -169,12 +169,12 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         }
     }
 
-    public UnifiedFormParameterValue createTypedValue(Object value, boolean present) {
+    public FoundryFormParameterValue createTypedValue(Object value, boolean present) {
         return toValue(FormEvaluationService.evaluate(this, value, present));
     }
 
     @Override
-    public UnifiedFormParameterValue getDefaultParameterValue() {
+    public FoundryFormParameterValue getDefaultParameterValue() {
         try {
             return toValue(FormEvaluationService.evaluate(this, null, false));
         } catch (EvaluationException exception) {
@@ -184,7 +184,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
 
     @Override
     public boolean isValid(ParameterValue value) {
-        if (!(value instanceof UnifiedFormParameterValue formValue)) {
+        if (!(value instanceof FoundryFormParameterValue formValue)) {
             return false;
         }
         try {
@@ -197,10 +197,10 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-        if (!(defaultValue instanceof UnifiedFormParameterValue formValue)) {
+        if (!(defaultValue instanceof FoundryFormParameterValue formValue)) {
             return this;
         }
-        UnifiedFormParameterDefinition copy = new UnifiedFormParameterDefinition(getName());
+        FoundryFormParameterDefinition copy = new FoundryFormParameterDefinition(getName());
         copy.setDescription(getDescription());
         copy.setFields(getFields());
         copy.setLayouts(getLayouts());
@@ -211,7 +211,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         return copy;
     }
 
-    private UnifiedFormParameterValue evaluate(Object value, boolean present) {
+    private FoundryFormParameterValue evaluate(Object value, boolean present) {
         try {
             return toValue(FormEvaluationService.evaluate(this, value, present));
         } catch (EvaluationException exception) {
@@ -219,14 +219,14 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         }
     }
 
-    private UnifiedFormParameterValue toValue(Map<String, Object> value) {
+    private FoundryFormParameterValue toValue(Map<String, Object> value) {
         Map<String, String> environmentVariables = new LinkedHashMap<>();
         for (FormField field : getFields()) {
             if (!field.isSecret() && field.getEnvironmentVariable() != null) {
                 environmentVariables.put(field.getName(), field.getEnvironmentVariable());
             }
         }
-        return new UnifiedFormParameterValue(
+        return new FoundryFormParameterValue(
                 getName(), value, getDescription(), getOutputMode(), getEnvironmentExport(), environmentVariables);
     }
 
@@ -249,7 +249,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
         encoded.put("itemType", field.getItemType());
         encoded.put("environmentVariable", field.getEnvironmentVariable());
         net.sf.json.JSONArray options = new net.sf.json.JSONArray();
-        for (io.jenkins.plugins.unifiedparameters.model.Option option : field.getChoices()) {
+        for (io.jenkins.plugins.parameterfoundry.model.Option option : field.getChoices()) {
             JSONObject item = new JSONObject();
             item.put("value", option.getValue());
             item.put("label", option.getLabel());
@@ -284,13 +284,13 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
     }
 
     @Extension
-    @Symbol("unifiedForm")
+    @Symbol("foundryForm")
     public static final class DescriptorImpl extends ParameterDescriptor {
         @Override
-        public UnifiedFormParameterDefinition newInstance(StaplerRequest2 request, JSONObject formData)
+        public FoundryFormParameterDefinition newInstance(StaplerRequest2 request, JSONObject formData)
                 throws Descriptor.FormException {
-            UnifiedFormParameterDefinition definition =
-                    (UnifiedFormParameterDefinition) super.newInstance(request, formData);
+            FoundryFormParameterDefinition definition =
+                    (FoundryFormParameterDefinition) super.newInstance(request, formData);
             List<String> errors = FormEvaluationService.validateDefinition(definition);
             if (!errors.isEmpty()) {
                 throw new Descriptor.FormException(String.join("; ", errors), "parameter");
@@ -300,7 +300,7 @@ public final class UnifiedFormParameterDefinition extends ParameterDefinition {
 
         @Override
         public String getDisplayName() {
-            return "Unified Form Parameter";
+            return "Foundry Form Parameter";
         }
     }
 }

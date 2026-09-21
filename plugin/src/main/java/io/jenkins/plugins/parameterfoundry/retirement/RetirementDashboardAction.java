@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.retirement;
+package io.jenkins.plugins.parameterfoundry.retirement;
 
 import hudson.Extension;
 import hudson.model.RootAction;
@@ -69,11 +69,11 @@ public final class RetirementDashboardAction implements RootAction {
 
     @Override
     public String getDisplayName() {
-        return "Unified Parameters Retirement";
+        return "Parameter Foundry Retirement";
     }
 
     @Override
     public String getUrlName() {
-        return "unified-parameters-retirement";
+        return "parameter-foundry-retirement";
     }
 }

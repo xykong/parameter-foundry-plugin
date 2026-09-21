@@ -1,12 +1,12 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
 import hudson.model.Label;
 import hudson.model.Node;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -169,11 +169,11 @@ public final class NodeLabelProviderDefinition extends SharedProviderDefinition 
     }
 
     @Extension
-    @Symbol("unifiedNodeProvider")
+    @Symbol("foundryNodeProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Node/Label Provider";
+            return "Parameter Foundry Node/Label Provider";
         }
     }
 }

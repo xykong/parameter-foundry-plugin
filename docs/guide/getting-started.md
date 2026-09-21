@@ -6,7 +6,7 @@ back. It takes about five minutes.
 ## Before you start
 
 - Jenkins `2.528.3` or newer.
-- The `unified-parameters` plugin installed and enabled
+- The `parameter-foundry` plugin installed and enabled
   (**Manage Jenkins → Plugins → Installed plugins**).
 - Permission to configure a Job (`Job/CONFIGURE`) and to build it (`Job/BUILD`).
 
@@ -14,7 +14,7 @@ back. It takes about five minutes.
 
 1. Open a Freestyle or Pipeline Job and select **Configure**.
 2. Enable **This project is parameterized**.
-3. Select **Add Parameter → Unified Choice Parameter**.
+3. Select **Add Parameter → Foundry Choice Parameter**.
 4. Fill in the form:
 
 | Field | Value in this example |
@@ -35,7 +35,7 @@ The same definition is available in Pipeline and Job DSL:
 pipeline {
   agent any
   parameters {
-    unifiedChoice(
+    foundryChoice(
       name: 'CHANNEL',
       choices: [[value: 'staging', label: 'Staging'], [value: 'production', label: 'Production']],
       renderer: 'searchable',
@@ -55,7 +55,7 @@ pipeline {
 // Job DSL
 job('deploy') {
   parameters {
-    unifiedChoice('CHANNEL') {
+    foundryChoice('CHANNEL') {
       option('staging', 'Staging')
       option('production', 'Production')
       renderer('searchable')
@@ -89,7 +89,7 @@ export for multiple selection defaults to a comma-separated list; switch
 Use a Provider when the option set lives outside the Job — a REST endpoint, a
 managed configuration file, a Git repository, or a reviewed script:
 
-1. Define the Provider once in **Manage Jenkins → System → Unified Parameters**,
+1. Define the Provider once in **Manage Jenkins → System → Parameter Foundry**,
    or on a Folder so it is scoped to that Folder.
 2. In the parameter, set **Shared Provider ID** to that Provider's ID and leave
    the inline **Choices** list empty.
@@ -107,7 +107,7 @@ policies.
 | Pipeline | `params.NAME` — a string, a list, or a map depending on the parameter |
 | Environment | Configured export variable(s); secret form fields are never exported |
 | CLI | `build` with a JSON array for multiple selection |
-| REST | `buildWithParameters` plus the typed API at `unified-parameters/api/v1/…` |
+| REST | `buildWithParameters` plus the typed API at `parameter-foundry/api/v1/…` |
 | Rebuild | The historical value is offered again |
 
 ## Next steps

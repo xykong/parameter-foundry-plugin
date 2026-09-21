@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.MatrixCell;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.MatrixCell;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -18,12 +18,12 @@ public final class ParameterEvaluationService {
 
     private ParameterEvaluationService() {}
 
-    public static String evaluateSingle(UnifiedChoiceParameterDefinition definition, DecodedInput input) {
+    public static String evaluateSingle(FoundryChoiceParameterDefinition definition, DecodedInput input) {
         return evaluateSingle(definition, input, definition.getSelectableOptions());
     }
 
     public static String evaluateSingle(
-            UnifiedChoiceParameterDefinition definition, DecodedInput input, List<Option> options) {
+            FoundryChoiceParameterDefinition definition, DecodedInput input, List<Option> options) {
         DefinitionValidationService.requireValid(definition);
         if (!input.present()) {
             String defaultValue = resolveSingleDefault(definition, options);
@@ -47,12 +47,12 @@ public final class ParameterEvaluationService {
         return value;
     }
 
-    public static List<String> evaluateMultiple(AbstractUnifiedParameterDefinition definition, DecodedInput input) {
+    public static List<String> evaluateMultiple(AbstractFoundryParameterDefinition definition, DecodedInput input) {
         return evaluateMultiple(definition, input, definition.getSelectableOptions());
     }
 
     public static List<String> evaluateMultiple(
-            AbstractUnifiedParameterDefinition definition, DecodedInput input, List<Option> options) {
+            AbstractFoundryParameterDefinition definition, DecodedInput input, List<Option> options) {
         return evaluateMultiple(definition, input, options, null);
     }
 
@@ -63,7 +63,7 @@ public final class ParameterEvaluationService {
      * scheduled.
      */
     public static List<String> evaluateMultiple(
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             DecodedInput input,
             List<Option> options,
             ChoiceMatrix matrix) {
@@ -77,7 +77,7 @@ public final class ParameterEvaluationService {
      * value goes through the enforcing path.
      */
     private static List<String> evaluateMultiple(
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             DecodedInput input,
             List<Option> options,
             ChoiceMatrix matrix,
@@ -117,7 +117,7 @@ public final class ParameterEvaluationService {
     }
 
     private static void validateRowConstraint(
-            AbstractUnifiedParameterDefinition definition, ChoiceMatrix matrix, List<String> values) {
+            AbstractFoundryParameterDefinition definition, ChoiceMatrix matrix, List<String> values) {
         if (matrix == null
                 || "any".equals(matrix.getRowSelectionMode())
                 || matrix.getCells().isEmpty()) {
@@ -167,19 +167,19 @@ public final class ParameterEvaluationService {
      * {@link String} or {@code null} for single selection and a {@link List} for multiple
      * selection, so callers must branch on the definition rather than on a concrete class.
      */
-    public static Object defaultFor(AbstractUnifiedParameterDefinition definition, List<Option> options) {
+    public static Object defaultFor(AbstractFoundryParameterDefinition definition, List<Option> options) {
         if (definition.isMultiple()) {
             ChoiceMatrix matrix = definition.getTable();
             return evaluateMultiple(definition, DecodedInput.absent(), options, matrix, false);
         }
-        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+        if (definition instanceof FoundryChoiceParameterDefinition choice) {
             return evaluateSingle(choice, DecodedInput.absent(), options);
         }
         throw error(
                 ErrorCode.UNSUPPORTED_DEFINITION, definition, "Definition does not expose a single-choice default.");
     }
 
-    private static String resolveSingleDefault(UnifiedChoiceParameterDefinition definition, List<Option> options) {
+    private static String resolveSingleDefault(FoundryChoiceParameterDefinition definition, List<Option> options) {
         return switch (definition.getDefaultMode()) {
             case "none" -> null;
             case "first" -> {
@@ -196,7 +196,7 @@ public final class ParameterEvaluationService {
     }
 
     private static List<String> resolveMultipleDefault(
-            AbstractUnifiedParameterDefinition definition, List<Option> options) {
+            AbstractFoundryParameterDefinition definition, List<Option> options) {
         List<String> defaults =
                 switch (definition.getDefaultMode()) {
                     case "none" -> List.of();
@@ -217,10 +217,10 @@ public final class ParameterEvaluationService {
     }
 
     private static void validateKnownEnabled(
-            AbstractUnifiedParameterDefinition definition, List<Option> options, String value) {
+            AbstractFoundryParameterDefinition definition, List<Option> options, String value) {
         Option option = definition.findOption(options, value);
         if (option == null) {
-            if (definition instanceof UnifiedChoiceParameterDefinition single && single.isAllowCustomValue()) {
+            if (definition instanceof FoundryChoiceParameterDefinition single && single.isAllowCustomValue()) {
                 CustomValuePolicy.validate(single, value);
                 return;
             }
@@ -231,7 +231,7 @@ public final class ParameterEvaluationService {
         }
     }
 
-    private static void validateSelectionCount(AbstractUnifiedParameterDefinition definition, int count) {
+    private static void validateSelectionCount(AbstractFoundryParameterDefinition definition, int count) {
         if (definition.isRequired() && count == 0) {
             throw error(ErrorCode.REQUIRED, definition, "At least one value is required.");
         }
@@ -250,7 +250,7 @@ public final class ParameterEvaluationService {
     }
 
     private static EvaluationException error(
-            ErrorCode code, AbstractUnifiedParameterDefinition definition, String message) {
+            ErrorCode code, AbstractFoundryParameterDefinition definition, String message) {
         return new EvaluationException(code, definition.getName(), message);
     }
 }

@@ -1,24 +1,24 @@
-package io.jenkins.plugins.unifiedparameters.api;
+package io.jenkins.plugins.parameterfoundry.api;
 
 import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchEntry;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchPreview;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationCoordinator;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidence;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidenceService;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPreview;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationRecord;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationRecordStore;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
-import io.jenkins.plugins.unifiedparameters.retirement.RetirementScanner;
-import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulation;
-import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulationJson;
-import io.jenkins.plugins.unifiedparameters.simulation.ReplacementSimulationService;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationBatchEntry;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationBatchPreview;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationCoordinator;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationEvidence;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationEvidenceService;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPreview;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationRecord;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationRecordStore;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.retirement.RetirementScanner;
+import io.jenkins.plugins.parameterfoundry.simulation.ReplacementSimulation;
+import io.jenkins.plugins.parameterfoundry.simulation.ReplacementSimulationJson;
+import io.jenkins.plugins.parameterfoundry.simulation.ReplacementSimulationService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,11 +32,11 @@ import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.verb.GET;
 import org.kohsuke.stapler.verb.POST;
 
-public final class UnifiedParametersJobAction implements Action {
+public final class ParameterFoundryJobAction implements Action {
 
     private final Job<?, ?> job;
 
-    UnifiedParametersJobAction(Job<?, ?> job) {
+    ParameterFoundryJobAction(Job<?, ?> job) {
         this.job = job;
     }
 
@@ -266,7 +266,7 @@ public final class UnifiedParametersJobAction implements Action {
             MigrationRecord record = MigrationCoordinator.cloneAndApply(job, cloneName, preview, accepted);
             Job<?, ?> clone = jenkins.model.Jenkins.get().getItemByFullName(record.getTargetJob(), Job.class);
             response.sendRedirect(request.getContextPath() + "/" + (clone == null ? job.getUrl() : clone.getUrl()));
-        } catch (io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException exception) {
+        } catch (io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException exception) {
             throw HttpResponses.errorWithoutStack(409, exception.getSafeMessage());
         }
     }
@@ -283,7 +283,7 @@ public final class UnifiedParametersJobAction implements Action {
             List<String> accepted = acceptDecisions ? preview.requiredDecisions() : List.of();
             MigrationCoordinator.applyInPlace(job, preview, accepted);
             response.sendRedirect(request.getContextPath() + "/" + job.getUrl());
-        } catch (io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException exception) {
+        } catch (io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException exception) {
             throw HttpResponses.errorWithoutStack(409, exception.getSafeMessage());
         }
     }
@@ -294,7 +294,7 @@ public final class UnifiedParametersJobAction implements Action {
         try {
             MigrationCoordinator.rollback(job, recordId);
             response.sendRedirect(request.getContextPath() + "/" + job.getUrl());
-        } catch (io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException exception) {
+        } catch (io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException exception) {
             throw HttpResponses.errorWithoutStack(409, exception.getSafeMessage());
         }
     }
@@ -313,12 +313,12 @@ public final class UnifiedParametersJobAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return "Unified Parameters Migration";
+        return "Parameter Foundry Migration";
     }
 
     @Override
     public String getUrlName() {
-        return "unified-parameters";
+        return "parameter-foundry";
     }
 
     public static final class ApiRoot {

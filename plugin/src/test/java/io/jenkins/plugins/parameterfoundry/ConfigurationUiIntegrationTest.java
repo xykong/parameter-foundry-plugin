@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -6,18 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry;
-import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.ScriptProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersFolderProperty;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.script.ScriptCatalogEntry;
+import io.jenkins.plugins.parameterfoundry.companion.script.ScriptProviderCatalog;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.ManagedConfigProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryFolderProperty;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.RestProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.provider.ScriptProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.provider.StaticProviderDefinition;
 import java.net.URL;
 import java.util.List;
 import org.htmlunit.html.HtmlPage;
@@ -33,13 +33,13 @@ class ConfigurationUiIntegrationTest {
     void configuredSelectValuesRemainSelectedAfterReload(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("configuration-ui");
 
-        UnifiedChoiceParameterDefinition choice = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition choice = new FoundryChoiceParameterDefinition("CHANNEL");
         choice.setChoices(List.of(new Option("staging")));
         choice.setRenderer("searchable");
         choice.setDefaultMode("explicit");
         choice.setDefaultValue("staging");
 
-        UnifiedChoiceParameterDefinition multiple = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition multiple = MultipleChoiceFixtures.multipleChoice("TARGETS");
         multiple.setChoices(List.of(new Option("web")));
         multiple.setRenderer("checkbox");
         multiple.setSelectedDisplay("chips");
@@ -47,7 +47,7 @@ class ConfigurationUiIntegrationTest {
         multiple.setDefaultValues(List.of("web"));
         multiple.setStandardApiInputMode("delimited");
 
-        UnifiedFormParameterDefinition form = new UnifiedFormParameterDefinition("FORM");
+        FoundryFormParameterDefinition form = new FoundryFormParameterDefinition("FORM");
         form.setOutputMode("json");
         form.setEnvironmentExport("none");
 
@@ -57,53 +57,53 @@ class ConfigurationUiIntegrationTest {
 
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "CHANNEL",
                 "renderer",
                 "searchable");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "CHANNEL",
                 "defaultMode",
                 "explicit");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "renderer",
                 "checkbox");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "selectedDisplay",
                 "chips");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "standardApiInputMode",
                 "delimited");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition",
                 "FORM",
                 "outputMode",
                 "json");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition",
                 "FORM",
                 "environmentExport",
                 "none");
     }
 
     @Test
-    void unifiedChoiceMultipleModeRendersMultipleFields(JenkinsRule jenkins) throws Exception {
+    void foundryChoiceMultipleModeRendersMultipleFields(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("configuration-ui-multiple");
 
-        UnifiedChoiceParameterDefinition multiple = new UnifiedChoiceParameterDefinition("TARGETS");
+        FoundryChoiceParameterDefinition multiple = new FoundryChoiceParameterDefinition("TARGETS");
         multiple.setSelectionMode("multiple");
         multiple.setChoices(List.of(new Option("web")));
         multiple.setRenderer("checkbox");
@@ -118,25 +118,25 @@ class ConfigurationUiIntegrationTest {
 
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "selectionMode",
                 "multiple");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "renderer",
                 "checkbox");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "selectedDisplay",
                 "chips");
         assertSelected(
                 page,
-                "io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition",
+                "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
                 "TARGETS",
                 "standardApiInputMode",
                 "delimited");
@@ -145,9 +145,9 @@ class ConfigurationUiIntegrationTest {
     @Test
     void requiredReactiveWithoutDefaultShowsConfigurationWarning(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("configuration-warning");
-        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        FoundryChoiceParameterDefinition environment = new FoundryChoiceParameterDefinition("ENVIRONMENT");
         environment.setChoices(List.of(new Option("staging")));
-        UnifiedChoiceParameterDefinition artifact = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        FoundryChoiceParameterDefinition artifact = new FoundryChoiceParameterDefinition("ARTIFACT");
         artifact.setProviderId("artifacts");
         artifact.setDependsOn(List.of("ENVIRONMENT"));
         artifact.setRequired(true);
@@ -161,7 +161,7 @@ class ConfigurationUiIntegrationTest {
 
     @Test
     void globalProviderConfigurationIsRendered(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get()
+        ParameterFoundryGlobalConfiguration.get()
                 .setProviders(
                         List.of(new ScriptProviderDefinition("script-options", "sandbox-groovy", "catalog:releases")));
         ScriptProviderCatalog.get()
@@ -171,7 +171,7 @@ class ConfigurationUiIntegrationTest {
         HtmlPage page = webClient.getPage(new URL(jenkins.getURL(), "configure"));
         webClient.waitForBackgroundJavaScript(1000);
 
-        assertTrue(page.asNormalizedText().contains("Unified Parameters feature switches"));
+        assertTrue(page.asNormalizedText().contains("Parameter Foundry feature switches"));
         assertTrue(page.asNormalizedText().contains("Groovy Script"));
         assertTrue(page.asNormalizedText().contains("Use Groovy Sandbox"));
         assertEquals(
@@ -202,7 +202,7 @@ class ConfigurationUiIntegrationTest {
         StaticProviderDefinition staticProvider = new StaticProviderDefinition("static");
         staticProvider.setFailurePolicy("empty");
 
-        UnifiedParametersFolderProperty property = new UnifiedParametersFolderProperty();
+        ParameterFoundryFolderProperty property = new ParameterFoundryFolderProperty();
         property.setProviders(List.of(git, rest, managed, staticProvider));
         folder.addProperty(property);
 
@@ -210,45 +210,45 @@ class ConfigurationUiIntegrationTest {
 
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition",
                 "refs",
                 "refType",
                 "tag");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition",
                 "refs",
                 "sortOrder",
                 "descending");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.companion.git.GitRefProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition",
                 "refs",
                 "failurePolicy",
                 "empty");
         assertSelectedProviderOption(
-                page, "io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition", "rest", "format", "json");
+                page, "io.jenkins.plugins.parameterfoundry.provider.RestProviderDefinition", "rest", "format", "json");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.provider.RestProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.provider.RestProviderDefinition",
                 "rest",
                 "failurePolicy",
                 "last-known-good");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.provider.ManagedConfigProviderDefinition",
                 "managed",
                 "format",
                 "xml");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.provider.ManagedConfigProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.provider.ManagedConfigProviderDefinition",
                 "managed",
                 "failurePolicy",
                 "empty");
         assertSelectedProviderOption(
                 page,
-                "io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition",
+                "io.jenkins.plugins.parameterfoundry.provider.StaticProviderDefinition",
                 "static",
                 "failurePolicy",
                 "empty");

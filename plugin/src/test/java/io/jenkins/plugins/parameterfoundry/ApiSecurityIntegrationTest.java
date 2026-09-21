@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,9 +8,9 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.User;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ class ApiSecurityIntegrationTest {
         JenkinsRule.WebClient builder = client(jenkins, "builder");
         JenkinsRule.WebClient configurator = client(jenkins, "configurator");
         JenkinsRule.WebClient administrator = client(jenkins, "administrator");
-        String api = project.getUrl() + "unified-parameters/api/v1/";
+        String api = project.getUrl() + "parameter-foundry/api/v1/";
 
         assertEquals(403, get(anonymous, jenkins, api + "schema").getStatusCode(), "anonymous schema");
         assertEquals(403, get(reader, jenkins, api + "schema").getStatusCode(), "reader schema");
@@ -115,7 +115,7 @@ class ApiSecurityIntegrationTest {
                 new URL(jenkins.getURL(), project.getUrl() + "buildWithParameters?delay=0sec"), HttpMethod.POST);
         request.setAdditionalHeader("User-Agent", "Synthetic-Webhook/1.0");
         request.setRequestParameters(new ArrayList<>(List.of(
-                new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                 new NameValuePair("TARGETS", "web"),
                 new NameValuePair("TARGETS", "android"))));
 
@@ -135,7 +135,7 @@ class ApiSecurityIntegrationTest {
     void typedApiRejectsMalformedUnknownAndOversizedRequestsWithoutQueueing(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = parameterizedProject(jenkins, "request-contract");
         int queueLength = jenkins.jenkins.getQueue().getItems().length;
-        String api = project.getUrl() + "unified-parameters/api/v1/build";
+        String api = project.getUrl() + "parameter-foundry/api/v1/build";
 
         JenkinsRule.JSONWebResponse unknown =
                 postRawJson(jenkins.createWebClient(), jenkins, api, "{\"values\":{},\"debug\":true}");
@@ -156,12 +156,12 @@ class ApiSecurityIntegrationTest {
     @Test
     void nativeFileParametersRemainAvailableWhileTypedJsonFailsExplicitly(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("native-file-compatibility");
-        UnifiedChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
         targets.setChoices(List.of(new Option("android"), new Option("ios")));
         project.addProperty(new ParametersDefinitionProperty(new FileParameterDefinition("UPLOAD"), targets));
 
         JenkinsRule.JSONWebResponse schema =
-                jenkins.createWebClient().getJSON(project.getUrl() + "unified-parameters/api/v1/schema");
+                jenkins.createWebClient().getJSON(project.getUrl() + "parameter-foundry/api/v1/schema");
         JSONObject upload = schema.getJSONObject().getJSONArray("parameters").getJSONObject(0);
         assertEquals(false, upload.getBoolean("supported"));
 
@@ -170,7 +170,7 @@ class ApiSecurityIntegrationTest {
         JSONObject body = new JSONObject();
         body.put("values", values);
         JenkinsRule.JSONWebResponse typed = postJson(
-                jenkins.createWebClient(), jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+                jenkins.createWebClient(), jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", body);
         assertEquals(409, typed.getStatusCode());
         assertTrue(typed.getJSONObject().toString().contains("UNSUPPORTED_DEFINITION"));
 
@@ -182,7 +182,7 @@ class ApiSecurityIntegrationTest {
 
     private static FreeStyleProject parameterizedProject(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));

@@ -27,7 +27,7 @@ classification:
       question: What are the default, empty, unavailable, and stale-result behaviors?
 
 targetSkeleton:
-  symbol: unifiedChoice
+  symbol: foundryChoice
   arguments:
     name: CHANNEL
     providerId: <administrator-selected-provider>

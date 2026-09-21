@@ -1,4 +1,4 @@
-# Unified Parameters UI Prototype
+# Parameter Foundry UI Prototype
 
 This is an interactive, implementation-independent prototype for the `1.0`
 build form and configuration preview.

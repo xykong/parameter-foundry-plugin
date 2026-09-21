@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -8,7 +8,7 @@ public final class CustomValuePolicy {
 
     private CustomValuePolicy() {}
 
-    public static void validate(UnifiedChoiceParameterDefinition definition, String value) {
+    public static void validate(FoundryChoiceParameterDefinition definition, String value) {
         if (!definition.isAllowCustomValue()) {
             throw new EvaluationException(ErrorCode.UNKNOWN_VALUE, definition.getName(), "Unsupported value: " + value);
         }

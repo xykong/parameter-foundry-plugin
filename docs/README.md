@@ -1,4 +1,4 @@
-# Unified Parameters Documentation
+# Parameter Foundry Documentation
 
 ## User guide
 

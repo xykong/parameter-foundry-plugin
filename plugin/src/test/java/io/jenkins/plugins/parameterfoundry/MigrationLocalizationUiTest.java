@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +28,7 @@ class MigrationLocalizationUiTest {
                 jenkins.createWebClient().withJavaScriptEnabled(false).withThrowExceptionOnFailingStatusCode(false)) {
             client.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.9");
 
-            HtmlPage migration = client.getPage(project, "unified-parameters/");
+            HtmlPage migration = client.getPage(project, "parameter-foundry/");
             String text = migration.asNormalizedText();
 
             assertTrue(text.contains("统一参数迁移预览"), text.substring(0, Math.min(300, text.length())));
@@ -39,7 +39,7 @@ class MigrationLocalizationUiTest {
             assertTrue(text.contains("源选项数"), "fact labels not translated");
             assertFalse(text.contains("!Migration"), "unresolved message key in the page");
 
-            HtmlPage retirement = client.goTo("unified-parameters-retirement/");
+            HtmlPage retirement = client.goTo("parameter-foundry-retirement/");
             String dashboard = retirement.asNormalizedText();
             assertTrue(dashboard.contains("统一参数退役看板"), dashboard.substring(0, Math.min(300, dashboard.length())));
             assertTrue(dashboard.contains("未扫描的范围"));

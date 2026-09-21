@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.simulation;
+package io.jenkins.plugins.parameterfoundry.simulation;
 
 import hudson.Extension;
 import hudson.model.Job;
@@ -15,7 +15,7 @@ import org.kohsuke.stapler.verb.GET;
 
 /**
  * Controller-wide read-only replacement simulation. Administrators use it to prove, Job by Job,
- * that the unified controls reproduce the recorded behavior of the source controls before the
+ * that the foundry controls reproduce the recorded behavior of the source controls before the
  * migration wave starts.
  */
 @Extension
@@ -56,6 +56,6 @@ public final class ReplacementSimulationAction implements RootAction {
 
     @Override
     public String getUrlName() {
-        return "unified-parameters-replacement-simulation";
+        return "parameter-foundry-replacement-simulation";
     }
 }

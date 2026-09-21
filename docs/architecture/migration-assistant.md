@@ -2,7 +2,7 @@
 
 ## 1. Product Promise
 
-Migration is defined as moving a user's business requirement to Unified
+Migration is defined as moving a user's business requirement to Foundry
 Parameters with equivalent or better observable behavior.
 
 It is not binary compatibility, unchanged XML, unchanged Pipeline syntax, or
@@ -28,7 +28,7 @@ not expand the safe core runtime.
 
 ## 3. Adapter Packaging
 
-Source adapters ship inside the single `unified-parameters` HPI. They remain
+Source adapters ship inside the single `parameter-foundry` HPI. They remain
 runtime-optional by source class and are controlled by the global migration
 adapter feature switch; administrators do not need to install a separate
 adapter HPI.
@@ -40,7 +40,7 @@ An adapter:
 - may inspect live source objects while the source plugin is installed;
 - must not read arbitrary controller paths;
 - returns normalized intent, not a pre-created target Java object;
-- is versioned with the Unified Parameters HPI when source configuration
+- is versioned with the Parameter Foundry HPI when source configuration
   changes;
 - cannot schedule builds or modify Jobs directly.
 
@@ -86,7 +86,7 @@ decision. It does not copy secrets or full source scripts into reports.
 | C | safe target capability exists but source code intent needs refactoring | generated Provider/Form skeleton, required user inputs, test plan |
 | D | source mechanism is unsafe or intent cannot be proven | business-intent questions, safe redesign options, no automatic apply |
 
-Class C/D is not a product capability gap when Unified Parameters can express
+Class C/D is not a product capability gap when Parameter Foundry can express
 the business requirement. It means only that arbitrary source implementation
 code cannot be converted without understanding its intent.
 
@@ -132,7 +132,7 @@ Apply uses compare-before-write:
 
 1. re-read Job configuration;
 2. compare it with the preview digest;
-3. abort with `UNIFIED_PARAMETER_CONFIGURATION_CHANGED` on drift;
+3. abort with `PARAMETER_FOUNDRY_CONFIGURATION_CHANGED` on drift;
 4. write a plugin-owned protected backup;
 5. apply through Jenkins configuration/save APIs;
 6. reload and evaluate generated fixtures;
@@ -197,6 +197,6 @@ The retirement scanner reports independently:
 - optional integration-plugin dependencies;
 - historical source class references where safely detectable.
 
-“Functionally migrated” means active requirements run on Unified Parameters.
+“Functionally migrated” means active requirements run on Parameter Foundry.
 “Safe to uninstall source plugin” is a separate administrator decision
 governed by ADR 0008.

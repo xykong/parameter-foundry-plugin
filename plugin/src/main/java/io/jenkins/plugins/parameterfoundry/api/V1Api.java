@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.api;
+package io.jenkins.plugins.parameterfoundry.api;
 
 import hudson.model.Cause;
 import hudson.model.CauseAction;
@@ -10,26 +10,26 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Queue;
 import hudson.model.queue.ScheduleResult;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.DependencyGraph;
-import io.jenkins.plugins.unifiedparameters.evaluation.DependencyValues;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderHealth;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderRegistry;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolution;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderRuntime;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotStore;
-import io.jenkins.plugins.unifiedparameters.snapshot.ResolvedProviderOptions;
-import io.jenkins.plugins.unifiedparameters.snapshot.SnapshotAudience;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.DependencyGraph;
+import io.jenkins.plugins.parameterfoundry.evaluation.DependencyValues;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.OptionImportEndpoint;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderHealth;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderRegistry;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolution;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderRuntime;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore;
+import io.jenkins.plugins.parameterfoundry.snapshot.ResolvedProviderOptions;
+import io.jenkins.plugins.parameterfoundry.snapshot.SnapshotAudience;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationResult;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,18 +88,18 @@ public final class V1Api {
                 throw new EvaluationException(ErrorCode.MALFORMED_INPUT, "parameter", "A parameter name is required.");
             }
             ParameterDefinition definition = requireProperty().getParameterDefinition(name);
-            if (!(definition instanceof AbstractUnifiedParameterDefinition unified)) {
+            if (!(definition instanceof AbstractFoundryParameterDefinition foundry)) {
                 throw new EvaluationException(
-                        ErrorCode.UNSUPPORTED_DEFINITION, name, "Only Unified parameter definitions expose options.");
+                        ErrorCode.UNSUPPORTED_DEFINITION, name, "Only Foundry parameter definitions expose options.");
             }
-            DefinitionValidationService.requireValid(unified);
+            DefinitionValidationService.requireValid(foundry);
             JSONObject submittedDependencies =
                     body.containsKey("dependencies") ? requireObject(body, "dependencies") : null;
-            Map<String, String> dependencies = DependencyValues.fromJson(unified, submittedDependencies);
+            Map<String, String> dependencies = DependencyValues.fromJson(foundry, submittedDependencies);
             ProviderResolution resolution =
-                    ProviderResolutionService.resolve(job, unified, ProviderOperation.RESOLVE, dependencies);
+                    ProviderResolutionService.resolve(job, foundry, ProviderOperation.RESOLVE, dependencies);
             ResolvedProviderOptions snapshot = ProviderSnapshotStore.get()
-                    .create(job, unified, dependencies, resolution, SnapshotAudience.BUILD_VALUE);
+                    .create(job, foundry, dependencies, resolution, SnapshotAudience.BUILD_VALUE);
             JSONArray options = new JSONArray();
             for (Option option : resolution.options()) {
                 JSONObject encoded = new JSONObject();
@@ -121,7 +121,7 @@ public final class V1Api {
                 // the axes the Provider just reported instead of a stale definition copy.
                 result.put("table", JSONObject.fromObject(resolution.matrix()));
             }
-            Object defaultValue = ParameterEvaluationService.defaultFor(unified, resolution.options());
+            Object defaultValue = ParameterEvaluationService.defaultFor(foundry, resolution.options());
             result.put("default", defaultValue);
             result.put(
                     "defaults",
@@ -257,17 +257,17 @@ public final class V1Api {
             if (definition == null) {
                 throw new EvaluationException(ErrorCode.MALFORMED_INPUT, name, "Unknown Provider snapshot parameter.");
             }
-            if (!(definition instanceof AbstractUnifiedParameterDefinition unified) || !unified.isProviderBacked()) {
+            if (!(definition instanceof AbstractFoundryParameterDefinition foundry) || !foundry.isProviderBacked()) {
                 throw new EvaluationException(
-                        ErrorCode.MALFORMED_INPUT, name, "Provider snapshot requires a dynamic Unified parameter.");
+                        ErrorCode.MALFORMED_INPUT, name, "Provider snapshot requires a dynamic Foundry parameter.");
             }
         }
 
         Map<String, ParameterValue> decoded = new LinkedHashMap<>();
         for (ParameterDefinition definition : DependencyGraph.topologicalOrder(property.getParameterDefinitions())) {
             boolean present = requestValues.containsKey(definition.getName());
-            Map<String, String> dependencies = definition instanceof AbstractUnifiedParameterDefinition unified
-                    ? DependencyValues.fromParameterValues(unified, decoded)
+            Map<String, String> dependencies = definition instanceof AbstractFoundryParameterDefinition foundry
+                    ? DependencyValues.fromParameterValues(foundry, decoded)
                     : Map.of();
             String snapshotId = snapshots.containsKey(definition.getName())
                     ? requireString(snapshots.get(definition.getName()), definition.getName(), "snapshot ID")
@@ -425,11 +425,11 @@ public final class V1Api {
             ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
             if (property != null) {
                 for (ParameterDefinition definition : property.getParameterDefinitions()) {
-                    if (!(definition instanceof AbstractUnifiedParameterDefinition unified)
-                            || !unified.isProviderBacked()) {
+                    if (!(definition instanceof AbstractFoundryParameterDefinition foundry)
+                            || !foundry.isProviderBacked()) {
                         continue;
                     }
-                    ProviderRegistry.findProvider(job, unified.getProviderId()).ifPresent(located -> {
+                    ProviderRegistry.findProvider(job, foundry.getProviderId()).ifPresent(located -> {
                         JSONObject provider = new JSONObject();
                         provider.put("id", located.provider().getId());
                         provider.put("scope", located.scope().name());

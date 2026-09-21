@@ -5,7 +5,7 @@
 
 ## Context
 
-Unified Parameters supports the standard Jenkins build endpoint and a typed
+Parameter Foundry supports the standard Jenkins build endpoint and a typed
 JSON API. Those APIs must have explicit decoding, authorization, error, and
 queueing behavior rather than relying on client-specific conventions.
 
@@ -16,11 +16,11 @@ queueing behavior rather than relying on client-specific conventions.
 Job-scoped typed endpoints use:
 
 ```text
-GET  /job/<job>/unified-parameters/api/v1/schema
-POST /job/<job>/unified-parameters/api/v1/resolve
-POST /job/<job>/unified-parameters/api/v1/validate
-POST /job/<job>/unified-parameters/api/v1/build
-GET  /job/<job>/unified-parameters/api/v1/providers/health
+GET  /job/<job>/parameter-foundry/api/v1/schema
+POST /job/<job>/parameter-foundry/api/v1/resolve
+POST /job/<job>/parameter-foundry/api/v1/validate
+POST /job/<job>/parameter-foundry/api/v1/build
+GET  /job/<job>/parameter-foundry/api/v1/providers/health
 ```
 
 The `/api/v1` contract remains backward compatible for the lifetime of the
@@ -73,7 +73,7 @@ Rules:
   request with HTTP 409;
 - `delaySeconds` is bounded by the same policy as standard Jenkins scheduling.
 
-Mixed Jenkins Core/Unified behavior and unsupported secret/domain parameter
+Mixed Jenkins Core/Foundry behavior and unsupported secret/domain parameter
 boundaries are defined by
 [ADR 0012](./0012-typed-api-parameter-adapters.md).
 
@@ -112,7 +112,7 @@ clients requiring stable machine-readable errors use `/api/v1/validate` or
 `/api/v1/build`.
 
 For Jenkins CLI, omission is handled by Jenkins Core's `BuildCommand` through
-`ParameterDefinition.getDefaultParameterValue()`. Unified Parameters resolves
+`ParameterDefinition.getDefaultParameterValue()`. Parameter Foundry resolves
 omitted Reactive defaults with the CLI dependency context. A required Reactive
 parameter configured with `defaultMode=none` remains valid configuration, but
 the caller must submit it explicitly. If it is omitted, Jenkins CLI returns the
@@ -136,7 +136,7 @@ returns options, default candidates, warnings, and a snapshot ID.
   "canonicalValues": {},
   "errors": [
     {
-      "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+      "code": "PARAMETER_FOUNDRY_UNKNOWN_VALUE",
       "parameter": "TARGETS",
       "path": "$[1]",
       "message": "Value is not present in the resolved option set.",
@@ -153,20 +153,20 @@ Messages are localizable presentation text. Clients depend on `code`,
 
 Stable `v1` families include:
 
-- `UNIFIED_PARAMETER_REQUIRED`;
-- `UNIFIED_PARAMETER_UNKNOWN_VALUE`;
-- `UNIFIED_PARAMETER_DISABLED_VALUE`;
-- `UNIFIED_PARAMETER_DUPLICATE_VALUE`;
-- `UNIFIED_PARAMETER_INVALID_TYPE`;
-- `UNIFIED_PARAMETER_MIN_SELECTIONS`;
-- `UNIFIED_PARAMETER_MAX_SELECTIONS`;
-- `UNIFIED_PARAMETER_PROVIDER_UNAVAILABLE`;
-- `UNIFIED_PARAMETER_SNAPSHOT_EXPIRED`;
-- `UNIFIED_PARAMETER_DEPENDENCY_CYCLE`;
-- `UNIFIED_PARAMETER_CONFIGURATION_CHANGED`;
-- `UNIFIED_PARAMETER_REQUEST_TOO_LARGE`;
-- `UNIFIED_PARAMETER_UNSUPPORTED_DEFINITION`;
-- `UNIFIED_PARAMETER_RATE_LIMITED`.
+- `PARAMETER_FOUNDRY_REQUIRED`;
+- `PARAMETER_FOUNDRY_UNKNOWN_VALUE`;
+- `PARAMETER_FOUNDRY_DISABLED_VALUE`;
+- `PARAMETER_FOUNDRY_DUPLICATE_VALUE`;
+- `PARAMETER_FOUNDRY_INVALID_TYPE`;
+- `PARAMETER_FOUNDRY_MIN_SELECTIONS`;
+- `PARAMETER_FOUNDRY_MAX_SELECTIONS`;
+- `PARAMETER_FOUNDRY_PROVIDER_UNAVAILABLE`;
+- `PARAMETER_FOUNDRY_SNAPSHOT_EXPIRED`;
+- `PARAMETER_FOUNDRY_DEPENDENCY_CYCLE`;
+- `PARAMETER_FOUNDRY_CONFIGURATION_CHANGED`;
+- `PARAMETER_FOUNDRY_REQUEST_TOO_LARGE`;
+- `PARAMETER_FOUNDRY_UNSUPPORTED_DEFINITION`;
+- `PARAMETER_FOUNDRY_RATE_LIMITED`.
 
 User input, Provider data, and expected stale-snapshot errors must not produce
 HTTP 500 or schedule a build.
@@ -219,7 +219,7 @@ all scheduling capacity.
 
 Administrators may tune limits globally within implementation hard bounds.
 Folder/Job configurators may only lower their local limits. Rejection returns
-HTTP 429, `UNIFIED_PARAMETER_RATE_LIMITED`, and an integer-seconds
+HTTP 429, `PARAMETER_FOUNDRY_RATE_LIMITED`, and an integer-seconds
 `Retry-After`. It does not execute a Provider or schedule a build.
 
 ## Consequences

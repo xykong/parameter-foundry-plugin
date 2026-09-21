@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.form;
+package io.jenkins.plugins.parameterfoundry.form;
 
-import io.jenkins.plugins.unifiedparameters.evaluation.CustomValuePolicy;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.parameterfoundry.evaluation.CustomValuePolicy;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,22 +40,22 @@ public final class FormEvaluationService {
 
     private FormEvaluationService() {}
 
-    public static List<String> validateDefinition(UnifiedFormParameterDefinition definition) {
+    public static List<String> validateDefinition(FoundryFormParameterDefinition definition) {
         List<String> errors = new ArrayList<>();
         Set<String> names = new HashSet<>();
         Counter counter = new Counter();
         validateFields(definition.getFields(), "$", 0, names, counter, errors);
         if (counter.value > MAX_FIELDS) {
-            errors.add("Unified Form cannot define more than " + MAX_FIELDS + " fields");
+            errors.add("Foundry Form cannot define more than " + MAX_FIELDS + " fields");
         }
         if (!Set.of("map", "json").contains(definition.getOutputMode())) {
-            errors.add("Unified Form outputMode must be map or json");
+            errors.add("Foundry Form outputMode must be map or json");
         }
         if (!Set.of("json", "none").contains(definition.getEnvironmentExport())) {
-            errors.add("Unified Form environmentExport must be json or none");
+            errors.add("Foundry Form environmentExport must be json or none");
         }
         if (!TrustedRendererRegistry.isTrusted(definition.getRenderer(), TrustedRendererRegistry.FAMILY_FORM)) {
-            errors.add("Unified Form renderer is not trusted: " + definition.getRenderer());
+            errors.add("Foundry Form renderer is not trusted: " + definition.getRenderer());
         }
         if ("json".equals(definition.getEnvironmentExport()) && containsSecret(definition.getFields())) {
             errors.add("Forms with secret fields cannot export the complete form as an environment variable");
@@ -71,7 +71,7 @@ public final class FormEvaluationService {
     }
 
     public static Map<String, Object> evaluate(
-            UnifiedFormParameterDefinition definition, Object rawValue, boolean present) {
+            FoundryFormParameterDefinition definition, Object rawValue, boolean present) {
         List<String> errors = validateDefinition(definition);
         if (!errors.isEmpty()) {
             throw new EvaluationException(
@@ -99,7 +99,7 @@ public final class FormEvaluationService {
     }
 
     private static Map<String, Object> evaluateObject(
-            UnifiedFormParameterDefinition definition,
+            FoundryFormParameterDefinition definition,
             List<FormField> fields,
             JSONObject submitted,
             String path,
@@ -130,7 +130,7 @@ public final class FormEvaluationService {
     }
 
     private static Object evaluateField(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path, int depth) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path, int depth) {
         if (raw == null || raw instanceof JSONNull) {
             if (field.isRequired()) {
                 throw invalid(definition, path, "A value is required.");
@@ -168,7 +168,7 @@ public final class FormEvaluationService {
     }
 
     private static String validateString(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path) {
         if (!(raw instanceof String value)) {
             throw invalid(definition, path, "Expected a string.");
         }
@@ -188,7 +188,7 @@ public final class FormEvaluationService {
     }
 
     private static Long validateInteger(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path) {
         try {
             BigDecimal number = new BigDecimal(String.valueOf(raw));
             long value = number.longValueExact();
@@ -200,7 +200,7 @@ public final class FormEvaluationService {
     }
 
     private static BigDecimal validateDecimal(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path) {
         try {
             BigDecimal value = new BigDecimal(String.valueOf(raw)).stripTrailingZeros();
             validateRange(definition, field, value, path);
@@ -211,7 +211,7 @@ public final class FormEvaluationService {
     }
 
     private static void validateRange(
-            UnifiedFormParameterDefinition definition, FormField field, BigDecimal value, String path) {
+            FoundryFormParameterDefinition definition, FormField field, BigDecimal value, String path) {
         if (field.getMinimum() != null && value.compareTo(BigDecimal.valueOf(field.getMinimum())) < 0) {
             throw invalid(definition, path, "Number is lower than the configured minimum.");
         }
@@ -221,7 +221,7 @@ public final class FormEvaluationService {
     }
 
     private static String validateChoice(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path) {
         if (!(raw instanceof String value)) {
             throw invalid(definition, path, "Expected a choice string.");
         }
@@ -236,7 +236,7 @@ public final class FormEvaluationService {
     }
 
     private static List<String> validateMultiChoice(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path) {
         if (!(raw instanceof JSONArray array)) {
             throw invalid(definition, path, "Expected an array of choice strings.");
         }
@@ -254,7 +254,7 @@ public final class FormEvaluationService {
         return List.copyOf(canonical);
     }
 
-    private static String validateDate(UnifiedFormParameterDefinition definition, Object raw, String path) {
+    private static String validateDate(FoundryFormParameterDefinition definition, Object raw, String path) {
         if (!(raw instanceof String value)) {
             throw invalid(definition, path, "Expected an ISO date string.");
         }
@@ -265,7 +265,7 @@ public final class FormEvaluationService {
         }
     }
 
-    private static String validateTime(UnifiedFormParameterDefinition definition, Object raw, String path) {
+    private static String validateTime(FoundryFormParameterDefinition definition, Object raw, String path) {
         if (!(raw instanceof String value)) {
             throw invalid(definition, path, "Expected an ISO time string.");
         }
@@ -277,7 +277,7 @@ public final class FormEvaluationService {
     }
 
     private static List<Object> validateArray(
-            UnifiedFormParameterDefinition definition, FormField field, Object raw, String path, int depth) {
+            FoundryFormParameterDefinition definition, FormField field, Object raw, String path, int depth) {
         if (!(raw instanceof JSONArray array)) {
             throw invalid(definition, path, "Expected an array.");
         }
@@ -293,7 +293,7 @@ public final class FormEvaluationService {
     }
 
     private static void validateItems(
-            UnifiedFormParameterDefinition definition, FormField field, int count, String path) {
+            FoundryFormParameterDefinition definition, FormField field, int count, String path) {
         if (count < field.getMinItems()) {
             throw invalid(definition, path, "Array has fewer items than the configured minimum.");
         }
@@ -302,7 +302,7 @@ public final class FormEvaluationService {
         }
     }
 
-    private static Object parseDefault(UnifiedFormParameterDefinition definition, FormField field, String path) {
+    private static Object parseDefault(FoundryFormParameterDefinition definition, FormField field, String path) {
         String value = field.getDefaultValue();
         try {
             return switch (field.getType()) {
@@ -454,7 +454,7 @@ public final class FormEvaluationService {
         return false;
     }
 
-    private static EvaluationException invalid(UnifiedFormParameterDefinition definition, String path, String message) {
+    private static EvaluationException invalid(FoundryFormParameterDefinition definition, String path, String message) {
         return new EvaluationException(ErrorCode.INVALID_TYPE, definition.getName(), path + ": " + message);
     }
 

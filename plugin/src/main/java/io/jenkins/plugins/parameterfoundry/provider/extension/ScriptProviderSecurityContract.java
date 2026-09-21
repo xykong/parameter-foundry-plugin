@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider.extension;
+package io.jenkins.plugins.parameterfoundry.provider.extension;
 
 import java.util.Set;
 

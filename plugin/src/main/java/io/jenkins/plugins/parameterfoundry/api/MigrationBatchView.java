@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.api;
+package io.jenkins.plugins.parameterfoundry.api;
 
-import io.jenkins.plugins.unifiedparameters.migration.MigrationRecord;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationRecord;
 import java.util.List;
 
 /** The applied records of one atomic batch, grouped for the Job's migration page. */

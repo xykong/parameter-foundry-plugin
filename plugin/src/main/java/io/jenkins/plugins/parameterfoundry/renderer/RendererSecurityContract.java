@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.renderer;
+package io.jenkins.plugins.parameterfoundry.renderer;
 
 import java.util.Set;
 

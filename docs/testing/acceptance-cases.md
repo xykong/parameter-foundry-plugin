@@ -1,4 +1,4 @@
-# Unified Parameters Acceptance Cases
+# Parameter Foundry Acceptance Cases
 
 This is the canonical index for acceptance cases, cross-platform coverage,
 and user-reported regressions. Every case records reproducible behavior and
@@ -23,10 +23,10 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
-| UP-AC-001 | UnifiedChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
-| UP-AC-002 | UnifiedChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
+| UP-AC-001 | FoundryChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
+| UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
-| UP-AC-011 | Unified fixtures | Every acceptance Job configures choice parameters through `unifiedChoice` (+ `selectionMode: multiple` where needed), and the deprecated definition and symbol no longer exist. | Passed 2026-09-11 on `0.2.15-SNAPSHOT`: 32 of 32 Jobs migrated and built, 55 of 55 resolve calls returned `200`, a controller-wide scan of 688 Jobs found no remaining reference, every Job loaded without a class-loading error, and the configuration UI offers only the unified entry |
+| UP-AC-011 | Foundry fixtures | Every acceptance Job configures choice parameters through `foundryChoice` (+ `selectionMode: multiple` where needed), and the deprecated definition and symbol no longer exist. | Passed 2026-09-11 on `0.2.15-SNAPSHOT`: 32 of 32 Jobs migrated and built, 55 of 55 resolve calls returned `200`, a controller-wide scan of 688 Jobs found no remaining reference, every Job loaded without a class-loading error, and the configuration UI offers only the foundry entry |
 | UP-AC-012 | Replacement readiness | Inventory every Job on the controller, classify each source parameter with the deployed migration adapters, and state whether lossless replacement is automatic, needs decisions, or is blocked. | Passed 2026-09-13 on `0.3.155-SNAPSHOT`: 688 Jobs scanned; 112 use a source family; 3 Jobs fully automatic, 43 need recorded decisions, 66 are blocked by Class C/D. Report: [`replacement-readiness-2026-09-13.md`](./replacement-readiness-2026-09-13.md) |
 | UP-AC-004 | Reactive | Change the dependency and wait for the refresh. Verify loading, stale-selection handling, errors, and no accidental build submission. | Browser plus CLI/API |
 | UP-AC-005 | Form | Enter valid and invalid nested values. Verify localized validation, canonical JSON, and environment export. | Browser and build log |
@@ -34,11 +34,11 @@ until every applicable column passes.
 | UP-AC-007 | Layout | Verify title is bold on the left, description is a bounded wrapping block on the right, and controls align under the description. | Desktop Chromium verified; mobile pending |
 | UP-AC-008 | Transport | Submit from UI, CLI, REST, Pipeline, Freestyle, and rebuild. Verify equivalent normalized values. | End to end |
 | UP-AC-009 | Migration | Preview and apply Active Choices, Extended Choice, File Parameter, and Git migrations. Preserve source jobs and verify target behavior. | Active Choices/Extended Choice/Git source-target production builds verified; File Parameter is an explicit native-capability boundary |
-| UP-AC-010 | Unified Choice entry | Configure one `unifiedChoice` parameter in `selectionMode: single` and `multiple`. Single returns a scalar, multiple returns a deterministic list; the same renderer/validation/transport parity applies to both modes. | Production `0.2.12-SNAPSHOT` deployment verified on 2026-09-10: scalar `staging` and list `android,web` from one definition family, form renders by mode, typed schema reports `selectionMode`; 191 Test Harness cases pass |
+| UP-AC-010 | Foundry Choice entry | Configure one `foundryChoice` parameter in `selectionMode: single` and `multiple`. Single returns a scalar, multiple returns a deterministic list; the same renderer/validation/transport parity applies to both modes. | Production `0.2.12-SNAPSHOT` deployment verified on 2026-09-10: scalar `staging` and list `android,web` from one definition family, form renders by mode, typed schema reports `selectionMode`; 191 Test Harness cases pass |
 | UP-AC-013 | Batch migration | Open the migration page of a Job with one migratable parameter, one parameter that needs a decision, and one Class C parameter. The page lists the applicable count, the blocked parameters, and the line-level diff; applying the batch without accepting the decisions fails, applying with them replaces only the applicable parameter and leaves the blocked definition untouched. | Passed 2026-09-14: `MigrationBatchCoordinatorTest` covers the preview counts, the diff, the refusal without accepted decisions, the atomic apply, the single-record rollback refusal, and the batch rollback; `MigrationCoordinator.previewBatch` returns `CONFIGURATION_CHANGED` for a stale digest. Production: `0.3.166-SNAPSHOT` served the batch section and a 126-line diff for a 78-option production parameter |
 | UP-AC-014 | Batch rollback | Roll back an applied batch after the Job was edited manually. The rollback must be refused so the manual edit is not silently overwritten; an unchanged Job must restore the pre-batch XML and mark every record `ROLLED_BACK`. | Passed 2026-09-14: `MigrationBatchCoordinatorTest` asserts the restored source definitions and the record status, and the drift case returns `CONFIGURATION_CHANGED` |
 | UP-AC-015 | Migration evidence | Run a build before the migration and a build with the same input after it, then verify the record. The evidence must report `PASS` with equal canonical values; a different input must report `FAIL`, and the absence of a post-migration build must report `PENDING`. | Passed 2026-09-14: `MigrationEvidenceServiceTest` records `PENDING`, then `PASS` for `staging` before and after, then `FAIL` for `staging` versus `production`, including the forced run numbers |
-| UP-AC-016 | Repository blind spot | Create a Job whose parameters are materialized, a Job that reads its Pipeline from SCM, and an organization folder. The retirement dashboard and the JSON report must report the unscanned state and list the SCM Job and the folder. | Passed 2026-09-14: `RepositoryScanTest` asserts `unscanned`, the SCM Job list without the inline-Pipeline Job, the organization folder, and the `repositoryScan` block in `unified-parameters-retirement/report`. Production: the deployed report returned `unscanned=true` with 623 SCM-defined Jobs, 5 multibranch or organization folders, and 259 materialized Jobs |
+| UP-AC-016 | Repository blind spot | Create a Job whose parameters are materialized, a Job that reads its Pipeline from SCM, and an organization folder. The retirement dashboard and the JSON report must report the unscanned state and list the SCM Job and the folder. | Passed 2026-09-14: `RepositoryScanTest` asserts `unscanned`, the SCM Job list without the inline-Pipeline Job, the organization folder, and the `repositoryScan` block in `parameter-foundry-retirement/report`. Production: the deployed report returned `unscanned=true` with 623 SCM-defined Jobs, 5 multibranch or organization folders, and 259 materialized Jobs |
 | UP-AC-017 | Migration localization | Render the migration page and the retirement dashboard with a Chinese locale. The view chrome, adapter decisions, fact labels, and verification cases must be Chinese and no unresolved `!Key!` may appear. | Passed 2026-09-14: `MigrationLocalizationUiTest` renders both pages in `zh_CN`; `MigrationMessageCoverageTest` proves that every referenced key exists and that the Chinese, Japanese, and Korean bundles translate the full key set. Production: both pages rendered in Chinese on `0.3.166-SNAPSHOT` with no unresolved keys |
 | UP-AC-018 | Simulated replacement | Run the controller-wide simulation for a Job that recorded values under the source control. The report must rebuild the target, replay every recorded value, and mark the parameter `EQUIVALENT` when the value is representable and the environment export matches, `MISMATCH` when a recorded value is no longer offered, and `MANUAL_REDESIGN` for a script source while keeping the recorded value contract. | Passed 2026-09-15: `ReplacementSimulationServiceTest` covers the equivalent, stale-value, script-source, no-recorded-build, verdict-matrix, and controller-report cases; the report endpoint requires only administrative read access |
 | UP-AC-019 | Multiple-choice export order | Migrate an Extended Choice multi-select whose downstream reads the environment variable. The migrated parameter must accept `environmentExportOrder: submitted` and export exactly the string the source control exported, while the canonical value stays the sorted set; a definition without the field must keep exporting the sorted set. | Passed 2026-09-15: `EnvironmentExportOrderTest` covers the canonical default, the submitted order for delimited and JSON export, validation of an unknown order, and the unchanged canonical value; `ExtendedChoiceMigrationAdapterTest` asserts the migration selects `submitted`; `ReplacementSimulationServiceTest` proves a submitted-order build value is `EQUIVALENT` |
@@ -77,7 +77,7 @@ until every applicable column passes.
 
 ### UP-ISSUE-002: Title and description layout
 
-- Reproduction: open a Unified Parameters build form with a long description.
+- Reproduction: open a Parameter Foundry build form with a long description.
 - Actual: Jenkins displayed title and description vertically and controls
   were not visually aligned.
 - Fix: scope a plugin entry class, use a two-column title/description grid,
@@ -126,8 +126,8 @@ until every applicable column passes.
 
 - Reproduction: open the Extended Choice and Git migration example build forms.
 - Actual: some jobs exposed only the legacy source parameter, so users could
-  not compare the migrated Unified Parameters control with the original.
-- Fix: keep the legacy source parameters, add equivalent Unified Parameters
+  not compare the migrated Parameter Foundry control with the original.
+- Fix: keep the legacy source parameters, add equivalent Parameter Foundry
   controls for Extended Choice and governed Git refs, print both values in the
   build log, and label the File Parameter case as a native-capability boundary
   instead of creating a false equivalent choice.
@@ -136,22 +136,22 @@ until every applicable column passes.
 - Verification: passed on 2026-09-10 with real Chromium desktop checks and
   Linux-agent builds for Extended Choice source/clone and Git branch cases.
 
-### UP-ISSUE-007: Unified Choice multiple mode failed to resolve options
+### UP-ISSUE-007: Foundry Choice multiple mode failed to resolve options
 
-- Reproduction: open the build form of a `unifiedChoice` parameter configured
+- Reproduction: open the build form of a `foundryChoice` parameter configured
   with `selectionMode: multiple`, or POST its name to
-  `unified-parameters/api/v1/resolve`.
+  `parameter-foundry/api/v1/resolve`.
 - Actual: the request returned HTTP `500` and the build form could not load any
   option, because the resolve endpoint still cast the definition to the legacy
   multi-choice class. `java.lang.ClassCastException` was recorded in the
   controller log.
-- Cause: unifying the entry point made `UnifiedChoiceParameterDefinition` able
+- Cause: unifying the entry point made `FoundryChoiceParameterDefinition` able
   to report `isMultiple()`, but the resolve endpoint kept a cast that only the
   legacy definition satisfied.
 - Fix: evaluate through the shared base definition instead of casting, and
-  cover the resolve path for a multiple-mode unified choice.
+  cover the resolve path for a multiple-mode foundry choice.
 - Verification: passed on 2026-09-11 with plugin `0.2.13-SNAPSHOT`. The resolve
-  sweep returned `200` for all 55 Unified choice parameters across the 32
+  sweep returned `200` for all 55 Foundry choice parameters across the 32
   acceptance Jobs, and a real browser confirmed that a `selectionMode: multiple`
   field loads its options and keeps two chips synchronized.
 
@@ -160,13 +160,13 @@ until every applicable column passes.
 - Reproduction: open the matrix acceptance build form (rows Android/iOS/Web,
   columns A/B/C), select a cell such as `android-a`, then submit or validate it.
 - Actual: the server rejects the value with
-  `UNIFIED_PARAMETER_UNKNOWN_VALUE: Unsupported value: android-a` and nothing is
+  `PARAMETER_FOUNDRY_UNKNOWN_VALUE: Unsupported value: android-a` and nothing is
   queued. Only the flat option values `android`, `ios`, and `web` are accepted,
   although the form renders selectable cells with `android-a`-style values.
 - Cause: option resolution and validation read the flat `choices` list, while
   the table renderer builds its controls from `table.cells`. The two option
   models are never merged, so every rendered cell value is outside the accepted
-  option set. This predates the unified entry point.
+  option set. This predates the foundry entry point.
 - Additional: the table renderer does not expose `disabledReason` for disabled
   cells, although the matrix design requires disabled cells to expose a reason
   where configured. Flat options already do this.
@@ -246,7 +246,7 @@ until every applicable column passes.
 - Detection: read the controller-rendered build form, not only the Job XML; the
   rendered form shows which definition the controller actually serves.
 - Verification: passed 2026-09-20. The saved Job XML keeps both
-  `UnifiedChoiceParameterDefinition` entries after a build, the rendered form
+  `FoundryChoiceParameterDefinition` entries after a build, the rendered form
   contains the five-row table with the `Docker login` column, five chips, and
   `Selected 5 of 5`, and a submitted subset build logged in to exactly the
   selected registries.
@@ -279,7 +279,7 @@ until every applicable column passes.
 - Reproduction: configure a multiple-choice parameter (or a table) with
   `minSelections: 1` and no default value, then open the build form.
 - Actual: the form could not render; the resolve call failed with
-  `UNIFIED_PARAMETER_MIN_SELECTIONS: Select at least 1 value(s).` and the field
+  `PARAMETER_FOUNDRY_MIN_SELECTIONS: Select at least 1 value(s).` and the field
   stayed non-interactive. The user could not select anything to satisfy the
   minimum.
 - Cause: resolving the *default* ran the same evaluation as a submission, so an

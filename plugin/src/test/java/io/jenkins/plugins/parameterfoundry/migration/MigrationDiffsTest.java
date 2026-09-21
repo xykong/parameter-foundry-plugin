@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.ArrayList;
 import java.util.List;
 import jenkins.model.Jenkins;
@@ -24,7 +24,7 @@ class MigrationDiffsTest {
                 String.join(",", values),
                 values.get(0),
                 null);
-        UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition("PLATFORMS");
+        FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition("PLATFORMS");
         target.setSelectionMode("multiple");
         target.setRenderer("checkbox");
         target.setChoices(values.stream().map(Option::new).toList());
@@ -36,7 +36,7 @@ class MigrationDiffsTest {
         assertTrue(readableTarget.size() < 100, "options must collapse to one line each: " + readableTarget.size());
         assertTrue(
                 readableTarget.stream()
-                        .anyMatch(line -> line.contains("<io.jenkins.plugins.unifiedparameters.model.Option>")
+                        .anyMatch(line -> line.contains("<io.jenkins.plugins.parameterfoundry.model.Option>")
                                 && line.contains("platform-39")),
                 readableTarget.toString());
 
@@ -44,9 +44,9 @@ class MigrationDiffsTest {
 
         assertTrue(diff.contains("- <com.cwctravel"), firstLines(diff));
         assertTrue(
-                diff.contains("+ <io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition>"),
+                diff.contains("+ <io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition>"),
                 firstLines(diff));
-        assertTrue(diff.contains("<io.jenkins.plugins.unifiedparameters.model.Option>"), firstLines(diff));
+        assertTrue(diff.contains("<io.jenkins.plugins.parameterfoundry.model.Option>"), firstLines(diff));
         assertTrue(diff.contains("platform-39"), firstLines(diff));
         assertTrue(
                 diff.lines().count() < 200,
@@ -55,7 +55,7 @@ class MigrationDiffsTest {
 
     @Test
     void condensesLongUnchangedRunsAndKeepsBothSides() {
-        String diff = MigrationDiffs.unified(
+        String diff = MigrationDiffs.foundry(
                 List.of("a", "b", "c", "d", "e", "f", "g", "h", "x"),
                 List.of("a", "b", "c", "d", "e", "f", "g", "h", "y"));
 

@@ -1,4 +1,4 @@
-# Jenkins Unified Parameters 功能调研与产品目标
+# Jenkins Parameter Foundry 功能调研与产品目标
 
 ## 1. 结论（先读）
 
@@ -6,8 +6,8 @@
 |--------|------|
 | 文档状态 | 第二阶段完成：功能调研、产品目标和核心设计基线 |
 | 产品定位 | 面向 Jenkins 社区的通用现代参数插件，不是 sample-project 内部专用插件 |
-| 正式名称 | `Unified Parameters` |
-| Plugin short name | `unified-parameters` |
+| 正式名称 | `Parameter Foundry` |
+| Plugin short name | `parameter-foundry` |
 | 核心判断 | 现有插件各自解决了部分问题，但没有一个同时做到现代 UI、类型安全、API 一致、安全数据源和优雅 Pipeline DSL |
 | 建议方向 | 建立统一的“参数模型 + 选项数据源 + 渲染器 + 验证器”体系 |
 | 第一版本重点 | 静态单选、多选、Radio、Checkbox；Freestyle/Pipeline/API/Rebuild 一致；无脚本迁移 |
@@ -515,7 +515,7 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 
 ### 10.1 一句话定义
 
-`Unified Parameters` 是 Jenkins 的现代类型化参数平台，通过统一 Option 模型、可扩展 Provider、
+`Parameter Foundry` 是 Jenkins 的现代类型化参数平台，通过统一 Option 模型、可扩展 Provider、
 现代 Renderer 和服务端 Validator，为 Freestyle、Pipeline 和所有构建入口提供相同语义。
 
 ### 10.2 目标用户
@@ -705,7 +705,7 @@ emptySubmission:
 
 ```groovy
 parameters {
-    unifiedChoice(
+    foundryChoice(
         name: 'CHANNEL',
         choices: [
             [value: 'prod', label: 'Production'],
@@ -714,7 +714,7 @@ parameters {
         defaultMode: 'explicit',
         defaultValue: 'test'
     )
-    unifiedChoice(
+    foundryChoice(
         selectionMode: 'multiple',
         name: 'TARGETS',
         choices: [
@@ -731,7 +731,7 @@ parameters {
 }
 ```
 
-`1.0` Symbol 已固定为 `unifiedChoice`（`selectionMode` 表达基数）和 `unifiedForm`；实现前仍须通过 Declarative
+`1.0` Symbol 已固定为 `foundryChoice`（`selectionMode` 表达基数）和 `foundryForm`；实现前仍须通过 Declarative
 Pipeline 和嵌套 Describable 技术 spike。
 
 ### 11.9 REST Provider 安全
@@ -822,7 +822,7 @@ Pipeline 和嵌套 Describable 技术 spike。
 - 不执行 Groovy，不渲染任意 HTML，不访问任意文件或网络。
 
 `1.0` 不包含 Editable/custom value、Global/Folder Provider、REST Provider、Reactive、
-Cascade、Unified Form 或生产 Job in-place migration。完整路线见
+Cascade、Foundry Form 或生产 Job in-place migration。完整路线见
 [`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)。
 
 ### 13.2 `1.x` 增强
@@ -897,7 +897,7 @@ canonical value、`ParameterValue`、环境变量、构建记录和稳定 error 
 
 | 原问题 | 决策 |
 |--------|------|
-| 单一还是拆分公开类型 | 最终统一为 `UnifiedChoiceParameterDefinition`，由 `selectionMode` 表达单选/多选 |
+| 单一还是拆分公开类型 | 最终统一为 `FoundryChoiceParameterDefinition`，由 `selectionMode` 表达单选/多选 |
 | Declarative Pipeline Symbol 和字段 | ADR 0009 固定 flat static DSL 和 nested dynamic Provider，由技术 spike 验证 Jenkins binding |
 | Rebuild 集成和历史兼容 | ADR 0008 |
 | Provider API 校验和快照 | ADR 0007 |
@@ -910,7 +910,7 @@ canonical value、`ParameterValue`、环境变量、构建记录和稳定 error 
 
 新增门禁：
 
-- ADR 0012 定义 mixed Core/Unified Typed API。
+- ADR 0012 定义 mixed Core/Foundry Typed API。
 - ADR 0013 定义 XStream 后 authoritative configuration validation。
 - ADR 0014 将 Pipeline、standard REST 4xx/no-queue、CLI、Rebuild 等先放入 `0.1` 可执行验证。
 

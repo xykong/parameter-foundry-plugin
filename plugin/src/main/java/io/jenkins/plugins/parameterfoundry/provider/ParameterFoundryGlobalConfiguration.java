@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
@@ -14,8 +14,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest2;
 
 @Extension
-@Symbol("unifiedParameters")
-public final class UnifiedParametersGlobalConfiguration extends GlobalConfiguration {
+@Symbol("parameterFoundry")
+public final class ParameterFoundryGlobalConfiguration extends GlobalConfiguration {
 
     private List<SharedProviderDefinition> providers = List.of();
     private List<ConnectionProfile> connectionProfiles = List.of();
@@ -24,12 +24,12 @@ public final class UnifiedParametersGlobalConfiguration extends GlobalConfigurat
     private boolean gitRefsProviderEnabled = true;
     private boolean accessibleChoiceGridEnabled = true;
 
-    public UnifiedParametersGlobalConfiguration() {
+    public ParameterFoundryGlobalConfiguration() {
         load();
     }
 
-    public static UnifiedParametersGlobalConfiguration get() {
-        return GlobalConfiguration.all().get(UnifiedParametersGlobalConfiguration.class);
+    public static ParameterFoundryGlobalConfiguration get() {
+        return GlobalConfiguration.all().get(ParameterFoundryGlobalConfiguration.class);
     }
 
     public List<SharedProviderDefinition> getProviders() {
@@ -98,26 +98,26 @@ public final class UnifiedParametersGlobalConfiguration extends GlobalConfigurat
     }
 
     public static boolean migrationAdaptersFeatureEnabled() {
-        UnifiedParametersGlobalConfiguration configuration = current();
+        ParameterFoundryGlobalConfiguration configuration = current();
         return configuration == null || configuration.isMigrationAdaptersEnabled();
     }
 
     public static boolean scriptProviderFeatureEnabled() {
-        UnifiedParametersGlobalConfiguration configuration = current();
+        ParameterFoundryGlobalConfiguration configuration = current();
         return configuration == null || configuration.isScriptProviderEnabled();
     }
 
     public static boolean gitRefsProviderFeatureEnabled() {
-        UnifiedParametersGlobalConfiguration configuration = current();
+        ParameterFoundryGlobalConfiguration configuration = current();
         return configuration == null || configuration.isGitRefsProviderEnabled();
     }
 
     public static boolean accessibleChoiceGridFeatureEnabled() {
-        UnifiedParametersGlobalConfiguration configuration = current();
+        ParameterFoundryGlobalConfiguration configuration = current();
         return configuration == null || configuration.isAccessibleChoiceGridEnabled();
     }
 
-    private static UnifiedParametersGlobalConfiguration current() {
+    private static ParameterFoundryGlobalConfiguration current() {
         return Jenkins.getInstanceOrNull() == null ? null : get();
     }
 
@@ -139,6 +139,6 @@ public final class UnifiedParametersGlobalConfiguration extends GlobalConfigurat
 
     @Override
     public String getDisplayName() {
-        return "Unified Parameters Providers";
+        return "Parameter Foundry Providers";
     }
 }

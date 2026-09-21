@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.simulation;
+package io.jenkins.plugins.parameterfoundry.simulation;
 
 import java.util.LinkedHashMap;
 import java.util.List;

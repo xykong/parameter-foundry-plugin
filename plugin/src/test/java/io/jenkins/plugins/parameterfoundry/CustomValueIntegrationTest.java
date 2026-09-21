@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -7,9 +7,9 @@ import hudson.cli.CLICommandInvoker;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ class CustomValueIntegrationTest {
         JSONObject body = new JSONObject();
         body.put("values", values);
         JenkinsRule.JSONWebResponse typedResponse =
-                postJson(jenkins, typed.getUrl() + "unified-parameters/api/v1/build", body);
+                postJson(jenkins, typed.getUrl() + "parameter-foundry/api/v1/build", body);
         assertEquals(201, typedResponse.getStatusCode());
         jenkins.waitUntilNoActivity();
         assertValue(typed, "release-43");
@@ -53,7 +53,7 @@ class CustomValueIntegrationTest {
 
     private static FreeStyleProject customJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("RELEASE");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("RELEASE");
         definition.setChoices(List.of(new Option("stable")));
         definition.setAllowCustomValue(true);
         definition.setCustomValuePattern("release-[0-9]+");
@@ -63,8 +63,8 @@ class CustomValueIntegrationTest {
     }
 
     private static void assertValue(FreeStyleProject project, String expected) {
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("RELEASE"));
         assertEquals(expected, value.getValue());
     }

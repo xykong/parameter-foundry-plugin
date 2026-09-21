@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 public enum ErrorCode {
     CONFIGURATION_INVALID,

@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.automation;
+package io.jenkins.plugins.parameterfoundry.automation;
 
 import hudson.Extension;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.FormField;
-import io.jenkins.plugins.unifiedparameters.form.FormLayout;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FormField;
+import io.jenkins.plugins.parameterfoundry.form.FormLayout;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.ArrayList;
 import java.util.List;
 import javaposse.jobdsl.dsl.Context;
@@ -14,17 +14,17 @@ import javaposse.jobdsl.plugin.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.DslExtensionMethod;
 
 @Extension(optional = true)
-public final class UnifiedParametersJobDslExtension extends ContextExtensionPoint {
+public final class ParameterFoundryJobDslExtension extends ContextExtensionPoint {
 
     @DslExtensionMethod(context = BuildParametersContext.class)
-    public Object unifiedChoice(String name, Runnable closure) {
+    public Object foundryChoice(String name, Runnable closure) {
         ChoiceContext context = new ChoiceContext();
         executeInContext(closure, context);
         return context.create(name);
     }
 
     @DslExtensionMethod(context = BuildParametersContext.class)
-    public Object unifiedForm(String name, Runnable closure) {
+    public Object foundryForm(String name, Runnable closure) {
         FormContext context = new FormContext();
         executeInContext(closure, context);
         return context.create(name);
@@ -133,8 +133,8 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             this.delimiter = delimiter;
         }
 
-        UnifiedChoiceParameterDefinition create(String name) {
-            UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition(name);
+        FoundryChoiceParameterDefinition create(String name) {
+            FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition(name);
             definition.setDescription(description);
             definition.setChoices(options);
             definition.setProviderId(providerId);
@@ -188,8 +188,8 @@ public final class UnifiedParametersJobDslExtension extends ContextExtensionPoin
             this.environmentExport = environmentExport;
         }
 
-        UnifiedFormParameterDefinition create(String name) {
-            UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition(name);
+        FoundryFormParameterDefinition create(String name) {
+            FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition(name);
             definition.setDescription(description);
             definition.setFields(fields);
             definition.setLayouts(layouts);

@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
 
 public abstract class SourceMigrationAdapter implements ExtensionPoint {
 
@@ -33,7 +33,7 @@ public abstract class SourceMigrationAdapter implements ExtensionPoint {
     }
 
     public boolean isEnabled() {
-        return UnifiedParametersGlobalConfiguration.migrationAdaptersFeatureEnabled();
+        return ParameterFoundryGlobalConfiguration.migrationAdaptersFeatureEnabled();
     }
 
     public static ExtensionList<SourceMigrationAdapter> all() {

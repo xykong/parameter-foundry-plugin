@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;

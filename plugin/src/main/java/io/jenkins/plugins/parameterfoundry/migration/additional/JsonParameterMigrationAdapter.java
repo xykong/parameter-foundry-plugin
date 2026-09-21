@@ -1,8 +1,8 @@
-package io.jenkins.plugins.unifiedparameters.migration.additional;
+package io.jenkins.plugins.parameterfoundry.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
 import java.util.List;
 
 @Extension
@@ -33,7 +33,7 @@ public final class JsonParameterMigrationAdapter extends AbstractAdditionalMigra
 
     @Override
     protected String targetSkeleton(ParameterDefinition definition) {
-        return "unifiedForm(\n"
+        return "foundryForm(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"

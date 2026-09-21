@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.form;
+package io.jenkins.plugins.parameterfoundry.form;
 
 import hudson.EnvVars;
 import hudson.model.ParameterValue;
@@ -16,7 +16,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 @ExportedBean(defaultVisibility = 2)
-public final class UnifiedFormParameterValue extends ParameterValue {
+public final class FoundryFormParameterValue extends ParameterValue {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -27,11 +27,11 @@ public final class UnifiedFormParameterValue extends ParameterValue {
     private final Map<String, String> fieldEnvironmentVariables;
 
     @DataBoundConstructor
-    public UnifiedFormParameterValue(String name, Map<String, Object> value) {
+    public FoundryFormParameterValue(String name, Map<String, Object> value) {
         this(name, value, null, "map", "json", Map.of());
     }
 
-    public UnifiedFormParameterValue(
+    public FoundryFormParameterValue(
             String name,
             Map<String, Object> value,
             String description,
@@ -96,7 +96,7 @@ public final class UnifiedFormParameterValue extends ParameterValue {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof UnifiedFormParameterValue valueObject)) {
+        if (!(other instanceof FoundryFormParameterValue valueObject)) {
             return false;
         }
         return Objects.equals(getName(), valueObject.getName()) && Objects.equals(value, valueObject.value);

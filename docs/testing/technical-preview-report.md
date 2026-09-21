@@ -1,12 +1,12 @@
 # `0.1 Technical Preview` Verification Report
 
 - Verification date: August 31, 2026
-- Core artifact: `plugin/target/unified-parameters.hpi`
+- Core artifact: `plugin/target/parameter-foundry.hpi`
 - Migration artifacts:
-  - `migration-extended-choice/target/unified-parameters-migration-extended-choice.hpi`
-  - `migration-active-choices/target/unified-parameters-migration-active-choices.hpi`
-  - `migration-list-git-branches/target/unified-parameters-migration-list-git-branches.hpi`
-  - `migration-additional-sources/target/unified-parameters-migration-additional-sources.hpi`
+  - `migration-extended-choice/target/parameter-foundry-migration-extended-choice.hpi`
+  - `migration-active-choices/target/parameter-foundry-migration-active-choices.hpi`
+  - `migration-list-git-branches/target/parameter-foundry-migration-list-git-branches.hpi`
+  - `migration-additional-sources/target/parameter-foundry-migration-additional-sources.hpi`
 
 ## Gate Results
 
@@ -18,7 +18,7 @@
 | UP-SPIKE-004 presence/decoding | Standard REST absent, presence-only empty, repeated/JSON-array/delimited values, and browser metadata tests | Passed |
 | UP-SPIKE-005 standard REST status | Invalid value returns HTTP 400 with unchanged queue on Jenkins `2.528.3` and `2.568.2` | Passed |
 | UP-SPIKE-006 CLI | Jenkins CLI `build -p` accepts JSON-array and configured delimited formats and records the canonical list | Passed |
-| UP-SPIKE-007 mixed Typed API | Core String/Boolean/Choice plus Unified String/Array/Object/null shapes validate and schedule atomically; unsupported Password returns HTTP 409 | Passed |
+| UP-SPIKE-007 mixed Typed API | Core String/Boolean/Choice plus Foundry String/Array/Object/null shapes validate and schedule atomically; unsupported Password returns HTTP 409 | Passed |
 | UP-SPIKE-008 Rebuild | Rebuild uses the current definition Renderer and historical values | Passed |
 | UP-SPIKE-009 CSP/no-JS | External adjunct only, bounded 200-option fallback, real Chromium enhanced interaction | Passed |
 | UP-SPIKE-010 reactor | Core and source-specific migration adapters build as separate HPIs with one-way dependencies | Passed |
@@ -88,7 +88,7 @@ The isolated Jenkins `2.568.2-lts-jdk21` run verified:
 - migration clone/apply/rollback execution;
 - governed Provider resolution, health, custom values, reactive dependency
   refresh, snapshot replacement, and build-record provenance;
-- Unified Form typed fields, conditional layout, canonical browser submission,
+- Foundry Form typed fields, conditional layout, canonical browser submission,
   and JSON no-JavaScript fallback;
 - source-plugin retirement reporting for active, generated, queued/running, and
   historical references;
@@ -98,17 +98,17 @@ The isolated Jenkins `2.568.2-lts-jdk21` run verified:
 
 Generated evidence:
 
-- `docs/ui-gallery/images/unified-parameters/desktop-build-result.png`
-- `docs/ui-gallery/images/unified-parameters/rebuild.png`
-- `docs/ui-gallery/images/unified-parameters/mobile.png`
-- `docs/ui-gallery/images/unified-parameters/light.png`
-- `docs/ui-gallery/images/unified-parameters/dark.png`
-- `docs/ui-gallery/images/unified-parameters/high-contrast.png`
-- `docs/ui-gallery/images/unified-parameters/configuration-preview.png`
-- `docs/ui-gallery/images/unified-parameters/migration-preview.png`
-- `docs/ui-gallery/images/unified-parameters/provider.png`
-- `docs/ui-gallery/images/unified-parameters/unified-form.png`
-- `docs/ui-gallery/images/unified-parameters/retirement-dashboard.png`
+- `docs/ui-gallery/images/parameter-foundry/desktop-build-result.png`
+- `docs/ui-gallery/images/parameter-foundry/rebuild.png`
+- `docs/ui-gallery/images/parameter-foundry/mobile.png`
+- `docs/ui-gallery/images/parameter-foundry/light.png`
+- `docs/ui-gallery/images/parameter-foundry/dark.png`
+- `docs/ui-gallery/images/parameter-foundry/high-contrast.png`
+- `docs/ui-gallery/images/parameter-foundry/configuration-preview.png`
+- `docs/ui-gallery/images/parameter-foundry/migration-preview.png`
+- `docs/ui-gallery/images/parameter-foundry/provider.png`
+- `docs/ui-gallery/images/parameter-foundry/foundry-form.png`
+- `docs/ui-gallery/images/parameter-foundry/retirement-dashboard.png`
 - `docs/testing/results/1.0-e2e-benchmark.json`
 - `docs/testing/results/1.0-accessibility.json`
 
@@ -139,7 +139,7 @@ The source Extended Choice plugin emits known legacy browser warnings in the
 isolated migration environment. Jenkins `2.568.2` also has a breadcrumb
 overflow-menu `xmlEscape` defect during responsive or large-layout
 transitions. The E2E verifier filters only those exact, stack-attributed
-external errors and still fails on any Unified Parameters script error.
+external errors and still fails on any Parameter Foundry script error.
 
 ## Decision
 

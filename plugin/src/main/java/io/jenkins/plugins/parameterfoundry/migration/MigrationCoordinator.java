@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.Item;
 import hudson.model.Items;
@@ -6,11 +6,11 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.TopLevelItem;
-import io.jenkins.plugins.unifiedparameters.Messages;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.provider.Digests;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.Messages;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.provider.Digests;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -446,7 +446,7 @@ public final class MigrationCoordinator {
     }
 
     private static Path backupRoot() {
-        return Jenkins.get().getRootDir().toPath().resolve("unified-parameters/migration-backups");
+        return Jenkins.get().getRootDir().toPath().resolve("parameter-foundry/migration-backups");
     }
 
     private static void restoreBackup(Job<?, ?> job, String backupFile) throws IOException {

@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
-import io.jenkins.plugins.unifiedparameters.Messages;
+import io.jenkins.plugins.parameterfoundry.Messages;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;

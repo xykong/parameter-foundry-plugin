@@ -44,7 +44,7 @@ classification:
   userDecisions: []
 
 target:
-  symbol: unifiedChoice
+  symbol: foundryChoice
 selectionMode: multiple
   arguments:
     name: TARGETS
@@ -77,10 +77,10 @@ verification:
     expectedEnvironment: android,web
   - case: duplicate
     input: [android, android]
-    expectedError: UNIFIED_PARAMETER_DUPLICATE_VALUE
+    expectedError: PARAMETER_FOUNDRY_DUPLICATE_VALUE
   - case: unknown
     input: [desktop]
-    expectedError: UNIFIED_PARAMETER_UNKNOWN_VALUE
+    expectedError: PARAMETER_FOUNDRY_UNKNOWN_VALUE
 
 notes:
   - Source order is explicitly declared non-semantic, so stable machine-value lexical serialization remains A class.

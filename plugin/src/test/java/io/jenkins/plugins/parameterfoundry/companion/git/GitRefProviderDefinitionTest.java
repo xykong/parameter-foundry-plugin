@@ -1,16 +1,16 @@
-package io.jenkins.plugins.unifiedparameters.companion.git;
+package io.jenkins.plugins.parameterfoundry.companion.git;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.provider.ConnectionProfile;
-import io.jenkins.plugins.unifiedparameters.provider.ProfileHeader;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderRequest;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderScope;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.provider.ConnectionProfile;
+import io.jenkins.plugins.parameterfoundry.provider.ProfileHeader;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderRequest;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderScope;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;

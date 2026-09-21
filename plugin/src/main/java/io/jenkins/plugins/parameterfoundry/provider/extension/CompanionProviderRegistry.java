@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.provider.extension;
+package io.jenkins.plugins.parameterfoundry.provider.extension;
 
 import hudson.PluginWrapper;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
 import java.util.Optional;
 import jenkins.model.Jenkins;
 
@@ -10,7 +10,7 @@ public final class CompanionProviderRegistry {
     private CompanionProviderRegistry() {}
 
     public static Optional<ScriptProviderExtension> findReviewedScriptEngine(String engineId) {
-        if (!UnifiedParametersGlobalConfiguration.scriptProviderFeatureEnabled()
+        if (!ParameterFoundryGlobalConfiguration.scriptProviderFeatureEnabled()
                 || engineId == null
                 || !engineId.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
             return Optional.empty();
@@ -22,7 +22,7 @@ public final class CompanionProviderRegistry {
                     if (owner == null) {
                         return false;
                     }
-                    return "unified-parameters".equals(owner.getShortName())
+                    return "parameter-foundry".equals(owner.getShortName())
                             ? extension.getSecurityContract().isReviewedBuiltInV1()
                             : extension.getSecurityContract().isReviewedV1();
                 })

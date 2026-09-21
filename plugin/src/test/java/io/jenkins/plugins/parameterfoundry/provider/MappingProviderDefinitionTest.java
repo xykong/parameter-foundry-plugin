@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +70,11 @@ class MappingProviderDefinitionTest {
 
         @Test
         void aDependentParameterResolvesPerDependencyValue(JenkinsRule jenkins) throws Exception {
-            UnifiedParametersGlobalConfiguration.get().setProviders(List.of(buildTypeMapping()));
+            ParameterFoundryGlobalConfiguration.get().setProviders(List.of(buildTypeMapping()));
             FreeStyleProject job = jenkins.createFreeStyleProject("mapping-integration");
-            UnifiedChoiceParameterDefinition mode = new UnifiedChoiceParameterDefinition("BUILD_MODE");
+            FoundryChoiceParameterDefinition mode = new FoundryChoiceParameterDefinition("BUILD_MODE");
             mode.setChoices(List.of(new Option("production"), new Option("development")));
-            UnifiedChoiceParameterDefinition type = new UnifiedChoiceParameterDefinition("BUILD_TYPE");
+            FoundryChoiceParameterDefinition type = new FoundryChoiceParameterDefinition("BUILD_TYPE");
             type.setProviderId("build-type");
             type.setDependsOn(List.of("BUILD_MODE"));
             job.addProperty(new ParametersDefinitionProperty(mode, type));

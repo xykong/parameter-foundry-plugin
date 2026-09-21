@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.additional;
+package io.jenkins.plugins.parameterfoundry.migration.additional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -12,8 +12,8 @@ import hudson.plugins.validating_string_parameter.ValidatingStringParameterDefin
 import io.jenkins.plugins.editable_choice.EditableChoiceParameterDefinition;
 import io.jenkins.plugins.file_parameters.StashedFileParameterDefinition;
 import io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.restlistparam.RestListParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
 import java.util.List;
 import jp.ikedam.jenkins.plugins.extensible_choice_parameter.ExtensibleChoiceParameterDefinition;
 import org.jenkinsci.plugins.uiparameter.HtmlFormParameterDefinition;
@@ -41,13 +41,13 @@ class AdditionalMigrationAdaptersTest {
             var plan = sourceCase.adapter.inspect(sourceCase.definition);
             if (sourceCase.adapter instanceof StashedFileMigrationAdapter) {
                 assertEquals(
-                        io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.D,
+                        io.jenkins.plugins.parameterfoundry.migration.MigrationClassification.D,
                         plan.getClassification());
                 assertTrue(plan.getReason().contains("ADR 0015"));
                 assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Do not disable")));
             } else {
                 assertEquals(
-                        io.jenkins.plugins.unifiedparameters.migration.MigrationClassification.C,
+                        io.jenkins.plugins.parameterfoundry.migration.MigrationClassification.C,
                         plan.getClassification());
             }
             assertNull(plan.getTarget());
@@ -65,7 +65,7 @@ class AdditionalMigrationAdaptersTest {
 
         var plan = adapter.inspect(new JsonParameterReferenceDefinition("REFERENCE"));
 
-        assertTrue(plan.getTargetSkeleton().contains("unifiedForm"));
+        assertTrue(plan.getTargetSkeleton().contains("foundryForm"));
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Provider versus Form")));
     }
 

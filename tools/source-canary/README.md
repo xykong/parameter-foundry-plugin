@@ -1,7 +1,7 @@
 # Source Plugin Docker Canary
 
 This tool runs a disposable Jenkins Controller with real source-plugin HPI
-files and the locally built Unified Parameters HPI.
+files and the locally built Parameter Foundry HPI.
 
 It is intentionally limited to synthetic Jobs and binds Jenkins to a random
 localhost port. It does not read production credentials, connect to production

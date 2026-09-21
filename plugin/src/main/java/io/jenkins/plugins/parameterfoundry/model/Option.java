@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.model;
+package io.jenkins.plugins.parameterfoundry.model;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -128,11 +128,11 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
     }
 
     @Extension
-    @Symbol("unifiedOption")
+    @Symbol("foundryOption")
     public static final class DescriptorImpl extends Descriptor<Option> {
         @Override
         public String getDisplayName() {
-            return "Unified parameter option";
+            return "Foundry parameter option";
         }
     }
 }

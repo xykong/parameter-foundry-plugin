@@ -33,7 +33,7 @@ classification:
 targetSkeleton:
   candidate:
     provider:
-      symbol: unifiedGitRefProvider
+      symbol: foundryGitRefProvider
       arguments:
         id: git-refs-provider
         connectionProfileId: <administrator-selected-connection-profile>
@@ -41,7 +41,7 @@ targetSkeleton:
         includePattern: <reviewed-branch-regex>
         maximumRefs: 1000
     parameter:
-      symbol: unifiedChoice
+      symbol: foundryChoice
       arguments:
         name: BRANCH
         providerId: git-refs-provider

@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -53,10 +53,10 @@ public final class Digests {
         return sha256(encoded.toString());
     }
 
-    public static String axis(List<io.jenkins.plugins.unifiedparameters.model.AxisOption> axis) {
+    public static String axis(List<io.jenkins.plugins.parameterfoundry.model.AxisOption> axis) {
         StringBuilder encoded = new StringBuilder();
         if (axis != null) {
-            for (io.jenkins.plugins.unifiedparameters.model.AxisOption option : axis) {
+            for (io.jenkins.plugins.parameterfoundry.model.AxisOption option : axis) {
                 encoded.append(option.getValue())
                         .append('\u0000')
                         .append(option.getLabel())

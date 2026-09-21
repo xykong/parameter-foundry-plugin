@@ -30,7 +30,7 @@ evaluation, not textual XML ordering.
 |---------|------------------|
 | Build with Parameters browser page | Jenkins Test Harness and real browser |
 | standard `buildWithParameters` REST | form presence marker, single, repeated, explicit empty, compatibility encoding, HTTP status and queue invariant |
-| Typed REST `/api/v1/build` | mixed supported Core/Unified definitions, typed values, unsupported-definition 409 |
+| Typed REST `/api/v1/build` | mixed supported Core/Foundry definitions, typed values, unsupported-definition 409 |
 | Jenkins CLI | documented single/multiple encoding and errors |
 | Pipeline `build` step | typed/custom ParameterValue and compatibility string |
 | upstream trigger compatibility profile | standard ParameterValue contract |

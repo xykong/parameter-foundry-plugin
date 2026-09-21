@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.automation;
+package io.jenkins.plugins.parameterfoundry.automation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +27,15 @@ class JobDslIntegrationTest {
     void publicJobDslMethodsCreateRoundTrippableDefinitions(JenkinsRule jenkins) throws Exception {
         JenkinsJobManagement management = new JenkinsJobManagement(System.out, Map.of(), new File("."));
         new DslScriptLoader(management).runScripts(List.of(new ScriptRequest("""
-                        job('job-dsl-unified') {
+                        job('job-dsl-foundry') {
                           parameters {
-                            unifiedChoice('CHANNEL') {
+                            foundryChoice('CHANNEL') {
                               option('staging', 'Staging')
                               option('production', 'Production')
                               renderer('searchable')
                               defaultValue('staging')
                             }
-                            unifiedChoice('TARGETS') {
+                            foundryChoice('TARGETS') {
                               selectionMode('multiple')
                               option('android', 'Android')
                               option('ios', 'iOS')
@@ -45,7 +45,7 @@ class JobDslIntegrationTest {
                               defaultValue('android')
                               selectionRange(1, 2)
                             }
-                            unifiedChoice('MULTI') {
+                            foundryChoice('MULTI') {
                               option('a', 'A')
                               option('b', 'B')
                               selectionMode('multiple')
@@ -53,7 +53,7 @@ class JobDslIntegrationTest {
                               defaultValue('a')
                               selectionRange(1, 2)
                             }
-                            unifiedForm('DEPLOYMENT') {
+                            foundryForm('DEPLOYMENT') {
                               field('service', 'string') {
                                 required(true)
                                 stringRange(2, 32, '[a-z][a-z0-9-]+')
@@ -74,7 +74,7 @@ class JobDslIntegrationTest {
                         }
                         """)));
 
-        FreeStyleProject project = jenkins.jenkins.getItemByFullName("job-dsl-unified", FreeStyleProject.class);
+        FreeStyleProject project = jenkins.jenkins.getItemByFullName("job-dsl-foundry", FreeStyleProject.class);
         assertNotNull(project);
         jenkins.configRoundtrip(project);
         ParametersDefinitionProperty property = project.getProperty(ParametersDefinitionProperty.class);
@@ -83,19 +83,19 @@ class JobDslIntegrationTest {
         ParameterDefinition targets = property.getParameterDefinition("TARGETS");
         ParameterDefinition multi = property.getParameterDefinition("MULTI");
         ParameterDefinition deployment = property.getParameterDefinition("DEPLOYMENT");
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, channel);
-        UnifiedChoiceParameterDefinition multiple = assertInstanceOf(UnifiedChoiceParameterDefinition.class, targets);
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, channel);
+        FoundryChoiceParameterDefinition multiple = assertInstanceOf(FoundryChoiceParameterDefinition.class, targets);
         assertEquals("multiple", multiple.getSelectionMode());
         assertTrue(multiple.isMultiple());
         assertEquals(List.of("ios", "android"), multiple.getDefaultValues());
         assertEquals(1, multiple.getMinSelections());
         assertEquals(2, multiple.getMaxSelections());
-        UnifiedChoiceParameterDefinition unifiedMultiple =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, multi);
-        assertEquals("multiple", unifiedMultiple.getSelectionMode());
-        assertEquals("list", unifiedMultiple.getRenderer());
-        assertEquals(List.of("a"), unifiedMultiple.getDefaultValues());
-        UnifiedFormParameterDefinition form = assertInstanceOf(UnifiedFormParameterDefinition.class, deployment);
+        FoundryChoiceParameterDefinition foundryMultiple =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, multi);
+        assertEquals("multiple", foundryMultiple.getSelectionMode());
+        assertEquals("list", foundryMultiple.getRenderer());
+        assertEquals(List.of("a"), foundryMultiple.getDefaultValues());
+        FoundryFormParameterDefinition form = assertInstanceOf(FoundryFormParameterDefinition.class, deployment);
         assertEquals(List.of("service", "region"), form.getLayouts().get(0).getFieldNames());
         assertEquals("SERVICE_NAME", form.getFields().get(0).getEnvironmentVariable());
     }

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.definition;
+package io.jenkins.plugins.parameterfoundry.definition;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -8,18 +8,18 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
-import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.evaluation.InputDecoders;
-import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.model.OptionImportEndpoint;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSubmission;
-import io.jenkins.plugins.unifiedparameters.snapshot.ResolvedProviderOptions;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.InputDecoders;
+import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.OptionImportEndpoint;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotMetadata;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSubmission;
+import io.jenkins.plugins.parameterfoundry.snapshot.ResolvedProviderOptions;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationResult;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.verb.POST;
 
-public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParameterDefinition {
+public final class FoundryChoiceParameterDefinition extends AbstractFoundryParameterDefinition {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     private int customValueMaxLength = 256;
 
     @DataBoundConstructor
-    public UnifiedChoiceParameterDefinition(String name) {
+    public FoundryChoiceParameterDefinition(String name) {
         super(name);
     }
 
@@ -220,7 +220,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     public boolean isValid(ParameterValue value) {
         try {
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
-            if (value instanceof UnifiedChoiceParameterValue choiceValue) {
+            if (value instanceof FoundryChoiceParameterValue choiceValue) {
                 if (isMultiple()) {
                     ParameterEvaluationService.evaluateMultiple(
                             this, DecodedInput.present(choiceValue.getValues()), resolved.options(), resolved.matrix());
@@ -260,10 +260,10 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-        if (!(defaultValue instanceof UnifiedChoiceParameterValue choiceValue)) {
+        if (!(defaultValue instanceof FoundryChoiceParameterValue choiceValue)) {
             return this;
         }
-        UnifiedChoiceParameterDefinition copy = copyDefinition();
+        FoundryChoiceParameterDefinition copy = copyDefinition();
         copy.setDefaultMode("explicit");
         if (isMultiple()) {
             copy.setDefaultValues(choiceValue.getValues());
@@ -285,7 +285,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             }
         }
         ParameterValue defaultParameterValue = getDefaultParameterValue();
-        return defaultParameterValue instanceof UnifiedChoiceParameterValue choiceValue
+        return defaultParameterValue instanceof FoundryChoiceParameterValue choiceValue
                 && java.util.Objects.equals(choiceValue.getValue(), value);
     }
 
@@ -297,8 +297,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     @Override
     protected String getRendererFamily() {
         return isMultiple()
-                ? io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_MULTI_CHOICE
-                : io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry.FAMILY_SINGLE_CHOICE;
+                ? io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry.FAMILY_MULTI_CHOICE
+                : io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry.FAMILY_SINGLE_CHOICE;
     }
 
     @Override
@@ -318,7 +318,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
             }
         }
         ParameterValue value = getDefaultParameterValue();
-        return value instanceof UnifiedChoiceParameterValue choiceValue ? choiceValue.getValues() : java.util.List.of();
+        return value instanceof FoundryChoiceParameterValue choiceValue ? choiceValue.getValues() : java.util.List.of();
     }
 
     @Override
@@ -326,8 +326,8 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         return "multiple".equals(getSelectionMode());
     }
 
-    private UnifiedChoiceParameterDefinition copyDefinition() {
-        UnifiedChoiceParameterDefinition copy = new UnifiedChoiceParameterDefinition(getName());
+    private FoundryChoiceParameterDefinition copyDefinition() {
+        FoundryChoiceParameterDefinition copy = new FoundryChoiceParameterDefinition(getName());
         copy.setSelectionMode(getSelectionMode());
         copy.setDescription(getDescription());
         copy.setChoices(getChoices());
@@ -371,17 +371,17 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         return ProviderSubmission.resolveWithoutSubmission(ProviderSubmission.requireOwningJob(this), this, operation);
     }
 
-    private UnifiedChoiceParameterValue toValue(String value, ProviderSnapshotMetadata metadata) {
-        return UnifiedChoiceParameterValue.single(getName(), value, getDescription(), getEnvironmentExport(), metadata);
+    private FoundryChoiceParameterValue toValue(String value, ProviderSnapshotMetadata metadata) {
+        return FoundryChoiceParameterValue.single(getName(), value, getDescription(), getEnvironmentExport(), metadata);
     }
 
-    private UnifiedChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
+    private FoundryChoiceParameterValue toMultiValue(List<String> values, ProviderSnapshotMetadata metadata) {
         return toMultiValue(values, values, metadata);
     }
 
-    private UnifiedChoiceParameterValue toMultiValue(
+    private FoundryChoiceParameterValue toMultiValue(
             List<String> values, List<String> submittedOrder, ProviderSnapshotMetadata metadata) {
-        return UnifiedChoiceParameterValue.multiple(
+        return FoundryChoiceParameterValue.multiple(
                 getName(),
                 values,
                 submittedOrder,
@@ -408,7 +408,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
     }
 
     @Extension
-    @Symbol("unifiedChoice")
+    @Symbol("foundryChoice")
     public static final class DescriptorImpl extends ParameterDescriptor {
         @POST
         public void doPreviewImport(StaplerRequest2 request, StaplerResponse2 response) throws IOException {
@@ -416,15 +416,15 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
         }
 
         @Override
-        public UnifiedChoiceParameterDefinition newInstance(StaplerRequest2 request, JSONObject formData)
+        public FoundryChoiceParameterDefinition newInstance(StaplerRequest2 request, JSONObject formData)
                 throws Descriptor.FormException {
             JSONObject data = JSONObject.fromObject(formData);
             String defaultValuesText = data.optString("defaultValuesText", "");
             String dependsOnText = data.optString("dependsOnText", "");
             data.remove("defaultValuesText");
             data.remove("dependsOnText");
-            UnifiedChoiceParameterDefinition definition =
-                    (UnifiedChoiceParameterDefinition) super.newInstance(request, data);
+            FoundryChoiceParameterDefinition definition =
+                    (FoundryChoiceParameterDefinition) super.newInstance(request, data);
             definition.setDefaultValues(Arrays.stream(defaultValuesText.split("[\\r\\n,]+"))
                     .map(String::trim)
                     .filter(value -> !value.isEmpty())
@@ -442,7 +442,7 @@ public final class UnifiedChoiceParameterDefinition extends AbstractUnifiedParam
 
         @Override
         public String getDisplayName() {
-            return "Unified Choice Parameter";
+            return "Foundry Choice Parameter";
         }
     }
 }

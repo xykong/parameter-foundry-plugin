@@ -39,12 +39,12 @@ classification:
       question: Is selection order part of the business requirement?
       choices:
         - value: unordered
-          result: Generate unifiedChoice with selectionMode multiple and verify membership only
+          result: Generate foundryChoice with selectionMode multiple and verify membership only
         - value: ordered
           result: Do not generate a 1.0 target; redesign with an ordered Form field
 
 targetWhenUnordered:
-  symbol: unifiedChoice
+  symbol: foundryChoice
 selectionMode: multiple
   arguments:
     name: DEPLOY_STEPS

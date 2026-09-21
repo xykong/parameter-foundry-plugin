@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.extendedchoice;
+package io.jenkins.plugins.parameterfoundry.migration.extendedchoice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +24,8 @@ class ExtendedChoiceMigrationAdapterTest {
         MigrationPlan plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.A, plan.getClassification());
-        UnifiedChoiceParameterDefinition target =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, plan.getTarget());
+        FoundryChoiceParameterDefinition target =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, plan.getTarget());
         assertEquals("radio", target.getRenderer());
         assertEquals("staging", target.getDefaultValue());
         assertEquals(
@@ -41,8 +41,8 @@ class ExtendedChoiceMigrationAdapterTest {
         MigrationPlan plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.B, plan.getClassification());
-        UnifiedChoiceParameterDefinition target =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, plan.getTarget());
+        FoundryChoiceParameterDefinition target =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, plan.getTarget());
         assertEquals("multiple", target.getSelectionMode());
         assertEquals("checkbox", target.getRenderer());
         assertEquals("delimited", target.getStandardApiInputMode());
@@ -76,8 +76,8 @@ class ExtendedChoiceMigrationAdapterTest {
         MigrationPlan plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.B, plan.getClassification());
-        UnifiedChoiceParameterDefinition target =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, plan.getTarget());
+        FoundryChoiceParameterDefinition target =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, plan.getTarget());
         assertEquals("multiple", target.getSelectionMode());
         assertEquals("none", target.getDefaultMode());
         assertEquals(

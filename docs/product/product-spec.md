@@ -1,22 +1,22 @@
-# Unified Parameters 产品规格
+# Parameter Foundry 产品规格
 
 ## 1. 结论（先读）
 
 | 决策项 | 内容 |
 |--------|------|
-| 正式名称 | **Unified Parameters** |
-| Jenkins 展示名 | `Unified Parameters` |
-| Plugin short name / artifactId | `unified-parameters` |
-| 预期仓库 | `jenkinsci/unified-parameters-plugin` |
+| 正式名称 | **Parameter Foundry** |
+| Jenkins 展示名 | `Parameter Foundry` |
+| Plugin short name / artifactId | `parameter-foundry` |
+| 预期仓库 | `jenkinsci/parameter-foundry-plugin` |
 | Maven groupId | `io.jenkins.plugins` |
-| Java package | `io.jenkins.plugins.unifiedparameters` |
-| Pipeline 主 Symbol | `unifiedChoice`（`selectionMode: single|multiple`）、`unifiedForm` |
+| Java package | `io.jenkins.plugins.parameterfoundry` |
+| Pipeline 主 Symbol | `foundryChoice`（`selectionMode: single|multiple`）、`foundryForm` |
 | 产品标语 | **One parameter model. Every Jenkins entry point.** |
 | UI/API 一致性 | 强保证；不一致视为发布阻断 |
 | 规格日期 | 2026-08-28 |
 | 当前阶段 | 核心设计基线完成；下一里程碑为 `0.1 Technical Preview` |
 
-**Unified Parameters** 不只是一个新的 Choice 控件，而是 Jenkins 的统一现代参数平台。
+**Parameter Foundry** 不只是一个新的 Choice 控件，而是 Jenkins 的统一现代参数平台。
 
 它必须解决当前生态最核心的问题：
 
@@ -55,7 +55,7 @@
 
 | 候选 | 优点 | 问题 | 决策 |
 |------|------|------|------|
-| Unified Parameters | 精确表达统一模型、统一入口和统一扩展体系；长期有效 | 现代 UI 优势需要通过副标题表达 | **采用** |
+| Parameter Foundry | 精确表达统一模型、统一入口和统一扩展体系；长期有效 | 现代 UI 优势需要通过副标题表达 | **采用** |
 | Modern Parameters | 直观、有产品感、搜索友好 | “Modern” 会随时间老化，更像品质评价 | 不采用 |
 | Typed Parameters | 强调类型安全 | 容易让用户误解为只解决 Java 类型 | 不采用 |
 | Parameter Studio | 有产品感 | 容易被理解为独立编辑器或低代码平台 | 不采用 |
@@ -66,11 +66,11 @@
 
 2026-08-28 完成以下检查：
 
-- Jenkins Update Center 共扫描 2098 个插件，没有 `unified-parameters`。
-- `plugins.jenkins.io/unified-parameters/` 不存在。
-- `jenkinsci/unified-parameters-plugin` 不存在。
-- Jenkins Maven 仓库中没有 `io.jenkins.plugins:unified-parameters`。
-- 未发现已公开使用的 `unifiedChoice`、`unifiedForm`
+- Jenkins Update Center 共扫描 2098 个插件，没有 `parameter-foundry`。
+- `plugins.jenkins.io/parameter-foundry/` 不存在。
+- `jenkinsci/parameter-foundry-plugin` 不存在。
+- Jenkins Maven 仓库中没有 `io.jenkins.plugins:parameter-foundry`。
+- 未发现已公开使用的 `foundryChoice`、`foundryForm`
   Jenkins Symbol。
 
 以上只是当前可用性证据。正式申请 Jenkins 社区托管时仍须执行最终名称检查和社区评审。
@@ -79,13 +79,13 @@
 
 | 对象 | 规范 |
 |------|------|
-| Java package | `io.jenkins.plugins.unifiedparameters.*` |
-| CSS class | `unified-parameters-*` |
-| JavaScript module | `unified-parameters/*` |
-| REST path | `unified-parameters/*` |
-| Metrics prefix | `jenkins_unified_parameters_*` |
+| Java package | `io.jenkins.plugins.parameterfoundry.*` |
+| CSS class | `parameter-foundry-*` |
+| JavaScript module | `parameter-foundry/*` |
+| REST path | `parameter-foundry/*` |
+| Metrics prefix | `jenkins_parameter_foundry_*` |
 | Log namespace | Java package名 |
-| JCasC root | `unifiedParameters` |
+| JCasC root | `parameterFoundry` |
 
 禁止使用：
 
@@ -175,7 +175,7 @@ metadata: {}
 - `json`：JSON Array。
 - `none`：不导出环境变量。
 
-多选顺序不是 `unifiedChoice` 多选模式（`selectionMode: multiple`）的业务语义；List/环境变量顺序在一个 Provider snapshot 内
+多选顺序不是 `foundryChoice` 多选模式（`selectionMode: multiple`）的业务语义；List/环境变量顺序在一个 Provider snapshot 内
 确定，动态快照变化后可能变化。顺序敏感需求使用后续 ordered collection/Form 类型。
 
 如果选项值包含 delimiter，保存配置时必须报错，或要求切换为 JSON 输出。
@@ -192,7 +192,7 @@ metadata: {}
 | UP-SPIKE-004 | Form presence/decoding | presence marker、repeated 和 explicit-empty 语义通过 |
 | UP-SPIKE-005 | Standard REST status | 最低基线和目标 LTS 上 invalid input 返回 4xx 且 queue 不变 |
 | UP-SPIKE-006 | CLI | multi-value 和稳定错误契约通过 |
-| UP-SPIKE-007 | Mixed Typed API | Core String/Text/Boolean/Choice + Unified Job 原子调度通过 |
+| UP-SPIKE-007 | Mixed Typed API | Core String/Text/Boolean/Choice + Foundry Job 原子调度通过 |
 | UP-SPIKE-008 | Rebuild | 保持 Renderer 并按当前 definition 重验证 |
 | UP-SPIKE-009 | CSP/No-JS | CSP-safe enhancement 和 bounded fallback 通过 |
 | UP-SPIKE-010 | Single HPI migration packaging | core、source adapter、Provider 和 Renderer 在一个 HPI 中加载通过 |
@@ -231,7 +231,7 @@ metadata: {}
 | UP-SEM-004 | absent/explicit-empty | form 使用 reserved presence marker，其他入口结构化表达；所有入口结果一致 |
 | UP-SEM-005 | stale default | `1.0` Inline stale default 始终阻止保存；动态策略在后续版本显式配置 |
 | UP-SEM-006 | multi-choice order | 业务值为无序集合；所有输出按机器值 `String.compareTo` 稳定排序 |
-| UP-SEM-007 | form presence marker | `__unified_parameters_presence` 不进入值列表，冲突/重复/未知 marker 拒绝 |
+| UP-SEM-007 | form presence marker | `__parameter_foundry_presence` 不进入值列表，冲突/重复/未知 marker 拒绝 |
 | UP-SEM-008 | required Reactive omission | 无默认值的必填 Reactive 参数允许保存，但 CLI/自动化调用方必须显式提交；配置页显示警告 |
 
 必填 Reactive 参数不强制必须拥有默认值。`defaultMode: none` 是合法配置，表示
@@ -292,7 +292,7 @@ XStream 可能绕过 setter，所有入口在 Provider 和排队前必须运行
 
 ```groovy
 parameters {
-    unifiedChoice(
+    foundryChoice(
         name: 'CHANNEL',
         choices: [
             [value: 'production'],
@@ -304,7 +304,7 @@ parameters {
         renderer: 'searchable'
     )
 
-    unifiedChoice(
+    foundryChoice(
         name: 'TARGETS',
         selectionMode: 'multiple',
         choices: [
@@ -472,9 +472,9 @@ Connection Profile 的权限、URL 构造和凭据绑定见
 | UP-INT-012 | Provider snapshot | UI/API 可使用同一选项快照 |
 | UP-MIG-003 | Dynamic migration adapters | 生成 Provider/Cascade 重构骨架和验证 fixture |
 
-## 9. `2.0` Unified Form
+## 9. `2.0` Foundry Form
 
-`unifiedForm` 用于结构化组合参数：
+`foundryForm` 用于结构化组合参数：
 
 - text、number、boolean、choice、multi-choice。
 - section、grid、tabs 和条件显示。

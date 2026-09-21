@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -41,11 +41,11 @@ public final class ProfileHeader extends AbstractDescribableImpl<ProfileHeader> 
     }
 
     @Extension
-    @Symbol("unifiedProfileHeader")
+    @Symbol("foundryProfileHeader")
     public static final class DescriptorImpl extends Descriptor<ProfileHeader> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Profile Header";
+            return "Parameter Foundry Profile Header";
         }
     }
 }

@@ -1,10 +1,10 @@
-# Unified Parameters 功能设计
+# Parameter Foundry 功能设计
 
 ## 1. 功能结论（先读）
 
 | 决策项 | 内容 |
 |--------|------|
-| 产品 | **Unified Parameters** |
+| 产品 | **Parameter Foundry** |
 | 目标 | 成为 Jenkins 通用参数领域的功能超集和首选实现 |
 | 覆盖原则 | 全部竞品有效使用场景必须有明确替代路径 |
 | 兼容原则 | 追求语义正确和迁移可控，不追求旧实现逐字节兼容 |
@@ -13,7 +13,7 @@
 | UI/API 一致性 | 参数业务语义强一致；不一致不得发布 |
 | 完成标准 | 每个竞品功能都有目标能力、迁移器、测试和 Gallery 证据 |
 
-Unified Parameters 的最终目标不是“比 Active Choices 更好”，而是：
+Parameter Foundry 的最终目标不是“比 Active Choices 更好”，而是：
 
 > 使用一个统一平台，替代 Jenkins Core 基础参数之外所有通用参数插件，并让旧插件用户在功能、
 > 安全、UI、自动化和维护成本上获得足够明显的收益。
@@ -28,7 +28,7 @@ XML、Pipeline `$class` 或历史构建记录的无缝兼容。规范定义见
 
 - 每个已调研插件的有效使用场景都有目标实现。
 - 每类来源配置都有自动迁移或明确的辅助重构流程。
-- 完成功能迁移后，活动 Job 可以只使用 Unified Parameters 进行配置、构建、自动触发和 Rebuild。
+- 完成功能迁移后，活动 Job 可以只使用 Parameter Foundry 进行配置、构建、自动触发和 Rebuild。
 - Freestyle、Pipeline、API、CLI、Webhook、Upstream 和 Rebuild 行为一致。
 - 对无法自动等价转换的配置，提供可执行决策而不是简单标记“不支持”。
 - 所有迁移路径都有测试样本和回滚方式。
@@ -58,7 +58,7 @@ XML、Pipeline `$class` 或历史构建记录的无缝兼容。规范定义见
 即使属于 `Reject-and-redesign`，Migration Assistant 也必须说明：
 
 - 原配置试图实现什么目标。
-- Unified Parameters 应使用什么功能。
+- Parameter Foundry 应使用什么功能。
 - 哪些输入需要用户补充。
 - 如何验证结果。
 
@@ -92,21 +92,21 @@ XML、Pipeline `$class` 或历史构建记录的无缝兼容。规范定义见
 
 ### 4.1 Jenkins Core
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
-| String | `unifiedText` | Direct |
-| Text | `unifiedText(multiline: true)` | Direct |
-| Boolean | `unifiedBoolean` / Unified Form boolean | Direct |
-| Choice | `unifiedChoice` | Direct |
+| String | `foundryText` | Direct |
+| Text | `foundryText(multiline: true)` | Direct |
+| Boolean | `foundryBoolean` / Foundry Form boolean | Direct |
+| Choice | `foundryChoice` | Direct |
 | 首项隐式默认 | 显式 `defaultMode: first` | Semantic |
 | API/CLI | 统一 Value Parser | Direct |
 | File upload | 保留 Jenkins multipart 原生参数；Typed JSON 显式不支持 | Interoperate |
 
-Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core 参数，但必须提供一致且更丰富的替代。
+Core 参数继续可用；Parameter Foundry 不要求用户迁移简单 Core 参数，但必须提供一致且更丰富的替代。
 
 ### 4.2 Extended Choice Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Single/Multi Select | Choice + cardinality | Direct |
 | Radio/Checkbox | Renderer | Direct |
@@ -120,45 +120,45 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | custom delimiter | Environment Export policy | Semantic |
 | quote value | JSON/export encoding | Semantic |
 | description mapping | Option description | Direct |
-| JSON Editor | Unified Form | Semantic |
+| JSON Editor | Foundry Form | Semantic |
 | JavaScript | Declarative Renderer 或 Renderer extension | Reject-and-redesign |
 
 ### 4.3 Active Choices
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Active Choice | Provider + Choice renderer | Direct/Semantic |
 | Reactive Choice | Dependency Graph | Semantic |
 | Reactive Reference | Read-only Field/Content renderer | Semantic |
 | Groovy List/Map | Inline、REST、JSON 或 Script Provider | Refactor |
-| Scriptler | Unified Script Provider adapter | Extension |
+| Scriptler | Foundry Script Provider adapter | Extension |
 | fallback script | Provider fallback chain | Semantic |
 | filterable | Searchable renderer | Direct |
 | `:selected` | Option.selected/defaults | Semantic |
 | `:disabled` | Option.disabled | Semantic |
-| `ET_TEXT_BOX` | Unified Form string field | Semantic |
+| `ET_TEXT_BOX` | Foundry Form string field | Semantic |
 | `ET_ORDERED_LIST`/`ET_UNORDERED_LIST` | Read-only Content or explicit typed choice | Semantic |
-| `ET_FORMATTED_HTML` | Structured Content/Unified Form or reviewed Renderer | Reject-and-redesign |
+| `ET_FORMATTED_HTML` | Structured Content/Foundry Form or reviewed Renderer | Reject-and-redesign |
 | `ET_FORMATTED_HIDDEN_HTML` | Retain or explicit business-field redesign | Manual/Class D |
 | `omitValueField` | Explicit presentation-only/output decision | Semantic |
 | DOM 参数查找 | 服务端依赖图 | Semantic |
 
 ### 4.4 Json Editor Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
-| JSON Schema object | Unified Form Schema | Semantic |
+| JSON Schema object | Foundry Form Schema | Semantic |
 | enum | Choice Field | Direct |
 | array | Multi-choice Field | Direct |
 | number/string/boolean | Typed Field | Direct |
 | start values | Form defaults | Direct |
 | editor options | Layout/Renderer options | Semantic |
-| Pipeline `input` | Unified Form 支持 Job 参数和 Input Step | Semantic |
+| Pipeline `input` | Foundry Form 支持 Job 参数和 Input Step | Semantic |
 | JSON output | Structured Parameter Value | Direct |
 
 ### 4.5 Extensible Choice Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Textarea Provider | Inline Provider | Direct |
 | Global Textarea | Global/Folder Provider | Direct |
@@ -166,12 +166,12 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | System Groovy | Built-in sandboxed Script Provider or external companion | Extension |
 | editable mode | Editable Choice policy | Direct |
 | add edited choice | Managed Option contribution workflow | Semantic |
-| ChoiceListProvider SPI | Unified Provider SPI | Direct |
+| ChoiceListProvider SPI | Foundry Provider SPI | Direct |
 | Freestyle only限制 | 全入口一致 | 改进 |
 
 ### 4.6 Editable Choice
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | autocomplete | Searchable combobox | Direct |
 | allow custom | `allowCustomValue` | Direct |
@@ -182,7 +182,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 ### 4.7 Custom Checkbox Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Checkbox group | Multiple + Checkbox renderer | Direct |
 | Inline YAML/JSON | Inline import | Direct |
@@ -197,30 +197,30 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 ### 4.8 Multiselect Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | dependent dropdown columns | Cascade Form/Renderer | Direct |
 | CSV decision tree | Tree import | Direct |
 | variable per column | Field output mapping | Direct |
 | title/variable/content rows | Structured Tree Schema | Semantic |
 | alternative labels | Option label/value | Direct |
-| Pipeline object tree | Unified Cascade DSL | Semantic |
+| Pipeline object tree | Foundry Cascade DSL | Semantic |
 
 ### 4.9 Validating String Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Regex | Regex Validator | Direct |
-| inline feedback | Unified validation UI | Direct |
+| inline feedback | Foundry validation UI | Direct |
 | custom error | Localizable validation message | Direct |
-| server validation | Unified Validator | Direct |
-| CLI validation | Unified Value Parser/Validator | Direct |
+| server validation | Foundry Validator | Direct |
+| CLI validation | Foundry Value Parser/Validator | Direct |
 
 ### 4.10 HTML Parameters
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
-| 多字段表单 | Unified Form | Semantic |
+| 多字段表单 | Foundry Form | Semantic |
 | tabs/sections/grid | Form Layout Schema | Direct |
 | text/select/checkbox | Typed Fields | Direct |
 | field mappings | Output Mapping | Direct |
@@ -232,7 +232,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 ### 4.11 JSON Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | Config File source | Managed Config Provider | Direct |
 | HTTP source | REST JSON Provider | Direct |
@@ -244,7 +244,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 ### 4.12 REST List Parameter
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | JSON/XML REST | REST Provider | Direct |
 | Credentials | Connection Profile 绑定 Jenkins Credentials | Direct |
@@ -253,13 +253,13 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 | display/value separation | Option label/value | Direct |
 | filter/sort | Provider transform chain | Direct |
 | cache TTL | Provider Cache | Direct |
-| validation | Unified Validator | Direct |
+| validation | Foundry Validator | Direct |
 | allow empty | Empty Policy | Direct |
-| empty/error message | Unified State UI | Direct |
+| empty/error message | Foundry State UI | Direct |
 
 ### 4.13 Scriptler
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | shared scripts | Built-in Script Catalog or external companion | Extension |
 | Git-managed scripts | SCM Script Provider | Extension |
@@ -269,7 +269,7 @@ Core 参数继续可用；Unified Parameters 不要求用户迁移简单 Core �
 
 ### 4.14 List Git Branches
 
-| 来源能力 | Unified Parameters 目标 | 替代方式 |
+| 来源能力 | Parameter Foundry 目标 | 替代方式 |
 |----------|---------------------------|----------|
 | branch/tag/ref discovery | governed REST or built-in Git refs Provider | Extension |
 | repository URL | administrator-owned Connection Profile | Refactor |
@@ -288,7 +288,7 @@ organization/repository/ref 组合后，才能使用 branch candidate。
 ### 4.15 File Parameters
 
 文件上传是 multipart transport，不是 Option Provider。Core File 和原生 Stashed File
-参数可继续与 Unified Parameters 共存。标准 Jenkins 页面和 endpoint 保持原行为；JSON Typed
+参数可继续与 Parameter Foundry 共存。标准 Jenkins 页面和 endpoint 保持原行为；JSON Typed
 API 对包含文件定义的 Job 原子返回 unsupported，不把“未上传”伪装成成功。
 
 ## 5. 功能架构
@@ -312,15 +312,15 @@ Parameter Definition
 
 | 公开类型 | 用途 |
 |----------|------|
-| `unifiedText` | 单行、多行、隐藏和可验证文本 |
-| `unifiedBoolean` | Boolean/switch |
-| `unifiedChoice` | 单选/多选（`selectionMode: single|multiple`）、Radio/Checkbox/chips/table |
-| `unifiedCascade` | 多列依赖选择 |
-| `unifiedForm` | Schema 组合表单 |
+| `foundryText` | 单行、多行、隐藏和可验证文本 |
+| `foundryBoolean` | Boolean/switch |
+| `foundryChoice` | 单选/多选（`selectionMode: single|multiple`）、Radio/Checkbox/chips/table |
+| `foundryCascade` | 多列依赖选择 |
+| `foundryForm` | Schema 组合表单 |
 
 内部尽量复用统一模型，但公开 Symbol 保持用途清晰。
 
-`1.0` 只发布 `unifiedChoice`（单选与多选）。Editable/custom、Text、Boolean、
+`1.0` 只发布 `foundryChoice`（单选与多选）。Editable/custom、Text、Boolean、
 Cascade 和 Form 按
 [`ADR 0004`](../decisions/0004-release-scope-and-migration-promise.md)
 的路线进入后续版本。
@@ -416,7 +416,7 @@ dependsOn:
 精确策略见
 [`ADR 0007`](../decisions/0007-provider-snapshots-cache-and-failure.md)。
 
-## 7. Unified Form
+## 7. Foundry Form
 
 ### 7.1 Field
 
@@ -488,7 +488,7 @@ dependsOn:
 
 ### 9.1 保证范围
 
-Unified Parameters 对**参数业务语义**提供 UI/API 强一致保证：
+Parameter Foundry 对**参数业务语义**提供 UI/API 强一致保证：
 
 - 可选值。
 - 默认值。
@@ -525,13 +525,13 @@ UI 专属的视觉表现不要求 API 复刻：
 
 ### 9.2 一致性承诺
 
-| 场景 | Jenkins 页面 | 标准 Jenkins API | Unified Typed API |
+| 场景 | Jenkins 页面 | 标准 Jenkins API | Foundry Typed API |
 |------|--------------|------------------|-------------------|
 | 静态单选/多选 | 完整 Renderer | 支持 | 支持 |
 | Editable value | 输入和提示 | 支持 | 支持 |
 | Provider 选项 | 自动加载 | schema/resolve API | schema/resolve API |
 | Reactive | 依赖变化自动刷新 | 提交依赖值解析 | 提交依赖值解析 |
-| Unified Form | Schema Form | JSON 字符串 | JSON Object |
+| Foundry Form | Schema Form | JSON 字符串 | JSON Object |
 | 默认值 | 页面显示 canonical default | 缺省参数应用同一 default | 缺省字段应用同一 default |
 | Validation | 字段级提示 | HTTP 4xx | 结构化 HTTP 4xx |
 | Disabled/stale value | 不可选并显示原因 | 拒绝 | 拒绝 |
@@ -584,16 +584,16 @@ Content-Type: application/x-www-form-urlencoded
 
 - 单值字段。
 - 多选按参数显式配置的 `repeated`、`json-array` 或 `delimited` 模式。
-- form 入口用 repeated `__unified_parameters_presence` marker 区分 absent 和 explicit empty。
-- Unified Form JSON 字符串。
+- form 入口用 repeated `__parameter_foundry_presence` marker 区分 absent 和 explicit empty。
+- Foundry Form JSON 字符串。
 
 标准 API 不根据 Option 内容猜测编码。Transport decoder 在 Provider 解析前完成，Provider
 解析后只负责合法值和 canonical value 验证。
 
-#### Unified Typed API
+#### Foundry Typed API
 
 ```text
-POST /job/<job>/unified-parameters/api/v1/build
+POST /job/<job>/parameter-foundry/api/v1/build
 Content-Type: application/json
 ```
 
@@ -618,17 +618,17 @@ Content-Type: application/json
 Typed API 不使用 delimiter 猜测。
 
 Typed API 是 supported-definition Job 的完整调度入口：内置适配 Jenkins Core
-String/Text/Boolean/Choice 和 Unified Parameters；存在 unsupported/重复名称 definition 时整体
+String/Text/Boolean/Choice 和 Parameter Foundry；存在 unsupported/重复名称 definition 时整体
 返回 HTTP 409，不静默套用默认值。Password、Credentials、File 和未适配第三方 definition
 不进入核心 Typed API。
 
 #### Discovery API
 
 ```text
-GET  /job/<job>/unified-parameters/api/v1/schema
-POST /job/<job>/unified-parameters/api/v1/resolve
-POST /job/<job>/unified-parameters/api/v1/validate
-GET  /job/<job>/unified-parameters/api/v1/providers/health
+GET  /job/<job>/parameter-foundry/api/v1/schema
+POST /job/<job>/parameter-foundry/api/v1/resolve
+POST /job/<job>/parameter-foundry/api/v1/validate
+GET  /job/<job>/parameter-foundry/api/v1/providers/health
 ```
 
 用途：
@@ -733,7 +733,7 @@ diagnostic snapshot 不可用于构建。核心 snapshot 不绑定最初调用�
 {
   "errors": [
     {
-      "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+      "code": "PARAMETER_FOUNDRY_UNKNOWN_VALUE",
       "parameter": "TARGETS",
       "path": "$[1]",
       "message": "Value is not present in the resolved option set.",
@@ -924,7 +924,7 @@ Migration Dashboard 显示：
 Source Inspector
   -> Normalized Intent
   -> Migration Decision
-  -> Unified Definition
+  -> Foundry Definition
   -> Verification Fixture
 ```
 
@@ -939,7 +939,7 @@ Source Inspector
 7. Json Editor/HTML Parameters。
 8. Scriptler。
 
-Adapter 随 `unified-parameters` 单一 HPI 交付，通过全局 migration adapter 开关控制启用。
+Adapter 随 `parameter-foundry` 单一 HPI 交付，通过全局 migration adapter 开关控制启用。
 Adapter 只生成 Normalized Intent，不直接修改 Job 或调度构建。
 
 ## 12. 让用户迁移的明确理由
@@ -1058,7 +1058,7 @@ Adapter 只生成 Normalized Intent，不直接修改 Job 或调度构建。
 
 ### 14.5 `2.0 Complete Requirement Coverage`
 
-- UP-E17 Unified Form。
+- UP-E17 Foundry Form。
 - UP-E18 Script Provider companion。
 - UP-E19 Renderer extension。
 - UP-E20 全来源 Migration Assistant。

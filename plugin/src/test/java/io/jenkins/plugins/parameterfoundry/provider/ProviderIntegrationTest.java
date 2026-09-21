@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,11 +9,11 @@ import hudson.cli.CLICommandInvoker;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.MultipleChoiceFixtures;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,14 @@ class ProviderIntegrationTest {
     void staticSharedProviderHasStandardTypedCliAndHealthParity(JenkinsRule jenkins) throws Exception {
         StaticProviderDefinition provider = new StaticProviderDefinition("releases");
         provider.setOptions(List.of(new Option("web"), new Option("android"), new Option("ios")));
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
 
         FreeStyleProject standard = providerJob(jenkins, "provider-standard");
         Page standardResponse = postForm(
                 jenkins,
                 standard,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "web"),
                         new NameValuePair("TARGETS", "android")));
         assertEquals(201, standardResponse.getWebResponse().getStatusCode());
@@ -56,7 +56,7 @@ class ProviderIntegrationTest {
         JSONObject body = new JSONObject();
         body.put("values", values);
         JenkinsRule.JSONWebResponse typedResponse =
-                postJson(jenkins, typed.getUrl() + "unified-parameters/api/v1/build", body);
+                postJson(jenkins, typed.getUrl() + "parameter-foundry/api/v1/build", body);
         assertEquals(201, typedResponse.getStatusCode());
         jenkins.waitUntilNoActivity();
         assertCanonical(typed, List.of("android", "ios"));
@@ -70,7 +70,7 @@ class ProviderIntegrationTest {
         JSONObject resolveBody = new JSONObject();
         resolveBody.put("parameter", "TARGETS");
         JenkinsRule.JSONWebResponse resolve =
-                postJson(jenkins, typed.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, typed.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
         assertEquals(3, resolve.getJSONObject().getJSONArray("options").size());
         assertEquals(
                 JSONArray.fromObject(List.of("android")),
@@ -79,7 +79,7 @@ class ProviderIntegrationTest {
         assertTrue(resolve.getJSONObject().getString("optionSetDigest").startsWith("sha256:"));
 
         JenkinsRule.JSONWebResponse health =
-                jenkins.createWebClient().getJSON(typed.getUrl() + "unified-parameters/api/v1/providers/health");
+                jenkins.createWebClient().getJSON(typed.getUrl() + "parameter-foundry/api/v1/providers/health");
         assertEquals(
                 true,
                 health.getJSONObject()
@@ -92,7 +92,7 @@ class ProviderIntegrationTest {
     void providerBackedBuildFormRequiresEnhancedUiOrTypedApi(JenkinsRule jenkins) throws Exception {
         StaticProviderDefinition provider = new StaticProviderDefinition("dynamic");
         provider.setOptions(List.of(new Option("one"), new Option("two")));
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
         FreeStyleProject project = providerJob(jenkins, "provider-form");
 
         HtmlPage page = (HtmlPage) jenkins.createWebClient()
@@ -104,17 +104,17 @@ class ProviderIntegrationTest {
         assertTrue(page.asNormalizedText().contains("Loading options..."));
         assertTrue(page.getByXPath("//button[normalize-space()='Build without JavaScript']")
                 .isEmpty());
-        assertFalse(page.getByXPath("//input[@name='__unified_parameters_presence']")
-                .isEmpty());
+        assertFalse(
+                page.getByXPath("//input[@name='__parameter_foundry_presence']").isEmpty());
     }
 
     @Test
     void providerBackedBuildFormRendersBeforeProviderResolution(JenkinsRule jenkins) throws Exception {
         AtomicInteger loadCount = new AtomicInteger();
-        UnifiedParametersGlobalConfiguration.get()
+        ParameterFoundryGlobalConfiguration.get()
                 .setProviders(List.of(new CountingProvider("slow-dynamic", loadCount)));
         FreeStyleProject project = jenkins.createFreeStyleProject("provider-form-loading");
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setProviderId("slow-dynamic");
         definition.setDefaultMode("first");
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -132,9 +132,9 @@ class ProviderIntegrationTest {
     void providerBackedBuildFormKeepsBuildButtonInInitialMarkup(JenkinsRule jenkins) throws Exception {
         StaticProviderDefinition provider = new StaticProviderDefinition("button-gated");
         provider.setOptions(List.of(new Option("one")));
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
         FreeStyleProject project = providerJob(jenkins, "provider-button-gated");
-        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition definition = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setProviderId("button-gated");
 
@@ -149,7 +149,7 @@ class ProviderIntegrationTest {
 
     private static FreeStyleProject providerJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setProviderId("releases");
         if ("provider-form".equals(name)) {
             definition.setProviderId("dynamic");
@@ -184,8 +184,8 @@ class ProviderIntegrationTest {
     }
 
     private static void assertCanonical(FreeStyleProject project, List<String> expected) {
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(expected, value.getValues());
     }

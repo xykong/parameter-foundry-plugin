@@ -1,14 +1,14 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 
-/** Creates the unified multiple-selection shape that replaced the legacy multi-choice definition. */
+/** Creates the foundry multiple-selection shape that replaced the legacy multi-choice definition. */
 public final class MultipleChoiceFixtures {
 
     private MultipleChoiceFixtures() {}
 
-    public static UnifiedChoiceParameterDefinition multipleChoice(String name) {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition(name);
+    public static FoundryChoiceParameterDefinition multipleChoice(String name) {
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition(name);
         definition.setSelectionMode("multiple");
         return definition;
     }

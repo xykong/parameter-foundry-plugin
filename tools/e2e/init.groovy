@@ -4,18 +4,18 @@ import hudson.model.FreeStyleProject
 import hudson.model.ParametersDefinitionProperty
 import io.jenkins.plugins.darktheme.DarkThemeSystemManagerFactory
 import io.jenkins.plugins.thememanager.ThemeManagerPageDecorator
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition
-import io.jenkins.plugins.unifiedparameters.form.FormField
-import io.jenkins.plugins.unifiedparameters.form.FormLayout
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter
-import io.jenkins.plugins.unifiedparameters.model.AxisOption
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix
-import io.jenkins.plugins.unifiedparameters.model.MatrixCell
-import io.jenkins.plugins.unifiedparameters.model.Option
-import io.jenkins.plugins.unifiedparameters.provider.MatrixProviderDefinition
-import io.jenkins.plugins.unifiedparameters.provider.StaticProviderDefinition
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition
+import io.jenkins.plugins.parameterfoundry.form.FormField
+import io.jenkins.plugins.parameterfoundry.form.FormLayout
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter
+import io.jenkins.plugins.parameterfoundry.model.AxisOption
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix
+import io.jenkins.plugins.parameterfoundry.model.MatrixCell
+import io.jenkins.plugins.parameterfoundry.model.Option
+import io.jenkins.plugins.parameterfoundry.provider.MatrixProviderDefinition
+import io.jenkins.plugins.parameterfoundry.provider.StaticProviderDefinition
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration
 import jenkins.model.Jenkins
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
@@ -45,18 +45,18 @@ registryAgents.setRowAxisLabel('DOCKER_REGISTRIES')
 registryAgents.setColumnAxisLabel('BUILD_NODE')
 registryAgents.setRowSelectionMode('any')
 
-UnifiedParametersGlobalConfiguration.get().setProviders([sharedEnvironments, registryAgents])
+ParameterFoundryGlobalConfiguration.get().setProviders([sharedEnvironments, registryAgents])
 
-def staticJob = jenkins.getItem('unified-parameters-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-e2e')
+def staticJob = jenkins.getItem('parameter-foundry-e2e') ?: jenkins.createProject(FreeStyleProject, 'parameter-foundry-e2e')
 staticJob.removeProperty(ParametersDefinitionProperty)
 
-def channel = new UnifiedChoiceParameterDefinition('CHANNEL')
+def channel = new FoundryChoiceParameterDefinition('CHANNEL')
 channel.setChoices([new Option('staging'), new Option('production')])
 channel.setRenderer('searchable')
 channel.setDefaultMode('explicit')
 channel.setDefaultValue('staging')
 
-def release = new UnifiedChoiceParameterDefinition('RELEASE')
+def release = new FoundryChoiceParameterDefinition('RELEASE')
 release.setChoices([new Option('stable')])
 release.setRenderer('searchable')
 release.setDefaultMode('explicit')
@@ -65,7 +65,7 @@ release.setAllowCustomValue(true)
 release.setCustomValuePattern('release-[0-9]+')
 release.setCustomValueMaxLength(16)
 
-def deployMode = new UnifiedChoiceParameterDefinition('DEPLOY_MODE')
+def deployMode = new FoundryChoiceParameterDefinition('DEPLOY_MODE')
 def legacyMode = new Option('legacy')
 legacyMode.setDisabled(true)
 legacyMode.setDisabledReason('Legacy deployment is retired')
@@ -74,7 +74,7 @@ deployMode.setRenderer('radio')
 deployMode.setDefaultMode('explicit')
 deployMode.setDefaultValue('safe')
 
-def regions = new UnifiedChoiceParameterDefinition('REGIONS')
+def regions = new FoundryChoiceParameterDefinition('REGIONS')
 regions.setSelectionMode('multiple')
 regions.setChoices([
     new Option('us-east'),
@@ -101,14 +101,14 @@ featureRetired.setLabel('Retired feature')
 featureRetired.setGroup('Experimental')
 featureRetired.setDisabled(true)
 featureRetired.setDisabledReason('Removed from the supported release train')
-def features = new UnifiedChoiceParameterDefinition('FEATURES')
+def features = new FoundryChoiceParameterDefinition('FEATURES')
 features.setSelectionMode('multiple')
 features.setChoices([featureA, featureB, featureC, featureRetired])
 features.setRenderer('checkbox')
 features.setDefaultMode('explicit')
 features.setDefaultValues(['feature-a'])
 
-def targets = new UnifiedChoiceParameterDefinition('TARGETS')
+def targets = new FoundryChoiceParameterDefinition('TARGETS')
 targets.setSelectionMode('multiple')
 targets.setChoices((0..<10000).collect { index ->
     def option = new Option(String.format('target-%04d', index))
@@ -143,7 +143,7 @@ def disabledCell = new MatrixCell('ios', 'b', 'ios-b')
 disabledCell.setDisabled(true)
 disabledCell.setDisabledReason('Not available for iOS')
 matrix.setCells([new MatrixCell('android', 'a', 'android-a'), new MatrixCell('ios', 'a', 'ios-a'), disabledCell])
-def tableTargets = new UnifiedChoiceParameterDefinition('TABLE_TARGETS')
+def tableTargets = new FoundryChoiceParameterDefinition('TABLE_TARGETS')
 tableTargets.setSelectionMode('multiple')
 tableTargets.setRenderer('table')
 tableTargets.setSelectedDisplay('chips')
@@ -154,14 +154,14 @@ tableTargets.setTable(matrix)
 staticJob.addProperty(new ParametersDefinitionProperty(channel, release, deployMode, regions, features, targets, tableTargets))
 staticJob.save()
 
-def providerJob = jenkins.getItem('unified-parameters-provider-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-provider-e2e')
+def providerJob = jenkins.getItem('parameter-foundry-provider-e2e') ?: jenkins.createProject(FreeStyleProject, 'parameter-foundry-provider-e2e')
 providerJob.removeProperty(ParametersDefinitionProperty)
-def providerEnvironment = new UnifiedChoiceParameterDefinition('ENVIRONMENT')
+def providerEnvironment = new FoundryChoiceParameterDefinition('ENVIRONMENT')
 providerEnvironment.setChoices([new Option('staging'), new Option('production')])
 providerEnvironment.setRenderer('select')
 providerEnvironment.setDefaultMode('explicit')
 providerEnvironment.setDefaultValue('staging')
-def environments = new UnifiedChoiceParameterDefinition('ENVIRONMENTS')
+def environments = new FoundryChoiceParameterDefinition('ENVIRONMENTS')
 environments.setSelectionMode('multiple')
 environments.setProviderId('shared-environments')
 environments.setRenderer('checkbox')
@@ -169,25 +169,25 @@ environments.setSelectedDisplay('chips')
 environments.setDefaultMode('explicit')
 environments.setDefaultValues(['staging'])
 environments.setMinSelections(1)
-def artifact = new UnifiedChoiceParameterDefinition('ARTIFACT')
+def artifact = new FoundryChoiceParameterDefinition('ARTIFACT')
 artifact.setProviderId('shared-environments')
 artifact.setDependsOn(['ENVIRONMENT'])
 artifact.setRenderer('searchable')
 artifact.setDefaultMode('first')
 // Renderer regression fixtures: a Provider-backed single choice must render the renderer it was
 // configured with, and a radio group above the render limit must degrade explicitly.
-def targetNode = new UnifiedChoiceParameterDefinition('TARGET_NODE')
+def targetNode = new FoundryChoiceParameterDefinition('TARGET_NODE')
 targetNode.setProviderId('shared-environments')
 targetNode.setRenderer('radio')
 targetNode.setDefaultMode('explicit')
 targetNode.setDefaultValue('staging')
-def lockedNode = new UnifiedChoiceParameterDefinition('LOCKED_NODE')
+def lockedNode = new FoundryChoiceParameterDefinition('LOCKED_NODE')
 lockedNode.setProviderId('shared-environments')
 lockedNode.setRenderer('radio')
 lockedNode.setRequired(true)
 lockedNode.setDefaultMode('explicit')
 lockedNode.setDefaultValue('production')
-def wideRadio = new UnifiedChoiceParameterDefinition('WIDE_RADIO')
+def wideRadio = new FoundryChoiceParameterDefinition('WIDE_RADIO')
 wideRadio.setChoices((0..<70).collect { index ->
     new Option(String.format('narrow-%03d', index))
 })
@@ -195,13 +195,13 @@ wideRadio.setRenderer('radio')
 wideRadio.setDefaultMode('first')
 // A single choice can be shown as a list box too, which is what Active Choices called
 // PT_SINGLE_SELECT with visibleItemCount.
-def nodeList = new UnifiedChoiceParameterDefinition('NODE_LIST')
+def nodeList = new FoundryChoiceParameterDefinition('NODE_LIST')
 nodeList.setRenderer('list')
 nodeList.setProviderId('shared-environments')
 nodeList.setRequired(true)
 nodeList.setDefaultMode('explicit')
 nodeList.setDefaultValue('staging')
-def registryLogins = new UnifiedChoiceParameterDefinition('DOCKER_LOGINS')
+def registryLogins = new FoundryChoiceParameterDefinition('DOCKER_LOGINS')
 registryLogins.setSelectionMode('multiple')
 registryLogins.setRenderer('table')
 registryLogins.setProviderId('registries-on-agents')
@@ -213,7 +213,7 @@ providerJob.addProperty(new ParametersDefinitionProperty(
     providerEnvironment, environments, artifact, targetNode, lockedNode, wideRadio, nodeList, registryLogins))
 providerJob.save()
 
-def formJob = jenkins.getItem('unified-parameters-form-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-form-e2e')
+def formJob = jenkins.getItem('parameter-foundry-form-e2e') ?: jenkins.createProject(FreeStyleProject, 'parameter-foundry-form-e2e')
 formJob.removeProperty(ParametersDefinitionProperty)
 def serviceField = new FormField('service', 'string')
 serviceField.setLabel('Service name')
@@ -247,7 +247,7 @@ advancedLayout.setTitle('Advanced settings')
 advancedLayout.setFieldNames(['features', 'notes'])
 advancedLayout.setVisibleWhenField('advanced')
 advancedLayout.setVisibleWhenValue('true')
-def deploymentForm = new UnifiedFormParameterDefinition('DEPLOYMENT')
+def deploymentForm = new FoundryFormParameterDefinition('DEPLOYMENT')
 deploymentForm.setFields([serviceField, replicasField, enabledField, regionField, featuresField, notesField])
 deploymentForm.setLayouts([primaryLayout, advancedLayout])
 deploymentForm.setOutputMode('map')
@@ -257,7 +257,7 @@ formJob.save()
 
 def configJob = jenkins.getItem('up-config-e2e') ?: jenkins.createProject(FreeStyleProject, 'up-config-e2e')
 configJob.removeProperty(ParametersDefinitionProperty)
-def configTargets = new UnifiedChoiceParameterDefinition('CONFIGTARGETS')
+def configTargets = new FoundryChoiceParameterDefinition('CONFIGTARGETS')
 configTargets.setSelectionMode('multiple')
 configTargets.setChoices([new Option('android'), new Option('ios')])
 configTargets.setRenderer('checkbox')
@@ -267,7 +267,7 @@ configTargets.setDefaultValues(['android'])
 configJob.addProperty(new ParametersDefinitionProperty(configTargets))
 configJob.save()
 
-def pipeline = jenkins.getItem('unified-parameters-pipeline-e2e') ?: jenkins.createProject(WorkflowJob, 'unified-parameters-pipeline-e2e')
+def pipeline = jenkins.getItem('parameter-foundry-pipeline-e2e') ?: jenkins.createProject(WorkflowJob, 'parameter-foundry-pipeline-e2e')
 pipeline.removeProperty(ParametersDefinitionProperty)
 pipeline.addProperty(new ParametersDefinitionProperty(targets))
 pipeline.setDefinition(new CpsFlowDefinition(
@@ -287,7 +287,7 @@ def source = new ExtendedChoiceParameterDefinition(
 )
 def adapter = SourceMigrationAdapter.all().find { it.sourcePluginId == 'extended-choice-parameter' }
 def plan = adapter.inspect(source)
-def migrationJob = jenkins.getItem('unified-parameters-migration-e2e') ?: jenkins.createProject(FreeStyleProject, 'unified-parameters-migration-e2e')
+def migrationJob = jenkins.getItem('parameter-foundry-migration-e2e') ?: jenkins.createProject(FreeStyleProject, 'parameter-foundry-migration-e2e')
 migrationJob.removeProperty(ParametersDefinitionProperty)
 migrationJob.addProperty(new ParametersDefinitionProperty(source))
 migrationJob.save()
@@ -297,4 +297,4 @@ new File(jenkins.rootDir, 'migration-plan.json').text = JsonOutput.prettyPrint(J
     decisions: plan.decisions,
 ]))
 
-new File(jenkins.rootDir, 'unified-parameters-e2e-ready').text = 'ready'
+new File(jenkins.rootDir, 'parameter-foundry-e2e-ready').text = 'ready'

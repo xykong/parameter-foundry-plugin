@@ -25,7 +25,7 @@ reactor:
 
 ```text
 pom.xml                                  aggregator
-plugin/                                  unified-parameters HPI
+plugin/                                  parameter-foundry HPI
 migration-extended-choice/               adapter HPI
 ```
 
@@ -34,20 +34,20 @@ Future adapters add sibling HPI modules.
 The core artifact coordinates remain:
 
 ```text
-io.jenkins.plugins:unified-parameters
+io.jenkins.plugins:parameter-foundry
 ```
 
 The first adapter uses:
 
 ```text
-io.jenkins.plugins:unified-parameters-migration-extended-choice
+io.jenkins.plugins:parameter-foundry-migration-extended-choice
 ```
 
 ### Dependencies
 
 The adapter HPI has:
 
-- a required dependency on `unified-parameters`;
+- a required dependency on `parameter-foundry`;
 - a required dependency on the supported Extended Choice plugin while the
   adapter is installed;
 - no dependency from the core plugin back to either source plugin or adapter.

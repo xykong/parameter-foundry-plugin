@@ -26,7 +26,7 @@ validateJobDefinitions(List<ParameterDefinition>, ValidationContext)
 It checks:
 
 - model version and required fields;
-- reserved names, including `__unified_parameters_presence`;
+- reserved names, including `__parameter_foundry_presence`;
 - exactly one of static `choices` or dynamic `provider`;
 - Renderer/cardinality compatibility;
 - default mode/value invariants;
@@ -39,7 +39,7 @@ Job-level validation checks:
 
 - duplicate parameter names;
 - any definition, including a Core/third-party definition, named
-  `__unified_parameters_presence`;
+  `__parameter_foundry_presence`;
 - typed-adapter coverage when a Typed API operation is requested;
 - cross-parameter dependency references and cycles when applicable.
 

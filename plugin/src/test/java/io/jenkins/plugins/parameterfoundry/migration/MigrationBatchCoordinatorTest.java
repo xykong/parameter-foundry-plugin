@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,9 +11,9 @@ import example.invalid.InvalidTargetParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import java.nio.file.Files;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class MigrationBatchCoordinatorTest {
         assertTrue(preview.getDiff().contains("LEGACY_CHANNEL"));
         assertTrue(preview.getDiff().contains("LEGACY_TARGETS"));
         assertTrue(preview.getDiff().contains("ExtendedChoiceParameterDefinition"));
-        assertTrue(preview.getDiff().contains("UnifiedChoiceParameterDefinition"));
+        assertTrue(preview.getDiff().contains("FoundryChoiceParameterDefinition"));
         assertTrue(preview.getDiff().contains("- "), preview.getDiff());
         assertTrue(preview.getDiff().contains("+ "), preview.getDiff());
 
@@ -51,8 +51,8 @@ class MigrationBatchCoordinatorTest {
         MigrationBatchResult result = MigrationCoordinator.applyBatch(job, preview, preview.getRequiredDecisions());
 
         assertEquals(2, result.getRecordCount());
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, definition(job, "LEGACY_CHANNEL"));
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, definition(job, "LEGACY_TARGETS"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, definition(job, "LEGACY_CHANNEL"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, definition(job, "LEGACY_TARGETS"));
         assertInstanceOf(ExtendedChoiceParameterDefinition.class, definition(job, "LEGACY_DYNAMIC"));
         MigrationRecord record = result.getRecords().get(0);
         assertEquals(result.getBatchId(), record.getBatchId());
@@ -60,7 +60,7 @@ class MigrationBatchCoordinatorTest {
         assertTrue(Files.isRegularFile(jenkins.jenkins
                 .getRootDir()
                 .toPath()
-                .resolve("unified-parameters/migration-backups")
+                .resolve("parameter-foundry/migration-backups")
                 .resolve(record.getBackupFile())));
 
         EvaluationException singleRollback =

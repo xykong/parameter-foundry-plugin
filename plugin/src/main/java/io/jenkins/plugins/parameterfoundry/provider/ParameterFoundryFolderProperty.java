@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
@@ -10,13 +10,13 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-public final class UnifiedParametersFolderProperty extends AbstractFolderProperty<AbstractFolder<?>> {
+public final class ParameterFoundryFolderProperty extends AbstractFolderProperty<AbstractFolder<?>> {
 
     private List<SharedProviderDefinition> providers = List.of();
     private List<ConnectionProfile> connectionProfiles = List.of();
 
     @DataBoundConstructor
-    public UnifiedParametersFolderProperty() {}
+    public ParameterFoundryFolderProperty() {}
 
     public List<SharedProviderDefinition> getProviders() {
         return providers == null ? List.of() : providers;
@@ -25,7 +25,7 @@ public final class UnifiedParametersFolderProperty extends AbstractFolderPropert
     @DataBoundSetter
     public void setProviders(List<SharedProviderDefinition> providers) {
         this.providers = providers == null ? List.of() : List.copyOf(new ArrayList<>(providers));
-        UnifiedParametersGlobalConfiguration.requireUniqueIds(
+        ParameterFoundryGlobalConfiguration.requireUniqueIds(
                 this.providers.stream().map(SharedProviderDefinition::getId).toList(), "Provider");
     }
 
@@ -37,16 +37,16 @@ public final class UnifiedParametersFolderProperty extends AbstractFolderPropert
     public void setConnectionProfiles(List<ConnectionProfile> connectionProfiles) {
         this.connectionProfiles =
                 connectionProfiles == null ? List.of() : List.copyOf(new ArrayList<>(connectionProfiles));
-        UnifiedParametersGlobalConfiguration.requireUniqueIds(
+        ParameterFoundryGlobalConfiguration.requireUniqueIds(
                 this.connectionProfiles.stream().map(ConnectionProfile::getId).toList(), "Profile");
     }
 
     @Extension
-    @Symbol("unifiedParameters")
+    @Symbol("parameterFoundry")
     public static final class DescriptorImpl extends AbstractFolderPropertyDescriptor {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Providers";
+            return "Parameter Foundry Providers";
         }
     }
 }

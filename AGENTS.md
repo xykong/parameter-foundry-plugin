@@ -1,9 +1,9 @@
-# Unified Parameters Agent Rules
+# Parameter Foundry Agent Rules
 
 ## Project Scope
 
 This repository owns the community Jenkins plugin product, implementation,
-tests, architecture, migration tooling, and UI research for Unified Parameters.
+tests, architecture, migration tooling, and UI research for Parameter Foundry.
 
 Production Jenkins operations, deployment configuration, credentials, cluster
 changes, and organization-specific Job data do not belong in this repository.

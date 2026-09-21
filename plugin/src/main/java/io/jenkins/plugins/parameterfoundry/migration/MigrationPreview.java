@@ -1,8 +1,8 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.Messages;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.Messages;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,16 +128,16 @@ public final class MigrationPreview {
     }
 
     private static String summarize(ParameterDefinition target) {
-        if (!(target instanceof AbstractUnifiedParameterDefinition unified)) {
+        if (!(target instanceof AbstractFoundryParameterDefinition foundry)) {
             return Messages.MigrationPreviewNoTarget();
         }
         String cardinality =
-                unified.isMultiple() ? Messages.MigrationValueMultipleChoice() : Messages.MigrationValueSingleChoice();
+                foundry.isMultiple() ? Messages.MigrationValueMultipleChoice() : Messages.MigrationValueSingleChoice();
         return Messages.MigrationPreviewInlineSummary(
-                String.valueOf(unified.getChoices().size()),
+                String.valueOf(foundry.getChoices().size()),
                 cardinality,
-                unified.getRenderer(),
-                unified.getDefaultMode());
+                foundry.getRenderer(),
+                foundry.getDefaultMode());
     }
 
     private static List<String> verificationCases() {

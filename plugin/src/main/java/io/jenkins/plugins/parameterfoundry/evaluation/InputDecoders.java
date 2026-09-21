@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,11 +20,11 @@ public final class InputDecoders {
     private InputDecoders() {}
 
     public static DecodedInput fromStandardRequest(
-            AbstractUnifiedParameterDefinition definition, StaplerRequest2 request) {
+            AbstractFoundryParameterDefinition definition, StaplerRequest2 request) {
         validatePresenceMarkers(request);
         String[] raw = request.getParameterValues(definition.getName());
         boolean marked = hasMarker(
-                request.getParameterValues(AbstractUnifiedParameterDefinition.PRESENCE_FIELD), definition.getName());
+                request.getParameterValues(AbstractFoundryParameterDefinition.PRESENCE_FIELD), definition.getName());
         if (raw == null) {
             return marked ? DecodedInput.present(List.of()) : DecodedInput.absent();
         }
@@ -34,7 +34,7 @@ public final class InputDecoders {
         return DecodedInput.present(Arrays.asList(raw));
     }
 
-    public static DecodedInput fromSubmittedJson(AbstractUnifiedParameterDefinition definition, JSONObject submitted) {
+    public static DecodedInput fromSubmittedJson(AbstractFoundryParameterDefinition definition, JSONObject submitted) {
         if (!submitted.containsKey("value")) {
             return DecodedInput.present(List.of());
         }
@@ -52,7 +52,7 @@ public final class InputDecoders {
         return DecodedInput.present(List.of(String.valueOf(raw)));
     }
 
-    public static DecodedInput fromCli(AbstractUnifiedParameterDefinition definition, String rawValue) {
+    public static DecodedInput fromCli(AbstractFoundryParameterDefinition definition, String rawValue) {
         if (rawValue == null) {
             return DecodedInput.absent();
         }
@@ -78,7 +78,7 @@ public final class InputDecoders {
         return DecodedInput.present(List.of(rawValue));
     }
 
-    private static List<String> decodeMultiTransport(AbstractUnifiedParameterDefinition definition, List<String> raw) {
+    private static List<String> decodeMultiTransport(AbstractFoundryParameterDefinition definition, List<String> raw) {
         return switch (definition.getStandardApiInputMode()) {
             case "repeated" -> List.copyOf(raw);
             case "json-array" -> {
@@ -114,7 +114,7 @@ public final class InputDecoders {
         return Arrays.asList(input.split(java.util.regex.Pattern.quote(delimiter), -1));
     }
 
-    private static EvaluationException malformed(AbstractUnifiedParameterDefinition definition, String message) {
+    private static EvaluationException malformed(AbstractFoundryParameterDefinition definition, String message) {
         return new EvaluationException(ErrorCode.MALFORMED_INPUT, definition.getName(), message);
     }
 
@@ -131,7 +131,7 @@ public final class InputDecoders {
     }
 
     private static void validatePresenceMarkers(StaplerRequest2 request) {
-        String[] markers = request.getParameterValues(AbstractUnifiedParameterDefinition.PRESENCE_FIELD);
+        String[] markers = request.getParameterValues(AbstractFoundryParameterDefinition.PRESENCE_FIELD);
         if (markers == null) {
             return;
         }

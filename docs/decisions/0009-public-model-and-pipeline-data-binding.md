@@ -17,7 +17,7 @@ Job DSL, JCasC, XML, and Snippet Generator output to drift.
 The persisted public `1.x` ParameterDefinition model is intentionally concise.
 Nested runtime models are internal evaluation objects.
 
-`UnifiedChoiceParameterDefinition`:
+`FoundryChoiceParameterDefinition`:
 
 ```text
 name                         constructor field
@@ -32,7 +32,7 @@ environmentExport
 modelVersion
 ```
 
-`UnifiedChoiceParameterDefinition` in multiple mode:
+`FoundryChoiceParameterDefinition` in multiple mode:
 
 ```text
 name                         constructor field
@@ -77,7 +77,7 @@ internal specs.
 Static `1.0` syntax remains:
 
 ```groovy
-unifiedChoice(
+foundryChoice(
     name: 'TARGETS',
     selectionMode: 'multiple',
     choices: [
@@ -96,7 +96,7 @@ unifiedChoice(
 Dynamic `1.1` syntax uses the same definition with a typed nested Provider:
 
 ```groovy
-unifiedChoice(
+foundryChoice(
     name: 'RELEASE',
     provider: restOptions(
         connection: 'release-catalog',

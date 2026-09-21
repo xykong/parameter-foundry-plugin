@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -25,14 +25,14 @@ class LocalizedChoicePageTest {
         try (var client =
                 jenkins.createWebClient().withJavaScriptEnabled(false).withThrowExceptionOnFailingStatusCode(false)) {
             HtmlPage page = client.getPage(project, "build?delay=0sec");
-            HtmlElement field = page.querySelector("[data-unified-parameter]");
+            HtmlElement field = page.querySelector("[data-parameter-foundry]");
             assertEquals(
                     "{0} matches; showing {1}. Refine the search. {2} selected.",
                     field.getAttribute("data-up-limited-matches"));
         }
         for (String suffix : List.of("", "_zh_CN", "_ja", "_ko")) {
             Properties messages = new Properties();
-            String resource = "/io/jenkins/plugins/unifiedparameters/Messages" + suffix + ".properties";
+            String resource = "/io/jenkins/plugins/parameterfoundry/Messages" + suffix + ".properties";
             try (InputStream stream = getClass().getResourceAsStream(resource)) {
                 assertTrue(stream != null, resource);
                 messages.load(stream);

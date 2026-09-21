@@ -1,4 +1,4 @@
-# Unified Parameters `1.0` UI Interaction Specification
+# Parameter Foundry `1.0` UI Interaction Specification
 
 ## 1. Scope
 
@@ -6,12 +6,12 @@ This specification covers:
 
 - Freestyle/Pipeline parameter configuration;
 - Build with Parameters;
-- `unifiedChoice` with `selectionMode`;
+- `foundryChoice` with `selectionMode`;
 - Inline Provider editing;
 - select, searchable combobox, radio, list, chips, and checkbox renderers;
 - loading, empty, invalid, disabled, and configuration-error states.
 
-Reactive, REST Provider, cascade, and Unified Form interactions are later
+Reactive, REST Provider, cascade, and Foundry Form interactions are later
 specifications.
 
 The interactive design companion is
@@ -125,7 +125,7 @@ Every renderer displays:
 
 Changing Renderer does not change selected values or submission encoding.
 The generated form includes one
-`__unified_parameters_presence=<parameter-name>` metadata marker per Unified
+`__parameter_foundry_presence=<parameter-name>` metadata marker per Foundry
 parameter. The marker is transport metadata and is not an Option value.
 
 ### 4.2 Single Choice

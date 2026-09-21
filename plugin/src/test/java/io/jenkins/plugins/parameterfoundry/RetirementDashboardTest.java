@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,8 +9,8 @@ import example.legacy.LegacyParameterValue;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.retirement.RetirementFinding;
-import io.jenkins.plugins.unifiedparameters.retirement.RetirementScanner;
+import io.jenkins.plugins.parameterfoundry.retirement.RetirementFinding;
+import io.jenkins.plugins.parameterfoundry.retirement.RetirementScanner;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -41,10 +41,10 @@ class RetirementDashboardTest {
         assertEquals(1, value.historicalBuilds());
         assertTrue(value.activeJobs().isEmpty());
 
-        JenkinsRule.JSONWebResponse report = jenkins.createWebClient().getJSON("unified-parameters-retirement/report");
+        JenkinsRule.JSONWebResponse report = jenkins.createWebClient().getJSON("parameter-foundry-retirement/report");
         assertTrue(report.getJSONObject().getJSONArray("findings").size() >= 2);
         String dashboard =
-                jenkins.createWebClient().goTo("unified-parameters-retirement/").asNormalizedText();
+                jenkins.createWebClient().goTo("parameter-foundry-retirement/").asNormalizedText();
         assertTrue(dashboard.contains("unknown-external"));
         assertTrue(dashboard.contains("Active Jobs"));
     }

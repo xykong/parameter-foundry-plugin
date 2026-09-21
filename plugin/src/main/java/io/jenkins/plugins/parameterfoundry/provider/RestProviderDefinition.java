@@ -1,8 +1,8 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -149,14 +149,14 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     public List<Option> load(ProviderLoadContext context) {
         ConnectionProfile profile = context.connectionProfile()
                 .orElseThrow(() -> new ProviderException(
-                        io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                         getId(),
                         "Connection Profile is unavailable."));
         Map<String, String> query = new LinkedHashMap<>();
         for (RestQueryParameter parameter : getQueryParameters()) {
             if (query.put(parameter.getName(), parameter.resolveValue(context.request())) != null) {
                 throw new ProviderException(
-                        io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                         getId(),
                         "REST Provider has a duplicate query parameter.");
             }
@@ -166,7 +166,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         String responseFormat = "auto".equals(getFormat()) ? response.format() : getFormat();
         if (!responseFormat.equals(response.format())) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     getId(),
                     "REST Provider response Content-Type does not match the configured format.");
         }
@@ -218,11 +218,11 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     @Extension
-    @Symbol("unifiedRestProvider")
+    @Symbol("foundryRestProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters REST JSON/XML Provider";
+            return "Parameter Foundry REST JSON/XML Provider";
         }
     }
 }

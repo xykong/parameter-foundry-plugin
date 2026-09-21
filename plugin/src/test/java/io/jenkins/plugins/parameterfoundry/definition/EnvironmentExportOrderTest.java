@@ -1,12 +1,12 @@
-package io.jenkins.plugins.unifiedparameters.definition;
+package io.jenkins.plugins.parameterfoundry.definition;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.EnvVars;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ class EnvironmentExportOrderTest {
 
     @Test
     void theCanonicalOrderIsTheDefaultAndStaysSorted() {
-        UnifiedChoiceParameterDefinition definition = multipleChoice();
+        FoundryChoiceParameterDefinition definition = multipleChoice();
 
         assertEquals("canonical", definition.getEnvironmentExportOrder());
         assertEquals("android,web", exported(definition, List.of("web", "android"), "canonical"));
@@ -22,16 +22,16 @@ class EnvironmentExportOrderTest {
 
     @Test
     void theSubmittedOrderKeepsTheSourceString() {
-        UnifiedChoiceParameterDefinition definition = multipleChoice();
+        FoundryChoiceParameterDefinition definition = multipleChoice();
 
         assertEquals("web,android", exported(definition, List.of("web", "android"), "submitted"));
     }
 
     @Test
     void theJsonExportFollowsTheSelectedOrder() {
-        UnifiedChoiceParameterValue canonical = UnifiedChoiceParameterValue.multiple(
+        FoundryChoiceParameterValue canonical = FoundryChoiceParameterValue.multiple(
                 "TARGETS", List.of("android", "web"), List.of("web", "android"), null, "json", ",", "canonical", null);
-        UnifiedChoiceParameterValue submitted = UnifiedChoiceParameterValue.multiple(
+        FoundryChoiceParameterValue submitted = FoundryChoiceParameterValue.multiple(
                 "TARGETS", List.of("android", "web"), List.of("web", "android"), null, "json", ",", "submitted", null);
 
         assertEquals("[\"android\",\"web\"]", environment(canonical));
@@ -43,7 +43,7 @@ class EnvironmentExportOrderTest {
 
     @Test
     void validationRejectsAnUnknownOrder() {
-        UnifiedChoiceParameterDefinition definition = multipleChoice();
+        FoundryChoiceParameterDefinition definition = multipleChoice();
 
         assertThrows(IllegalArgumentException.class, () -> definition.setEnvironmentExportOrder("random"));
         assertTrue(
@@ -51,9 +51,9 @@ class EnvironmentExportOrderTest {
     }
 
     private static String exported(
-            UnifiedChoiceParameterDefinition definition, List<String> submitted, String exportOrder) {
+            FoundryChoiceParameterDefinition definition, List<String> submitted, String exportOrder) {
         definition.setEnvironmentExportOrder(exportOrder);
-        UnifiedChoiceParameterValue value = UnifiedChoiceParameterValue.multiple(
+        FoundryChoiceParameterValue value = FoundryChoiceParameterValue.multiple(
                 definition.getName(),
                 List.of("android", "web"),
                 submitted,
@@ -65,14 +65,14 @@ class EnvironmentExportOrderTest {
         return environment(value);
     }
 
-    private static String environment(UnifiedChoiceParameterValue value) {
+    private static String environment(FoundryChoiceParameterValue value) {
         EnvVars environment = new EnvVars();
         value.buildEnvironment(null, environment);
         return environment.get(value.getName());
     }
 
-    private static UnifiedChoiceParameterDefinition multipleChoice() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+    private static FoundryChoiceParameterDefinition multipleChoice() {
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("TARGETS");
         definition.setSelectionMode("multiple");
         definition.setRenderer("checkbox");
         definition.setChoices(List.of(new Option("android"), new Option("web")));

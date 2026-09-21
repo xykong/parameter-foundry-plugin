@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.migration.activechoices;
+package io.jenkins.plugins.parameterfoundry.migration.activechoices;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
 import java.util.List;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
@@ -29,7 +29,7 @@ class ActiveChoicesMigrationAdapterTest {
 
         assertEquals(MigrationClassification.B, plan.getClassification());
         String skeleton = plan.getTargetSkeleton();
-        assertTrue(skeleton.contains("unifiedMappingProvider"), skeleton);
+        assertTrue(skeleton.contains("foundryMappingProvider"), skeleton);
         assertTrue(skeleton.contains("[value: '-Dsample-project_TRACY=1']"), skeleton);
         assertTrue(
                 plan.getDecisions().stream().anyMatch(decision -> decision.contains("empty source option")),
@@ -69,7 +69,7 @@ class ActiveChoicesMigrationAdapterTest {
 
         assertEquals(MigrationClassification.B, plan.getClassification());
         assertNull(plan.getTarget());
-        assertTrue(plan.getTargetSkeleton().contains("unifiedNodeProvider"), plan.getTargetSkeleton());
+        assertTrue(plan.getTargetSkeleton().contains("foundryNodeProvider"), plan.getTargetSkeleton());
         assertTrue(plan.getTargetSkeleton().contains("source: 'nodes'"), plan.getTargetSkeleton());
         assertEquals("nodes", plan.getFacts().get("Offered node source"));
     }
@@ -87,7 +87,7 @@ class ActiveChoicesMigrationAdapterTest {
         var plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.B, plan.getClassification());
-        assertTrue(plan.getTargetSkeleton().contains("unifiedNodeProvider"), plan.getTargetSkeleton());
+        assertTrue(plan.getTargetSkeleton().contains("foundryNodeProvider"), plan.getTargetSkeleton());
     }
 
     @Test
@@ -123,7 +123,7 @@ class ActiveChoicesMigrationAdapterTest {
         assertEquals(MigrationClassification.B, plan.getClassification());
         assertNull(plan.getTarget());
         String skeleton = plan.getTargetSkeleton();
-        assertTrue(skeleton.contains("unifiedMappingProvider"), skeleton);
+        assertTrue(skeleton.contains("foundryMappingProvider"), skeleton);
         assertTrue(skeleton.contains("dependencyParameter: 'BUILD_MODE'"), skeleton);
         assertTrue(skeleton.contains("[value: 'store']"), skeleton);
         assertTrue(skeleton.contains("[value: 'debug'], [value: 'release']"), skeleton);
@@ -140,8 +140,7 @@ class ActiveChoicesMigrationAdapterTest {
         var plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.A, plan.getClassification());
-        var target =
-                (io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition) plan.getTarget();
+        var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition) plan.getTarget();
         assertEquals("single", target.getSelectionMode());
         assertEquals("searchable", target.getRenderer());
         assertEquals("explicit", target.getDefaultMode());
@@ -173,7 +172,7 @@ class ActiveChoicesMigrationAdapterTest {
         var plan = adapter.inspect(source);
 
         assertEquals(MigrationClassification.C, plan.getClassification());
-        assertTrue(plan.getTargetSkeleton().contains("unifiedRestProvider"));
+        assertTrue(plan.getTargetSkeleton().contains("foundryRestProvider"));
         assertTrue(plan.getTargetSkeleton().contains("relativePath: '<reviewed-source-path>'"));
         assertFalse(plan.getTargetSkeleton().contains("internal.example.test"));
         assertEquals("https://<host>/api/platforms", plan.getFacts().get("Detected endpoint"));
@@ -214,7 +213,7 @@ class ActiveChoicesMigrationAdapterTest {
     void textBoxReferenceProducesTypedStringFieldAndPreservesDependencies() {
         var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS", "ENVIRONMENT", "ET_TEXT_BOX", false));
 
-        assertTrue(plan.getTargetSkeleton().contains("unifiedForm"));
+        assertTrue(plan.getTargetSkeleton().contains("foundryForm"));
         assertTrue(plan.getTargetSkeleton().contains("field('DETAILS', 'string')"));
         assertTrue(plan.getTargetSkeleton().contains("ENVIRONMENT"));
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("raw string")));
@@ -235,7 +234,7 @@ class ActiveChoicesMigrationAdapterTest {
         var plan = adapter.inspect(new DynamicReferenceParameter("DETAILS"));
 
         assertEquals(MigrationClassification.C, plan.getClassification());
-        assertTrue(plan.getTargetSkeleton().contains("unifiedForm"));
+        assertTrue(plan.getTargetSkeleton().contains("foundryForm"));
         assertTrue(plan.getTargetSkeleton().contains("TODO reviewed typed fields"));
         assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("formatted HTML")));
     }

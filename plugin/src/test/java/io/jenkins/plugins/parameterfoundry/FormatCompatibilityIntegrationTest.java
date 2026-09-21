@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,17 +18,17 @@ import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.form.FormField;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterValue;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
-import io.jenkins.plugins.unifiedparameters.provider.SharedProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotStore;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.form.FormField;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.SharedProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,18 +53,18 @@ class FormatCompatibilityIntegrationTest {
                 new StandardCase(
                         "repeated",
                         List.of(
-                                new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                                new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                                 new NameValuePair("TARGETS", "web"),
                                 new NameValuePair("TARGETS", "android"))),
                 new StandardCase(
                         "json-array",
                         List.of(
-                                new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                                new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                                 new NameValuePair("TARGETS", "[\"web\",\"android\"]"))),
                 new StandardCase(
                         "delimited",
                         List.of(
-                                new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                                new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                                 new NameValuePair("TARGETS", "web|android"))));
 
         for (StandardCase testCase : cases) {
@@ -84,7 +84,7 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void standardRestAbsentAndPresenceOnlyEmptyRemainDistinct(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "standard-empty", ",");
-        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition definition = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
@@ -102,7 +102,7 @@ class FormatCompatibilityIntegrationTest {
                                 jenkins,
                                 project,
                                 List.of(new NameValuePair(
-                                        AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS")))
+                                        AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS")))
                         .getWebResponse()
                         .getStatusCode());
         jenkins.waitUntilNoActivity();
@@ -122,7 +122,7 @@ class FormatCompatibilityIntegrationTest {
 
         assertEquals(
                 1,
-                page.getByXPath("//input[@name='__unified_parameters_presence' and @value='TARGETS']")
+                page.getByXPath("//input[@name='__parameter_foundry_presence' and @value='TARGETS']")
                         .size());
         assertEquals(
                 1,
@@ -143,8 +143,8 @@ class FormatCompatibilityIntegrationTest {
 
         assertEquals(201, response.getWebResponse().getStatusCode());
         jenkins.waitUntilNoActivity();
-        UnifiedFormParameterValue value = assertInstanceOf(
-                UnifiedFormParameterValue.class,
+        FoundryFormParameterValue value = assertInstanceOf(
+                FoundryFormParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("DEPLOYMENT"));
         assertEquals("checkout", value.getStructuredValue().get("service"));
         assertEquals(3L, value.getStructuredValue().get("replicas"));
@@ -168,7 +168,7 @@ class FormatCompatibilityIntegrationTest {
         body.put("values", values);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", body);
 
         assertEquals(200, response.getStatusCode(), response.getJSONObject().toString());
         JSONObject canonical = response.getJSONObject().getJSONObject("canonicalValues");
@@ -181,15 +181,15 @@ class FormatCompatibilityIntegrationTest {
         assertEquals(3, canonical.getJSONObject("DEPLOYMENT").getInt("replicas"));
 
         JenkinsRule.JSONWebResponse schema =
-                jenkins.createWebClient().getJSON(project.getUrl() + "unified-parameters/api/v1/schema");
+                jenkins.createWebClient().getJSON(project.getUrl() + "parameter-foundry/api/v1/schema");
         assertEquals("string", schemaFor(schema, "MESSAGE").getString("type"));
         assertEquals("array", schemaFor(schema, "TARGETS").getString("type"));
         assertEquals("object", schemaFor(schema, "DEPLOYMENT").getString("type"));
     }
 
     @Test
-    void unifiedChoiceMultipleModeUsesArrayShapeInTypedApi(JenkinsRule jenkins) throws Exception {
-        FreeStyleProject project = unifiedMultipleJob(jenkins, "unified-typed-array");
+    void foundryChoiceMultipleModeUsesArrayShapeInTypedApi(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = foundryMultipleJob(jenkins, "foundry-typed-array");
 
         JSONObject values = new JSONObject();
         values.put("TARGETS", JSONArray.fromObject(List.of("web", "android")));
@@ -197,7 +197,7 @@ class FormatCompatibilityIntegrationTest {
         body.put("values", values);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", body);
 
         assertEquals(200, response.getStatusCode(), response.getJSONObject().toString());
         assertEquals(
@@ -205,20 +205,20 @@ class FormatCompatibilityIntegrationTest {
                 response.getJSONObject().getJSONObject("canonicalValues").getJSONArray("TARGETS"));
 
         JenkinsRule.JSONWebResponse schema =
-                jenkins.createWebClient().getJSON(project.getUrl() + "unified-parameters/api/v1/schema");
+                jenkins.createWebClient().getJSON(project.getUrl() + "parameter-foundry/api/v1/schema");
         JSONObject targets = schemaFor(schema, "TARGETS");
         assertEquals("array", targets.getString("type"));
         assertEquals("multiple", targets.getString("selectionMode"));
     }
 
     @Test
-    void resolveReturnsOptionsForUnifiedChoiceMultipleMode(JenkinsRule jenkins) throws Exception {
-        FreeStyleProject project = unifiedMultipleJob(jenkins, "unified-resolve-multiple");
+    void resolveReturnsOptionsForFoundryChoiceMultipleMode(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject project = foundryMultipleJob(jenkins, "foundry-resolve-multiple");
 
         JSONObject body = new JSONObject();
         body.put("parameter", "TARGETS");
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", body);
 
         assertEquals(200, response.getStatusCode(), response.getJSONObject().toString());
         JSONObject resolved = response.getJSONObject();
@@ -231,14 +231,14 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void typedApiUsesDefaultsForOmittedValuesAndEmptyArrayForExplicitEmpty(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-empty-default", ",");
-        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition definition = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
 
         JSONObject omitted = new JSONObject();
         JenkinsRule.JSONWebResponse omittedResponse =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", valuesBody(omitted));
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", valuesBody(omitted));
         assertEquals(
                 JSONArray.fromObject(List.of("android")),
                 omittedResponse.getJSONObject().getJSONObject("canonicalValues").getJSONArray("TARGETS"));
@@ -246,7 +246,7 @@ class FormatCompatibilityIntegrationTest {
         JSONObject explicitEmpty = new JSONObject();
         explicitEmpty.put("TARGETS", new JSONArray());
         JenkinsRule.JSONWebResponse emptyResponse =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", valuesBody(explicitEmpty));
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", valuesBody(explicitEmpty));
         assertEquals(
                 JSONArray.fromObject(List.of()),
                 emptyResponse.getJSONObject().getJSONObject("canonicalValues").getJSONArray("TARGETS"));
@@ -287,7 +287,7 @@ class FormatCompatibilityIntegrationTest {
 
     @Test
     void standardDependencyJsonCanReuseTypedResolveSnapshot(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "standard-snapshot-format");
 
@@ -297,7 +297,7 @@ class FormatCompatibilityIntegrationTest {
         resolveBody.put("parameter", "ARTIFACT");
         resolveBody.put("dependencies", dependencies);
         JenkinsRule.JSONWebResponse resolved =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
         assertEquals(200, resolved.getStatusCode());
         String snapshotId = resolved.getJSONObject().getString("snapshotId");
 
@@ -305,8 +305,8 @@ class FormatCompatibilityIntegrationTest {
                 jenkins,
                 project,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "ENVIRONMENT"),
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "ARTIFACT"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "ENVIRONMENT"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "ARTIFACT"),
                         new NameValuePair("ENVIRONMENT", "production"),
                         new NameValuePair("ARTIFACT", "production-artifact"),
                         new NameValuePair("__up_dependencies_ARTIFACT", "{\"ENVIRONMENT\":\"production\"}"),
@@ -317,8 +317,8 @@ class FormatCompatibilityIntegrationTest {
                 response.getWebResponse().getStatusCode(),
                 response.getWebResponse().getContentAsString());
         jenkins.waitUntilNoActivity();
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT"));
         assertEquals("production-artifact", value.getValue());
         assertNotNull(value.getProviderSnapshot());
@@ -329,9 +329,9 @@ class FormatCompatibilityIntegrationTest {
     void expiredSnapshotIsRefreshedBeforeBuild(JenkinsRule jenkins) throws Exception {
         DependencyProvider provider = new DependencyProvider("artifacts");
         provider.setCacheTtlSeconds(0);
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
         ProviderSnapshotStore.get().clear();
-        io.jenkins.plugins.unifiedparameters.provider.ProviderRuntime.get().clear();
+        io.jenkins.plugins.parameterfoundry.provider.ProviderRuntime.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "expired-snapshot-format");
 
         JSONObject dependencies = new JSONObject();
@@ -340,7 +340,7 @@ class FormatCompatibilityIntegrationTest {
         resolveBody.put("parameter", "ARTIFACT");
         resolveBody.put("dependencies", dependencies);
         JenkinsRule.JSONWebResponse resolved =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
         String snapshotId = resolved.getJSONObject().getString("snapshotId");
 
         JSONObject values = new JSONObject();
@@ -353,12 +353,12 @@ class FormatCompatibilityIntegrationTest {
         body.put("providerSnapshots", snapshots);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body);
 
         assertEquals(201, response.getStatusCode(), response.getJSONObject().toString());
         jenkins.waitUntilNoActivity();
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT"));
         assertNotNull(value.getProviderSnapshot());
         assertNotEquals(snapshotId, value.getProviderSnapshot().getSnapshotId());
@@ -370,12 +370,12 @@ class FormatCompatibilityIntegrationTest {
                 jenkins,
                 "standard-unknown",
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "unknown")),
                 "UNKNOWN_VALUE");
 
         FreeStyleProject disabled = standardMultipleJob(jenkins, "repeated", "standard-disabled", ",");
-        UnifiedChoiceParameterDefinition disabledDefinition = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition disabledDefinition = (FoundryChoiceParameterDefinition)
                 disabled.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         Option disabledOption = disabledDefinition.findOption("android");
         disabledOption.setDisabled(true);
@@ -383,7 +383,7 @@ class FormatCompatibilityIntegrationTest {
                 jenkins,
                 disabled,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "android")),
                 "DISABLED_VALUE");
 
@@ -391,7 +391,7 @@ class FormatCompatibilityIntegrationTest {
                 jenkins,
                 "standard-duplicate",
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "android"),
                         new NameValuePair("TARGETS", "android")),
                 "DUPLICATE_VALUE");
@@ -401,7 +401,7 @@ class FormatCompatibilityIntegrationTest {
                 jenkins,
                 malformed,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "[\"android\"")),
                 "MALFORMED_INPUT");
     }
@@ -409,7 +409,7 @@ class FormatCompatibilityIntegrationTest {
     @Test
     void typedApiRejectsWrongContainersInsteadOfApplyingDefaults(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = standardMultipleJob(jenkins, "repeated", "typed-wrong-container", ",");
-        UnifiedChoiceParameterDefinition definition = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition definition = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("TARGETS");
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
@@ -418,9 +418,9 @@ class FormatCompatibilityIntegrationTest {
         JSONObject wrongValues = new JSONObject();
         wrongValues.put("values", JSONArray.fromObject(List.of("android")));
         JenkinsRule.JSONWebResponse wrongValuesResponse =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", wrongValues);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", wrongValues);
         assertEquals(400, wrongValuesResponse.getStatusCode());
-        assertEquals("UNIFIED_PARAMETER_INVALID_TYPE", errorCode(wrongValuesResponse));
+        assertEquals("PARAMETER_FOUNDRY_INVALID_TYPE", errorCode(wrongValuesResponse));
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
 
         JSONObject wrongParameterValue = new JSONObject();
@@ -428,15 +428,15 @@ class FormatCompatibilityIntegrationTest {
         values.put("TARGETS", "android");
         wrongParameterValue.put("values", values);
         JenkinsRule.JSONWebResponse wrongParameterValueResponse =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", wrongParameterValue);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", wrongParameterValue);
         assertEquals(400, wrongParameterValueResponse.getStatusCode());
-        assertEquals("UNIFIED_PARAMETER_INVALID_TYPE", errorCode(wrongParameterValueResponse));
+        assertEquals("PARAMETER_FOUNDRY_INVALID_TYPE", errorCode(wrongParameterValueResponse));
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
     }
 
     @Test
     void snapshotBindingFailureIsAConflictAndDoesNotQueue(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "stale-snapshot-format");
 
@@ -446,7 +446,7 @@ class FormatCompatibilityIntegrationTest {
         resolveBody.put("parameter", "ARTIFACT");
         resolveBody.put("dependencies", dependencies);
         JenkinsRule.JSONWebResponse resolved =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
         String snapshotId = resolved.getJSONObject().getString("snapshotId");
 
         JSONObject values = new JSONObject();
@@ -460,29 +460,29 @@ class FormatCompatibilityIntegrationTest {
         int queueLength = jenkins.jenkins.getQueue().getItems().length;
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body);
 
         assertEquals(409, response.getStatusCode());
-        assertEquals("UNIFIED_PARAMETER_SNAPSHOT_INVALID", errorCode(response));
+        assertEquals("PARAMETER_FOUNDRY_SNAPSHOT_INVALID", errorCode(response));
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
     }
 
     @Test
     void multiChoiceExportUsesCanonicalFormatNotSubmissionOrder() {
-        UnifiedChoiceParameterValue delimited = UnifiedChoiceParameterValue.multiple(
+        FoundryChoiceParameterValue delimited = FoundryChoiceParameterValue.multiple(
                 "TARGETS", List.of("web", "android"), null, "delimited", "|", null);
         EnvVars delimitedEnvironment = new EnvVars();
         delimited.buildEnvironment(null, delimitedEnvironment);
         assertEquals("android|web", delimitedEnvironment.get("TARGETS"));
 
-        UnifiedChoiceParameterValue json =
-                UnifiedChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "json", "|", null);
+        FoundryChoiceParameterValue json =
+                FoundryChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "json", "|", null);
         EnvVars jsonEnvironment = new EnvVars();
         json.buildEnvironment(null, jsonEnvironment);
         assertEquals("[\"android\",\"web\"]", jsonEnvironment.get("TARGETS"));
 
-        UnifiedChoiceParameterValue none =
-                UnifiedChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "none", "|", null);
+        FoundryChoiceParameterValue none =
+                FoundryChoiceParameterValue.multiple("TARGETS", List.of("web", "android"), null, "none", "|", null);
         EnvVars noneEnvironment = new EnvVars();
         none.buildEnvironment(null, noneEnvironment);
         assertFalse(noneEnvironment.containsKey("TARGETS"));
@@ -500,7 +500,7 @@ class FormatCompatibilityIntegrationTest {
         Page response = postForm(jenkins, project, parameters);
         assertEquals(400, response.getWebResponse().getStatusCode(), expectedCode);
         assertTrue(
-                response.getWebResponse().getContentAsString().contains("UNIFIED_PARAMETER_" + expectedCode),
+                response.getWebResponse().getContentAsString().contains("PARAMETER_FOUNDRY_" + expectedCode),
                 response.getWebResponse().getContentAsString());
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
     }
@@ -525,16 +525,16 @@ class FormatCompatibilityIntegrationTest {
         return response.getJSONObject().getJSONArray("errors").getJSONObject(0).getString("code");
     }
 
-    private static UnifiedChoiceParameterValue multipleValue(FreeStyleBuild build) {
+    private static FoundryChoiceParameterValue multipleValue(FreeStyleBuild build) {
         return assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+                FoundryChoiceParameterValue.class,
                 build.getAction(ParametersAction.class).getParameter("TARGETS"));
     }
 
     private static FreeStyleProject standardMultipleJob(JenkinsRule jenkins, String mode, String name, String delimiter)
             throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setStandardApiInputMode(mode);
         definition.setDelimiter(delimiter);
@@ -542,9 +542,9 @@ class FormatCompatibilityIntegrationTest {
         return project;
     }
 
-    private static FreeStyleProject unifiedMultipleJob(JenkinsRule jenkins, String name) throws Exception {
+    private static FreeStyleProject foundryMultipleJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("TARGETS");
         definition.setSelectionMode("multiple");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -553,7 +553,7 @@ class FormatCompatibilityIntegrationTest {
 
     private static FreeStyleProject formJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("DEPLOYMENT");
+        FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition("DEPLOYMENT");
         FormField service = new FormField("service", "string");
         service.setRequired(true);
         FormField replicas = new FormField("replicas", "integer");
@@ -567,11 +567,11 @@ class FormatCompatibilityIntegrationTest {
 
     private static FreeStyleProject typedShapeJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition channel = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition channel = new FoundryChoiceParameterDefinition("CHANNEL");
         channel.setChoices(List.of(new Option("staging"), new Option("production")));
-        UnifiedChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
         targets.setChoices(List.of(new Option("web"), new Option("android")));
-        UnifiedFormParameterDefinition form = formDefinition();
+        FoundryFormParameterDefinition form = formDefinition();
         project.addProperty(new ParametersDefinitionProperty(
                 new StringParameterDefinition("MESSAGE", "default", ""),
                 new BooleanParameterDefinition("FLAG", false, ""),
@@ -582,8 +582,8 @@ class FormatCompatibilityIntegrationTest {
         return project;
     }
 
-    private static UnifiedFormParameterDefinition formDefinition() {
-        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("DEPLOYMENT");
+    private static FoundryFormParameterDefinition formDefinition() {
+        FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition("DEPLOYMENT");
         FormField service = new FormField("service", "string");
         service.setRequired(true);
         FormField replicas = new FormField("replicas", "integer");
@@ -596,11 +596,11 @@ class FormatCompatibilityIntegrationTest {
 
     private static FreeStyleProject reactiveJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        FoundryChoiceParameterDefinition environment = new FoundryChoiceParameterDefinition("ENVIRONMENT");
         environment.setChoices(List.of(new Option("staging"), new Option("production")));
         environment.setDefaultMode("explicit");
         environment.setDefaultValue("staging");
-        UnifiedChoiceParameterDefinition artifact = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        FoundryChoiceParameterDefinition artifact = new FoundryChoiceParameterDefinition("ARTIFACT");
         artifact.setProviderId("artifacts");
         artifact.setDependsOn(List.of("ENVIRONMENT"));
         artifact.setDefaultMode("first");
@@ -628,7 +628,7 @@ class FormatCompatibilityIntegrationTest {
             String fileName,
             String fileContent)
             throws Exception {
-        String boundary = "----UnifiedParametersFormatTest";
+        String boundary = "----ParameterFoundryFormatTest";
         StringBuilder body = new StringBuilder();
         for (NameValuePair parameter : parameters) {
             body.append("--").append(boundary).append("\r\n");

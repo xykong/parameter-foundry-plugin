@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.Extension;
-import io.jenkins.plugins.unifiedparameters.Messages;
+import io.jenkins.plugins.parameterfoundry.Messages;
 import java.util.ArrayList;
 import java.util.List;
 import jenkins.model.GlobalConfiguration;
@@ -60,6 +60,6 @@ public final class MigrationRecordStore extends GlobalConfiguration {
 
     @Override
     public String getDisplayName() {
-        return "Unified Parameters Migration Records";
+        return "Parameter Foundry Migration Records";
     }
 }

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -245,7 +245,7 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
             throw exception;
         } catch (IllegalArgumentException exception) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     id,
                     "Connection Profile target is not allowed.");
         }
@@ -350,11 +350,11 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
     }
 
     @Extension
-    @Symbol("unifiedConnectionProfile")
+    @Symbol("foundryConnectionProfile")
     public static final class DescriptorImpl extends Descriptor<ConnectionProfile> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Connection Profile";
+            return "Parameter Foundry Connection Profile";
         }
     }
 }

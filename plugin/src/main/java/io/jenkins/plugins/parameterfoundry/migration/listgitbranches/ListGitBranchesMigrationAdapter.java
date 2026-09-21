@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.migration.listgitbranches;
+package io.jenkins.plugins.parameterfoundry.migration.listgitbranches;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -215,7 +215,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
             String targetSort,
             boolean quickFilter) {
         String providerId = "TODO-git-refs-provider";
-        return "unifiedGitRefProvider(\n"
+        return "foundryGitRefProvider(\n"
                 + "    id: '"
                 + providerId
                 + "',\n"
@@ -232,7 +232,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
                 + ",\n"
                 + "    maximumRefs: 1000\n"
                 + ")\n"
-                + "unifiedChoice(\n"
+                + "foundryChoice(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"

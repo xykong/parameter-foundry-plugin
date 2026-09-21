@@ -1,4 +1,4 @@
-# Unified Parameters — User Guide
+# Parameter Foundry — User Guide
 
 This guide is for people who **use** the plugin: configuring parameters in a Job,
 reading values in a build, driving it from Pipeline, CLI, or REST, and migrating
@@ -24,8 +24,8 @@ and [`../decisions/`](../decisions/).
 
 ## One minute summary
 
-- One parameter family, two entry points: **`unifiedChoice`** for value selection
-  (single, multiple, or a two-dimensional table) and **`unifiedForm`** for typed
+- One parameter family, two entry points: **`foundryChoice`** for value selection
+  (single, multiple, or a two-dimensional table) and **`foundryForm`** for typed
   structured input.
 - The same definition behaves the same way in the browser, CLI, REST, Pipeline,
   Rebuild, and downstream builds, because every entry point calls one server-side

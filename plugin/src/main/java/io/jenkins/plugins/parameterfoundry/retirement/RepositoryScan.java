@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.retirement;
+package io.jenkins.plugins.parameterfoundry.retirement;
 
 import java.util.List;
 

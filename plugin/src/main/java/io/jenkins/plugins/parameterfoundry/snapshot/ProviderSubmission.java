@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.snapshot;
+package io.jenkins.plugins.parameterfoundry.snapshot;
 
 import hudson.cli.BuildCommand;
 import hudson.cli.CLICommand;
@@ -6,12 +6,12 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.DependencyValues;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.DependencyValues;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService;
 import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -23,7 +23,7 @@ public final class ProviderSubmission {
 
     public static ResolvedProviderOptions resolve(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             ProviderOperation operation,
             StaplerRequest2 request,
             JSONObject submitted) {
@@ -42,7 +42,7 @@ public final class ProviderSubmission {
     }
 
     public static ResolvedProviderOptions resolveWithoutSubmission(
-            Job<?, ?> job, AbstractUnifiedParameterDefinition definition, ProviderOperation operation) {
+            Job<?, ?> job, AbstractFoundryParameterDefinition definition, ProviderOperation operation) {
         if (!definition.getDependsOn().isEmpty()) {
             throw new EvaluationException(
                     ErrorCode.DEPENDENCY_INVALID,
@@ -52,13 +52,13 @@ public final class ProviderSubmission {
         return ProviderSnapshotStore.get().resolveForBuild(job, definition, Map.of(), null, operation);
     }
 
-    public static ResolvedProviderOptions resolveForDefault(AbstractUnifiedParameterDefinition definition) {
+    public static ResolvedProviderOptions resolveForDefault(AbstractFoundryParameterDefinition definition) {
         if (!definition.isProviderBacked()) {
             return new ResolvedProviderOptions(
                     definition.getSelectableOptions(), definition.getTable(), null, null, false);
         }
         Job<?, ?> owningJob = requireOwningJob(definition);
-        CliBuildContext context = UnifiedParametersCliListener.currentBuild();
+        CliBuildContext context = ParameterFoundryCliListener.currentBuild();
         if (context != null && context.job().getFullName().equals(owningJob.getFullName())) {
             try {
                 return resolveForCliParameters(
@@ -81,7 +81,7 @@ public final class ProviderSubmission {
 
     public static ResolvedProviderOptions resolveForCli(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             ProviderOperation operation,
             CLICommand command)
             throws java.io.IOException, InterruptedException {
@@ -101,7 +101,7 @@ public final class ProviderSubmission {
 
     private static ResolvedProviderOptions resolveForCliParameters(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             ProviderOperation operation,
             Map<String, String> parameters)
             throws java.io.IOException, InterruptedException {
@@ -113,8 +113,8 @@ public final class ProviderSubmission {
             throw new EvaluationException(
                     ErrorCode.CONFIGURATION_INVALID, job.getFullName(), "Job is not parameterized.");
         }
-        io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationResult validation =
-                io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService.validateJobDefinitions(
+        io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationResult validation =
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateJobDefinitions(
                         property.getParameterDefinitions());
         if (!validation.isValid()) {
             throw new EvaluationException(ErrorCode.CONFIGURATION_INVALID, job.getFullName(), validation.summarize());
@@ -145,16 +145,16 @@ public final class ProviderSubmission {
         return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, null, operation);
     }
 
-    public static String snapshotRequestField(AbstractUnifiedParameterDefinition definition) {
+    public static String snapshotRequestField(AbstractFoundryParameterDefinition definition) {
         return "__up_snapshot_" + definition.getName();
     }
 
-    public static String dependenciesRequestField(AbstractUnifiedParameterDefinition definition) {
+    public static String dependenciesRequestField(AbstractFoundryParameterDefinition definition) {
         return "__up_dependencies_" + definition.getName();
     }
 
     private static JSONObject dependenciesFromRequest(
-            AbstractUnifiedParameterDefinition definition, StaplerRequest2 request) {
+            AbstractFoundryParameterDefinition definition, StaplerRequest2 request) {
         String encoded = request.getParameter(dependenciesRequestField(definition));
         if (encoded != null && !encoded.isBlank()) {
             JSONObject submitted = DependencyValues.parseJsonObject(definition, encoded);
@@ -178,7 +178,7 @@ public final class ProviderSubmission {
         return dependencies;
     }
 
-    public static Job<?, ?> requireOwningJob(AbstractUnifiedParameterDefinition definition) {
+    public static Job<?, ?> requireOwningJob(AbstractFoundryParameterDefinition definition) {
         return ProviderResolutionService.findOwningJob(definition)
                 .orElseThrow(() -> new EvaluationException(
                         ErrorCode.CONFIGURATION_INVALID,

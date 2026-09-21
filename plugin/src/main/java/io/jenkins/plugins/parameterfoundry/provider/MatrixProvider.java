@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
 
 /**
  * A governed Provider whose response is a two-axis matrix instead of a flat option list. The

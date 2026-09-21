@@ -8,7 +8,7 @@ Each fixture contains:
 - source intent;
 - adapter classification;
 - explicit semantic decisions;
-- expected Unified Parameters definition;
+- expected Parameter Foundry definition;
 - verification cases.
 
 Current fixture:

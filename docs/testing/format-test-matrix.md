@@ -21,8 +21,8 @@ cases against isolated cloned Jobs and record only redacted aggregate results.
 | Standard REST | Delimited | Exactly one field split by the configured delimiter | `standardRestFormatsProduceTheSameCanonicalMultipleValue` |
 | Standard REST | Absent | Missing value and marker invoke the configured default | `standardRestAbsentAndPresenceOnlyEmptyRemainDistinct` |
 | Standard REST | Explicit empty | Presence marker without a value produces an empty optional selection | `standardRestAbsentAndPresenceOnlyEmptyRemainDistinct` |
-| Browser/native form | Presence metadata | One reserved marker identifies rendered Unified parameters | `browserFormEmitsPresenceMetadataForNativeSubmission` |
-| Standard REST | Unified Form | One form field carries one JSON object string | `standardRestFormUsesOneJsonStringField` |
+| Browser/native form | Presence metadata | One reserved marker identifies rendered Foundry parameters | `browserFormEmitsPresenceMetadataForNativeSubmission` |
+| Standard REST | Foundry Form | One form field carries one JSON object string | `standardRestFormUsesOneJsonStringField` |
 | Typed REST | String | JSON string remains a scalar string | `typedApiPreservesStringArrayObjectAndExplicitNullShapes` |
 | Typed REST | Array | JSON array remains an array until canonical sorting | `typedApiPreservesStringArrayObjectAndExplicitNullShapes` |
 | Typed REST | Object | JSON object is validated against the stored form schema | `typedApiPreservesStringArrayObjectAndExplicitNullShapes` |
@@ -43,12 +43,12 @@ scheduling. The queue length is unchanged.
 
 | Case | Expected error code | Automated evidence |
 |---|---|---|
-| Unknown machine value | `UNIFIED_PARAMETER_UNKNOWN_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
-| Disabled machine value | `UNIFIED_PARAMETER_DISABLED_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
-| Duplicate repeated value | `UNIFIED_PARAMETER_DUPLICATE_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
-| Malformed JSON-array transport | `UNIFIED_PARAMETER_MALFORMED_INPUT` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
-| Wrong Typed API container | `UNIFIED_PARAMETER_INVALID_TYPE` | `typedApiRejectsWrongContainersInsteadOfApplyingDefaults` |
-| Cross-dependency Provider snapshot | `UNIFIED_PARAMETER_SNAPSHOT_INVALID` | `snapshotBindingFailureIsAConflictAndDoesNotQueue` |
+| Unknown machine value | `PARAMETER_FOUNDRY_UNKNOWN_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
+| Disabled machine value | `PARAMETER_FOUNDRY_DISABLED_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
+| Duplicate repeated value | `PARAMETER_FOUNDRY_DUPLICATE_VALUE` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
+| Malformed JSON-array transport | `PARAMETER_FOUNDRY_MALFORMED_INPUT` | `semanticAndShapeFailuresReturnStableCodesWithoutQueueing` |
+| Wrong Typed API container | `PARAMETER_FOUNDRY_INVALID_TYPE` | `typedApiRejectsWrongContainersInsteadOfApplyingDefaults` |
+| Cross-dependency Provider snapshot | `PARAMETER_FOUNDRY_SNAPSHOT_INVALID` | `snapshotBindingFailureIsAConflictAndDoesNotQueue` |
 
 HTTP status rules are:
 

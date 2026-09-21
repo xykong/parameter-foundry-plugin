@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.migration.activechoices;
+package io.jenkins.plugins.parameterfoundry.migration.activechoices;
 
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;

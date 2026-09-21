@@ -37,3 +37,18 @@ history before migration:
 Production Job names, credentials, cluster configuration, and upgrade evidence
 were intentionally not migrated. They remain operational records in
 `example-ops`.
+
+## Naming History
+
+The project was developed and released under the working name **Unified
+Parameters** from August 28, 2026. On September 21, 2026 it was renamed to
+**Parameter Foundry**; see
+[ADR 0017](../decisions/0017-product-renaming-to-parameter-foundry.md) for the
+decision and [`docs/research/naming-and-brand-evaluation.md`](../research/naming-and-brand-evaluation.md)
+for the evaluation that replaced it.
+
+This file and the dated verification records under `docs/testing/` keep the
+names, artifact names, and identifiers that were current when they were
+written. The rename is complete in the live product surface: code, resources,
+build metadata, tooling, the user guide, and the current requirement
+documents.

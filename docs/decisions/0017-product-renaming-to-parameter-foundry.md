@@ -58,3 +58,17 @@ abbreviated `ParamFoundry` in Java packages or artifact IDs.
   and `@Symbol` annotations) will be migrated according to the execution plan.
 - Documentation, guidebooks, and sample configurations will reflect the
   `foundryChoice` and `foundryForm` DSL symbols.
+- Persisted state follows the rename. Stored Job XML, Pipeline scripts, Job DSL
+  scripts, REST clients, CLI automation, and the update-center short name all
+  move to the new identifiers without aliases, so a controller upgrade requires
+  the corresponding configuration migration.
+- Build records written by an earlier `unified-parameters` release reference the
+  former class names. Rebuild and historical rendering of those records need the
+  source plugin retained or a dedicated converter; this is not covered by the
+  rename and is tracked as a separate compatibility decision.
+- Stable requirement, acceptance, and issue identifiers (`UP-…`) and the
+  internal `up-` browser styling prefix are deliberately retained. They are
+  opaque cross-document keys rather than product branding, and dated
+  verification records keep resolving against them.
+- Released artifacts and dated verification records keep the names they were
+  published and measured under.

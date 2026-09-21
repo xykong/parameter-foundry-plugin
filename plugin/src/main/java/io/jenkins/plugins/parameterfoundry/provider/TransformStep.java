@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -198,11 +198,11 @@ public final class TransformStep extends AbstractDescribableImpl<TransformStep> 
     }
 
     @Extension
-    @Symbol("unifiedTransform")
+    @Symbol("foundryTransform")
     public static final class DescriptorImpl extends Descriptor<TransformStep> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Transform";
+            return "Parameter Foundry Transform";
         }
     }
 }

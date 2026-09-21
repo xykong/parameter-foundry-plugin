@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.snapshot;
+package io.jenkins.plugins.parameterfoundry.snapshot;
 
 import java.io.Serial;
 import java.io.Serializable;

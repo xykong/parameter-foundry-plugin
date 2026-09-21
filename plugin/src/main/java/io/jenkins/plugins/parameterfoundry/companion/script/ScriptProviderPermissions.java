@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.companion.script;
+package io.jenkins.plugins.parameterfoundry.companion.script;
 
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;

@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.companion.renderer;
+package io.jenkins.plugins.parameterfoundry.companion.renderer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.jenkins.plugins.unifiedparameters.renderer.RendererSecurityContract;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.parameterfoundry.renderer.RendererSecurityContract;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import org.junit.jupiter.api.Test;
 
 class AccessibleChoiceGridRendererTest {

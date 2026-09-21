@@ -52,7 +52,7 @@ classification:
       question: If omitValueField is true, is the reference strictly presentation-only?
 
 targetSkeleton:
-  symbol: unifiedForm
+  symbol: foundryForm
   arguments:
     name: DETAILS
     dependencies: [ENVIRONMENT]

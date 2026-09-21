@@ -1,17 +1,17 @@
-package io.jenkins.plugins.unifiedparameters.validation;
+package io.jenkins.plugins.parameterfoundry.validation;
 
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.CustomValuePolicy;
-import io.jenkins.plugins.unifiedparameters.evaluation.DependencyGraph;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.form.FormEvaluationService;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.CustomValuePolicy;
+import io.jenkins.plugins.parameterfoundry.evaluation.DependencyGraph;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.form.FormEvaluationService;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,10 +31,10 @@ public final class DefinitionValidationService {
     public static DefinitionValidationResult validateStoredDefinition(ParameterDefinition definition) {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
-        if (definition instanceof UnifiedFormParameterDefinition form) {
+        if (definition instanceof FoundryFormParameterDefinition form) {
             if (form.getName() == null
                     || form.getName().isEmpty()
-                    || AbstractUnifiedParameterDefinition.PRESENCE_FIELD.equals(form.getName())) {
+                    || AbstractFoundryParameterDefinition.PRESENCE_FIELD.equals(form.getName())) {
                 errors.add("Form parameter name is required and cannot be reserved");
             }
             if (form.getModelVersion() != 1) {
@@ -43,29 +43,29 @@ public final class DefinitionValidationService {
             errors.addAll(FormEvaluationService.validateDefinition(form));
             return new DefinitionValidationResult(errors);
         }
-        if (!(definition instanceof AbstractUnifiedParameterDefinition unified)) {
+        if (!(definition instanceof AbstractFoundryParameterDefinition foundry)) {
             return new DefinitionValidationResult(errors);
         }
 
-        validateName(unified, errors);
-        if (unified.getModelVersion() != 1) {
-            errors.add("Unsupported model version: " + unified.getModelVersion());
+        validateName(foundry, errors);
+        if (foundry.getModelVersion() != 1) {
+            errors.add("Unsupported model version: " + foundry.getModelVersion());
         }
-        if (!DEFAULT_MODES.contains(unified.getDefaultMode())) {
-            errors.add("Unsupported default mode: " + unified.getDefaultMode());
+        if (!DEFAULT_MODES.contains(foundry.getDefaultMode())) {
+            errors.add("Unsupported default mode: " + foundry.getDefaultMode());
         }
-        for (String dependency : unified.getDependsOn()) {
+        for (String dependency : foundry.getDependsOn()) {
             if (dependency == null || !dependency.matches("[A-Za-z_][A-Za-z0-9_.-]{0,127}")) {
                 errors.add("Dependency names must use letters, digits, dot, underscore, or hyphen");
             }
         }
-        if (!unified.getDependsOn().isEmpty() && !unified.isProviderBacked()) {
+        if (!foundry.getDependsOn().isEmpty() && !foundry.isProviderBacked()) {
             errors.add("Reactive dependencies require a shared Provider");
         }
-        validateCliDefaultPolicy(unified, warnings);
-        validateChoices(unified, errors);
+        validateCliDefaultPolicy(foundry, warnings);
+        validateChoices(foundry, errors);
 
-        if (unified instanceof UnifiedChoiceParameterDefinition choice) {
+        if (foundry instanceof FoundryChoiceParameterDefinition choice) {
             if (!Set.of("single", "multiple").contains(choice.getSelectionMode())) {
                 errors.add("Unsupported selection mode: " + choice.getSelectionMode());
             }
@@ -93,7 +93,7 @@ public final class DefinitionValidationService {
             if (!names.add(name)) {
                 errors.add("Duplicate parameter name: " + name);
             }
-            if (AbstractUnifiedParameterDefinition.PRESENCE_FIELD.equals(name)) {
+            if (AbstractFoundryParameterDefinition.PRESENCE_FIELD.equals(name)) {
                 errors.add("Reserved parameter name: " + name);
             }
             errors.addAll(validateStoredDefinition(definition).getErrors());
@@ -109,16 +109,16 @@ public final class DefinitionValidationService {
         }
     }
 
-    private static void validateName(AbstractUnifiedParameterDefinition definition, List<String> errors) {
+    private static void validateName(AbstractFoundryParameterDefinition definition, List<String> errors) {
         String name = definition.getName();
         if (name == null || name.isEmpty()) {
             errors.add("Parameter name is required");
-        } else if (AbstractUnifiedParameterDefinition.PRESENCE_FIELD.equals(name)) {
+        } else if (AbstractFoundryParameterDefinition.PRESENCE_FIELD.equals(name)) {
             errors.add("Parameter name is reserved");
         }
     }
 
-    private static void validateCliDefaultPolicy(AbstractUnifiedParameterDefinition definition, List<String> warnings) {
+    private static void validateCliDefaultPolicy(AbstractFoundryParameterDefinition definition, List<String> warnings) {
         if (definition.isRequired()
                 && !definition.getDependsOn().isEmpty()
                 && "none".equals(definition.getDefaultMode())) {
@@ -127,7 +127,7 @@ public final class DefinitionValidationService {
         }
     }
 
-    private static void validateChoices(AbstractUnifiedParameterDefinition definition, List<String> errors) {
+    private static void validateChoices(AbstractFoundryParameterDefinition definition, List<String> errors) {
         if (definition.isProviderBacked()) {
             if (!definition.getProviderId().matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
                 errors.add("Provider ID is invalid");
@@ -175,7 +175,7 @@ public final class DefinitionValidationService {
         }
     }
 
-    private static void validateSingle(UnifiedChoiceParameterDefinition definition, List<String> errors) {
+    private static void validateSingle(FoundryChoiceParameterDefinition definition, List<String> errors) {
         if (!SINGLE_RENDERERS.contains(definition.getRenderer())
                 && !TrustedRendererRegistry.isTrusted(
                         definition.getRenderer(), TrustedRendererRegistry.FAMILY_SINGLE_CHOICE)) {
@@ -206,7 +206,7 @@ public final class DefinitionValidationService {
         }
     }
 
-    private static void validateMultiple(AbstractUnifiedParameterDefinition definition, List<String> errors) {
+    private static void validateMultiple(AbstractFoundryParameterDefinition definition, List<String> errors) {
         if (!MULTI_RENDERERS.contains(definition.getRenderer())
                 && !TrustedRendererRegistry.isTrusted(
                         definition.getRenderer(), TrustedRendererRegistry.FAMILY_MULTI_CHOICE)) {
@@ -262,7 +262,7 @@ public final class DefinitionValidationService {
     }
 
     private static void validateMatrix(
-            ChoiceMatrix matrix, AbstractUnifiedParameterDefinition definition, List<String> errors) {
+            ChoiceMatrix matrix, AbstractFoundryParameterDefinition definition, List<String> errors) {
         if (!Set.of("any", "at-most-one", "exactly-one").contains(matrix.getRowSelectionMode())) {
             errors.add("Unsupported matrix row selection mode: " + matrix.getRowSelectionMode());
         }
@@ -300,7 +300,7 @@ public final class DefinitionValidationService {
     }
 
     private static void validateDefaultValue(
-            AbstractUnifiedParameterDefinition definition, String value, List<String> errors) {
+            AbstractFoundryParameterDefinition definition, String value, List<String> errors) {
         if (value == null || value.isEmpty()) {
             errors.add("Explicit default values must be non-empty");
             return;
@@ -310,7 +310,7 @@ public final class DefinitionValidationService {
         }
         Option option = definition.findOption(value);
         if (option == null) {
-            if (definition instanceof UnifiedChoiceParameterDefinition single && single.isAllowCustomValue()) {
+            if (definition instanceof FoundryChoiceParameterDefinition single && single.isAllowCustomValue()) {
                 try {
                     CustomValuePolicy.validate(single, value);
                 } catch (EvaluationException exception) {

@@ -21,13 +21,13 @@ The report is written to:
 docs/testing/results/pct-YYYY-MM-DD.json
 ```
 
-The check covers the single Unified Parameters HPI, which now contains the
+The check covers the single Parameter Foundry HPI, which now contains the
 core, migration adapters, Renderer, Script Provider, and Git refs Provider.
 It first installs
 the local reactor snapshot into the Docker Maven cache, then runs PCT with the
 Jenkins WAR generated for each supported Core version.
 
-PCT itself runs on Java 21. The local Unified Parameters artifacts are compiled
+PCT itself runs on Java 21. The local Parameter Foundry artifacts are compiled
 to the bytecode level required by each Core entry: Java 17 for Jenkins
 `2.528.3` and Java 21 for Jenkins `2.568.2`. The same compiler properties are
 and Core version are passed to PCT's original-POM build, which prevents a

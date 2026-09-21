@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,8 +7,8 @@ import example.legacy.LegacyParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.scm.NullSCM;
-import io.jenkins.plugins.unifiedparameters.retirement.RepositoryScan;
-import io.jenkins.plugins.unifiedparameters.retirement.RetirementScanner;
+import io.jenkins.plugins.parameterfoundry.retirement.RepositoryScan;
+import io.jenkins.plugins.parameterfoundry.retirement.RetirementScanner;
 import jenkins.branch.OrganizationFolder;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -45,12 +45,12 @@ class RepositoryScanTest {
         assertTrue(scan.getMaterializedJobs() >= 1);
 
         String dashboard =
-                jenkins.createWebClient().goTo("unified-parameters-retirement/").asNormalizedText();
+                jenkins.createWebClient().goTo("parameter-foundry-retirement/").asNormalizedText();
         assertTrue(dashboard.contains("Unscanned sources"));
         assertTrue(dashboard.contains("scm-pipeline"));
 
         JSONObject report = jenkins.createWebClient()
-                .getJSON("unified-parameters-retirement/report")
+                .getJSON("parameter-foundry-retirement/report")
                 .getJSONObject();
         assertTrue(report.getJSONObject("repositoryScan").getBoolean("unscanned"));
         assertTrue(report.getJSONObject("repositoryScan")

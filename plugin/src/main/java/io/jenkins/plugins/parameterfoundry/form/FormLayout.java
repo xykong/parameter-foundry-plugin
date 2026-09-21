@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.form;
+package io.jenkins.plugins.parameterfoundry.form;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -121,7 +121,7 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
     }
 
     @Extension
-    @Symbol("unifiedFormLayout")
+    @Symbol("foundryFormLayout")
     public static final class DescriptorImpl extends Descriptor<FormLayout> {
         public ListBoxModel doFillTypeItems() {
             return new ListBoxModel(
@@ -134,7 +134,7 @@ public final class FormLayout extends AbstractDescribableImpl<FormLayout> implem
 
         @Override
         public String getDisplayName() {
-            return "Unified Form Layout";
+            return "Foundry Form Layout";
         }
     }
 }

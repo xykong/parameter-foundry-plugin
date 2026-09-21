@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.simulation;
+package io.jenkins.plugins.parameterfoundry.simulation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,8 +32,8 @@ class ReplacementSimulationServiceTest {
         ReplacementSimulationEntry entry = simulation.entries().get(0);
         assertEquals(ReplacementSimulationService.EQUIVALENT, entry.verdict());
         assertEquals(2, entry.observationCount());
-        assertEquals("UnifiedChoiceParameterDefinition", entry.targetType());
-        assertTrue(entry.getTargetSnippet().contains("unifiedChoice("), entry.getTargetSnippet());
+        assertEquals("FoundryChoiceParameterDefinition", entry.targetType());
+        assertTrue(entry.getTargetSnippet().contains("foundryChoice("), entry.getTargetSnippet());
         assertTrue(entry.getRequiredValues().containsAll(List.of("staging", "production")));
         assertEquals(ReplacementSimulationService.COMPARISON_MATCH, entry.getOptionSetComparison());
         for (ParameterObservation observation : entry.observations()) {
@@ -225,7 +225,7 @@ class ReplacementSimulationServiceTest {
         run(job, "LEGACY_CHANNEL", "staging");
 
         JSONObject report = jenkins.createWebClient()
-                .getJSON("unified-parameters-replacement-simulation/report")
+                .getJSON("parameter-foundry-replacement-simulation/report")
                 .getJSONObject();
 
         assertNotNull(report);

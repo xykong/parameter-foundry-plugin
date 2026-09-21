@@ -7,7 +7,7 @@ Pipeline, and Job DSL unless noted.
 ## 1. Static single choice
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'CHANNEL',
   choices: [[value: 'staging', label: 'Staging'], [value: 'production', label: 'Production']],
   renderer: 'radio',
@@ -23,7 +23,7 @@ Searchable keeps 10,000-option lists usable: the form renders a bounded window,
 filters as you type, and exposes grouping and bulk actions.
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'ARTIFACT',
   providerId: 'artifacts',
   renderer: 'searchable',
@@ -34,7 +34,7 @@ unifiedChoice(
 ## 3. Multiple selection with chips
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'TARGETS',
   selectionMode: 'multiple',
   choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
@@ -54,7 +54,7 @@ Cells carry the machine values, so labels and coordinates can be renamed without
 invalidating builds.
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'MATRIX_TARGETS',
   selectionMode: 'multiple',
   renderer: 'table',
@@ -79,7 +79,7 @@ submitted.
 ## 5. Custom value next to a fixed list
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'IMAGE_TAG',
   choices: [[value: 'latest']],
   allowCustomValue: true,
@@ -95,13 +95,13 @@ Options reload whenever `ENVIRONMENT` changes; the parameter keeps a valid
 selection and blocks the build while refreshing.
 
 ```groovy
-unifiedChoice(
+foundryChoice(
   name: 'ENVIRONMENT',
   choices: [[value: 'staging'], [value: 'production']],
   renderer: 'searchable'
 )
 
-unifiedChoice(
+foundryChoice(
   name: 'SERVICE',
   providerId: 'services',
   dependsOn: ['ENVIRONMENT'],
@@ -112,7 +112,7 @@ unifiedChoice(
 ## 7. Typed form
 
 ```groovy
-unifiedForm(
+foundryForm(
   name: 'DEPLOYMENT',
   renderer: 'schema',
   outputMode: 'map',
@@ -145,7 +145,7 @@ exported to `SERVICE_NAME`.
 
 ```groovy
 build job: 'deploy', wait: true, parameters: [
-  [$class: 'UnifiedChoiceParameterValue', name: 'TARGETS', value: ['web', 'android']]
+  [$class: 'FoundryChoiceParameterValue', name: 'TARGETS', value: ['web', 'android']]
 ]
 ```
 
@@ -177,7 +177,7 @@ curl -u user:token -X POST "$JENKINS_URL/job/deploy/buildWithParameters" \
 ```
 
 Invalid input returns `400` with a stable code such as
-`UNIFIED_PARAMETER_UNKNOWN_VALUE` and never queues a build.
+`PARAMETER_FOUNDRY_UNKNOWN_VALUE` and never queues a build.
 
 ## 11. Validate before scheduling
 
@@ -185,7 +185,7 @@ Invalid input returns `400` with a stable code such as
 curl -u user:token -X POST \
   -H 'Content-Type: application/json' \
   -d '{"values":{"CHANNEL":"production","TARGETS":["web","android"]}}' \
-  "$JENKINS_URL/job/deploy/unified-parameters/api/v1/validate"
+  "$JENKINS_URL/job/deploy/parameter-foundry/api/v1/validate"
 ```
 
 The response contains the canonical values that a build would record.

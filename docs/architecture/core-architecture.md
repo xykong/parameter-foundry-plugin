@@ -1,4 +1,4 @@
-# Unified Parameters Core Architecture
+# Parameter Foundry Core Architecture
 
 ## 1. Purpose
 
@@ -39,7 +39,7 @@ The architecture follows these decisions:
 ## 3. Package Layout
 
 ```text
-io.jenkins.plugins.unifiedparameters
+io.jenkins.plugins.parameterfoundry
   definition/    public ParameterDefinition implementations
                   and matching ParameterValue classes required by Jenkins
                   Pipeline subtype discovery
@@ -64,10 +64,10 @@ objects, or a specific Renderer.
 ### 4.1 `1.0`
 
 ```text
-UnifiedChoiceParameterDefinition
-UnifiedFormParameterDefinition
-UnifiedChoiceParameterValue
-UnifiedFormParameterValue
+FoundryChoiceParameterDefinition
+FoundryFormParameterDefinition
+FoundryChoiceParameterValue
+FoundryFormParameterValue
 ```
 
 The choice definition and its value type cover both cardinalities;
@@ -77,12 +77,12 @@ other public fields use `@DataBoundSetter`.
 
 Each definition has a unique `@Symbol`:
 
-- `unifiedChoice` (single and multiple via `selectionMode`);
-- `unifiedForm`.
+- `foundryChoice` (single and multiple via `selectionMode`);
+- `foundryForm`.
 
-`unifiedChoice` carries both single and multiple cardinality so the public
+`foundryChoice` carries both single and multiple cardinality so the public
 model, renderers, validation, and transport contracts stay behind one entry
-point. The former `unifiedMultiChoice` definition and symbol were removed rather
+point. The former `foundryMultiChoice` definition and symbol were removed rather
 than kept as aliases; every stored configuration was migrated.
 
 They share immutable internal components:
@@ -98,7 +98,7 @@ ParameterModelVersion
 
 ### 4.2 Persisted `1.0` Fields
 
-`UnifiedChoiceParameterDefinition` persists:
+`FoundryChoiceParameterDefinition` persists:
 
 | Field | Required | Notes |
 |-------|----------|-------|
@@ -144,7 +144,7 @@ selected import hint
 arbitrary Java objects. `selected` is normalized into Provider default
 candidates and is not an independent runtime default.
 
-`UnifiedChoiceParameterValue` persists the mode and the matching canonical
+`FoundryChoiceParameterValue` persists the mode and the matching canonical
 shape; the exported `value` property stays a scalar for single selection and a
 list for multiple selection.
 
@@ -166,7 +166,7 @@ evaluation.
 
 ### 4.3 Later Types
 
-`unifiedCascade`, `unifiedForm`, and any standalone text/boolean definitions
+`foundryCascade`, `foundryForm`, and any standalone text/boolean definitions
 are later public types. They must reuse the same evaluation service but do not
 expand the `1.0` persisted model prematurely.
 
@@ -189,7 +189,7 @@ The service API is conceptually:
 
 ```java
 EvaluationResult evaluate(
-    UnifiedParameterDefinition definition,
+    FoundryParameterDefinition definition,
     DecodedInput input,
     EvaluationContext context);
 ```
@@ -222,7 +222,7 @@ decoder and then to the service. It does not implement a parallel parser.
 ### 6.1 SPI
 
 ```text
-UnifiedParameterProvider
+FoundryParameterProvider
   resolve(ProviderRequest) -> ProviderResult
   descriptor()
 ```
@@ -311,7 +311,7 @@ codes but cannot replace core code meanings.
 
 ## 9. Typed API Integration
 
-A Job-scoped `Action` exposes `/unified-parameters/api/v1`. It obtains the Job
+A Job-scoped `Action` exposes `/parameter-foundry/api/v1`. It obtains the Job
 from the owning action rather than accepting an arbitrary Job path in request
 data.
 
@@ -370,7 +370,7 @@ the spike matrix in
 - malformed XStream definition validation;
 - Pipeline `params` and downstream `build`;
 - browser presence and standard REST HTTP 4xx/no-queue behavior;
-- CLI and mixed Core/Unified Typed API;
+- CLI and mixed Core/Foundry Typed API;
 - Rebuild;
 - Jelly no-JavaScript/CSP behavior;
 - migration adapter reactor packaging.

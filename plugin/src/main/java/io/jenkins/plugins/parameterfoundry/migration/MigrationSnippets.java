@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +14,8 @@ public final class MigrationSnippets {
     private MigrationSnippets() {}
 
     public static String forTarget(ParameterDefinition target) {
-        if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isMultiple()) {
-            return "unifiedChoice(\n"
+        if (target instanceof FoundryChoiceParameterDefinition choice && !choice.isMultiple()) {
+            return "foundryChoice(\n"
                     + "  name: "
                     + quote(choice.getName())
                     + ",\n  choices: "
@@ -29,8 +29,8 @@ public final class MigrationSnippets {
                             : "")
                     + "\n)";
         }
-        if (target instanceof AbstractUnifiedParameterDefinition multiple && multiple.isMultiple()) {
-            return "unifiedChoice(\n"
+        if (target instanceof AbstractFoundryParameterDefinition multiple && multiple.isMultiple()) {
+            return "foundryChoice(\n"
                     + "  name: "
                     + quote(multiple.getName())
                     + ",\n  selectionMode: 'multiple',\n  choices: "
@@ -50,13 +50,13 @@ public final class MigrationSnippets {
                     + quote(multiple.getStandardApiInputMode())
                     + ",\n  delimiter: "
                     + quote(multiple.getDelimiter())
-                    + (multiple instanceof UnifiedChoiceParameterDefinition choice
+                    + (multiple instanceof FoundryChoiceParameterDefinition choice
                             ? ",\n  environmentExportOrder: " + quote(choice.getEnvironmentExportOrder())
                             : "")
                     + "\n)";
         }
-        if (target instanceof UnifiedFormParameterDefinition form) {
-            return "unifiedForm(\n  name: "
+        if (target instanceof FoundryFormParameterDefinition form) {
+            return "foundryForm(\n  name: "
                     + quote(form.getName())
                     + ",\n  fields: [/* reviewed typed fields */],\n  renderer: 'schema'\n)";
         }

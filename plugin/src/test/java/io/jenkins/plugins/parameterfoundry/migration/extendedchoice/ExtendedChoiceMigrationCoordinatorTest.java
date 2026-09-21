@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.extendedchoice;
+package io.jenkins.plugins.parameterfoundry.migration.extendedchoice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -10,12 +10,12 @@ import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoicePara
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationCoordinator;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPreviewHandle;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationRecord;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationCoordinator;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPreviewHandle;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationRecord;
 import java.nio.file.Files;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -31,19 +31,19 @@ class ExtendedChoiceMigrationCoordinatorTest {
         source.addProperty(new ParametersDefinitionProperty(staticSingle()));
         MigrationPreviewHandle preview = MigrationCoordinator.preview(source, "LEGACY_CHANNEL");
 
-        MigrationRecord record = MigrationCoordinator.cloneAndApply(source, "unified", preview, List.of());
+        MigrationRecord record = MigrationCoordinator.cloneAndApply(source, "foundry", preview, List.of());
 
         assertInstanceOf(ExtendedChoiceParameterDefinition.class, definition(source, "LEGACY_CHANNEL"));
-        FreeStyleProject clone = jenkins.jenkins.getItemByFullName("unified", FreeStyleProject.class);
+        FreeStyleProject clone = jenkins.jenkins.getItemByFullName("foundry", FreeStyleProject.class);
         assertNotNull(clone);
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, definition(clone, "LEGACY_CHANNEL"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, definition(clone, "LEGACY_CHANNEL"));
         assertEquals("legacy", record.getSourceJob());
-        assertEquals("unified", record.getTargetJob());
+        assertEquals("foundry", record.getTargetJob());
         assertEquals("APPLIED", record.getStatus());
         assertTrue(Files.isRegularFile(jenkins.jenkins
                 .getRootDir()
                 .toPath()
-                .resolve("unified-parameters/migration-backups")
+                .resolve("parameter-foundry/migration-backups")
                 .resolve(record.getBackupFile())));
 
         MigrationCoordinator.rollback(clone, record.getId());
@@ -74,7 +74,7 @@ class ExtendedChoiceMigrationCoordinatorTest {
         EvaluationException rollbackConflict =
                 assertThrows(EvaluationException.class, () -> MigrationCoordinator.rollback(target, record.getId()));
         assertEquals(ErrorCode.CONFIGURATION_CHANGED, rollbackConflict.getCode());
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, definition(target, "LEGACY_CHANNEL"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, definition(target, "LEGACY_CHANNEL"));
     }
 
     private static ParameterDefinition definition(FreeStyleProject project, String name) {

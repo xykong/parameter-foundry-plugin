@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.ProxyConfiguration;
 import hudson.security.ACL;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;

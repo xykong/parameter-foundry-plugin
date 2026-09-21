@@ -24,7 +24,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 MAVEN_IMAGE = "maven:3.9.11-eclipse-temurin-21"
 JENKINS_IMAGE = "jenkins/jenkins:2.568.2-lts-jdk21"
-CONTAINER_PREFIX = "unified-parameters-source-canary"
+CONTAINER_PREFIX = "parameter-foundry-source-canary"
 TIMEOUT_SECONDS = 180
 
 PLUGIN_LINES = (
@@ -61,12 +61,12 @@ import org.biouno.unochoice.CascadeChoiceParameter
 import org.biouno.unochoice.ChoiceParameter
 import org.biouno.unochoice.model.GroovyScript
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript
-import io.jenkins.plugins.unifiedparameters.companion.renderer.AccessibleChoiceGridRenderer
-import io.jenkins.plugins.unifiedparameters.companion.script.ScriptCatalogEntry
-import io.jenkins.plugins.unifiedparameters.companion.script.ScriptProviderCatalog
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition
-import io.jenkins.plugins.unifiedparameters.provider.ScriptProviderDefinition
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration
+import io.jenkins.plugins.parameterfoundry.companion.renderer.AccessibleChoiceGridRenderer
+import io.jenkins.plugins.parameterfoundry.companion.script.ScriptCatalogEntry
+import io.jenkins.plugins.parameterfoundry.companion.script.ScriptProviderCatalog
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition
+import io.jenkins.plugins.parameterfoundry.provider.ScriptProviderDefinition
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration
 
 def jenkins = Jenkins.get()
 def location = JenkinsLocationConfiguration.get()
@@ -167,8 +167,8 @@ def companionProvider = new ScriptProviderDefinition(
     'sandbox-groovy',
     'catalog:releases'
 )
-UnifiedParametersGlobalConfiguration.get().setProviders([companionProvider])
-def companionParameter = new UnifiedChoiceParameterDefinition('COMPANION')
+ParameterFoundryGlobalConfiguration.get().setProviders([companionProvider])
+def companionParameter = new FoundryChoiceParameterDefinition('COMPANION')
 companionParameter.setProviderId('companion-options')
 companionParameter.setRenderer('accessible-choice-grid')
 def companionJob = jenkins.createProject(FreeStyleProject, 'source-companion')
@@ -201,7 +201,7 @@ def free_port() -> int:
 
 
 def artifact_paths() -> list[Path]:
-    return [ROOT / "plugin" / "target" / "unified-parameters.hpi"]
+    return [ROOT / "plugin" / "target" / "parameter-foundry.hpi"]
 
 
 def build_artifacts() -> None:
@@ -348,7 +348,7 @@ class Canary:
         filename: str,
         content: bytes,
     ) -> int:
-        boundary = "----UnifiedParametersCanary"
+        boundary = "----ParameterFoundryCanary"
         body = (
             f"--{boundary}\r\n"
             f'Content-Disposition: form-data; name="{field}"; filename="{filename}"\r\n'
@@ -499,7 +499,7 @@ def main() -> int:
         "checks": {},
     }
     try:
-        with tempfile.TemporaryDirectory(prefix="unified-parameters-source-canary-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="parameter-foundry-source-canary-") as temporary:
             temporary_path = Path(temporary)
             plugin_dir = temporary_path / "plugins"
             home_dir = temporary_path / "home"
@@ -526,7 +526,7 @@ def main() -> int:
                 "uno-choice",
                 "list-git-branches-parameter",
                 "file-parameters",
-                "unified-parameters",
+                "parameter-foundry",
             }
             active_plugins = {
                 item["shortName"]
@@ -547,7 +547,7 @@ def main() -> int:
             }
 
             schema_text = canary.get_text(
-                "/job/source-companion/unified-parameters/api/v1/schema"
+                "/job/source-companion/parameter-foundry/api/v1/schema"
             )
             schema_body = json.loads(schema_text)
             if "accessible-choice-grid" not in schema_text:
@@ -556,7 +556,7 @@ def main() -> int:
                     f"body={schema_body}"
                 )
             resolve_status, resolve_body = canary.post_json(
-                "/job/source-companion/unified-parameters/api/v1/resolve",
+                "/job/source-companion/parameter-foundry/api/v1/resolve",
                 {"parameter": "COMPANION", "dependencies": {}},
             )
             option_values = [item.get("value") for item in resolve_body.get("options", [])]
@@ -566,7 +566,7 @@ def main() -> int:
                 )
             previous = canary.last_build("source-companion").get("number", 0)
             build_status, build_body = canary.post_json(
-                "/job/source-companion/unified-parameters/api/v1/build",
+                "/job/source-companion/parameter-foundry/api/v1/build",
                 {"values": {"COMPANION": "release-a"}},
             )
             companion_build = canary.wait_for_build("source-companion", previous)
@@ -588,25 +588,25 @@ def main() -> int:
             }
 
             extended_preview = canary.get_text(
-                "/job/source-extended-choice/unified-parameters/"
+                "/job/source-extended-choice/parameter-foundry/"
             )
             active_preview = canary.get_text(
-                "/job/source-active-choices/unified-parameters/"
+                "/job/source-active-choices/parameter-foundry/"
             )
             git_preview = canary.get_text(
-                "/job/source-list-git-branches/unified-parameters/"
+                "/job/source-list-git-branches/parameter-foundry/"
             )
             stash_preview = canary.get_text(
-                "/job/source-stashed-file/unified-parameters/"
+                "/job/source-stashed-file/parameter-foundry/"
             )
             assert "Class B" in extended_preview
-            assert "UnifiedChoiceParameterDefinition" in extended_preview
+            assert "FoundryChoiceParameterDefinition" in extended_preview
             assert "selectionMode: 'multiple'" in extended_preview
             assert "Class C" in active_preview
             assert "TODO-governed-provider" in active_preview
             assert "ACTIVE_BASE" in active_preview
             assert "Class C" in git_preview
-            assert "unifiedGitRefProvider" in git_preview
+            assert "foundryGitRefProvider" in git_preview
             assert "refType: 'branch'" in git_preview
             assert "example.test" not in git_preview
             assert "Class D" in stash_preview
@@ -624,7 +624,7 @@ def main() -> int:
 
             clone_name = "target-extended-choice"
             status, _ = canary.post_form(
-                "/job/source-extended-choice/unified-parameters/cloneMigration",
+                "/job/source-extended-choice/parameter-foundry/cloneMigration",
                 {
                     "parameterName": "LEGACY_TARGETS",
                     "cloneName": clone_name,
@@ -634,9 +634,9 @@ def main() -> int:
             if status not in {200, 302}:
                 raise RuntimeError(f"migration clone returned HTTP {status}")
             clone_config = canary.get_text(f"/job/{clone_name}/config.xml")
-            if "UnifiedChoiceParameterDefinition" not in clone_config:
-                raise RuntimeError("clone did not persist the Unified target definition")
-            clone_page = canary.get_text(f"/job/{clone_name}/unified-parameters/")
+            if "FoundryChoiceParameterDefinition" not in clone_config:
+                raise RuntimeError("clone did not persist the Foundry target definition")
+            clone_page = canary.get_text(f"/job/{clone_name}/parameter-foundry/")
             if "APPLIED" not in clone_page:
                 raise RuntimeError("clone did not create an APPLIED migration record")
             report["checks"]["extendedChoiceClone"] = {
@@ -648,7 +648,7 @@ def main() -> int:
 
             standard_status, _ = canary.post_form(
                 f"/job/{clone_name}/buildWithParameters?delay=0sec",
-                {"__unified_parameters_presence": "LEGACY_TARGETS", "LEGACY_TARGETS": "web,android"},
+                {"__parameter_foundry_presence": "LEGACY_TARGETS", "LEGACY_TARGETS": "web,android"},
             )
             standard_build = canary.wait_for_build(clone_name)
             if standard_status != 201 or standard_build.get("result") != "SUCCESS":
@@ -666,7 +666,7 @@ def main() -> int:
             webhook_status, _ = canary.post_form(
                 f"/job/{clone_name}/buildWithParameters?delay=0sec",
                 {
-                    "__unified_parameters_presence": "LEGACY_TARGETS",
+                    "__parameter_foundry_presence": "LEGACY_TARGETS",
                     "LEGACY_TARGETS": "ios,web",
                 },
                 extra_headers={"User-Agent": "Synthetic-Webhook/1.0"},
@@ -685,7 +685,7 @@ def main() -> int:
             }
 
             validate_status, validate_body = canary.post_json(
-                f"/job/{clone_name}/unified-parameters/api/v1/validate",
+                f"/job/{clone_name}/parameter-foundry/api/v1/validate",
                 {"values": {"LEGACY_TARGETS": ["web", "android"]}},
             )
             canonical = validate_body.get("canonicalValues", {}).get("LEGACY_TARGETS")
@@ -695,7 +695,7 @@ def main() -> int:
                 )
             previous = canary.last_build(clone_name).get("number", 0)
             build_status, build_body = canary.post_json(
-                f"/job/{clone_name}/unified-parameters/api/v1/build",
+                f"/job/{clone_name}/parameter-foundry/api/v1/build",
                 {"values": {"LEGACY_TARGETS": ["web", "android"]}},
             )
             typed_build = canary.wait_for_build(clone_name, previous)
@@ -744,7 +744,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 def job = Jenkins.get().createProject(WorkflowJob, '{upstream_name}')
 job.setDefinition(new CpsFlowDefinition(\"\"\"
 build job: '{clone_name}', wait: true, parameters: [[
-  \\$class: 'UnifiedChoiceParameterValue',
+  \\$class: 'FoundryChoiceParameterValue',
   name: 'LEGACY_TARGETS',
   value: ['web', 'android']
 ]]
@@ -778,7 +778,7 @@ job.save()
             before_invalid_build = canary.last_build(clone_name).get("number", 0)
             before_invalid_queue = canary.queue_length()
             invalid_status, invalid_body = canary.post_json(
-                f"/job/{clone_name}/unified-parameters/api/v1/build",
+                f"/job/{clone_name}/parameter-foundry/api/v1/build",
                 {"values": {"LEGACY_TARGETS": ["unknown"]}},
             )
             after_invalid_build = canary.last_build(clone_name).get("number", 0)
@@ -790,7 +790,7 @@ job.save()
             )
             if (
                 invalid_status != 400
-                or invalid_code != "UNIFIED_PARAMETER_UNKNOWN_VALUE"
+                or invalid_code != "PARAMETER_FOUNDRY_UNKNOWN_VALUE"
                 or after_invalid_build != before_invalid_build
                 or after_invalid_queue != before_invalid_queue
             ):
@@ -813,7 +813,7 @@ job.save()
             invalid_webhook_status, invalid_webhook_body = canary.post_form(
                 f"/job/{clone_name}/buildWithParameters?delay=0sec",
                 {
-                    "__unified_parameters_presence": "LEGACY_TARGETS",
+                    "__parameter_foundry_presence": "LEGACY_TARGETS",
                     "LEGACY_TARGETS": "unknown",
                 },
                 extra_headers={"User-Agent": "Synthetic-Webhook/1.0"},
@@ -823,7 +823,7 @@ job.save()
             invalid_webhook_text = invalid_webhook_body.decode(errors="replace")
             if (
                 invalid_webhook_status != 400
-                or "UNIFIED_PARAMETER_UNKNOWN_VALUE" not in invalid_webhook_text
+                or "PARAMETER_FOUNDRY_UNKNOWN_VALUE" not in invalid_webhook_text
                 or after_webhook_build != before_webhook_build
                 or after_webhook_queue != before_webhook_queue
             ):
@@ -835,7 +835,7 @@ job.save()
                 )
             report["checks"]["webhookInvalidNoQueue"] = {
                 "status": invalid_webhook_status,
-                "code": "UNIFIED_PARAMETER_UNKNOWN_VALUE",
+                "code": "PARAMETER_FOUNDRY_UNKNOWN_VALUE",
                 "buildNumberUnchanged": True,
                 "queueLengthUnchanged": True,
                 "passed": True,
@@ -873,24 +873,24 @@ job.save()
                 "passed": True,
             }
 
-            clone_page = canary.get_text(f"/job/{clone_name}/unified-parameters/")
+            clone_page = canary.get_text(f"/job/{clone_name}/parameter-foundry/")
             record_match = re.search(
                 r'name="recordId"[^>]*value="([^"]+)"', clone_page
             )
             if record_match is None:
                 raise RuntimeError("migration record did not expose a rollback ID")
             rollback_status, _ = canary.post_form(
-                f"/job/{clone_name}/unified-parameters/rollbackMigration",
+                f"/job/{clone_name}/parameter-foundry/rollbackMigration",
                 {"recordId": record_match.group(1)},
             )
             rolled_back_config = canary.get_text(f"/job/{clone_name}/config.xml")
             rolled_back_page = canary.get_text(
-                f"/job/{clone_name}/unified-parameters/"
+                f"/job/{clone_name}/parameter-foundry/"
             )
             if (
                 rollback_status not in {200, 302}
                 or "ExtendedChoiceParameterDefinition" not in rolled_back_config
-                or "UnifiedChoiceParameterDefinition" in rolled_back_config
+                or "FoundryChoiceParameterDefinition" in rolled_back_config
                 or "ROLLED_BACK" not in rolled_back_page
             ):
                 raise RuntimeError(

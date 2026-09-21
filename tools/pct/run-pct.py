@@ -21,7 +21,7 @@ CORE_JAVA_RELEASES = {
     "2.528.3": "17",
     "2.568.2": "21",
 }
-PLUGIN_IDS = ("unified-parameters",)
+PLUGIN_IDS = ("parameter-foundry",)
 TEST_SUMMARY = re.compile(
     r"Tests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)"
 )
@@ -270,7 +270,7 @@ def main() -> int:
         "versions": [],
     }
 
-    with tempfile.TemporaryDirectory(prefix="unified-parameters-pct-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="parameter-foundry-pct-") as temporary:
         temporary_path = Path(temporary)
         pct_source = temporary_path / "pct"
         repository = temporary_path / "repository"

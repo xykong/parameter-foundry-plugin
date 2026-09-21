@@ -6,7 +6,7 @@ demonstrate the local contract but do not approve the larger attack surface.
 
 ## Script Provider
 
-- [ ] The plugin declares an explicit Jenkins and Unified Parameters
+- [ ] The plugin declares an explicit Jenkins and Parameter Foundry
   compatibility range.
 - [ ] Catalog configuration requires the dedicated Script Provider
   configuration permission.

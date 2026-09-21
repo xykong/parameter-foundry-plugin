@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.companion.git;
+package io.jenkins.plugins.parameterfoundry.companion.git;
 
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
 import java.util.Map;
 
 @FunctionalInterface

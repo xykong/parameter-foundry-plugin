@@ -1,12 +1,12 @@
-package io.jenkins.plugins.unifiedparameters.migration.activechoices;
+package io.jenkins.plugins.parameterfoundry.migration.activechoices;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -165,13 +165,13 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         }
         String source = labels ? "labels" : "nodes";
         String providerId = "TODO-node-provider";
-        String skeleton = "unifiedNodeProvider(\n"
+        String skeleton = "foundryNodeProvider(\n"
                 + "    id: '"
                 + providerId
                 + "',\n    source: '"
                 + source
                 + "'\n)\n"
-                + "unifiedChoice(\n"
+                + "foundryChoice(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n    providerId: '"
@@ -201,13 +201,13 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
             ParameterDefinition definition, ActiveChoicesScriptAnalysis.ConditionalChoices conditional) {
         String providerId = "TODO-mapping-provider";
         StringBuilder cases = new StringBuilder();
-        cases.append("unifiedMappingCase(\n")
+        cases.append("foundryMappingCase(\n")
                 .append("    value: ")
                 .append(quote(conditional.caseValue()))
                 .append(",\n    options: ")
                 .append(optionSnippet(conditional.caseOptions()))
                 .append("\n)");
-        String skeleton = "unifiedMappingProvider(\n"
+        String skeleton = "foundryMappingProvider(\n"
                 + "    id: '"
                 + providerId
                 + "',\n    dependencyParameter: "
@@ -217,7 +217,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 + ",\n    cases: [\n"
                 + cases
                 + "\n    ]\n)\n"
-                + "unifiedChoice(\n"
+                + "foundryChoice(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n    providerId: '"
@@ -249,7 +249,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 facts);
     }
 
-    private static String optionSnippet(List<io.jenkins.plugins.unifiedparameters.model.Option> options) {
+    private static String optionSnippet(List<io.jenkins.plugins.parameterfoundry.model.Option> options) {
         return options.stream()
                 .map(option -> "[value: " + quote(option.getValue()) + "]")
                 .reduce((left, right) -> left + ", " + right)
@@ -265,7 +265,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
             String choiceType,
             boolean multiple,
             boolean filterable) {
-        UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition(definition.getName());
+        FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
         target.setSelectionMode(multiple ? "multiple" : "single");
         target.setRenderer(rendererFor(choiceType, multiple, filterable));
         target.setChoices(literal.options());
@@ -341,7 +341,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                                 .map(encoded -> "[" + encoded + "],\n")
                                 .orElse("");
         String providerSkeleton = network
-                ? "unifiedRestProvider(\n"
+                ? "foundryRestProvider(\n"
                         + "    id: 'TODO-rest-provider',\n"
                         + "    connectionProfileId: '<administrator-selected-connection-profile>',\n"
                         + "    relativePath: '<reviewed-source-path>',\n"
@@ -351,13 +351,13 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                         + fallbackLine
                         + "    timeoutSeconds: 5\n"
                         + ")\n"
-                : "unifiedStaticProvider(\n"
+                : "foundryStaticProvider(\n"
                         + "    id: 'TODO-governed-provider',\n"
                         + "    options: [/* reviewed source options */]\n"
                         + ")\n";
         String providerId = network ? "TODO-rest-provider" : "TODO-governed-provider";
         return providerSkeleton
-                + "unifiedChoice(\n"
+                + "foundryChoice(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"
@@ -388,7 +388,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                     case FORMATTED_HTML, FORMATTED_HIDDEN_HTML -> "/* TODO reviewed typed fields */";
                     default -> "/* TODO reviewed typed fields */";
                 };
-        return "unifiedForm(\n"
+        return "foundryForm(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n"

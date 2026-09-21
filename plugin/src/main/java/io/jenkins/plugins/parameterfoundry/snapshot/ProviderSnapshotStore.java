@@ -1,18 +1,18 @@
-package io.jenkins.plugins.unifiedparameters.snapshot;
+package io.jenkins.plugins.parameterfoundry.snapshot;
 
 import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.model.Job;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.Digests;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolution;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.Digests;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolution;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
@@ -34,7 +34,7 @@ public final class ProviderSnapshotStore {
 
     public ResolvedProviderOptions create(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             Map<String, String> dependencies,
             ProviderResolution resolution,
             SnapshotAudience audience) {
@@ -70,7 +70,7 @@ public final class ProviderSnapshotStore {
 
     public ResolvedProviderOptions resolveForBuild(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             Map<String, String> dependencies,
             String submittedSnapshotId,
             ProviderOperation operation) {
@@ -102,7 +102,7 @@ public final class ProviderSnapshotStore {
     private static void requireBinding(
             Snapshot snapshot,
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             Map<String, String> dependencies) {
         if (snapshot.audience() != SnapshotAudience.BUILD_VALUE) {
             throw invalid(definition, "Diagnostic Provider snapshots cannot be used for builds.");
@@ -122,7 +122,7 @@ public final class ProviderSnapshotStore {
         snapshots.entrySet().removeIf(entry -> !now.isBefore(entry.getValue().expiresAt()));
     }
 
-    private static String definitionDigest(AbstractUnifiedParameterDefinition definition) {
+    private static String definitionDigest(AbstractFoundryParameterDefinition definition) {
         StringBuilder value = new StringBuilder(definition.getClass().getName())
                 .append('\u0000')
                 .append(definition.getName())
@@ -138,7 +138,7 @@ public final class ProviderSnapshotStore {
                 .append(definition.isRequired())
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
-        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+        if (definition instanceof FoundryChoiceParameterDefinition choice) {
             value.append('\u0000').append(choice.getSelectionMode());
             if (choice.isMultiple()) {
                 value.append('\u0000')
@@ -169,7 +169,7 @@ public final class ProviderSnapshotStore {
         return "up-snapshot-" + Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    private static EvaluationException invalid(AbstractUnifiedParameterDefinition definition, String message) {
+    private static EvaluationException invalid(AbstractFoundryParameterDefinition definition, String message) {
         return new EvaluationException(ErrorCode.SNAPSHOT_INVALID, definition.getName(), message);
     }
 

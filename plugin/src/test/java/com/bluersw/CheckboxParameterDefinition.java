@@ -1,6 +1,6 @@
 package com.bluersw;
 
-import io.jenkins.plugins.unifiedparameters.migration.additional.StubParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.additional.StubParameterDefinition;
 
 public final class CheckboxParameterDefinition extends StubParameterDefinition {
     public CheckboxParameterDefinition(String name) {

@@ -1,15 +1,15 @@
-package io.jenkins.plugins.unifiedparameters.provider.extension;
+package io.jenkins.plugins.parameterfoundry.provider.extension;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
 import java.util.List;
 import net.sf.json.JSONObject;
 
 /**
  * High-risk script execution uses a governed request/result contract. The
- * first-party implementation ships in the Unified Parameters HPI, while
+ * first-party implementation ships in the Parameter Foundry HPI, while
  * external companions may implement the same SPI.
  */
 public abstract class ScriptProviderExtension implements ExtensionPoint {

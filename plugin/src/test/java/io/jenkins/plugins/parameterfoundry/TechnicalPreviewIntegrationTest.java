@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,12 +20,12 @@ import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
 import hudson.security.csrf.CrumbIssuer;
-import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService;
+import io.jenkins.plugins.parameterfoundry.api.ParameterFoundryJobAction;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,11 +66,11 @@ class TechnicalPreviewIntegrationTest {
 
     @Test
     void malformedXstreamDefinitionIsDiagnosedAndCannotQueue(JenkinsRule jenkins) throws Exception {
-        UnifiedChoiceParameterDefinition valid = multipleDefinition();
+        FoundryChoiceParameterDefinition valid = multipleDefinition();
         String xml = Jenkins.XSTREAM2.toXML(valid);
         String malformedXml = xml.replace("<value>ios</value>", "<value>android</value>");
-        UnifiedChoiceParameterDefinition malformed =
-                (UnifiedChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(malformedXml);
+        FoundryChoiceParameterDefinition malformed =
+                (FoundryChoiceParameterDefinition) Jenkins.XSTREAM2.fromXML(malformedXml);
         assertFalse(
                 DefinitionValidationService.validateStoredDefinition(malformed).isValid());
 
@@ -81,7 +81,7 @@ class TechnicalPreviewIntegrationTest {
         Page response = postForm(
                 jenkins,
                 project,
-                List.of(new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS")));
+                List.of(new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS")));
 
         assertEquals(400, response.getWebResponse().getStatusCode());
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
@@ -98,7 +98,7 @@ class TechnicalPreviewIntegrationTest {
                 jenkins,
                 project,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "unknown")));
 
         assertEquals(400, response.getWebResponse().getStatusCode());
@@ -109,7 +109,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void standardRestPresenceMarkerDistinguishesEmptyFromAbsent(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("presence");
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("android"));
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -117,25 +117,25 @@ class TechnicalPreviewIntegrationTest {
         Page response = postForm(
                 jenkins,
                 project,
-                List.of(new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS")));
+                List.of(new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS")));
 
         assertEquals(201, response.getWebResponse().getStatusCode());
         jenkins.waitUntilNoActivity();
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of(), value.getValue());
     }
 
     @Test
-    void typedApiSchedulesMixedCoreAndUnifiedDefinitions(JenkinsRule jenkins) throws Exception {
+    void typedApiSchedulesMixedCoreAndFoundryDefinitions(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("typed-mixed");
         project.addProperty(new ParametersDefinitionProperty(
                 new StringParameterDefinition("MESSAGE", "default", ""),
                 new BooleanParameterDefinition("FLAG", false, ""),
                 new ChoiceParameterDefinition("CORE_CHOICE", new String[] {"one", "two"}, ""),
                 multipleDefinition()));
-        assertNotNull(project.getAction(UnifiedParametersJobAction.class));
+        assertNotNull(project.getAction(ParameterFoundryJobAction.class));
 
         JSONObject values = new JSONObject();
         values.put("MESSAGE", "hello");
@@ -147,7 +147,7 @@ class TechnicalPreviewIntegrationTest {
         body.put("delaySeconds", 0);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", body, true);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body, true);
 
         assertEquals(201, response.getStatusCode());
         jenkins.waitUntilNoActivity();
@@ -169,7 +169,7 @@ class TechnicalPreviewIntegrationTest {
         int queueLength = jenkins.jenkins.getQueue().getItems().length;
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", body, false);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body, false);
 
         assertEquals(409, response.getStatusCode());
         assertEquals(queueLength, jenkins.jenkins.getQueue().getItems().length);
@@ -191,7 +191,7 @@ class TechnicalPreviewIntegrationTest {
                 """);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/import/preview", body, true);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/import/preview", body, true);
 
         assertEquals(200, response.getStatusCode());
         assertEquals(2, response.getJSONObject().getInt("count"));
@@ -215,13 +215,13 @@ class TechnicalPreviewIntegrationTest {
         project.addProperty(new ParametersDefinitionProperty(singleDefinition(), multipleDefinition()));
 
         JenkinsRule.JSONWebResponse schema =
-                jenkins.createWebClient().getJSON(project.getUrl() + "unified-parameters/api/v1/schema");
+                jenkins.createWebClient().getJSON(project.getUrl() + "parameter-foundry/api/v1/schema");
         assertEquals(2, schema.getJSONObject().getJSONArray("parameters").size());
 
         JSONObject resolveBody = new JSONObject();
         resolveBody.put("parameter", "TARGETS");
         JenkinsRule.JSONWebResponse resolve =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody, true);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody, true);
         assertEquals(3, resolve.getJSONObject().getJSONArray("options").size());
 
         JSONObject submitted = new JSONObject();
@@ -229,7 +229,7 @@ class TechnicalPreviewIntegrationTest {
         JSONObject validateBody = new JSONObject();
         validateBody.put("values", submitted);
         JenkinsRule.JSONWebResponse validate =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", validateBody, true);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", validateBody, true);
         assertEquals(
                 JSONArray.fromObject(List.of("android", "web")),
                 validate.getJSONObject().getJSONObject("canonicalValues").getJSONArray("TARGETS"));
@@ -241,7 +241,7 @@ class TechnicalPreviewIntegrationTest {
         project.addProperty(new ParametersDefinitionProperty(multipleDefinition()));
         int queueLength = jenkins.jenkins.getQueue().getItems().length;
         WebRequest request = new WebRequest(
-                new URL(jenkins.getURL(), project.getUrl() + "unified-parameters/api/v1/build"), HttpMethod.POST);
+                new URL(jenkins.getURL(), project.getUrl() + "parameter-foundry/api/v1/build"), HttpMethod.POST);
         request.setAdditionalHeader("Content-Type", "application/json");
         request.setRequestBody("{\"values\":{}}");
         JenkinsRule.WebClient client = jenkins.createWebClient().withThrowExceptionOnFailingStatusCode(false);
@@ -255,7 +255,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void optionDisplayTextIsEscaped(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("escaping");
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         Option option = new Option("safe");
         option.setLabel("<script>window.pwned=true</script>");
         option.setDescription("<img src=x onerror=alert(1)>");
@@ -280,8 +280,8 @@ class TechnicalPreviewIntegrationTest {
                 jenkins,
                 project,
                 List.of(
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
-                        new NameValuePair(AbstractUnifiedParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
+                        new NameValuePair(AbstractFoundryParameterDefinition.PRESENCE_FIELD, "TARGETS"),
                         new NameValuePair("TARGETS", "android")));
 
         assertEquals(400, response.getWebResponse().getStatusCode());
@@ -293,7 +293,7 @@ class TechnicalPreviewIntegrationTest {
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "pipeline");
         job.setDefinition(new CpsFlowDefinition("""
                 properties([parameters([
-                  unifiedChoice(
+                  foundryChoice(
                     name: 'TARGETS',
                     selectionMode: 'multiple',
                     choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
@@ -318,14 +318,14 @@ class TechnicalPreviewIntegrationTest {
                 pipeline {
                   agent none
                   parameters {
-                    unifiedChoice(
+                    foundryChoice(
                       name: 'CHANNEL',
                       choices: [[value: 'staging'], [value: 'production']],
                       defaultMode: 'explicit',
                       defaultValue: 'staging',
                       renderer: 'searchable'
                     )
-                    unifiedChoice(
+                    foundryChoice(
                       name: 'TARGETS',
                       selectionMode: 'multiple',
                       choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
@@ -352,8 +352,8 @@ class TechnicalPreviewIntegrationTest {
         jenkins.assertLogContains("TARGETS=android|web", build);
         ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
         assertNotNull(property);
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, property.getParameterDefinition("CHANNEL"));
-        assertInstanceOf(UnifiedChoiceParameterDefinition.class, property.getParameterDefinition("TARGETS"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, property.getParameterDefinition("CHANNEL"));
+        assertInstanceOf(FoundryChoiceParameterDefinition.class, property.getParameterDefinition("TARGETS"));
     }
 
     @Test
@@ -363,7 +363,7 @@ class TechnicalPreviewIntegrationTest {
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "upstream");
         upstream.setDefinition(new CpsFlowDefinition("""
                 build job: 'downstream', wait: true, parameters: [[
-                  $class: 'UnifiedChoiceParameterValue',
+                  $class: 'FoundryChoiceParameterValue',
                   name: 'TARGETS',
                   value: ['web', 'android']
                 ]]
@@ -371,8 +371,8 @@ class TechnicalPreviewIntegrationTest {
 
         jenkins.buildAndAssertSuccess(upstream);
 
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 downstream.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of("android", "web"), value.getValue());
     }
@@ -380,7 +380,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void pipelineBuildStepPassesStringChoiceValue(JenkinsRule jenkins) throws Exception {
         FreeStyleProject downstream = jenkins.createFreeStyleProject("choice-downstream");
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         definition.setChoices(List.of(new Option("staging"), new Option("production")));
         downstream.addProperty(new ParametersDefinitionProperty(definition));
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "choice-upstream");
@@ -403,7 +403,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void pipelineBuildStepPassesDelimitedStringMultiChoiceValue(JenkinsRule jenkins) throws Exception {
         FreeStyleProject downstream = jenkins.createFreeStyleProject("delimited-downstream");
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setStandardApiInputMode("delimited");
         downstream.addProperty(new ParametersDefinitionProperty(definition));
         WorkflowJob upstream = jenkins.createProject(WorkflowJob.class, "delimited-upstream");
@@ -432,8 +432,8 @@ class TechnicalPreviewIntegrationTest {
                 .invokeWithArgs(project.getFullName(), "-p", "TARGETS=[\"web\",\"android\"]", "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedChoiceParameterValue value = assertInstanceOf(
-                UnifiedChoiceParameterValue.class,
+        FoundryChoiceParameterValue value = assertInstanceOf(
+                FoundryChoiceParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS"));
         assertEquals(List.of("android", "web"), value.getValue());
     }
@@ -448,7 +448,7 @@ class TechnicalPreviewIntegrationTest {
                 .withThrowExceptionOnFailingStatusCode(false)
                 .getPage(project, "build?delay=0sec");
 
-        List<?> markers = page.getByXPath("//input[@name='__unified_parameters_presence']");
+        List<?> markers = page.getByXPath("//input[@name='__parameter_foundry_presence']");
         assertEquals(2, markers.size());
         assertFalse(
                 page.getByXPath("//input[@name='CHANNEL' or @name='TARGETS']").isEmpty());
@@ -463,7 +463,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void noJavaScriptLargeListIsBounded(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("large-form");
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         List<Option> options = new ArrayList<>();
         for (int index = 0; index < 1000; index++) {
             options.add(new Option(String.format("option-%04d", index)));
@@ -488,7 +488,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void rebuildUsesCurrentDefinitionRendererAndHistoricalValue(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("rebuild");
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web", "android"));
         project.addProperty(new ParametersDefinitionProperty(definition));
@@ -505,7 +505,7 @@ class TechnicalPreviewIntegrationTest {
     @Test
     void rebuildShowsHistoricalCustomValueInFallbackControls(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("rebuild-custom");
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("RELEASE");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("RELEASE");
         definition.setChoices(List.of(new Option("stable")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValue("stable");
@@ -514,7 +514,7 @@ class TechnicalPreviewIntegrationTest {
         project.addProperty(new ParametersDefinitionProperty(definition));
         project.scheduleBuild2(
                 0,
-                new ParametersAction(new UnifiedChoiceParameterValue(
+                new ParametersAction(new FoundryChoiceParameterValue(
                         "RELEASE", "release-42", null, definition.getEnvironmentExport())));
         jenkins.waitUntilNoActivity();
         FreeStyleBuild build = project.getLastBuild();
@@ -554,16 +554,16 @@ class TechnicalPreviewIntegrationTest {
         return new JenkinsRule.JSONWebResponse(webClient.loadWebResponse(request));
     }
 
-    private static UnifiedChoiceParameterDefinition singleDefinition() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+    private static FoundryChoiceParameterDefinition singleDefinition() {
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         definition.setChoices(List.of(new Option("staging"), new Option("production")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValue("staging");
         return definition;
     }
 
-    private static UnifiedChoiceParameterDefinition multipleDefinition() {
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+    private static FoundryChoiceParameterDefinition multipleDefinition() {
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web", "android"));
@@ -575,10 +575,10 @@ class TechnicalPreviewIntegrationTest {
         assertNotNull(property);
         List<ParameterDefinition> definitions = property.getParameterDefinitions();
         assertEquals(2, definitions.size());
-        UnifiedChoiceParameterDefinition single =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, definitions.get(0));
-        UnifiedChoiceParameterDefinition multiple =
-                assertInstanceOf(UnifiedChoiceParameterDefinition.class, definitions.get(1));
+        FoundryChoiceParameterDefinition single =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, definitions.get(0));
+        FoundryChoiceParameterDefinition multiple =
+                assertInstanceOf(FoundryChoiceParameterDefinition.class, definitions.get(1));
         assertEquals("staging", single.getDefaultValue());
         assertEquals(List.of("web", "android"), multiple.getDefaultValues());
     }

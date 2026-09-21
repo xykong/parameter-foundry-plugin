@@ -1,8 +1,8 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +43,11 @@ public final class StaticProviderDefinition extends SharedProviderDefinition {
     }
 
     @Extension
-    @Symbol("unifiedStaticProvider")
+    @Symbol("foundryStaticProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Static Provider";
+            return "Parameter Foundry Static Provider";
         }
     }
 }

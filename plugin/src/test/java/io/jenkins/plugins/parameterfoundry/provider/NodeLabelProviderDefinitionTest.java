@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,9 +82,9 @@ class NodeLabelProviderDefinitionTest {
         return new ProviderLoadContext(request, Optional.empty());
     }
 
-    private static List<String> values(List<io.jenkins.plugins.unifiedparameters.model.Option> options) {
+    private static List<String> values(List<io.jenkins.plugins.parameterfoundry.model.Option> options) {
         return options.stream()
-                .map(io.jenkins.plugins.unifiedparameters.model.Option::getValue)
+                .map(io.jenkins.plugins.parameterfoundry.model.Option::getValue)
                 .toList();
     }
 }

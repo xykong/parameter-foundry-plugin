@@ -5,7 +5,7 @@
 
 ## Decision
 
-Unified Parameters product development is maintained in this independent
+Parameter Foundry product development is maintained in this independent
 repository.
 
 The `example-ops` repository remains responsible only for production operations,

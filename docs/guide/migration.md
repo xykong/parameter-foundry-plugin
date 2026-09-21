@@ -7,7 +7,7 @@ never changes the Job on its own.
 
 ## Workflow
 
-1. **Preview** — open the Job and select **Unified Parameters** in the side panel.
+1. **Preview** — open the Job and select **Parameter Foundry** in the side panel.
    Each recognised parameter shows its classification, the semantic decisions
    that need a human answer, a target summary, the generated Pipeline definition,
    and a verification fixture.
@@ -39,23 +39,23 @@ has to be stated before an equivalent can be generated.
 
 | Source | Target |
 |---|---|
-| Extended Choice single/multi select, radio, checkbox | `unifiedChoice` with the matching renderer and `selectionMode` |
+| Extended Choice single/multi select, radio, checkbox | `foundryChoice` with the matching renderer and `selectionMode` |
 | Extended Choice static values | Inline `choices` |
 | Extended Choice property file | Managed config Provider |
 | Extended Choice Groovy script | Provider refactor (the script is not copied) |
-| Extended Choice JSON editor | `unifiedForm` |
+| Extended Choice JSON editor | `foundryForm` |
 | Extended Choice custom delimiter | `standardApiInputMode` / `environmentExport` |
-| Active Choices choice | Provider plus `unifiedChoice` |
+| Active Choices choice | Provider plus `foundryChoice` |
 | Active Choices reactive choice/reference | `dependsOn`, or a read-only form field |
 | Active Choices Groovy list/map | Inline, REST, managed config, or Script Provider |
 | Active Choices `:selected` / `:disabled` | Option defaults and disabled metadata |
 | Active Choices formatted HTML | Structured content or a reviewed renderer; raw HTML is not carried over |
 | List Git Branches | Built-in Git refs Provider behind a Connection Profile |
-| HTML parameters | `unifiedForm` sections, grids, and conditional layouts |
-| JSON Editor / JSON parameter | `unifiedForm` typed schema |
-| Multiselect, Custom Checkbox, Editable Choice, Extensible Choice | `unifiedChoice` variants |
-| Validating String | `unifiedForm` string field with regex and length |
-| REST List | REST Provider plus `unifiedChoice` |
+| HTML parameters | `foundryForm` sections, grids, and conditional layouts |
+| JSON Editor / JSON parameter | `foundryForm` typed schema |
+| Multiselect, Custom Checkbox, Editable Choice, Extensible Choice | `foundryChoice` variants |
+| Validating String | `foundryForm` string field with regex and length |
+| REST List | REST Provider plus `foundryChoice` |
 | Stashed File / File parameter | Stay native — uploads are not converted into choices |
 
 ## Boundaries
@@ -81,13 +81,13 @@ The same flow is scriptable:
 
 ```bash
 # Inventory every Job that an installed adapter recognizes
-jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -json
+jenkins-cli -s "$JENKINS_URL" parameter-foundry-migration -json
 
 # Dry run for one Job, with its decisions and the exact diff
-jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job
+jenkins-cli -s "$JENKINS_URL" parameter-foundry-migration -job folder/job
 
 # Apply the batch once the decisions are accepted
-jenkins-cli -s "$JENKINS_URL" unified-parameters-migration -job folder/job -apply -accept-decisions
+jenkins-cli -s "$JENKINS_URL" parameter-foundry-migration -job folder/job -apply -accept-decisions
 ```
 
 The inventory is scoped to the Jobs the CLI user may configure; it reports how
@@ -105,7 +105,7 @@ A migration is only proven when the same input produces the same result before
 and after the change:
 
 ```bash
-jenkins-cli -s "$JENKINS_URL" unified-parameters-migration-verify \
+jenkins-cli -s "$JENKINS_URL" parameter-foundry-migration-verify \
   -job folder/job -record <record-id>
 ```
 
@@ -123,7 +123,7 @@ takes the values the Job's builds actually used, and compares what the source
 control produced with what the target control would produce for the same input.
 
 ```bash
-curl -u "$USER:$TOKEN" "$JENKINS_URL/unified-parameters-replacement-simulation/report?builds=5"
+curl -u "$USER:$TOKEN" "$JENKINS_URL/parameter-foundry-replacement-simulation/report?builds=5"
 ```
 
 Per parameter the report answers:
@@ -141,7 +141,7 @@ Per parameter the report answers:
   parameter can be migrated.
 
 The Job page exposes the same simulation at
-`<job>/unified-parameters/simulation`, and a controller-wide run only needs
+`<job>/parameter-foundry/simulation`, and a controller-wide run only needs
 administrative read access, so a Job that the migration operator cannot
 configure is still verified.
 

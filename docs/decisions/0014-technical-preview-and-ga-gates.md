@@ -27,7 +27,7 @@ It must produce executable Jenkins Test Harness/browser fixtures proving:
 5. standard `buildWithParameters` invalid-input HTTP 4xx and unchanged queue
    state on the minimum baseline and release-target LTS;
 6. CLI multi-value decoding and stable errors;
-7. Typed API scheduling for mixed Core/Unified Jobs and rejection of
+7. Typed API scheduling for mixed Core/Foundry Jobs and rejection of
    unsupported definitions;
 8. Rebuild Renderer preservation and current-definition validation;
 9. CSP-safe JavaScript enhancement and bounded no-JavaScript fallback;

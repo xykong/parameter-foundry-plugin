@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
 import java.util.ArrayList;

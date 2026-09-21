@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 import java.io.Serial;
 
@@ -25,7 +25,7 @@ public class EvaluationException extends IllegalArgumentException {
     }
 
     public String getStableCode() {
-        return "UNIFIED_PARAMETER_" + code.name();
+        return "PARAMETER_FOUNDRY_" + code.name();
     }
 
     public String getSafeMessage() {

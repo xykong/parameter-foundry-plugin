@@ -99,7 +99,7 @@ async def interact_choice_page(page: Page, profile: str) -> None:
         await page.locator("select").first.select_option("testing")
         textboxes = page.locator("input[type=text]:visible")
         if await textboxes.count():
-            await textboxes.first.fill("feature/unified-parameters")
+            await textboxes.first.fill("feature/parameter-foundry")
         checkbox = page.locator("input[type=checkbox]:visible")
         if await checkbox.count():
             await checkbox.first.uncheck(force=True)

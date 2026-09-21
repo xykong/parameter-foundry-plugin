@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,18 +10,18 @@ import hudson.cli.CLICommandInvoker;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderResolutionService;
-import io.jenkins.plugins.unifiedparameters.provider.SharedProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotStore;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSubmission;
-import io.jenkins.plugins.unifiedparameters.snapshot.SnapshotAudience;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService;
+import io.jenkins.plugins.parameterfoundry.provider.SharedProviderDefinition;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSubmission;
+import io.jenkins.plugins.parameterfoundry.snapshot.SnapshotAudience;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void standardFormContextUsesParameterScopedSnapshotFields() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("ARTIFACT");
 
         assertEquals("__up_snapshot_ARTIFACT", ProviderSubmission.snapshotRequestField(definition));
         assertEquals("__up_dependencies_ARTIFACT", ProviderSubmission.dependenciesRequestField(definition));
@@ -46,7 +46,7 @@ class ReactiveSnapshotIntegrationTest {
     @Test
     void typedResolveAndBuildShareDependencyBoundSnapshot(JenkinsRule jenkins) throws Exception {
         DependencyProvider provider = new DependencyProvider("artifacts");
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-snapshot");
 
@@ -57,7 +57,7 @@ class ReactiveSnapshotIntegrationTest {
         resolveBody.put("dependencies", dependencies);
         resolveBody.put("version", 7);
         JenkinsRule.JSONWebResponse resolved =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
 
         assertEquals(200, resolved.getStatusCode());
         JSONObject resolution = resolved.getJSONObject();
@@ -77,11 +77,11 @@ class ReactiveSnapshotIntegrationTest {
         buildBody.put("values", values);
         buildBody.put("providerSnapshots", snapshots);
         JenkinsRule.JSONWebResponse built =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", buildBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", buildBody);
         assertEquals(201, built.getStatusCode(), built.getJSONObject().toString());
         jenkins.waitUntilNoActivity();
 
-        UnifiedChoiceParameterValue value = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue value = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
         assertEquals("staging-artifact", value.getValue());
         assertNotNull(value.getProviderSnapshot());
@@ -93,7 +93,7 @@ class ReactiveSnapshotIntegrationTest {
     @Test
     void snapshotCannotCrossDependencyOrDiagnosticBoundary(JenkinsRule jenkins) throws Exception {
         DependencyProvider provider = new DependencyProvider("artifacts");
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(provider));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-binding");
 
@@ -103,7 +103,7 @@ class ReactiveSnapshotIntegrationTest {
         resolveBody.put("parameter", "ARTIFACT");
         resolveBody.put("dependencies", dependencies);
         JenkinsRule.JSONWebResponse resolved =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/resolve", resolveBody);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/resolve", resolveBody);
         String snapshotId = resolved.getJSONObject().getString("snapshotId");
 
         JSONObject values = new JSONObject();
@@ -115,14 +115,14 @@ class ReactiveSnapshotIntegrationTest {
         body.put("values", values);
         body.put("providerSnapshots", snapshots);
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", body);
 
         assertEquals(409, response.getStatusCode());
         assertEquals(
-                "UNIFIED_PARAMETER_" + ErrorCode.SNAPSHOT_INVALID.name(),
+                "PARAMETER_FOUNDRY_" + ErrorCode.SNAPSHOT_INVALID.name(),
                 response.getJSONObject().getJSONArray("errors").getJSONObject(0).getString("code"));
 
-        UnifiedChoiceParameterDefinition artifact = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition artifact = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("ARTIFACT");
         Map<String, String> canonicalDependencies = Map.of("ENVIRONMENT", "staging");
         var providerResolution =
@@ -131,16 +131,16 @@ class ReactiveSnapshotIntegrationTest {
                 .create(project, artifact, canonicalDependencies, providerResolution, SnapshotAudience.DIAGNOSTIC)
                 .snapshotId();
         assertThrows(
-                io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException.class,
+                io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException.class,
                 () -> ProviderSnapshotStore.get()
                         .resolveForBuild(
                                 project, artifact, canonicalDependencies, diagnosticId, ProviderOperation.BUILD));
 
         FreeStyleProject other = reactiveJob(jenkins, "reactive-binding-other");
-        UnifiedChoiceParameterDefinition otherArtifact = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition otherArtifact = (FoundryChoiceParameterDefinition)
                 other.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("ARTIFACT");
         assertThrows(
-                io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException.class,
+                io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException.class,
                 () -> ProviderSnapshotStore.get()
                         .resolveForBuild(
                                 other, otherArtifact, canonicalDependencies, snapshotId, ProviderOperation.BUILD));
@@ -148,7 +148,7 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void cliResolvesReactiveDependenciesFromBuildParameters(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-cli");
 
@@ -162,7 +162,7 @@ class ReactiveSnapshotIntegrationTest {
                         "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedChoiceParameterValue value = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue value = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
         assertEquals("production-artifact", value.getValue());
         assertNotNull(value.getProviderSnapshot());
@@ -170,7 +170,7 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void cliOmittedReactiveParameterUsesDependencyAwareDefault(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-omitted");
 
@@ -178,9 +178,9 @@ class ReactiveSnapshotIntegrationTest {
                 .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedChoiceParameterValue environment = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue environment = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ENVIRONMENT");
-        UnifiedChoiceParameterValue artifact = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue artifact = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
         assertEquals("production", environment.getValue());
         assertEquals("production-artifact", artifact.getValue());
@@ -189,7 +189,7 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void cliOmittedReactiveParameterUsesDependencyDefault(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-defaults");
 
@@ -197,9 +197,9 @@ class ReactiveSnapshotIntegrationTest {
                 new CLICommandInvoker(jenkins, "build").invokeWithArgs(project.getFullName(), "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedChoiceParameterValue environment = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue environment = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ENVIRONMENT");
-        UnifiedChoiceParameterValue artifact = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue artifact = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("ARTIFACT");
         assertEquals("staging", environment.getValue());
         assertEquals("staging-artifact", artifact.getValue());
@@ -208,8 +208,7 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void cliOmittedReactiveMultiChoiceUsesDependencyAwareDefault(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get()
-                .setProviders(List.of(new MultiDependencyProvider("multi-artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new MultiDependencyProvider("multi-artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveMultiJob(jenkins, "reactive-cli-multi-omitted");
 
@@ -217,7 +216,7 @@ class ReactiveSnapshotIntegrationTest {
                 .invokeWithArgs(project.getFullName(), "-p", "ENVIRONMENT=production", "-s");
 
         assertEquals(0, result.returnCode(), result.stderr());
-        UnifiedChoiceParameterValue targets = (UnifiedChoiceParameterValue)
+        FoundryChoiceParameterValue targets = (FoundryChoiceParameterValue)
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("TARGETS");
         assertEquals(List.of("production-android"), targets.getValue());
         assertNotNull(targets.getProviderSnapshot());
@@ -225,10 +224,10 @@ class ReactiveSnapshotIntegrationTest {
 
     @Test
     void cliOmittedReactiveRequiredValueFailsBeforeQueueing(JenkinsRule jenkins) throws Exception {
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
         ProviderSnapshotStore.get().clear();
         FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-required");
-        UnifiedChoiceParameterDefinition artifact = (UnifiedChoiceParameterDefinition)
+        FoundryChoiceParameterDefinition artifact = (FoundryChoiceParameterDefinition)
                 project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("ARTIFACT");
         artifact.setDefaultMode("none");
         artifact.setRequired(true);
@@ -246,16 +245,16 @@ class ReactiveSnapshotIntegrationTest {
     @Test
     void jobValidationRejectsReactiveCycles(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("reactive-cycle");
-        UnifiedChoiceParameterDefinition first = new UnifiedChoiceParameterDefinition("FIRST");
+        FoundryChoiceParameterDefinition first = new FoundryChoiceParameterDefinition("FIRST");
         first.setProviderId("unused");
         first.setDependsOn(List.of("SECOND"));
-        UnifiedChoiceParameterDefinition second = new UnifiedChoiceParameterDefinition("SECOND");
+        FoundryChoiceParameterDefinition second = new FoundryChoiceParameterDefinition("SECOND");
         second.setProviderId("unused");
         second.setDependsOn(List.of("FIRST"));
         ParametersDefinitionProperty property = new ParametersDefinitionProperty(first, second);
 
         var validation =
-                io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService.validateJobDefinitions(
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateJobDefinitions(
                         property.getParameterDefinitions());
 
         assertTrue(validation.getErrors().stream().anyMatch(error -> error.contains("Reactive dependency cycle")));
@@ -263,12 +262,12 @@ class ReactiveSnapshotIntegrationTest {
 
     private static FreeStyleProject reactiveJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        FoundryChoiceParameterDefinition environment = new FoundryChoiceParameterDefinition("ENVIRONMENT");
         environment.setChoices(List.of(new Option("staging"), new Option("production")));
         environment.setDefaultMode("explicit");
         environment.setDefaultValue("staging");
 
-        UnifiedChoiceParameterDefinition artifact = new UnifiedChoiceParameterDefinition("ARTIFACT");
+        FoundryChoiceParameterDefinition artifact = new FoundryChoiceParameterDefinition("ARTIFACT");
         artifact.setProviderId("artifacts");
         artifact.setDependsOn(List.of("ENVIRONMENT"));
         artifact.setDefaultMode("first");
@@ -278,12 +277,12 @@ class ReactiveSnapshotIntegrationTest {
 
     private static FreeStyleProject reactiveMultiJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedChoiceParameterDefinition environment = new UnifiedChoiceParameterDefinition("ENVIRONMENT");
+        FoundryChoiceParameterDefinition environment = new FoundryChoiceParameterDefinition("ENVIRONMENT");
         environment.setChoices(List.of(new Option("staging"), new Option("production")));
         environment.setDefaultMode("explicit");
         environment.setDefaultValue("staging");
 
-        UnifiedChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
+        FoundryChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");
         targets.setProviderId("multi-artifacts");
         targets.setDependsOn(List.of("ENVIRONMENT"));
         targets.setDefaultMode("first");

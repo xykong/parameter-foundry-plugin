@@ -1,14 +1,14 @@
-package io.jenkins.plugins.unifiedparameters.companion.git;
+package io.jenkins.plugins.parameterfoundry.companion.git;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.Option;
-import io.jenkins.plugins.unifiedparameters.provider.ConnectionProfileConsumer;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
-import io.jenkins.plugins.unifiedparameters.provider.SharedProviderDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.Option;
+import io.jenkins.plugins.parameterfoundry.provider.ConnectionProfileConsumer;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.SharedProviderDefinition;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -114,7 +114,7 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
 
     @Override
     public List<Option> load(ProviderLoadContext context) {
-        if (!UnifiedParametersGlobalConfiguration.gitRefsProviderFeatureEnabled()) {
+        if (!ParameterFoundryGlobalConfiguration.gitRefsProviderFeatureEnabled()) {
             throw new ProviderException(ErrorCode.PROVIDER_UNAVAILABLE, getId(), "The Git refs Provider is disabled.");
         }
         return normalize(
@@ -283,11 +283,11 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
     }
 
     @Extension
-    @Symbol("unifiedGitRefProvider")
+    @Symbol("foundryGitRefProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Git Branch/Tag/Ref Provider";
+            return "Parameter Foundry Git Branch/Tag/Ref Provider";
         }
     }
 }

@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 import hudson.model.ParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -16,7 +16,7 @@ public final class DependencyValues {
     private DependencyValues() {}
 
     public static Map<String, String> fromJson(
-            AbstractUnifiedParameterDefinition definition, JSONObject submittedDependencies) {
+            AbstractFoundryParameterDefinition definition, JSONObject submittedDependencies) {
         if (definition.getDependsOn().isEmpty()) {
             if (submittedDependencies != null && !submittedDependencies.isEmpty()) {
                 throw invalid(definition, "This parameter does not declare dependencies.");
@@ -42,7 +42,7 @@ public final class DependencyValues {
     }
 
     public static Map<String, String> fromParameterValues(
-            AbstractUnifiedParameterDefinition definition, Map<String, ParameterValue> values) {
+            AbstractFoundryParameterDefinition definition, Map<String, ParameterValue> values) {
         Map<String, String> result = new LinkedHashMap<>();
         for (String dependency : definition.getDependsOn()) {
             ParameterValue value = values.get(dependency);
@@ -55,7 +55,7 @@ public final class DependencyValues {
     }
 
     public static JSONObject parseJsonObject(
-            AbstractUnifiedParameterDefinition definition, String encodedDependencies) {
+            AbstractFoundryParameterDefinition definition, String encodedDependencies) {
         if (encodedDependencies == null || encodedDependencies.isBlank()) {
             return definition.getDependsOn().isEmpty() ? new JSONObject() : null;
         }
@@ -86,7 +86,7 @@ public final class DependencyValues {
         return String.valueOf(value);
     }
 
-    private static EvaluationException invalid(AbstractUnifiedParameterDefinition definition, String message) {
+    private static EvaluationException invalid(AbstractFoundryParameterDefinition definition, String message) {
         return new EvaluationException(ErrorCode.DEPENDENCY_INVALID, definition.getName(), message);
     }
 }

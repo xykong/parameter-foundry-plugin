@@ -5,7 +5,7 @@ sourceFamilies:
   - plugin: editable-choice
     sourceClass: io.jenkins.plugins.editable_choice.EditableChoiceParameterDefinition
     classification: A
-    target: unifiedChoice
+    target: foundryChoice
     decisions:
       - custom-value-regex-and-length
       - persisted-versus-one-build-custom-value
@@ -13,7 +13,7 @@ sourceFamilies:
   - plugin: custom-checkbox-parameter
     sourceClass: com.bluersw.CheckboxParameterDefinition
     classification: A
-    target: unifiedChoice (selectionMode: multiple)
+    target: foundryChoice (selectionMode: multiple)
     decisions:
       - ordered-versus-unordered-membership
       - renderer-and-empty-semantics
@@ -21,7 +21,7 @@ sourceFamilies:
   - plugin: multiselect-parameter
     sourceClass: de.westemeyer.plugins.multiselect.MultiselectParameterDefinition
     classification: B
-    target: unifiedChoice (selectionMode: multiple)
+    target: foundryChoice (selectionMode: multiple)
     decisions:
       - repeated-versus-json-array-versus-delimited-transport
       - ordering-and-duplicate-policy
@@ -29,7 +29,7 @@ sourceFamilies:
   - plugin: extensible-choice-parameter
     sourceClass: jp.ikedam.jenkins.plugins.extensible_choice_parameter.ExtensibleChoiceParameterDefinition
     classification: C
-    target: unifiedChoice (selectionMode: single or multiple)
+    target: foundryChoice (selectionMode: single or multiple)
     decisions:
       - static-versus-governed-provider
       - authority-and-credential
@@ -38,7 +38,7 @@ sourceFamilies:
   - plugin: validating-string-parameter
     sourceClass: hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition
     classification: B
-    target: unifiedForm
+    target: foundryForm
     decisions:
       - safe-regex-subset
       - validation-timing-and-error-family
@@ -47,7 +47,7 @@ sourceFamilies:
   - plugin: json-editor-parameter
     sourceClass: io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition
     classification: C
-    target: unifiedForm
+    target: foundryForm
     decisions:
       - approved-schema-subset
       - map-versus-json-output
@@ -56,7 +56,7 @@ sourceFamilies:
   - plugin: html-parameters
     sourceClass: org.jenkinsci.plugins.uiparameter.HtmlFormParameterDefinition
     classification: C
-    target: unifiedForm
+    target: foundryForm
     decisions:
       - business-controls
       - trusted-layout
@@ -65,7 +65,7 @@ sourceFamilies:
   - plugin: json-parameter
     sourceClass: com.github.cyanbaz.jenkins.plugins.jsonparameter.JsonParameterDefinition
     classification: C
-    target: unifiedForm-or-governed-provider
+    target: foundryForm-or-governed-provider
     decisions:
       - structured-versus-reference-input
       - dependency-semantics
@@ -74,7 +74,7 @@ sourceFamilies:
   - plugin: rest-list-parameter
     sourceClass: io.jenkins.plugins.restlistparam.RestListParameterDefinition
     classification: C
-    target: unifiedChoice
+    target: foundryChoice
     decisions:
       - connection-profile
       - jsonpath-or-xpath-subset

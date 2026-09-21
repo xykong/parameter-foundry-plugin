@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.companion.script;
+package io.jenkins.plugins.parameterfoundry.companion.script;
 
 import hudson.Extension;
 import java.util.ArrayList;

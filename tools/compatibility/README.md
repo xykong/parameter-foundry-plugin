@@ -11,7 +11,7 @@ python3 tools/compatibility/audit-parameter-modes.py \
   --base-url https://jenkins.example.invalid \
   --auth-file /secure/path/jenkins-credentials.json \
   --auth-key jenkins_oidc_escape_hatch_secret \
-  > /tmp/unified-parameters-audit.json
+  > /tmp/parameter-foundry-audit.json
 ```
 
 The output intentionally omits Job names, option values, credentials, tokens,

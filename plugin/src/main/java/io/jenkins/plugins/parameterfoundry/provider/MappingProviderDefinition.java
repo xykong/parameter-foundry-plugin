@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -107,11 +107,11 @@ public final class MappingProviderDefinition extends SharedProviderDefinition {
     }
 
     @Extension
-    @Symbol("unifiedMappingProvider")
+    @Symbol("foundryMappingProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Dependency Mapping Provider";
+            return "Parameter Foundry Dependency Mapping Provider";
         }
     }
 }

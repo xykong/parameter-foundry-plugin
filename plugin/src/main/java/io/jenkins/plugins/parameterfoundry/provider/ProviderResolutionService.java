@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public final class ProviderResolutionService {
 
     public static ProviderResolution resolve(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             ProviderOperation operation,
             Map<String, String> dependencies) {
         if (!definition.isProviderBacked()) {
@@ -50,7 +50,7 @@ public final class ProviderResolutionService {
         return resolution;
     }
 
-    public static String currentProviderDigest(Job<?, ?> job, AbstractUnifiedParameterDefinition definition) {
+    public static String currentProviderDigest(Job<?, ?> job, AbstractFoundryParameterDefinition definition) {
         if (!definition.isProviderBacked()) {
             return Digests.sha256("inline\u0000" + definition.getName());
         }
@@ -84,7 +84,7 @@ public final class ProviderResolutionService {
     }
 
     private static ProviderRegistry.LocatedProvider requireProvider(
-            Job<?, ?> job, AbstractUnifiedParameterDefinition definition) {
+            Job<?, ?> job, AbstractFoundryParameterDefinition definition) {
         return ProviderRegistry.findProvider(job, definition.getProviderId())
                 .orElseThrow(() -> new ProviderException(
                         ErrorCode.PROVIDER_UNAVAILABLE,

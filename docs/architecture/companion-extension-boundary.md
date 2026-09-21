@@ -4,7 +4,7 @@ Date: August 28, 2026
 
 ## Purpose
 
-Unified Parameters covers business requirements without turning the core
+Parameter Foundry covers business requirements without turning the core
 plugin into a script console or arbitrary UI host. High-risk capabilities are
 installed and reviewed independently while retaining the same canonical
 evaluation, snapshot, validation, and audit contracts.
@@ -23,7 +23,7 @@ Companions use plugin-packaged Jelly and adjunct resources. A trusted v1
 contract requires CSP-safe behavior, escaped untrusted content, no inline
 script, no Job-supplied HTML, and syntactically bounded adjunct names.
 
-Only an installed plugin other than `unified-parameters` may satisfy an
+Only an installed plugin other than `parameter-foundry` may satisfy an
 external renderer ID. Administrators therefore make an explicit installation
 trust decision, and removing that companion makes definitions fail closed as
 configuration errors.
@@ -55,12 +55,12 @@ The companion result remains subject to the core Provider runtime:
 ## Compatibility
 
 Both SPIs use API version `1`. An incompatible version is ignored rather than
-loaded optimistically. Companion plugins must publish Jenkins and Unified
+loaded optimistically. Companion plugins must publish Jenkins and Foundry
 Parameters version ranges, upgrade fixtures, and their own threat-model
 extension.
 
 This repository includes three first-party capability implementations. They
-ship inside the single `unified-parameters` HPI:
+ship inside the single `parameter-foundry` HPI:
 
 - `accessible-choice-grid` provides the trusted
   `accessible-choice-grid` renderer. It contributes only packaged CSS/JavaScript
@@ -71,8 +71,8 @@ ship inside the single `unified-parameters` HPI:
   entries through Jenkins Script Security, requires sandbox mode, exposes only
   immutable dependency values and operation metadata, and normalizes bounded
   option output before it reaches the core Provider runtime.
-- `unifiedGitRefProvider` provides the
-  `unifiedGitRefProvider`. It resolves branch, tag, or full-ref values through
+- `foundryGitRefProvider` provides the
+  `foundryGitRefProvider`. It resolves branch, tag, or full-ref values through
   the Jenkins Git Client plugin, takes repository authority only from a
   governed Connection Profile, rejects redirects and custom headers, reuses
   core SSRF policy, and never persists repository URLs or credentials in a Job

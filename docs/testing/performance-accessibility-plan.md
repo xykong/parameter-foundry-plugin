@@ -112,7 +112,7 @@ The August 29, 2026 reproducible run is stored in:
 
 - [`results/1.0-e2e-benchmark.json`](./results/1.0-e2e-benchmark.json);
 - [`results/1.0-accessibility.json`](./results/1.0-accessibility.json);
-- [`../ui-gallery/images/unified-parameters/`](../ui-gallery/images/unified-parameters/).
+- [`../ui-gallery/images/parameter-foundry/`](../ui-gallery/images/parameter-foundry/).
 
 The run uses a Jenkins `2.568.2-lts-jdk21` controller limited to 4 vCPU and
 8 GiB, Chromium, 10,000 Inline options, one warm-up navigation, five measured

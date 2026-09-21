@@ -24,7 +24,7 @@
       if (/\/configSubmit\/?$/.test(action.pathname)) {
         action.pathname = action.pathname.replace(
           /\/configSubmit\/?$/,
-          "/unified-parameters/api/v1/import/preview",
+          "/parameter-foundry/api/v1/import/preview",
         );
         action.search = "";
         return action;
@@ -203,7 +203,7 @@
       (omitted > 0 ? ", /* " + omitted + " more imported options */" : "") +
       "]";
     var pipeline =
-      "unifiedChoice(\n  name: " +
+      "foundryChoice(\n  name: " +
       quote(name) +
       (kind === "multiple" ? ",\n  selectionMode: 'multiple'" : "") +
       ",\n  choices: " +

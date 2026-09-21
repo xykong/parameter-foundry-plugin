@@ -8,7 +8,7 @@
 ## Purpose
 
 This summary preserves the product-relevant findings that motivated the
-Unified Parameters parity contract. Production Job names, credentials,
+Parameter Foundry parity contract. Production Job names, credentials,
 controller configuration, and organization-specific upgrade records remain
 outside this repository.
 
@@ -30,7 +30,7 @@ outside this repository.
 ## Product Conclusions
 
 The test demonstrates useful capability but not one stable semantic contract
-across every Jenkins entry point. Unified Parameters therefore treats the
+across every Jenkins entry point. Parameter Foundry therefore treats the
 following as release-blocking requirements:
 
 - repeated, delimiter, typed-array, absent, and explicit-empty input have

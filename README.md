@@ -1,15 +1,15 @@
-# Unified Parameters
+# Parameter Foundry
 
 ## Introduction
 
-Unified Parameters is a community-oriented Jenkins plugin project that aims to
+Parameter Foundry is a community-oriented Jenkins plugin project that aims to
 provide one secure, typed, extensible parameter model across the Jenkins UI,
 Pipeline, REST API, CLI, webhooks, upstream builds, remote triggers, and
 Rebuild.
 
 The current development branch implements the roadmap through the `2.0`
 foundation: static and governed dynamic choices, reactive dependencies and
-Provider snapshots, typed Unified Forms, migration execution and rollback,
+Provider snapshots, typed Foundry Forms, migration execution and rollback,
 trusted companion extension contracts, reference Renderer and sandboxed Script
 Provider companions, source migration boundaries, and retirement reporting.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
@@ -65,7 +65,7 @@ Regenerate the competitor UI Gallery:
 make gallery
 ```
 
-Run the real-browser Unified Parameters E2E suite:
+Run the real-browser Parameter Foundry E2E suite:
 
 ```bash
 make e2e

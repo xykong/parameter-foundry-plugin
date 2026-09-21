@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,7 +27,7 @@ class MigrationMessageCoverageTest {
 
     @Test
     void everyJavaReferenceResolvesAndEveryLocaleIsComplete() throws IOException {
-        Path resources = Path.of("target", "classes", "io", "jenkins", "plugins", "unifiedparameters");
+        Path resources = Path.of("target", "classes", "io", "jenkins", "plugins", "parameterfoundry");
         Set<String> english = keys(resources.resolve("Messages.properties"));
         assertTrue(english.size() > 100, "Unexpected message count: " + english.size());
         for (String locale : LOCALES) {
@@ -52,7 +52,7 @@ class MigrationMessageCoverageTest {
 
     @Test
     void everyViewKeyExistsInTheViewBundleAndItsLocales() throws IOException {
-        Path resources = Path.of("target", "classes", "io", "jenkins", "plugins", "unifiedparameters");
+        Path resources = Path.of("target", "classes", "io", "jenkins", "plugins", "parameterfoundry");
         List<Path> views;
         try (Stream<Path> paths = Files.walk(resources)) {
             views = paths.filter(path -> path.toString().endsWith(".jelly")).toList();

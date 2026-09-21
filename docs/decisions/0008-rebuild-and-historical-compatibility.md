@@ -5,24 +5,24 @@
 
 ## Context
 
-Unified Parameters promises that migrated user requirements can be expressed
+Parameter Foundry promises that migrated user requirements can be expressed
 and rebuilt with the new plugin. It does not provide binary compatibility with
 source-plugin classes. Historical builds may still contain serialized source
 `ParameterValue` objects after the active Job is migrated.
 
 ## Decision
 
-### Builds Created by Unified Parameters
+### Builds Created by Parameter Foundry
 
 Each new build stores:
 
-- the Unified Parameters canonical value;
+- the Parameter Foundry canonical value;
 - parameter-definition configuration digest;
 - bounded Provider snapshot metadata;
 - the export mode used.
 
 Rebuild pre-populates the historical canonical value using the current
-Unified ParameterDefinition and its original Renderer family. Before
+Foundry ParameterDefinition and its original Renderer family. Before
 scheduling, the value is evaluated against the current definition and current
 or authorized snapshot policy.
 
@@ -88,9 +88,9 @@ or document a compatibility adapter. It must not weaken validation.
 Supported:
 
 - migrated active Jobs can be configured, built, automated, and rebuilt using
-  only Unified Parameters and any explicitly selected companion Providers;
+  only Parameter Foundry and any explicitly selected companion Providers;
 - old business requirements can be recreated 1:1 or better;
-- new Unified Parameters build records remain readable across plugin upgrades.
+- new Parameter Foundry build records remain readable across plugin upgrades.
 
 Not promised:
 

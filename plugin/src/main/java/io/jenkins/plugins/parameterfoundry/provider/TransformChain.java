@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.List;
 
 final class TransformChain {
@@ -14,7 +14,7 @@ final class TransformChain {
                 current = transforms.get(index).apply(current);
             } catch (RuntimeException exception) {
                 throw new ProviderException(
-                        io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                         providerId,
                         "Transform step " + index + " failed: " + exception.getMessage());
             }

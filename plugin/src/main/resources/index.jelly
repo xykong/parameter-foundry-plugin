@@ -1,15 +1,15 @@
 <?jelly escape-by-default='true'?>
 <div>
   <p>
-    <strong>Unified Parameters</strong> provides one parameter model for choices and typed input
+    <strong>Parameter Foundry</strong> provides one parameter model for choices and typed input
     across the Jenkins UI, Pipeline, REST, CLI, webhooks, upstream builds, and Rebuild. Every entry
     point calls the same server-side evaluation service, so the value a user picks is the value the
     build records.
   </p>
   <ul>
-    <li><strong>Unified Choice Parameter</strong> — single selection, multiple selection, and
+    <li><strong>Foundry Choice Parameter</strong> — single selection, multiple selection, and
       two-dimensional choice tables, with inline or Provider-backed options and reactive refresh.</li>
-    <li><strong>Unified Form Parameter</strong> — typed schema with validation, layouts,
+    <li><strong>Foundry Form Parameter</strong> — typed schema with validation, layouts,
       conditional visibility, canonical JSON output, and governed environment export.</li>
     <li>Renderers: select, searchable, radio, list, checkbox, chips, table, and a packaged
       accessible choice grid.</li>

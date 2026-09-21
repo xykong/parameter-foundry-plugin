@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.validation;
+package io.jenkins.plugins.parameterfoundry.validation;
 
 import java.util.ArrayList;
 import java.util.List;

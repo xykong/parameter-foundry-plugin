@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -52,7 +52,7 @@ public final class RestQueryParameter extends AbstractDescribableImpl<RestQueryP
         String dependencyValue = request.dependencyValues().get(dependencyParameter);
         if (dependencyValue == null) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.DEPENDENCY_INVALID,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.DEPENDENCY_INVALID,
                     request.providerId(),
                     "REST query dependency is unavailable: " + dependencyParameter);
         }
@@ -60,11 +60,11 @@ public final class RestQueryParameter extends AbstractDescribableImpl<RestQueryP
     }
 
     @Extension
-    @Symbol("unifiedRestQuery")
+    @Symbol("foundryRestQuery")
     public static final class DescriptorImpl extends Descriptor<RestQueryParameter> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters REST Query";
+            return "Parameter Foundry REST Query";
         }
     }
 }

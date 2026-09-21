@@ -1,16 +1,16 @@
-# Unified Choice Matrix Design
+# Foundry Choice Matrix Design
 
 ## Status
 
-- Status: Accepted; unified entry implemented in the current snapshot
+- Status: Accepted; foundry entry implemented in the current snapshot
 - Date: September 9, 2026 (updated September 10, 2026)
-- Scope: `unifiedChoice` option selection with `selectionMode` `single`/`multiple`
+- Scope: `foundryChoice` option selection with `selectionMode` `single`/`multiple`
 
 ## 1. Goal
 
-Unified Choice is one public parameter entry point. `selectionMode` expresses the
+Foundry Choice is one public parameter entry point. `selectionMode` expresses the
 value cardinality, `renderer` the selection surface, and `selectedDisplay` the
-presentation of selected values. Unified Choice also supports structured
+presentation of selected values. Foundry Choice also supports structured
 two-dimensional option matrices. A
 matrix preserves the meaning of rows and columns instead of flattening every
 combination into a long list.
@@ -31,7 +31,7 @@ creates machine values by concatenating row and column labels.
 There is one public parameter entry point:
 
 ```groovy
-unifiedChoice(
+foundryChoice(
     name: 'TARGETS',
     selectionMode: 'multiple',
     renderer: 'table',

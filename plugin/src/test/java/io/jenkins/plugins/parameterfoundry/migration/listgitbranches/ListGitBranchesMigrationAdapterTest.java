@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.listgitbranches;
+package io.jenkins.plugins.parameterfoundry.migration.listgitbranches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.syhuang.hudson.plugins.listgitbranchesparameter.ListGitBranchesParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
 import org.junit.jupiter.api.Test;
 
 class ListGitBranchesMigrationAdapterTest {
@@ -20,7 +20,7 @@ class ListGitBranchesMigrationAdapterTest {
 
         assertEquals(MigrationClassification.C, plan.getClassification());
         assertNull(plan.getTarget());
-        assertTrue(plan.getTargetSkeleton().contains("unifiedGitRefProvider"));
+        assertTrue(plan.getTargetSkeleton().contains("foundryGitRefProvider"));
         assertTrue(plan.getTargetSkeleton().contains("refType: 'branch'"));
         assertTrue(plan.getTargetSkeleton().contains("connectionProfileId"));
         assertFalse(plan.getTargetSkeleton().contains("example.test"));

@@ -7,7 +7,7 @@
 
 File parameters are multipart transport capabilities. They are not option
 Providers and cannot be represented safely as JSON strings, option values, or
-ordinary Unified Form fields without changing upload, storage, workspace,
+ordinary Foundry Form fields without changing upload, storage, workspace,
 stash, retention, and Rebuild behavior.
 
 The project previously left a possible reviewed File companion open as a
@@ -18,17 +18,17 @@ without a demonstrated business capability gap.
 
 ## Decision
 
-Unified Parameters does not introduce a File companion in the current roadmap.
+Parameter Foundry does not introduce a File companion in the current roadmap.
 
 - Jenkins Core `FileParameterDefinition` remains the recommended native upload
   parameter.
 - File Parameters `StashedFileParameterDefinition` remains native when stash
   lifecycle behavior is required.
-- Mixed Jobs may use native File/Stashed File definitions beside Unified
+- Mixed Jobs may use native File/Stashed File definitions beside Foundry
   choice and form definitions.
 - Standard Jenkins multipart endpoints remain the supported upload transport.
-- The Unified Typed JSON API rejects a Job containing a file definition with
-  HTTP `409` and `UNIFIED_PARAMETER_UNSUPPORTED_DEFINITION`; it never drops or
+- The Foundry Typed JSON API rejects a Job containing a file definition with
+  HTTP `409` and `PARAMETER_FOUNDRY_UNSUPPORTED_DEFINITION`; it never drops or
   fabricates file content.
 - Migration classifies Stashed File as class D with a "retain native"
   resolution. It must not convert an upload into a string, choice, Provider, or

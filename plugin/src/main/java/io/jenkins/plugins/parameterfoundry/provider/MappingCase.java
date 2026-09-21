@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public final class MappingCase extends AbstractDescribableImpl<MappingCase> impl
     }
 
     @Extension
-    @Symbol("unifiedMappingCase")
+    @Symbol("foundryMappingCase")
     public static final class DescriptorImpl extends Descriptor<MappingCase> {
         @Override
         public String getDisplayName() {

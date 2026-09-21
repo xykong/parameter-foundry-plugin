@@ -7,8 +7,8 @@ of a list copied into every Job.
 
 | Scope | Declared in | Visible to |
 |---|---|---|
-| Global | **Manage Jenkins → System → Unified Parameters** | Every Job |
-| Folder | Folder → **Configure → Unified Parameters** | That Folder's Jobs, and nested Folders when *Available to nested Folders* is set |
+| Global | **Manage Jenkins → System → Parameter Foundry** | Every Job |
+| Folder | Folder → **Configure → Parameter Foundry** | That Folder's Jobs, and nested Folders when *Available to nested Folders* is set |
 
 Parameters reference a Provider by **Shared Provider ID**. Provider-backed
 parameters resolve options at form load, bind the build to that option set
@@ -38,7 +38,7 @@ A **Matrix** Provider builds a table from two axes. Each axis is either an inlin
 list or the options of another Provider, so a column list can stay live:
 
 ```groovy
-unifiedMatrixProvider(
+foundryMatrixProvider(
     id: 'registries-on-agents',
     rowAxisLabel: 'DOCKER_REGISTRIES',
     rows: [[value: 'harbor.example.net', label: 'Registry B']],
@@ -48,7 +48,7 @@ unifiedMatrixProvider(
     rowSelectionMode: 'at-most-one'
 )
 
-unifiedChoice(
+foundryChoice(
     name: 'DOCKER_LOGINS',
     selectionMode: 'multiple',
     renderer: 'table',
@@ -109,7 +109,7 @@ list, so the question is only *where the list lives*:
 
 | | Inline choices | Provider |
 |---|---|---|
-| Declared in | The Job (parameter configuration, Job DSL, or the Pipeline's `parameters` block) | Manage Jenkins -> System -> Unified Parameters, or a Folder property |
+| Declared in | The Job (parameter configuration, Job DSL, or the Pipeline's `parameters` block) | Manage Jenkins -> System -> Parameter Foundry, or a Folder property |
 | Changes when an agent, branch, or environment is added | The Job must be edited | Nothing to change; the next resolve returns the new list |
 | Shared by several Jobs | No; each Job keeps its own copy | Yes, one definition for every Job that references it |
 | Can be live | No, the list is whatever the Job says | Yes: nodes, labels, Git refs, REST, a reviewed script, a config file |
@@ -118,7 +118,7 @@ list, so the question is only *where the list lives*:
 
 ```groovy
 // Inline: the list is part of the Job configuration.
-unifiedChoice(
+foundryChoice(
   name: 'BUILD_NODE',
   choices: [[value: 'agent-a.example.net'], [value: 'agent-b.example.net']],
   renderer: 'list',
@@ -126,7 +126,7 @@ unifiedChoice(
 )
 
 // Provider: the list lives outside the Job and stays live.
-unifiedChoice(name: 'BUILD_NODE', providerId: 'agent-nodes', renderer: 'list', required: true)
+foundryChoice(name: 'BUILD_NODE', providerId: 'agent-nodes', renderer: 'list', required: true)
 ```
 
 `demo-node-choice` deliberately carries both: `BUILD_NODE` is backed by a
@@ -153,7 +153,7 @@ the only place a base URL, credential, and allow-list are declared.
 
 Provider results are bounded: at most 10,000 options per resolve, bounded
 response sizes, and per-principal, per-Job, and per-Provider request budgets.
-Exceeding a budget returns `UNIFIED_PARAMETER_RATE_LIMITED` with `Retry-After`.
+Exceeding a budget returns `PARAMETER_FOUNDRY_RATE_LIMITED` with `Retry-After`.
 
 ## Script Providers
 
@@ -171,15 +171,15 @@ mapping** Provider is the declarative way to change the *option list itself* per
 value:
 
 ```groovy
-unifiedMappingProvider(
+foundryMappingProvider(
     id: 'build-type',
     dependencyParameter: 'BUILD_MODE',
     defaultOptions: [[value: 'debug'], [value: 'release']],
     cases: [
-        unifiedMappingCase(value: 'production', options: [[value: 'store']])
+        foundryMappingCase(value: 'production', options: [[value: 'store']])
     ]
 )
-unifiedChoice(name: 'BUILD_TYPE', providerId: 'build-type', dependsOn: ['BUILD_MODE'])
+foundryChoice(name: 'BUILD_TYPE', providerId: 'build-type', dependsOn: ['BUILD_MODE'])
 ```
 
 The parameter offers the case options while the dependency has that value, and the default list
@@ -195,7 +195,7 @@ refresh is in flight. Dependency cycles are configuration errors.
 
 ## Health and diagnostics
 
-`…/unified-parameters/api/v1/providers/health` reports the last result per
+`…/parameter-foundry/api/v1/providers/health` reports the last result per
 parameter — healthy or not, duration, option count, and a redacted message. Use
 it before blaming a Job configuration.
 
@@ -205,13 +205,13 @@ The plugin takes part in JCasC import and export. An exported global
 configuration looks like this (values shortened):
 
 ```yaml
-unifiedParameters:
+parameterFoundry:
   accessibleChoiceGridEnabled: true
   gitRefsProviderEnabled: true
   migrationAdaptersEnabled: true
   scriptProviderEnabled: true
   providers:
-    - unifiedScriptProvider:
+    - foundryScriptProvider:
         id: "release-options"
         engineId: "sandbox-groovy"
         sourceReference: "catalog:release_environments"

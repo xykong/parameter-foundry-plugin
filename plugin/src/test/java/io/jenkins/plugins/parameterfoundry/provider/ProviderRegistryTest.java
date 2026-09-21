@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.FreeStyleProject;
 import hudson.model.Items;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +22,11 @@ class ProviderRegistryTest {
     @Test
     void nearestFolderOverridesGlobalAndSiblingProvidersStayIsolated(JenkinsRule jenkins) throws Exception {
         StaticProviderDefinition global = provider("shared", "global");
-        UnifiedParametersGlobalConfiguration.get().setProviders(List.of(global));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(global));
 
         Folder team = jenkins.createProject(Folder.class, "team");
         StaticProviderDefinition local = provider("shared", "team");
-        UnifiedParametersFolderProperty teamProperty = new UnifiedParametersFolderProperty();
+        ParameterFoundryFolderProperty teamProperty = new ParameterFoundryFolderProperty();
         teamProperty.setProviders(List.of(local));
         team.addProperty(teamProperty);
 
@@ -98,7 +98,7 @@ class ProviderRegistryTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> UnifiedParametersGlobalConfiguration.requireUniqueIds(
+                () -> ParameterFoundryGlobalConfiguration.requireUniqueIds(
                         List.of(first.getId(), second.getId()), "Provider"));
         assertTrue(first.getDisplayName().equals("duplicate"));
         assertFalse(first.getOptions().isEmpty());
@@ -109,7 +109,7 @@ class ProviderRegistryTest {
         Folder source = jenkins.createProject(Folder.class, "source");
         StaticProviderDefinition inherited = provider("move-sensitive", "source");
         inherited.setUsableByChildren(true);
-        UnifiedParametersFolderProperty property = new UnifiedParametersFolderProperty();
+        ParameterFoundryFolderProperty property = new ParameterFoundryFolderProperty();
         property.setProviders(List.of(inherited));
         source.addProperty(property);
         Folder nested = source.createProject(Folder.class, "nested");

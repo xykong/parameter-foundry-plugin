@@ -28,7 +28,7 @@ classification:
       question: Should an unavailable Provider fail closed, return empty, or use last-known-good?
 
 targetSkeleton:
-  symbol: unifiedChoice
+  symbol: foundryChoice
   arguments:
     name: ARTIFACT
     providerId: <administrator-selected-provider>

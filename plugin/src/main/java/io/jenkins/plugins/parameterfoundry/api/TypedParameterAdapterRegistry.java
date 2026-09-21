@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.api;
+package io.jenkins.plugins.parameterfoundry.api;
 
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.BooleanParameterValue;
@@ -8,17 +8,17 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.evaluation.DecodedInput;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.evaluation.ParameterEvaluationService;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotStore;
-import io.jenkins.plugins.unifiedparameters.snapshot.ResolvedProviderOptions;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore;
+import io.jenkins.plugins.parameterfoundry.snapshot.ResolvedProviderOptions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +31,8 @@ final class TypedParameterAdapterRegistry {
     private TypedParameterAdapterRegistry() {}
 
     static boolean supports(ParameterDefinition definition) {
-        return definition instanceof UnifiedChoiceParameterDefinition
-                || definition instanceof UnifiedFormParameterDefinition
+        return definition instanceof FoundryChoiceParameterDefinition
+                || definition instanceof FoundryFormParameterDefinition
                 || definition instanceof ChoiceParameterDefinition
                 || definition instanceof BooleanParameterDefinition
                 || definition instanceof StringParameterDefinition;
@@ -45,20 +45,20 @@ final class TypedParameterAdapterRegistry {
         schema.put("supported", supports(definition));
         schema.put(
                 "owner",
-                definition instanceof UnifiedChoiceParameterDefinition
-                                || definition instanceof UnifiedFormParameterDefinition
-                        ? "unified-parameters"
+                definition instanceof FoundryChoiceParameterDefinition
+                                || definition instanceof FoundryFormParameterDefinition
+                        ? "parameter-foundry"
                         : "jenkins-core");
-        if (definition instanceof UnifiedFormParameterDefinition) {
+        if (definition instanceof FoundryFormParameterDefinition) {
             schema.put("type", "object");
-        } else if (definition instanceof UnifiedChoiceParameterDefinition choice && choice.isMultiple()) {
+        } else if (definition instanceof FoundryChoiceParameterDefinition choice && choice.isMultiple()) {
             schema.put("type", "array");
         } else if (definition instanceof BooleanParameterDefinition) {
             schema.put("type", "boolean");
         } else {
             schema.put("type", "string");
         }
-        if (definition instanceof UnifiedChoiceParameterDefinition single) {
+        if (definition instanceof FoundryChoiceParameterDefinition single) {
             schema.put("selectionMode", single.getSelectionMode());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
@@ -72,7 +72,7 @@ final class TypedParameterAdapterRegistry {
                 schema.put("customValuePattern", single.getCustomValuePattern());
                 schema.put("customValueMaxLength", single.getCustomValueMaxLength());
             }
-        } else if (definition instanceof UnifiedFormParameterDefinition form) {
+        } else if (definition instanceof FoundryFormParameterDefinition form) {
             schema.put("outputMode", form.getOutputMode());
             schema.put("renderer", form.getRenderer());
             schema.put("formSchema", JSONObject.fromObject(form.getSchemaJson()));
@@ -94,16 +94,16 @@ final class TypedParameterAdapterRegistry {
                     definition.getName(),
                     "Unsupported parameter definition: " + definition.getClass().getName());
         }
-        if (definition instanceof UnifiedFormParameterDefinition form) {
+        if (definition instanceof FoundryFormParameterDefinition form) {
             if (snapshotId != null) {
-                throw invalidType(definition, "Unified Form does not accept Provider snapshots.");
+                throw invalidType(definition, "Foundry Form does not accept Provider snapshots.");
             }
             if (present && !(typedValue instanceof JSONObject)) {
                 throw invalidType(definition, "Expected a JSON object.");
             }
             return form.createTypedValue(typedValue, present);
         }
-        if (definition instanceof UnifiedChoiceParameterDefinition choice) {
+        if (definition instanceof FoundryChoiceParameterDefinition choice) {
             if (choice.isMultiple()) {
                 return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
             }
@@ -118,7 +118,7 @@ final class TypedParameterAdapterRegistry {
                             ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
                             : DecodedInput.absent(),
                     resolved.options());
-            return UnifiedChoiceParameterValue.single(
+            return FoundryChoiceParameterValue.single(
                     choice.getName(),
                     canonical,
                     choice.getDescription(),
@@ -151,7 +151,7 @@ final class TypedParameterAdapterRegistry {
 
     private static ParameterValue decodeMultiple(
             Job<?, ?> job,
-            AbstractUnifiedParameterDefinition definition,
+            AbstractFoundryParameterDefinition definition,
             boolean present,
             Object typedValue,
             Map<String, String> dependencies,
@@ -173,7 +173,7 @@ final class TypedParameterAdapterRegistry {
                 present ? DecodedInput.present(values) : DecodedInput.absent(),
                 resolved.options(),
                 resolved.matrix());
-        return UnifiedChoiceParameterValue.multiple(
+        return FoundryChoiceParameterValue.multiple(
                 definition.getName(),
                 canonical,
                 definition.getDescription(),

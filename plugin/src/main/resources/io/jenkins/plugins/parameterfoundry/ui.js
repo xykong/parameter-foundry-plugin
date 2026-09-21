@@ -30,7 +30,7 @@
     }
     action.pathname = jobPath;
     action.search = "";
-    return new URL("unified-parameters/api/v1/resolve", action);
+    return new URL("parameter-foundry/api/v1/resolve", action);
   }
 
   function crumbHeaders() {
@@ -83,7 +83,7 @@
     var dependencies = {};
     dependencyNames(field).forEach(function (name) {
       var dependency = Array.prototype.find.call(
-        document.querySelectorAll("[data-unified-parameter]"),
+        document.querySelectorAll("[data-parameter-foundry]"),
         function (candidate) {
           return candidate.dataset.parameterName === name;
         },
@@ -196,7 +196,7 @@
   function createSearch(field, statusId) {
     var input = document.createElement("input");
     input.type = "search";
-    input.className = "jenkins-input unified-parameters-search";
+    input.className = "jenkins-input parameter-foundry-search";
     input.placeholder = localized(field, "searchPlaceholder", "Search label, value, description, group, or tag");
     input.setAttribute("aria-label", localized(field, "searchLabel", "Search options"));
     input.setAttribute("aria-describedby", statusId);
@@ -211,14 +211,14 @@
    */
   function chipsRegion(field) {
     var region = document.createElement("div");
-    region.className = "unified-parameters-chips-region";
+    region.className = "parameter-foundry-chips-region";
     region.dataset.upExpanded = "true";
     var chips = document.createElement("div");
-    chips.className = "unified-parameters-chips";
+    chips.className = "parameter-foundry-chips";
     chips.setAttribute("aria-label", localized(field, "selectedOptionsLabel", "Selected options"));
     var toggle = document.createElement("button");
     toggle.type = "button";
-    toggle.className = "jenkins-button unified-parameters-group-select unified-parameters-chips-toggle";
+    toggle.className = "jenkins-button parameter-foundry-group-select parameter-foundry-chips-toggle";
     toggle.hidden = true;
     toggle.addEventListener("click", function () {
       region.dataset.upTouched = "true";
@@ -231,8 +231,8 @@
   }
 
   function syncChipRegion(field, region) {
-    var chips = region.querySelector(".unified-parameters-chips");
-    var toggle = region.querySelector(".unified-parameters-chips-toggle");
+    var chips = region.querySelector(".parameter-foundry-chips");
+    var toggle = region.querySelector(".parameter-foundry-chips-toggle");
     var count = chips.childElementCount;
     if (!region.dataset.upTouched) {
       region.dataset.upExpanded = String(count <= CHIP_COLLAPSE_THRESHOLD);
@@ -248,7 +248,7 @@
   function createStatus() {
     var status = document.createElement("div");
     status.id = uniqueId("up-status");
-    status.className = "unified-parameters-status";
+    status.className = "parameter-foundry-status";
     status.setAttribute("role", "status");
     status.setAttribute("aria-live", "polite");
     return status;
@@ -319,7 +319,7 @@
     }
     var selected = new Set(initialValues);
     var enhanced = document.createElement("div");
-    enhanced.className = "unified-parameters-enhanced unified-parameters-table-enhanced";
+    enhanced.className = "parameter-foundry-enhanced parameter-foundry-table-enhanced";
     var status = createStatus();
     var chipRegion = chipsRegion(field);
     var chips = chipRegion.chips;
@@ -529,7 +529,7 @@
     function toolbarButton(label, onClick) {
     var button = document.createElement("button");
     button.type = "button";
-    button.className = "jenkins-button unified-parameters-group-select";
+    button.className = "jenkins-button parameter-foundry-group-select";
     button.textContent = label;
     button.addEventListener("click", onClick);
     return button;
@@ -542,7 +542,7 @@
   function headerAction(caption, ariaLabel, onClick) {
     var button = document.createElement("button");
     button.type = "button";
-    button.className = "unified-parameters-table-header-action";
+    button.className = "parameter-foundry-table-header-action";
     button.textContent = caption;
     button.setAttribute("aria-label", ariaLabel);
     button.title = ariaLabel;
@@ -567,7 +567,7 @@
       sortedSetValues(selected).forEach(function (value) {
         var caption = cellLabels.get(value) || value;
         var chip = document.createElement("span");
-        chip.className = "unified-parameters-chip";
+        chip.className = "parameter-foundry-chip";
         chip.appendChild(document.createTextNode(caption));
         var remove = document.createElement("button");
         remove.type = "button";
@@ -595,7 +595,7 @@
     }
 
     var toolbar = document.createElement("div");
-    toolbar.className = "unified-parameters-toolbar";
+    toolbar.className = "parameter-foundry-toolbar";
     toolbar.setAttribute("aria-label", "Table actions");
     toolbar.appendChild(
       toolbarButton(localized(field, "selectAllCells", "Select all"), function () {
@@ -613,11 +613,11 @@
       }),
     );
     var table = document.createElement("table");
-    table.className = "unified-parameters-table";
+    table.className = "parameter-foundry-table";
     if (tableModel.columnAxisLabel) {
       // The column caption names the axis, so the header row stays the machine values it offers.
       var caption = document.createElement("caption");
-      caption.className = "unified-parameters-table-caption";
+      caption.className = "parameter-foundry-table-caption";
       caption.textContent = tableModel.columnAxisLabel;
       table.appendChild(caption);
     }
@@ -778,7 +778,7 @@
   function detailsFor(option, detailsId, field) {
     var details = document.createElement("details");
     details.id = detailsId;
-    details.className = "unified-parameters-details";
+    details.className = "parameter-foundry-details";
     var summary = document.createElement("summary");
     summary.textContent = localized(field, "details", "Details");
     details.appendChild(summary);
@@ -805,7 +805,7 @@
       !option.pseudo &&
       (option.description || option.disabledReason || option.label !== option.value);
     var row = document.createElement("div");
-    row.className = "unified-parameters-option";
+    row.className = "parameter-foundry-option";
     row.setAttribute("aria-disabled", String(Boolean(option.disabled)));
     var label = document.createElement("label");
     var input = document.createElement("input");
@@ -824,7 +824,7 @@
       onChange(option.value, input.checked);
     });
     var copy = document.createElement("span");
-    copy.className = "unified-parameters-option-copy";
+    copy.className = "parameter-foundry-option-copy";
     var caption = document.createElement("strong");
     caption.textContent = option.label || option.value;
     copy.appendChild(caption);
@@ -849,7 +849,7 @@
    */
   function enhanceSingleRadio(field, options, initialValues) {
     var enhanced = document.createElement("div");
-    enhanced.className = "unified-parameters-enhanced unified-parameters-radio";
+    enhanced.className = "parameter-foundry-enhanced parameter-foundry-radio";
     enhanced.dataset.upEnhanced = "true";
     enhanced.setAttribute("role", "radiogroup");
     enhanced.setAttribute(
@@ -861,7 +861,7 @@
     var groupName = uniqueId("up-radio-group");
     var selected = new Set(initialValues.slice(0, 1));
     var list = document.createElement("div");
-    list.className = "unified-parameters-options";
+    list.className = "parameter-foundry-options";
 
     function update(message) {
       setSubmittedValues(field, selected, true);
@@ -913,12 +913,12 @@
       return;
     }
     var enhanced = document.createElement("div");
-    enhanced.className = "unified-parameters-enhanced";
+    enhanced.className = "parameter-foundry-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
     var search = createSearch(field, status.id);
     var select = document.createElement("select");
-    select.className = "jenkins-select__input unified-parameters-native-list";
+    select.className = "jenkins-select__input parameter-foundry-native-list";
     select.setAttribute(
       "aria-label",
       field.dataset.parameterName || "Select an option",
@@ -937,7 +937,7 @@
     if (wantsRadio) {
       // A radio group above the render limit degrades to the searchable list on purpose.
       var degraded = document.createElement("p");
-      degraded.className = "unified-parameters-notice";
+      degraded.className = "parameter-foundry-notice";
       degraded.textContent = formatMessage(
         localized(
           field,
@@ -1060,10 +1060,10 @@
     enhanced.appendChild(select);
     if (allowCustom) {
       var customAction = document.createElement("div");
-      customAction.className = "unified-parameters-custom-action";
+      customAction.className = "parameter-foundry-custom-action";
       customButton = document.createElement("button");
       customButton.type = "button";
-      customButton.className = "jenkins-button unified-parameters-custom-value";
+      customButton.className = "jenkins-button parameter-foundry-custom-value";
       customButton.setAttribute(
         "aria-label",
         localized(field, "useSearchAsCustomValue", "Use search text as a custom value"),
@@ -1082,7 +1082,7 @@
         );
       });
       customValidation = document.createElement("div");
-      customValidation.className = "unified-parameters-custom-validation";
+      customValidation.className = "parameter-foundry-custom-validation";
       customValidation.setAttribute("role", "alert");
       customValidation.hidden = true;
       customAction.appendChild(customButton);
@@ -1108,13 +1108,13 @@
   function enhanceMultipleList(field, options, initialValues) {
     var selected = new Set(initialValues);
     var enhanced = document.createElement("div");
-    enhanced.className = "unified-parameters-enhanced";
+    enhanced.className = "parameter-foundry-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
     var search = createSearch(field, status.id);
     var select = document.createElement("select");
     select.multiple = true;
-    select.className = "jenkins-select__input unified-parameters-native-list";
+    select.className = "jenkins-select__input parameter-foundry-native-list";
     select.setAttribute(
       "aria-label",
       field.dataset.parameterName || "Select options",
@@ -1184,18 +1184,18 @@
     var selected = new Set(initialValues);
     var collapsedGroups = new Set();
     var enhanced = document.createElement("div");
-    enhanced.className = "unified-parameters-enhanced";
+    enhanced.className = "parameter-foundry-enhanced";
     enhanced.dataset.upEnhanced = "true";
     var status = createStatus();
     var search = createSearch(field, status.id);
     var chipRegion = chipsRegion(field);
     var chips = chipRegion.chips;
     var toolbar = document.createElement("div");
-    toolbar.className = "unified-parameters-toolbar";
+    toolbar.className = "parameter-foundry-toolbar";
     toolbar.setAttribute("aria-label", "Selection actions");
     var list = document.createElement("div");
     list.id = uniqueId("up-options");
-    list.className = "unified-parameters-options";
+    list.className = "parameter-foundry-options";
     list.setAttribute("aria-label", localized(field, "availableOptionsLabel", "Available options"));
     search.setAttribute("aria-controls", list.id);
 
@@ -1217,7 +1217,7 @@
         });
         var caption = option ? option.label : value;
         var chip = document.createElement("span");
-        chip.className = "unified-parameters-chip";
+        chip.className = "parameter-foundry-chip";
         chip.appendChild(document.createTextNode(caption));
         var remove = document.createElement("button");
         remove.type = "button";
@@ -1272,7 +1272,7 @@
 
     function groupHeader(groupName, groupOptions) {
       var heading = document.createElement("div");
-      heading.className = "unified-parameters-group";
+      heading.className = "parameter-foundry-group";
       var collapse = createToolbarButton(groupName || "Other", function () {
         if (collapsedGroups.has(groupName)) {
           collapsedGroups.delete(groupName);
@@ -1281,12 +1281,12 @@
         }
         renderList();
       });
-      collapse.className = "unified-parameters-group-toggle";
+      collapse.className = "parameter-foundry-group-toggle";
       collapse.setAttribute("aria-expanded", String(!collapsedGroups.has(groupName)));
       var selectGroup = createToolbarButton(localized(field, "selectGroup", "Select group"), function () {
         changeSelection(groupOptions, "select", localized(field, "groupSelectionUpdated", "Group selection updated."));
       });
-      selectGroup.className = "jenkins-button unified-parameters-group-select";
+      selectGroup.className = "jenkins-button parameter-foundry-group-select";
       heading.appendChild(collapse);
       heading.appendChild(selectGroup);
       return heading;
@@ -1306,7 +1306,7 @@
       removeChildren(list);
       grouped.forEach(function (groupOptions, groupName) {
         var group = document.createElement("section");
-        group.className = "unified-parameters-group-section";
+        group.className = "parameter-foundry-group-section";
         group.setAttribute("aria-label", groupName || "Other options");
         group.appendChild(groupHeader(groupName, groupOptions));
         if (!collapsedGroups.has(groupName) || search.value) {
@@ -1327,7 +1327,7 @@
       });
       if (matches.length === 0) {
         var empty = document.createElement("p");
-        empty.className = "unified-parameters-empty";
+        empty.className = "parameter-foundry-empty";
         empty.textContent = localized(field, "noOptionsMatch", "No options match this search.");
         list.appendChild(empty);
       }
@@ -1477,7 +1477,7 @@
       return;
     }
     var providerFields = Array.prototype.slice.call(
-      form.querySelectorAll('[data-unified-parameter][data-provider-backed="true"]'),
+      form.querySelectorAll('[data-parameter-foundry][data-provider-backed="true"]'),
     );
     if (!providerFields.length) {
       return;
@@ -1568,7 +1568,7 @@
           enhanceSingle(field, options, initialValues);
         }
         var interactiveStatus = field.querySelector(
-          "[data-up-enhanced] .unified-parameters-status",
+          "[data-up-enhanced] .parameter-foundry-status",
         );
         if (resolved.fallback && interactiveStatus) {
           interactiveStatus.textContent =
@@ -1615,7 +1615,7 @@
 
   function scheduleReactiveRefresh(changedName) {
     Array.prototype.forEach.call(
-      document.querySelectorAll("[data-unified-parameter]"),
+      document.querySelectorAll("[data-parameter-foundry]"),
       function (field) {
         if (dependencyNames(field).indexOf(changedName) === -1) {
           return;
@@ -1650,7 +1650,7 @@
       scheduleReactiveRefresh(event.detail.parameter);
     });
     Array.prototype.forEach.call(
-      document.querySelectorAll("[data-unified-parameter]"),
+      document.querySelectorAll("[data-parameter-foundry]"),
       function (field) {
         bridgeFallbackValues(field);
         updateBuildAvailability(field.closest("form"));

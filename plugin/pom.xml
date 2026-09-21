@@ -4,17 +4,17 @@
 
   <parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>unified-parameters-parent</artifactId>
+    <artifactId>parameter-foundry-parent</artifactId>
     <version>${revision}${changelist}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>unified-parameters</artifactId>
+  <artifactId>parameter-foundry</artifactId>
   <packaging>hpi</packaging>
 
-  <name>Unified Parameters</name>
+  <name>Parameter Foundry</name>
   <description>One parameter model for every Jenkins entry point.</description>
-  <url>https://github.com/jenkinsci/unified-parameters-plugin</url>
+  <url>https://github.com/jenkinsci/parameter-foundry-plugin</url>
 
   <dependencies>
     <dependency>

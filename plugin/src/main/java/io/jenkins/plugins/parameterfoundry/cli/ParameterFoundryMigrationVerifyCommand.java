@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.cli;
+package io.jenkins.plugins.parameterfoundry.cli;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
 import hudson.model.Job;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidence;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidenceService;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationEvidence;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationEvidenceService;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.args4j.Option;
@@ -16,7 +16,7 @@ import org.kohsuke.args4j.Option;
  * <p>Exit codes: 0 verified, 1 mismatch, 2 waiting for a comparable build.
  */
 @Extension
-public final class UnifiedParametersMigrationVerifyCommand extends CLICommand {
+public final class ParameterFoundryMigrationVerifyCommand extends CLICommand {
 
     @Option(name = "-job", usage = "Full name of the migrated Job.", required = true)
     public String job;
@@ -35,7 +35,7 @@ public final class UnifiedParametersMigrationVerifyCommand extends CLICommand {
 
     @Override
     public String getName() {
-        return "unified-parameters-migration-verify";
+        return "parameter-foundry-migration-verify";
     }
 
     @Override

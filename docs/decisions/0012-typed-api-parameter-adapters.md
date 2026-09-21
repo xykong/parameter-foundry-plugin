@@ -5,8 +5,8 @@
 
 ## Context
 
-Jenkins Jobs commonly mix Unified Parameters with Jenkins Core parameter
-definitions. A typed build endpoint that accepts only Unified definitions
+Jenkins Jobs commonly mix Parameter Foundry with Jenkins Core parameter
+definitions. A typed build endpoint that accepts only Foundry definitions
 cannot schedule such a Job completely, while silently ignoring other
 definitions would apply unknown defaults and violate the API contract.
 
@@ -14,7 +14,7 @@ definitions would apply unknown defaults and violate the API contract.
 
 ### Complete-Job Contract
 
-`/unified-parameters/api/v1/build` is a complete Job scheduling API for Jobs
+`/parameter-foundry/api/v1/build` is a complete Job scheduling API for Jobs
 whose current parameter definitions all have a registered typed adapter.
 
 The core plugin includes adapters for:
@@ -25,17 +25,17 @@ The core plugin includes adapters for:
 | Core Text | String | Core default |
 | Core Boolean | Boolean | Core default |
 | Core Choice | String | Core default and Core choice validation |
-| Unified Choice | String/null | ADR 0005 |
-| Unified Multi-choice | Array | ADR 0005 |
+| Foundry Choice | String/null | ADR 0005 |
+| Foundry Multi-choice | Array | ADR 0005 |
 
 Core adapters preserve Jenkins Core semantics. They do not reinterpret Core
-Choice as Unified Choice or change its implicit/default behavior.
+Choice as Foundry Choice or change its implicit/default behavior.
 
 The schema identifies for every parameter:
 
 - name;
 - definition class family;
-- semantic owner: `jenkins-core` or `unified-parameters`;
+- semantic owner: `jenkins-core` or `parameter-foundry`;
 - typed JSON shape;
 - whether the definition is supported;
 - default availability without revealing secret values.
@@ -54,7 +54,7 @@ name:
 
 - `schema` reports the incompatibility without exposing secret defaults;
 - `validate` and `build` return HTTP 409 with
-  `UNIFIED_PARAMETER_UNSUPPORTED_DEFINITION`;
+  `PARAMETER_FOUNDRY_UNSUPPORTED_DEFINITION`;
 - no build is scheduled, even when the request omits that parameter.
 
 The endpoint never silently applies defaults from an unsupported definition.
@@ -83,7 +83,7 @@ They cannot schedule directly.
 Companion adapters:
 
 - declare supported definition classes and plugin version ranges;
-- cannot replace a built-in Core or Unified adapter;
+- cannot replace a built-in Core or Foundry adapter;
 - require their own security review for secret or credential-bearing types;
 - must provide mixed-Job, default, invalid, and upgrade fixtures.
 
@@ -93,16 +93,16 @@ record behavior.
 
 ### Request Rules
 
-- `values` may include any supported Core or Unified parameter by exact name.
+- `values` may include any supported Core or Foundry parameter by exact name.
 - Omitted supported definitions use their owning implementation's default
   semantics.
-- `providerSnapshots` may reference only Unified dynamic definitions.
+- `providerSnapshots` may reference only Foundry dynamic definitions.
 - Supplying a snapshot for a Core definition is a typed input error.
 - Scheduling occurs only after all definitions decode and validate.
 
 ## Consequences
 
-- Mixed Core/Unified Jobs are first-class Typed API users.
+- Mixed Core/Foundry Jobs are first-class Typed API users.
 - Unsupported third-party or secret definitions fail explicitly instead of
   being ignored.
 - Core behavior remains owned by Jenkins Core while scheduling remains atomic.

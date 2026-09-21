@@ -31,7 +31,7 @@ requirements:
     plannedTests: [preview-cli-values-errors]
   - id: UP-SPIKE-007
     release: "0.1"
-    summary: Mixed Core and Unified Typed API
+    summary: Mixed Core and Foundry Typed API
     plannedTests: [preview-typed-mixed-job-unsupported-definition]
   - id: UP-SPIKE-008
     release: "0.1"
@@ -238,7 +238,7 @@ requirements:
     plannedTests: [parity-manifest-completeness]
   - id: UP-INT-014
     release: "1.0"
-    summary: Mixed Core and Unified Typed API
+    summary: Mixed Core and Foundry Typed API
     plannedTests: [typed-core-string-text-boolean-choice, typed-unsupported-definition-409]
 
   - id: UP-UX-001

@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.migration.additional;
+package io.jenkins.plugins.parameterfoundry.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import java.util.List;
 
 @Extension

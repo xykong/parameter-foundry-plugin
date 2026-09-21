@@ -46,7 +46,7 @@ value cannot silently change between form load and build.
 - Browser and Pipeline are always available.
 - For `buildWithParameters`, pick `repeated` unless the caller already sends a
   JSON array or a delimited string; the mode must match what the caller sends or
-  the request fails with `UNIFIED_PARAMETER_MALFORMED_INPUT`.
+  the request fails with `PARAMETER_FOUNDRY_MALFORMED_INPUT`.
 - CLI users pass a JSON array for multiple selection.
 - Environment export: `delimited` is easy for shells, `json` is safer when values
   may contain the delimiter, and `none` is right when the value should stay out of

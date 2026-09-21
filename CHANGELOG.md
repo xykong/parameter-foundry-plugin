@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Unified Parameters are recorded in this file. Sections
+All notable changes to Parameter Foundry are recorded in this file. Sections
 follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and releases are
 listed newest first.
 
@@ -8,6 +8,46 @@ Versions follow `<major>.<minor>.<commit-count>`: the second field changes when
 the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
+
+## Unreleased
+
+The product identity moves from the working name "Unified Parameters" to
+**Parameter Foundry** ([ADR 0017](docs/decisions/0017-product-renaming-to-parameter-foundry.md)).
+This is a breaking change for every Pipeline, Job DSL, REST, CLI, and
+configuration reference to the plugin.
+
+### Changed
+
+- The plugin short name and Maven `artifactId` are `parameter-foundry`, the
+  repository is `jenkinsci/parameter-foundry-plugin`, and the Java package root
+  is `io.jenkins.plugins.parameterfoundry`.
+- The Pipeline and Job DSL symbols are `foundryChoice` and `foundryForm`. Every
+  supporting symbol follows the same namespace (`foundryStaticProvider`,
+  `foundryMatrixProvider`, `foundryFormField`, and so on).
+- The typed API and migration endpoints moved to `/parameter-foundry/api/v1/…`
+  and `/parameter-foundry-replacement-simulation/report`.
+- The CLI commands are `parameter-foundry-migration` and
+  `parameter-foundry-migration-verify`.
+- Stable error codes now use the `PARAMETER_FOUNDRY_` prefix: a client that
+  matches `UNIFIED_PARAMETER_RATE_LIMITED` must match
+  `PARAMETER_FOUNDRY_RATE_LIMITED` instead.
+- The REST presence marker is `__parameter_foundry_presence`.
+
+### Compatibility
+
+- Stored Job configuration, Pipeline scripts, and the Jenkins update center
+  entry must be migrated to the new short name and symbols. No aliases are
+  published for the former `unified-*` names.
+- Build records written by an earlier `unified-parameters` release keep their
+  historical class names; see
+  [ADR 0017](docs/decisions/0017-product-renaming-to-parameter-foundry.md) for
+  the consequences.
+- Requirement, acceptance, and issue identifiers (`UP-…`) and the internal
+  `up-` browser styling prefix are unchanged, so historical verification
+  records keep resolving.
+- Released artifacts and dated verification records keep the names they were
+  published and measured under. `dist/unified-parameters-0.3.233.hpi` stays the
+  reproducible `0.3.233` artifact.
 
 ## 0.3.233 - 2026-09-21
 

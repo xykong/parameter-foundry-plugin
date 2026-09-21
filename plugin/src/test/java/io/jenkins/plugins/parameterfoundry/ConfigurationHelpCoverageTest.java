@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ class ConfigurationHelpCoverageTest {
 
     @Test
     void everyConfiguredFieldShipsHelp() throws Exception {
-        Path root = Path.of("target", "classes", "io", "jenkins", "plugins", "unifiedparameters");
+        Path root = Path.of("target", "classes", "io", "jenkins", "plugins", "parameterfoundry");
         assertTrue(Files.isDirectory(root), root.toString());
         List<String> missing = new ArrayList<>();
         try (Stream<Path> paths = Files.walk(root)) {
@@ -56,7 +56,7 @@ class ConfigurationHelpCoverageTest {
     @Test
     void descriptorServesFieldHelp(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("help-coverage");
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         definition.setChoices(List.of(new Option("staging")));
         project.addProperty(new ParametersDefinitionProperty(definition));
 
@@ -67,7 +67,7 @@ class ConfigurationHelpCoverageTest {
         assertTrue(page.contains("help/selectionMode"), "the configure page must link field help");
 
         String help = jenkins.createWebClient()
-                .goTo("descriptor/io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition"
+                .goTo("descriptor/io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition"
                         + "/help/selectionMode")
                 .asNormalizedText();
         assertTrue(help.contains("How many values the parameter submits"), help);

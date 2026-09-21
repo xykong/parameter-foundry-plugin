@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -24,7 +24,7 @@ final class NetworkPolicy {
                 || uri.getHost() == null
                 || !java.util.Set.of("http", "https").contains(uri.getScheme())) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     "network",
                     "Provider target is not a valid HTTP(S) URI.");
         }
@@ -33,20 +33,20 @@ final class NetworkPolicy {
             addresses = resolver.resolve(uri.getHost());
         } catch (UnknownHostException exception) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     "network",
                     "Provider target could not be resolved.");
         }
         if (addresses.isEmpty()) {
             throw new ProviderException(
-                    io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     "network",
                     "Provider target did not resolve to an address.");
         }
         for (InetAddress address : addresses) {
             if (isAlwaysBlocked(address) || (!allowPrivateAddresses && isPrivate(address))) {
                 throw new ProviderException(
-                        io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                         "network",
                         "Provider target resolves to a prohibited address.");
             }

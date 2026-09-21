@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.provider.extension.CompanionProviderRegistry;
-import io.jenkins.plugins.unifiedparameters.provider.extension.ScriptProviderExtension;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.provider.extension.CompanionProviderRegistry;
+import io.jenkins.plugins.parameterfoundry.provider.extension.ScriptProviderExtension;
 import java.io.Serial;
 import java.util.List;
 import org.jenkinsci.Symbol;
@@ -42,15 +42,15 @@ public final class ScriptProviderDefinition extends SharedProviderDefinition {
     }
 
     @Override
-    public List<io.jenkins.plugins.unifiedparameters.model.Option> load(ProviderLoadContext context) {
-        if (!UnifiedParametersGlobalConfiguration.scriptProviderFeatureEnabled()) {
+    public List<io.jenkins.plugins.parameterfoundry.model.Option> load(ProviderLoadContext context) {
+        if (!ParameterFoundryGlobalConfiguration.scriptProviderFeatureEnabled()) {
             throw new ProviderException(
                     ErrorCode.PROVIDER_UNAVAILABLE, getId(), "The sandboxed Script Provider is disabled.");
         }
         ScriptProviderExtension extension = CompanionProviderRegistry.findReviewedScriptEngine(engineId)
                 .orElseThrow(() -> new ProviderException(
                         ErrorCode.PROVIDER_UNAVAILABLE, getId(), "Reviewed Script Provider companion is unavailable."));
-        List<io.jenkins.plugins.unifiedparameters.model.Option> result = extension.evaluate(context, sourceReference);
+        List<io.jenkins.plugins.parameterfoundry.model.Option> result = extension.evaluate(context, sourceReference);
         if (result == null) {
             throw new ProviderException(
                     ErrorCode.PROVIDER_UNAVAILABLE, getId(), "Script Provider returned no normalized result.");
@@ -75,11 +75,11 @@ public final class ScriptProviderDefinition extends SharedProviderDefinition {
     }
 
     @Extension
-    @Symbol("unifiedScriptProvider")
+    @Symbol("foundryScriptProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Reviewed Script Provider";
+            return "Parameter Foundry Reviewed Script Provider";
         }
     }
 }

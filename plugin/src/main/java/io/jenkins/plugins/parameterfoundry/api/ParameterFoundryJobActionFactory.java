@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.api;
+package io.jenkins.plugins.parameterfoundry.api;
 
 import hudson.Extension;
 import hudson.model.Action;
@@ -9,7 +9,7 @@ import java.util.List;
 import jenkins.model.TransientActionFactory;
 
 @Extension
-public final class UnifiedParametersJobActionFactory extends TransientActionFactory<Job> {
+public final class ParameterFoundryJobActionFactory extends TransientActionFactory<Job> {
 
     @Override
     public Class<Job> type() {
@@ -18,7 +18,7 @@ public final class UnifiedParametersJobActionFactory extends TransientActionFact
 
     @Override
     public Class<? extends Action> actionType() {
-        return UnifiedParametersJobAction.class;
+        return ParameterFoundryJobAction.class;
     }
 
     @Override
@@ -26,6 +26,6 @@ public final class UnifiedParametersJobActionFactory extends TransientActionFact
         if (target.getProperty(ParametersDefinitionProperty.class) == null) {
             return List.of();
         }
-        return List.of(new UnifiedParametersJobAction(target));
+        return List.of(new ParameterFoundryJobAction(target));
     }
 }

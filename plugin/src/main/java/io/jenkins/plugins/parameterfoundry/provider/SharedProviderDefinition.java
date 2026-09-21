@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.model.AbstractDescribableImpl;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public abstract class SharedProviderDefinition extends AbstractDescribableImpl<S
         return configurationDigest();
     }
 
-    public abstract List<io.jenkins.plugins.unifiedparameters.model.Option> load(ProviderLoadContext context);
+    public abstract List<io.jenkins.plugins.parameterfoundry.model.Option> load(ProviderLoadContext context);
 
     protected abstract String providerFingerprint();
 

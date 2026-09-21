@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,11 +18,11 @@ public final class DependencyGraph {
         List<String> errors = new ArrayList<>();
         Map<String, ParameterDefinition> byName = byName(definitions);
         for (ParameterDefinition definition : definitions) {
-            if (!(definition instanceof AbstractUnifiedParameterDefinition unified)) {
+            if (!(definition instanceof AbstractFoundryParameterDefinition foundry)) {
                 continue;
             }
             Set<String> unique = new HashSet<>();
-            for (String dependency : unified.getDependsOn()) {
+            for (String dependency : foundry.getDependsOn()) {
                 if (dependency == null || dependency.isBlank()) {
                     errors.add("Dependency names must be non-empty for parameter: " + definition.getName());
                 } else if (!unique.add(dependency)) {
@@ -75,8 +75,8 @@ public final class DependencyGraph {
         }
         states.put(name, VisitState.VISITING);
         path.add(name);
-        if (definition instanceof AbstractUnifiedParameterDefinition unified) {
-            for (String dependency : unified.getDependsOn()) {
+        if (definition instanceof AbstractFoundryParameterDefinition foundry) {
+            for (String dependency : foundry.getDependsOn()) {
                 ParameterDefinition dependencyDefinition = byName.get(dependency);
                 if (dependencyDefinition != null) {
                     visit(dependencyDefinition, byName, states, path, ordered);

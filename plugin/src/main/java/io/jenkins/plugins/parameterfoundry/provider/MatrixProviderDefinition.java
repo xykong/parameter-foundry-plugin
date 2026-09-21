@@ -1,12 +1,12 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.AxisOption;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.MatrixCell;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.AxisOption;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.MatrixCell;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -287,11 +287,11 @@ public final class MatrixProviderDefinition extends SharedProviderDefinition imp
     }
 
     @Extension
-    @Symbol("unifiedMatrixProvider")
+    @Symbol("foundryMatrixProvider")
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Matrix Provider";
+            return "Parameter Foundry Matrix Provider";
         }
     }
 }

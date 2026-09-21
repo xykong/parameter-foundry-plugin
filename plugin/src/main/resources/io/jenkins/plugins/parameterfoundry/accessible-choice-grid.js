@@ -4,7 +4,7 @@
   function enhance() {
     document
       .querySelectorAll(
-        '[data-unified-parameter="true"][data-renderer="accessible-choice-grid"]',
+        '[data-parameter-foundry="true"][data-renderer="accessible-choice-grid"]',
       )
       .forEach(function (field) {
         if (field.dataset.upAccessibleGrid === "true") {
@@ -13,12 +13,12 @@
         field.dataset.upAccessibleGrid = "true";
         field.classList.add("up-accessible-choice-grid");
         field
-          .querySelectorAll(".unified-parameters-options")
+          .querySelectorAll(".parameter-foundry-options")
           .forEach(function (options) {
             options.classList.add("up-accessible-choice-grid__options");
           });
         field
-          .querySelectorAll(".unified-parameters-native-list")
+          .querySelectorAll(".parameter-foundry-native-list")
           .forEach(function (select) {
             select.classList.add("up-accessible-choice-grid__select");
           });

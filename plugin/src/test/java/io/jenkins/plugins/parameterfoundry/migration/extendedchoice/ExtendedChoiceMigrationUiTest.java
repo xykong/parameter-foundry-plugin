@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration.extendedchoice;
+package io.jenkins.plugins.parameterfoundry.migration.extendedchoice;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.api.UnifiedParametersJobAction;
+import io.jenkins.plugins.parameterfoundry.api.ParameterFoundryJobAction;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -19,18 +19,18 @@ class ExtendedChoiceMigrationUiTest {
     void jobActionShowsClassificationDecisionsTargetAndVerificationFixture(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("migration-preview");
         project.addProperty(new ParametersDefinitionProperty(staticMultiple()));
-        UnifiedParametersJobAction action = project.getAction(UnifiedParametersJobAction.class);
+        ParameterFoundryJobAction action = project.getAction(ParameterFoundryJobAction.class);
 
         assertNotNull(action);
         assertTrue(action.hasMigrationCandidates());
 
-        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(project, "unified-parameters/");
+        HtmlPage page = jenkins.createWebClient().withJavaScriptEnabled(false).getPage(project, "parameter-foundry/");
         String text = page.asNormalizedText();
 
         assertTrue(text.contains("Class B"));
-        assertTrue(text.contains("UnifiedChoiceParameterDefinition"));
+        assertTrue(text.contains("FoundryChoiceParameterDefinition"));
         assertTrue(text.contains("Confirm that selection order is not part of the business requirement."));
-        assertTrue(text.contains("unifiedChoice"));
+        assertTrue(text.contains("foundryChoice"));
         assertTrue(text.contains("selectionMode: 'multiple'"));
         assertTrue(text.contains("Standard REST, Typed REST, CLI, and Pipeline build"));
         assertTrue(text.contains("does not modify the Job"));

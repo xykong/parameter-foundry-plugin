@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.snapshot;
+package io.jenkins.plugins.parameterfoundry.snapshot;
 
 import hudson.Extension;
 import hudson.model.Job;
@@ -11,7 +11,7 @@ import jenkins.cli.listeners.CLIListener;
 import jenkins.model.Jenkins;
 
 @Extension
-public final class UnifiedParametersCliListener implements CLIListener {
+public final class ParameterFoundryCliListener implements CLIListener {
 
     private static final ThreadLocal<CliBuildContext> CURRENT_BUILD = new ThreadLocal<>();
 

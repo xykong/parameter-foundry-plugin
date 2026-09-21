@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.model.Job;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -40,7 +40,7 @@ public final class ProviderRuntime {
                         TimeUnit.SECONDS,
                         new LinkedBlockingQueue<>(64),
                         runnable -> {
-                            Thread thread = new Thread(runnable, "unified-parameters-provider");
+                            Thread thread = new Thread(runnable, "parameter-foundry-provider");
                             thread.setDaemon(true);
                             return thread;
                         },

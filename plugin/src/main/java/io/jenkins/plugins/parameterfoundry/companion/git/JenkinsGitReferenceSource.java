@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.companion.git;
+package io.jenkins.plugins.parameterfoundry.companion.git;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
@@ -6,10 +6,10 @@ import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
 import hudson.security.ACL;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.provider.ConnectionProfile;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.provider.ConnectionProfile;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +42,7 @@ final class JenkinsGitReferenceSource implements GitReferenceSource {
         context.checkCancelled();
         Path worktree = null;
         try {
-            Path temporaryRoot = Jenkins.get().getRootDir().toPath().resolve("unified-parameters/git-refs");
+            Path temporaryRoot = Jenkins.get().getRootDir().toPath().resolve("parameter-foundry/git-refs");
             Files.createDirectories(temporaryRoot);
             worktree = Files.createTempDirectory(temporaryRoot, "ls-remote-");
             GitClient client = Git.with(TaskListener.NULL, new EnvVars())

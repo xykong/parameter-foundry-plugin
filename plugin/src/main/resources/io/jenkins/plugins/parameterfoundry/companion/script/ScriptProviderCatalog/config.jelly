@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:section title="Unified Parameters Sandboxed Script Provider">
+  <f:section title="Parameter Foundry Sandboxed Script Provider">
     <f:entry title="Catalog entries"
              description="Only sandboxed, administrator-managed scripts may be referenced by catalog:id.">
       <f:repeatableProperty field="entries" add="Add catalog entry" header="Catalog entry" />

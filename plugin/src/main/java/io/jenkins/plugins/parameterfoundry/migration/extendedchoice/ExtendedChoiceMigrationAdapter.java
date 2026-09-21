@@ -1,14 +1,14 @@
-package io.jenkins.plugins.unifiedparameters.migration.extendedchoice;
+package io.jenkins.plugins.parameterfoundry.migration.extendedchoice;
 
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.ParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationText;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         boolean hasUnsupportedDefault = supportedDefaults.size() != defaults.size();
 
         if (multiple) {
-            UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition(definition.getName());
+            FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
             target.setSelectionMode("multiple");
             copyCommon(definition, target, options);
             target.setRenderer(CHECK_BOX.equals(type) ? "checkbox" : "list");
@@ -113,7 +113,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                     facts);
         }
 
-        UnifiedChoiceParameterDefinition target = new UnifiedChoiceParameterDefinition(definition.getName());
+        FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
         copyCommon(definition, target, options);
         target.setRenderer(RADIO.equals(type) ? "radio" : "select");
         target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
@@ -154,7 +154,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
 
     private static void copyCommon(
             ParameterDefinition source,
-            io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition target,
+            io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition target,
             List<Option> options) {
         target.setDescription(source.getDescription());
         target.setChoices(options);
@@ -209,7 +209,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
 
     private static String dynamicSkeleton(ParameterDefinition source, String type) {
         boolean multiple = MULTI_SELECT.equals(type) || CHECK_BOX.equals(type) || MULTI_LEVEL_MULTI_SELECT.equals(type);
-        return "unifiedChoice(\n"
+        return "foundryChoice(\n"
                 + "    name: '"
                 + source.getName().replace("'", "\\'")
                 + "',\n"

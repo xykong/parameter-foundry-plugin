@@ -4,14 +4,14 @@
 
 1. The parameter's own message in the build form (it names the failing field).
 2. The build log — validation failures appear before scheduling.
-3. `…/job/<name>/unified-parameters/api/v1/providers/health` for Provider-backed
+3. `…/job/<name>/parameter-foundry/api/v1/providers/health` for Provider-backed
    parameters.
 4. **Manage Jenkins → System Log** for Provider or migration stack traces.
 
 ## Error codes
 
 Errors from browsers and REST return a stable code of the form
-`UNIFIED_PARAMETER_<CODE>`.
+`PARAMETER_FOUNDRY_<CODE>`.
 
 | Code | Meaning | Usual fix |
 |---|---|---|

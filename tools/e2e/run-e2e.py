@@ -27,16 +27,16 @@ CACHE_DIR = E2E_DIR / ".cache"
 PLUGINS_DIR = CACHE_DIR / "plugins"
 HOME_DIR = CACHE_DIR / "home"
 RESULTS_DIR = ROOT / "docs" / "testing" / "results"
-GALLERY_DIR = ROOT / "docs" / "ui-gallery" / "images" / "unified-parameters"
-CONTAINER = "unified-parameters-plugin-e2e"
+GALLERY_DIR = ROOT / "docs" / "ui-gallery" / "images" / "parameter-foundry"
+CONTAINER = "parameter-foundry-plugin-e2e"
 JENKINS_IMAGE = "jenkins/jenkins:2.568.2-lts-jdk21"
 MAVEN_IMAGE = "maven:3.9.11-eclipse-temurin-21"
 BASE_URL = "http://127.0.0.1:18081"
-BUILD_URL = BASE_URL + "/job/unified-parameters-e2e/build?delay=0sec"
+BUILD_URL = BASE_URL + "/job/parameter-foundry-e2e/build?delay=0sec"
 PROVIDER_BUILD_URL = (
-    BASE_URL + "/job/unified-parameters-provider-e2e/build?delay=0sec"
+    BASE_URL + "/job/parameter-foundry-provider-e2e/build?delay=0sec"
 )
-FORM_BUILD_URL = BASE_URL + "/job/unified-parameters-form-e2e/build?delay=0sec"
+FORM_BUILD_URL = BASE_URL + "/job/parameter-foundry-form-e2e/build?delay=0sec"
 OPTION_COUNT = 10_000
 MAX_RENDERED_OPTIONS = 200
 EXTERNAL_SOURCE_ERRORS = (
@@ -100,8 +100,8 @@ def prepare_plugins() -> None:
         ]
     )
     shutil.copy2(
-        ROOT / "plugin" / "target" / "unified-parameters.hpi",
-        PLUGINS_DIR / "unified-parameters.jpi",
+        ROOT / "plugin" / "target" / "parameter-foundry.hpi",
+        PLUGINS_DIR / "parameter-foundry.jpi",
     )
 
 
@@ -141,10 +141,10 @@ def wait_ready() -> None:
     while time.monotonic() < deadline:
         try:
             with urllib.request.urlopen(
-                BASE_URL + "/job/unified-parameters-e2e/api/json", timeout=3
+                BASE_URL + "/job/parameter-foundry-e2e/api/json", timeout=3
             ) as response:
                 if response.status == 200 and (
-                    HOME_DIR / "unified-parameters-e2e-ready"
+                    HOME_DIR / "parameter-foundry-e2e-ready"
                 ).is_file():
                     return
         except OSError:
@@ -214,7 +214,7 @@ async def model_payload_bytes(page: Page) -> int:
           const action = new URL(form.action || location.href, location.href);
           action.pathname = action.pathname.replace(/\\/build\\/?$/, '/');
           action.search = '';
-          const endpoint = new URL('unified-parameters/api/v1/resolve', action);
+          const endpoint = new URL('parameter-foundry/api/v1/resolve', action);
           const headers = {'Content-Type': 'application/json'};
           if (document.head.dataset.crumbHeader && document.head.dataset.crumbValue) {
             headers[document.head.dataset.crumbHeader] = document.head.dataset.crumbValue;
@@ -248,7 +248,7 @@ async def benchmark_search(page: Page) -> list[float]:
     timings = await page.evaluate(
         """async (queries) => {
           const search = document.querySelector(
-            '[data-parameter-name="TARGETS"] .unified-parameters-search'
+            '[data-parameter-name="TARGETS"] .parameter-foundry-search'
           );
           const timings = [];
           for (const query of queries) {
@@ -273,7 +273,7 @@ async def benchmark_selection(page: Page) -> list[float]:
     timings = await page.evaluate(
         """async () => {
           const checkbox = document.querySelector(
-            '[data-parameter-name="FEATURES"] .unified-parameters-option input[type="checkbox"]'
+            '[data-parameter-name="FEATURES"] .parameter-foundry-option input[type="checkbox"]'
           );
           const timings = [];
           for (let index = 0; index < 100; index += 1) {
@@ -296,7 +296,7 @@ async def benchmark_validation(page: Page) -> list[float]:
           const action = new URL(form.action || location.href, location.href);
           action.pathname = action.pathname.replace(/\\/build\\/?$/, '/');
           action.search = '';
-          const endpoint = new URL('unified-parameters/api/v1/validate', action);
+          const endpoint = new URL('parameter-foundry/api/v1/validate', action);
           const headers = {'Content-Type': 'application/json'};
           if (document.head.dataset.crumbHeader && document.head.dataset.crumbValue) {
             headers[document.head.dataset.crumbHeader] = document.head.dataset.crumbValue;
@@ -360,14 +360,14 @@ async def accessibility_audit(page: Page) -> dict[str, object]:
           }
           const duplicateIds = [];
           const seen = new Set();
-          document.querySelectorAll('.unified-parameters-field [id]').forEach((element) => {
+          document.querySelectorAll('.parameter-foundry-field [id]').forEach((element) => {
             if (seen.has(element.id)) duplicateIds.push(element.id);
             seen.add(element.id);
           });
           const unnamed = [];
           document.querySelectorAll(
-            '.unified-parameters-field button, .unified-parameters-field input, ' +
-            '.unified-parameters-field select, .unified-parameters-field summary'
+            '.parameter-foundry-field button, .parameter-foundry-field input, ' +
+            '.parameter-foundry-field select, .parameter-foundry-field summary'
           ).forEach((element) => {
             if (!visible(element) || element.type === 'hidden') return;
             const name = element.getAttribute('aria-label') || element.title ||
@@ -384,9 +384,9 @@ async def accessibility_audit(page: Page) -> dict[str, object]:
           });
           const contrast = [];
           document.querySelectorAll(
-            '.unified-parameters-field strong, .unified-parameters-field small, ' +
-            '.unified-parameters-status, .unified-parameters-group-toggle, ' +
-            '.unified-parameters-group-select, .unified-parameters-chip'
+            '.parameter-foundry-field strong, .parameter-foundry-field small, ' +
+            '.parameter-foundry-status, .parameter-foundry-group-toggle, ' +
+            '.parameter-foundry-group-select, .parameter-foundry-chip'
           ).forEach((element) => {
             if (!visible(element) || element.closest('[aria-disabled="true"]')) return;
             const foreground = parseColor(getComputedStyle(element).color);
@@ -409,11 +409,11 @@ async def accessibility_audit(page: Page) -> dict[str, object]:
 
 async def keyboard_and_interaction_checks(page: Page) -> None:
     channel = page.locator('[data-parameter-name="CHANNEL"]')
-    channel_list = await channel.locator(".unified-parameters-native-list").bounding_box()
+    channel_list = await channel.locator(".parameter-foundry-native-list").bounding_box()
     assert channel_list is not None and channel_list["height"] <= 160, channel_list
 
     release = page.locator('[data-parameter-name="RELEASE"]')
-    release_search = release.locator(".unified-parameters-search")
+    release_search = release.locator(".parameter-foundry-search")
     await release_search.fill("release-42")
     await release_search.press("Enter")
     assert (
@@ -423,7 +423,7 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
         == 1
     )
     assert "Custom value" in await release.locator(
-        ".unified-parameters-status"
+        ".parameter-foundry-status"
     ).inner_text()
 
     # An invalid custom value must not submit the build form when the user presses Enter.
@@ -431,7 +431,7 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
     await page.goto(BUILD_URL, wait_until="networkidle")
     await wait_interactive(page, all_fields=True)
     release = page.locator('[data-parameter-name="RELEASE"]')
-    release_search = release.locator(".unified-parameters-search")
+    release_search = release.locator(".parameter-foundry-search")
     builds_before = await page.request.get(
         BUILD_URL.rsplit("/build", 1)[0] + "/api/json?tree=builds[number]"
     )
@@ -439,7 +439,7 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
     await release_search.fill("not-a-valid-value")
     await page.wait_for_timeout(300)
     validation_text = await release.locator(
-        ".unified-parameters-custom-validation"
+        ".parameter-foundry-custom-validation"
     ).inner_text()
     assert "Value must match" in validation_text, repr(validation_text)
     await release_search.press("Enter")
@@ -469,7 +469,7 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
     await table.locator("table").wait_for()
     assert await table.locator("th").count() == 5, await table.locator("th").all_inner_texts()
     assert await table.locator("table input").count() == 3
-    table_chips = table.locator(".unified-parameters-chip")
+    table_chips = table.locator(".parameter-foundry-chip")
     assert [text.replace("\n", "") for text in await table_chips.all_inner_texts()] == [
         "Android / Ax"
     ]
@@ -478,61 +478,61 @@ async def keyboard_and_interaction_checks(page: Page) -> None:
         "Android / Ax",
         "iOS / Ax",
     ]
-    await table.locator(".unified-parameters-chip", has_text="iOS").locator("button").click()
+    await table.locator(".parameter-foundry-chip", has_text="iOS").locator("button").click()
     assert [text.replace("\n", "") for text in await table_chips.all_inner_texts()] == [
         "Android / Ax"
     ]
     assert await table.locator('table input[value="ios-b"]').is_disabled()
 
     target = page.locator('[data-parameter-name="TARGETS"]')
-    chips = target.locator(".unified-parameters-chip")
+    chips = target.locator(".parameter-foundry-chip")
     assert [text.replace("\n", "") for text in await chips.all_inner_texts()] == [
         "Target 0001x",
         "Target 0002x",
     ]
 
-    target_search = target.locator(".unified-parameters-search")
+    target_search = target.locator(".parameter-foundry-search")
     await target_search.focus()
     await target_search.press("Backspace")
     assert await chips.count() == 1
     assert "Target 0002" not in " ".join(await chips.all_inner_texts())
 
     await target_search.fill("Target 0002")
-    await target.locator(".unified-parameters-option input").check()
+    await target.locator(".parameter-foundry-option input").check()
     await target_search.fill("international")
-    assert await target.locator(".unified-parameters-option").count() == 1
+    assert await target.locator(".parameter-foundry-option").count() == 1
     await target_search.fill("canary")
-    assert await target.locator(".unified-parameters-option").count() == 1
+    assert await target.locator(".parameter-foundry-option").count() == 1
     await target_search.fill("")
 
     features = page.locator('[data-parameter-name="FEATURES"]')
-    first_toggle = features.locator(".unified-parameters-group-toggle").first
+    first_toggle = features.locator(".parameter-foundry-group-toggle").first
     assert await first_toggle.get_attribute("aria-expanded") == "true"
     await first_toggle.click()
     assert await first_toggle.get_attribute("aria-expanded") == "false"
     await first_toggle.click()
     assert await first_toggle.get_attribute("aria-expanded") == "true"
 
-    stable_group = features.locator(".unified-parameters-group-section").first
+    stable_group = features.locator(".parameter-foundry-group-section").first
     first_checkbox = stable_group.locator('input[type="checkbox"]').first
     second_checkbox = stable_group.locator('input[type="checkbox"]').nth(1)
     await first_checkbox.focus()
     await first_checkbox.press("ArrowDown")
     assert await second_checkbox.evaluate("element => element === document.activeElement")
 
-    await stable_group.locator(".unified-parameters-group-select").click()
-    experimental_group = features.locator(".unified-parameters-group-section").nth(1)
-    await experimental_group.locator(".unified-parameters-group-select").click()
-    status = await features.locator(".unified-parameters-status").inner_text()
+    await stable_group.locator(".parameter-foundry-group-select").click()
+    experimental_group = features.locator(".parameter-foundry-group-section").nth(1)
+    await experimental_group.locator(".parameter-foundry-group-select").click()
+    status = await features.locator(".parameter-foundry-status").inner_text()
     assert "1 disabled skipped" in status
-    details = stable_group.locator(".unified-parameters-details").first
+    details = stable_group.locator(".parameter-foundry-details").first
     await details.locator("summary").click()
     assert "Machine value: feature-a" in await details.inner_text()
 
-    assert await page.locator(".unified-parameters-option").count() <= MAX_RENDERED_OPTIONS
+    assert await page.locator(".parameter-foundry-option").count() <= MAX_RENDERED_OPTIONS
     assert await page.locator('input[type="radio"][value="legacy"]:disabled').count() == 1
     regions_select = page.locator(
-        '[data-parameter-name="REGIONS"] select.unified-parameters-native-list'
+        '[data-parameter-name="REGIONS"] select.parameter-foundry-native-list'
     )
     assert await regions_select.count() == 1
     assert await regions_select.evaluate("element => element.multiple")
@@ -580,42 +580,42 @@ async def configuration_preview_check(page: Page) -> None:
 
 async def migration_preview_check(page: Page) -> None:
     await page.goto(
-        BASE_URL + "/job/unified-parameters-migration-e2e/unified-parameters/",
+        BASE_URL + "/job/parameter-foundry-migration-e2e/parameter-foundry/",
         wait_until="networkidle",
     )
     text = await page.locator(".up-migration-page").inner_text()
     assert "Class B" in text
-    assert "UnifiedChoiceParameterDefinition" in text
-    assert "unifiedChoice" in text
+    assert "FoundryChoiceParameterDefinition" in text
+    assert "foundryChoice" in text
     assert "selectionMode: 'multiple'" in text
     assert "does not modify the Job" in text
     await page.screenshot(path=GALLERY_DIR / "migration-preview.png", full_page=True)
     clone_form = page.locator('form[action$="cloneMigration"]')
     await clone_form.locator('input[name="cloneName"]').fill(
-        "unified-migration-clone-e2e"
+        "foundry-migration-clone-e2e"
     )
     await clone_form.locator('input[name="acceptDecisions"]').check()
     await clone_form.get_by_role("button", name="Clone and apply").click()
     await page.wait_for_url(
-        BASE_URL + "/job/unified-migration-clone-e2e/"
+        BASE_URL + "/job/foundry-migration-clone-e2e/"
     )
     clone_config = await page.request.get(
-        BASE_URL + "/job/unified-migration-clone-e2e/config.xml"
+        BASE_URL + "/job/foundry-migration-clone-e2e/config.xml"
     )
     cloned = await clone_config.text()
-    assert "UnifiedChoiceParameterDefinition" in cloned
+    assert "FoundryChoiceParameterDefinition" in cloned
     assert "<selectionMode>multiple</selectionMode>" in cloned
 
     await page.goto(
         BASE_URL
-        + "/job/unified-migration-clone-e2e/unified-parameters/",
+        + "/job/foundry-migration-clone-e2e/parameter-foundry/",
         wait_until="networkidle",
     )
     assert "APPLIED" in await page.locator(".up-migration-records").inner_text()
     await page.get_by_role("button", name="Rollback").click()
-    await page.wait_for_url(BASE_URL + "/job/unified-migration-clone-e2e/")
+    await page.wait_for_url(BASE_URL + "/job/foundry-migration-clone-e2e/")
     rolled_back = await page.request.get(
-        BASE_URL + "/job/unified-migration-clone-e2e/config.xml"
+        BASE_URL + "/job/foundry-migration-clone-e2e/config.xml"
     )
     assert "ExtendedChoiceParameterDefinition" in await rolled_back.text()
 
@@ -638,29 +638,29 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     target_node = page.locator('[data-parameter-name="TARGET_NODE"]')
     assert (
         await target_node.locator(
-            '.unified-parameters-enhanced input[type="radio"]'
+            '.parameter-foundry-enhanced input[type="radio"]'
         ).count()
         == 4
     ), "optional radio group renders None plus the three options"
-    assert await target_node.locator(".unified-parameters-enhanced select").count() == 0
+    assert await target_node.locator(".parameter-foundry-enhanced select").count() == 0
     assert await target_node.locator(
-        '.unified-parameters-enhanced input[type="radio"][value="staging"]'
+        '.parameter-foundry-enhanced input[type="radio"][value="staging"]'
     ).is_checked()
     assert await target_node.get_attribute("role") is None
     assert (
-        await target_node.locator('.unified-parameters-enhanced[role="radiogroup"]').count()
+        await target_node.locator('.parameter-foundry-enhanced[role="radiogroup"]').count()
         == 1
     )
     # A required radio group has no None entry, so the submitted value stays mandatory.
     locked_node = page.locator('[data-parameter-name="LOCKED_NODE"]')
     assert (
         await locked_node.locator(
-            '.unified-parameters-enhanced input[type="radio"]'
+            '.parameter-foundry-enhanced input[type="radio"]'
         ).count()
         == 3
     )
     # A single choice with renderer=list is a list box: options visible, no dropdown, no multiple.
-    node_list = page.locator('[data-parameter-name="NODE_LIST"] select.unified-parameters-native-list')
+    node_list = page.locator('[data-parameter-name="NODE_LIST"] select.parameter-foundry-native-list')
     await page.wait_for_selector(
         '[data-parameter-name="NODE_LIST"][data-up-interactive="true"]'
     )
@@ -680,7 +680,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     await page.wait_for_selector(
         '[data-parameter-name="DOCKER_LOGINS"][data-up-interactive="true"]'
     )
-    login_table = logins.locator("table.unified-parameters-table")
+    login_table = logins.locator("table.parameter-foundry-table")
     await login_table.wait_for()
     assert await login_table.locator("caption").inner_text() == "BUILD_NODE"
     assert await login_table.locator("thead th").all_inner_texts() == [
@@ -708,8 +708,8 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     ).count() == 1
 
     # One-click row, column, and whole-table selection, then invert and clear.
-    chip_toggle = logins.locator(".unified-parameters-chips-toggle")
-    chip_list = logins.locator(".unified-parameters-chips")
+    chip_toggle = logins.locator(".parameter-foundry-chips-toggle")
+    chip_list = logins.locator(".parameter-foundry-chips")
     await logins.get_by_role("button", name="Clear all").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
 
@@ -720,7 +720,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
         'input[value="registry-auto.example.org@staging"]'
     ).is_checked()
     assert "Column staging selected" in await logins.locator(
-        ".unified-parameters-status"
+        ".parameter-foundry-status"
     ).inner_text()
 
     # A row caption fills every cell of that row, and a second click clears the row again.
@@ -731,7 +731,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
             f'input[value="registry.example.com@{column}"]'
         ).is_checked()
     assert "Row Registry A selected" in await logins.locator(
-        ".unified-parameters-status"
+        ".parameter-foundry-status"
     ).inner_text()
     await login_table.locator("tbody th button").nth(0).click()
     assert await logins.locator("input[data-up-generated-value]").count() == 4
@@ -753,7 +753,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     await logins.get_by_role("button", name="Invert").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 0
     assert "Selection inverted" in await logins.locator(
-        ".unified-parameters-status"
+        ".parameter-foundry-status"
     ).inner_text()
     await logins.get_by_role("button", name="Invert").click()
     assert await logins.locator("input[data-up-generated-value]").count() == 15
@@ -771,22 +771,22 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     # Above the radio limit the renderer degrades to the searchable list and says so.
     wide_radio = page.locator('[data-parameter-name="WIDE_RADIO"]')
     assert (
-        await wide_radio.locator(".unified-parameters-enhanced select").count() == 1
+        await wide_radio.locator(".parameter-foundry-enhanced select").count() == 1
     )
-    wide_notice = await wide_radio.locator(".unified-parameters-notice").inner_text()
+    wide_notice = await wide_radio.locator(".parameter-foundry-notice").inner_text()
     assert "instead of radio buttons" in wide_notice, wide_notice
     field = page.locator('[data-parameter-name="ENVIRONMENTS"]')
     assert "staging" in " ".join(
-        await field.locator(".unified-parameters-chip").all_inner_texts()
+        await field.locator(".parameter-foundry-chip").all_inner_texts()
     ).lower()
-    search = field.locator(".unified-parameters-search")
+    search = field.locator(".parameter-foundry-search")
     await search.fill("production")
-    await field.locator(".unified-parameters-option input").check()
+    await field.locator(".parameter-foundry-option input").check()
     artifact = page.locator('[data-parameter-name="ARTIFACT"]')
     first_snapshot = await artifact.locator("[data-up-snapshot-id]").input_value()
     assert first_snapshot.startswith("up-snapshot-")
     await page.locator(
-        '[data-parameter-name="ENVIRONMENT"] select.unified-parameters-native-list'
+        '[data-parameter-name="ENVIRONMENT"] select.parameter-foundry-native-list'
     ).select_option("production")
     await page.wait_for_function(
         """(previous) => {
@@ -802,7 +802,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     ).input_value()
     assert json.loads(dependencies_json) == {"ENVIRONMENT": "production"}
     await target_node.locator(
-        '.unified-parameters-enhanced input[type="radio"][value="development"]'
+        '.parameter-foundry-enhanced input[type="radio"][value="development"]'
     ).check()
     assert (
         await target_node.locator(
@@ -813,11 +813,11 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
     await page.screenshot(path=GALLERY_DIR / "provider.png", full_page=True)
     await page.get_by_role("button", name="Build").click()
     await page.wait_for_url(
-        BASE_URL + "/job/unified-parameters-provider-e2e/"
+        BASE_URL + "/job/parameter-foundry-provider-e2e/"
     )
     build = await page.request.get(
         BASE_URL
-        + "/job/unified-parameters-provider-e2e/lastBuild/api/json"
+        + "/job/parameter-foundry-provider-e2e/lastBuild/api/json"
         + "?tree=actions[parameters[name,value,providerSnapshot[*]]]"
     )
     build_parameters = {
@@ -837,7 +837,7 @@ async def provider_checks(browser: Browser, errors: list[dict[str, str]]) -> Non
 
     health = await page.request.get(
         BASE_URL
-        + "/job/unified-parameters-provider-e2e/unified-parameters/api/v1/providers/health"
+        + "/job/parameter-foundry-provider-e2e/parameter-foundry/api/v1/providers/health"
     )
     health_body = await health.json()
     assert health_body["providers"][0]["healthy"] is True
@@ -890,19 +890,19 @@ async def form_and_retirement_checks(
         "features": ["audit", "canary"],
         "notes": "review before production",
     }
-    await page.screenshot(path=GALLERY_DIR / "unified-form.png", full_page=True)
+    await page.screenshot(path=GALLERY_DIR / "foundry-form.png", full_page=True)
     await page.get_by_role("button", name="Build").click()
     try:
-        await page.wait_for_url(BASE_URL + "/job/unified-parameters-form-e2e/")
+        await page.wait_for_url(BASE_URL + "/job/parameter-foundry-form-e2e/")
     except Exception as error:
         body = await page.locator("body").inner_text()
         raise AssertionError(
-            "Unified Form browser submission did not redirect. "
+            "Foundry Form browser submission did not redirect. "
             f"url={page.url}\n{body[-4000:]}"
         ) from error
     build = await page.request.get(
         BASE_URL
-        + "/job/unified-parameters-form-e2e/lastBuild/api/json"
+        + "/job/parameter-foundry-form-e2e/lastBuild/api/json"
         + "?tree=actions[parameters[name,value,canonicalJson,structuredValue]]"
     )
     parameters = {
@@ -914,7 +914,7 @@ async def form_and_retirement_checks(
     assert parameters["DEPLOYMENT"]["value"]["replicas"] == 4
 
     await page.goto(
-        BASE_URL + "/unified-parameters-retirement/", wait_until="networkidle"
+        BASE_URL + "/parameter-foundry-retirement/", wait_until="networkidle"
     )
     text = await page.locator(".up-retirement").inner_text()
     assert "extended-choice-parameter" in text.lower()
@@ -946,7 +946,7 @@ async def no_javascript_check(browser: Browser) -> None:
     assert await target.locator('input[type="checkbox"][name="TARGETS"]').count() == 200
     assert "This parameter has 10000 options" in await target.inner_text()
     await page.screenshot(path=GALLERY_DIR / "no-javascript.png", full_page=True)
-    job_api = BASE_URL + "/job/unified-parameters-e2e/api/json"
+    job_api = BASE_URL + "/job/parameter-foundry-e2e/api/json"
     before_response = await page.request.get(job_api)
     before = await before_response.json()
     before_number = (before.get("lastBuild") or {}).get("number", 0)
@@ -987,7 +987,7 @@ async def browser_checks() -> tuple[dict[str, object], dict[str, object]]:
         selection_ms = await benchmark_selection(page)
         validation_ms = await benchmark_validation(page)
         accessibility = await accessibility_audit(page)
-        rendered_option_nodes = await page.locator(".unified-parameters-option").count()
+        rendered_option_nodes = await page.locator(".parameter-foundry-option").count()
 
         await page.screenshot(path=GALLERY_DIR / "light.png", full_page=True)
         await page.emulate_media(color_scheme="dark", forced_colors="none")
@@ -998,24 +998,24 @@ async def browser_checks() -> tuple[dict[str, object], dict[str, object]]:
 
         await keyboard_and_interaction_checks(page)
         await page.locator(
-            '[data-parameter-name="TARGETS"] .unified-parameters-search'
+            '[data-parameter-name="TARGETS"] .parameter-foundry-search'
         ).focus()
         await page.screenshot(path=GALLERY_DIR / "keyboard-focus.png", full_page=True)
 
         target_search = page.locator(
-            '[data-parameter-name="TARGETS"] .unified-parameters-search'
+            '[data-parameter-name="TARGETS"] .parameter-foundry-search'
         )
         await target_search.fill("Target 9999")
         option = page.locator(
-            '[data-parameter-name="TARGETS"] .unified-parameters-option'
+            '[data-parameter-name="TARGETS"] .parameter-foundry-option'
         )
         assert await option.count() == 1
         await option.locator("input").check()
         await page.get_by_role("button", name="Build").click()
-        await page.wait_for_url(BASE_URL + "/job/unified-parameters-e2e/")
+        await page.wait_for_url(BASE_URL + "/job/parameter-foundry-e2e/")
         build_api = await page.request.get(
             BASE_URL
-            + "/job/unified-parameters-e2e/1/api/json?tree=actions[parameters[name,value]]"
+            + "/job/parameter-foundry-e2e/1/api/json?tree=actions[parameters[name,value]]"
         )
         actions = (await build_api.json())["actions"]
         parameters = {
@@ -1027,7 +1027,7 @@ async def browser_checks() -> tuple[dict[str, object], dict[str, object]]:
         await page.screenshot(path=GALLERY_DIR / "desktop-build-result.png", full_page=True)
 
         await page.goto(
-            BASE_URL + "/job/unified-parameters-e2e/1/rebuild/parameterized",
+            BASE_URL + "/job/parameter-foundry-e2e/1/rebuild/parameterized",
             wait_until="networkidle",
         )
         await page.wait_for_selector(
@@ -1147,7 +1147,7 @@ def verify_migration() -> None:
     plan = json.loads((HOME_DIR / "migration-plan.json").read_text())
     assert plan["classification"] == "B", plan
     assert plan["targetClass"].endswith(
-        "UnifiedChoiceParameterDefinition"
+        "FoundryChoiceParameterDefinition"
     ), plan
 
 

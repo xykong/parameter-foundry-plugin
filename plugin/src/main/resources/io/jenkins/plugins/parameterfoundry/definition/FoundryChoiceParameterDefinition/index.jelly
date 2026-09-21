@@ -1,12 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.ui"/>
+  <st:adjunct includes="io.jenkins.plugins.parameterfoundry.ui"/>
   <j:forEach var="adjunct" items="${it.rendererAdjuncts}">
     <st:adjunct includes="${adjunct}"/>
   </j:forEach>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
-  <f:entry class="unified-parameters-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
-    <div name="parameter" class="unified-parameters-field" data-unified-parameter="true"
+  <f:entry class="parameter-foundry-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
+    <div name="parameter" class="parameter-foundry-field" data-parameter-foundry="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
          data-selected-display="${it.selectedDisplay}"
          data-table="${it.tableJson}"
@@ -62,12 +62,12 @@
          data-up-custom-value-invalid-with-rule="${it.uiCustomValueInvalidWithRule}"
          data-up-custom-value-policy="${it.uiCustomValuePolicy}">
       <input type="hidden" name="name" value="${it.name}" />
-      <input type="hidden" name="__unified_parameters_presence" value="${it.name}" />
+      <input type="hidden" name="__parameter_foundry_presence" value="${it.name}" />
       <input type="hidden" name="__up_snapshot_${it.name}" data-up-snapshot-id="true" value="" />
       <input type="hidden" name="__up_dependencies_${it.name}" data-up-dependencies-json="true" value="{}" />
       <div data-up-fallback="true">
         <j:if test="${it.providerBacked}">
-          <div class="unified-parameters-fallback-warning">
+          <div class="parameter-foundry-fallback-warning">
             This parameter uses shared Provider ${it.providerId}. JavaScript or the
             Typed API is required to resolve its governed option set.
           </div>
@@ -75,7 +75,7 @@
         <j:choose>
           <j:when test="${it.providerBacked}">
             <input type="hidden" name="value" data-up-fallback-json-value="true" value="" />
-            <div class="unified-parameters-status" data-up-refresh-status="true"
+            <div class="parameter-foundry-status" data-up-refresh-status="true"
                  role="status" aria-live="polite">
               Loading options...
             </div>
@@ -86,7 +86,7 @@
                      value="${defaultValue}" />
             </j:forEach>
             <j:if test="${it.fallbackTruncated}">
-              <div class="unified-parameters-fallback-warning">
+              <div class="parameter-foundry-fallback-warning">
                 This parameter has ${it.optionCount} options. Without JavaScript, the first
                 ${it.NO_JAVASCRIPT_OPTION_LIMIT} options are available. Use search or the Typed API
                 to access the complete set.
@@ -125,7 +125,7 @@
             <input type="hidden" name="value" data-up-fallback-json-value="true"
                    value="${it.defaultParameterValue.value}" />
             <j:if test="${it.fallbackTruncated}">
-              <div class="unified-parameters-fallback-warning">
+              <div class="parameter-foundry-fallback-warning">
                 This parameter has ${it.optionCount} options. Without JavaScript, the first
                 ${it.NO_JAVASCRIPT_OPTION_LIMIT} options are available. Use search or the Typed API
                 to access the complete set.

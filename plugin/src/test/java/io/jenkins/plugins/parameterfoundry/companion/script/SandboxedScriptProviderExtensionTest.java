@@ -1,16 +1,16 @@
-package io.jenkins.plugins.unifiedparameters.companion.script;
+package io.jenkins.plugins.parameterfoundry.companion.script;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.Descriptor;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderException;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderLoadContext;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderOperation;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderRequest;
-import io.jenkins.plugins.unifiedparameters.provider.ProviderScope;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderException;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderLoadContext;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderOperation;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderRequest;
+import io.jenkins.plugins.parameterfoundry.provider.ProviderScope;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

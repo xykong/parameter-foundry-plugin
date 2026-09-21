@@ -6,7 +6,7 @@
   default this plan already assumes
 
 The goal is that every production Job which uses a source parameter family is
-replaced by the unified controls, and that the replacement is **proven by
+replaced by the foundry controls, and that the replacement is **proven by
 simulation before the wave** and **by A/B evidence during the wave**. A Job that
 cannot be replaced losslessly must be visible as such with a concrete redesign
 task, not silently skipped.
@@ -15,7 +15,7 @@ task, not silently skipped.
 
 1. Every Job on the controller that uses a source parameter family has a
    simulation row from
-   `…/unified-parameters-replacement-simulation/report` (read-only, admin).
+   `…/parameter-foundry-replacement-simulation/report` (read-only, admin).
 2. Every parameter of those Jobs is in one of these states:
    - `EQUIVALENT` or `EQUIVALENT_ADDED_ENV`: the replacement reproduces the
      recorded value and the environment export.
@@ -49,7 +49,7 @@ controller is not an acceptable intermediate state.
 1. Extended Choice static parameters (mechanical mapping, decisions from the
    adapter).
 2. List Git Branches parameters, after their Connection Profiles exist.
-3. Active Choices parameters, re-authored against Providers or a Unified Form.
+3. Active Choices parameters, re-authored against Providers or a Foundry Form.
 4. Stashed File parameters stay native (ADR 0015) and are recorded as a
    deliberate boundary, not as a migration.
 
@@ -68,7 +68,7 @@ A/B evidence gate applies.
 
 ### 4. Connection Profiles are administrator-owned
 
-Every repository or service the unified Providers reach is bound through a
+Every repository or service the foundry Providers reach is bound through a
 Connection Profile. The migration inventory produces the required profile list
 (authority, path allow-list, credential reference) from the source parameters;
 repository URLs and credential IDs are never copied into Job configuration or
@@ -85,7 +85,7 @@ Provider or Form.
 ### 6. Stashed File stays native
 
 Uploading a file is a transport capability, not a choice control (ADR 0015).
-The unified controls do not replace it. If file upload ever needs a governed
+The foundry controls do not replace it. If file upload ever needs a governed
 replacement, that is a new product capability with its own design, not part of
 this migration.
 
@@ -107,7 +107,7 @@ proves the Job still runs is not sufficient.
 ### 9. Rollback
 
 Every batch keeps its pre-migration Job XML, every release keeps the previous
-HPI under `JENKINS_HOME/.unified-parameters-rollback/`, and a batch rollback is
+HPI under `JENKINS_HOME/.parameter-foundry-rollback/`, and a batch rollback is
 refused once the Job changed afterwards, so a manual edit is never overwritten.
 
 ## Organisational inputs this plan assumes

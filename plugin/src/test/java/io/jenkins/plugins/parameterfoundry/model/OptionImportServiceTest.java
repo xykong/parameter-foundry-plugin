@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.model;
+package io.jenkins.plugins.parameterfoundry.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -1,13 +1,13 @@
-# Unified Parameters (Jenkins plugin)
+# Parameter Foundry (Jenkins plugin)
 
 > Jenkins plugin that provides one parameter model for choices and typed input
 > across the UI, Pipeline, REST, CLI, Rebuild, and downstream builds. Values are
 > canonical, providers are governed, and the core never executes Job-supplied
 > code.
 
-Repository: https://github.com/jenkinsci/unified-parameters-plugin
-Plugin short name: `unified-parameters`
-Current symbols: `unifiedChoice`, `unifiedForm`
+Repository: https://github.com/jenkinsci/parameter-foundry-plugin
+Plugin short name: `parameter-foundry`
+Current symbols: `foundryChoice`, `foundryForm`
 
 ## Start here
 
@@ -24,30 +24,30 @@ Current symbols: `unifiedChoice`, `unifiedForm`
 
 ## Core concepts
 
-- `unifiedChoice` with `selectionMode: single` returns a string or `null`.
-- `unifiedChoice` with `selectionMode: multiple` returns an unordered list sorted by machine value.
+- `foundryChoice` with `selectionMode: single` returns a string or `null`.
+- `foundryChoice` with `selectionMode: multiple` returns an unordered list sorted by machine value.
 - `renderer: table` makes the matrix cells the selectable values; missing cells are unavailable and
   disabled cells stay unselectable.
-- `unifiedForm` returns a typed map or JSON object built from its field schema.
+- `foundryForm` returns a typed map or JSON object built from its field schema.
 - Options come from inline `choices` or from a Provider referenced by `providerId`; `dependsOn`
   makes the parameter reactive.
 - Providers resolve through Connection Profiles that declare base URL, credentials, path and query
   allow-lists, timeouts, and response size bounds.
-- Provider types: `unifiedStaticProvider`, `unifiedManagedConfigProvider`, `unifiedRestProvider`,
-  `unifiedGitRefProvider`, `unifiedScriptProvider` (reviewed companion engine), and
-  `unifiedMappingProvider` for a dependency value → option list mapping with a default list; the
+- Provider types: `foundryStaticProvider`, `foundryManagedConfigProvider`, `foundryRestProvider`,
+  `foundryGitRefProvider`, `foundryScriptProvider` (reviewed companion engine), and
+  `foundryMappingProvider` for a dependency value → option list mapping with a default list; the
   mapping executes nothing.
 - Environment export: `string` or `none` for single selection, `delimited`, `json`, or `none` for
   multiple selection, `json` or `none` plus per-field variables for forms.
-- Typed API: `…/unified-parameters/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
-- Errors carry stable codes such as `UNIFIED_PARAMETER_UNKNOWN_VALUE`.
-- Migration CLI: `unified-parameters-migration` scans the controller, previews a
+- Typed API: `…/parameter-foundry/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
+- Errors carry stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.
+- Migration CLI: `parameter-foundry-migration` scans the controller, previews a
   Job with its decisions and exact diff, and applies one atomic batch per Job;
-  `unified-parameters-migration-verify` stores the before/after A/B evidence on
+  `parameter-foundry-migration-verify` stores the before/after A/B evidence on
   the migration record.
-- Read-only replacement simulation: `…/unified-parameters-replacement-simulation/report`
+- Read-only replacement simulation: `…/parameter-foundry-replacement-simulation/report`
   compares every production Job's recorded values and environment exports with
-  the simulated unified control and reports `EQUIVALENT`, `MISMATCH`,
+  the simulated foundry control and reports `EQUIVALENT`, `MISMATCH`,
   `NEEDS_PROVIDER`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter.
 - The migration page, the retirement dashboard, and every adapter reason,
   decision, fact, and verification case ship in English, Chinese, Japanese, and

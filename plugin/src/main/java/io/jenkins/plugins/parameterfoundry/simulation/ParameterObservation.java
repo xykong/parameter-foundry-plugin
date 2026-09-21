@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.simulation;
+package io.jenkins.plugins.parameterfoundry.simulation;
 
 /**
  * One recorded production build compared against its simulated replacement: what the source

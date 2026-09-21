@@ -10,13 +10,13 @@
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>unified-parameters-parent</artifactId>
+  <artifactId>parameter-foundry-parent</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
 
-  <name>Unified Parameters Reactor</name>
-  <description>Unified Parameters core plugin and migration adapters.</description>
-  <url>https://github.com/jenkinsci/unified-parameters-plugin</url>
+  <name>Parameter Foundry Reactor</name>
+  <description>Parameter Foundry core plugin and migration adapters.</description>
+  <url>https://github.com/jenkinsci/parameter-foundry-plugin</url>
 
   <licenses>
     <license>
@@ -42,7 +42,7 @@
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.528</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-    <gitHubRepo>jenkinsci/unified-parameters-plugin</gitHubRepo>
+    <gitHubRepo>jenkinsci/parameter-foundry-plugin</gitHubRepo>
 
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>

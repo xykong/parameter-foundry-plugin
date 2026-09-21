@@ -6,7 +6,7 @@
 
 ## Context
 
-Unified Parameters is one product from the administrator's perspective. The
+Parameter Foundry is one product from the administrator's perspective. The
 former multi-HPI layout required separately installing the core plugin,
 companions, and migration adapters before the complete internal requirement
 could be accepted. That installation boundary is an unnecessary barrier.
@@ -20,7 +20,7 @@ Jenkins plugin artifacts.
 The repository produces one Jenkins HPI:
 
 ```text
-io.jenkins.plugins:unified-parameters
+io.jenkins.plugins:parameter-foundry
 ```
 
 The HPI contains the core parameter and Provider platform, migration adapters,
@@ -33,7 +33,7 @@ when the corresponding source family is not used.
 
 ## Feature Switches
 
-The global Unified Parameters configuration exposes fail-closed switches for:
+The global Parameter Foundry configuration exposes fail-closed switches for:
 
 - migration adapters;
 - sandboxed Script Provider;

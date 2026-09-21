@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.retirement;
+package io.jenkins.plugins.parameterfoundry.retirement;
 
 import hudson.PluginWrapper;
 import hudson.model.Item;
@@ -9,9 +9,9 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Queue;
 import hudson.model.Run;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -166,8 +166,8 @@ public final class RetirementScanner {
     }
 
     private static Source sourceForDefinition(ParameterDefinition definition) {
-        if (definition instanceof AbstractUnifiedParameterDefinition
-                || definition instanceof UnifiedFormParameterDefinition
+        if (definition instanceof AbstractFoundryParameterDefinition
+                || definition instanceof FoundryFormParameterDefinition
                 || definition.getClass().getName().startsWith("hudson.model.")) {
             return null;
         }
@@ -184,7 +184,7 @@ public final class RetirementScanner {
         String name = type.getName();
         if (name.startsWith("hudson.model.")
                 || name.startsWith("jenkins.model.")
-                || name.startsWith("io.jenkins.plugins.unifiedparameters.")) {
+                || name.startsWith("io.jenkins.plugins.parameterfoundry.")) {
             return null;
         }
         PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(type);

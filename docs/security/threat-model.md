@@ -1,4 +1,4 @@
-# Unified Parameters Threat Model
+# Parameter Foundry Threat Model
 
 ## 1. Scope
 
@@ -265,7 +265,7 @@ status, Renderer type, and migration classification.
   the global feature switches.
 - Administrators may explicitly allow internal Provider targets.
 - Parameter values stored in ordinary Jenkins build records are visible
-  according to Jenkins permissions; Unified Parameters is not a secret
+  according to Jenkins permissions; Parameter Foundry is not a secret
   parameter replacement.
 - Historical source-plugin build records retain the source plugin's original
   security and serialization characteristics.

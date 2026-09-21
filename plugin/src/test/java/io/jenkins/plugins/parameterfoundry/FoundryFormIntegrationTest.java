@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -8,12 +8,12 @@ import hudson.EnvVars;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.form.FormEvaluationService;
-import io.jenkins.plugins.unifiedparameters.form.FormField;
-import io.jenkins.plugins.unifiedparameters.form.FormLayout;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.form.UnifiedFormParameterValue;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.form.FormEvaluationService;
+import io.jenkins.plugins.parameterfoundry.form.FormField;
+import io.jenkins.plugins.parameterfoundry.form.FormLayout;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
-class UnifiedFormIntegrationTest {
+class FoundryFormIntegrationTest {
 
     @Test
     void typedBuildPersistsStructuredValueAndExportsGovernedFields(JenkinsRule jenkins) throws Exception {
@@ -46,12 +46,12 @@ class UnifiedFormIntegrationTest {
         body.put("values", values);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/build", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body);
 
         assertEquals(201, response.getStatusCode(), response.getJSONObject().toString());
         jenkins.waitUntilNoActivity();
-        UnifiedFormParameterValue value = assertInstanceOf(
-                UnifiedFormParameterValue.class,
+        FoundryFormParameterValue value = assertInstanceOf(
+                FoundryFormParameterValue.class,
                 project.getLastBuild().getAction(ParametersAction.class).getParameter("DEPLOYMENT"));
         Map<String, Object> structured = value.getStructuredValue();
         assertEquals("checkout", structured.get("service"));
@@ -76,7 +76,7 @@ class UnifiedFormIntegrationTest {
         body.put("values", values);
 
         JenkinsRule.JSONWebResponse response =
-                postJson(jenkins, project.getUrl() + "unified-parameters/api/v1/validate", body);
+                postJson(jenkins, project.getUrl() + "parameter-foundry/api/v1/validate", body);
 
         assertEquals(400, response.getStatusCode());
         String message =
@@ -86,8 +86,8 @@ class UnifiedFormIntegrationTest {
 
     @Test
     void browserSubmittedJsonArrayWrapperIsDecoded(JenkinsRule jenkins) throws Exception {
-        UnifiedFormParameterDefinition definition =
-                (UnifiedFormParameterDefinition) formJob(jenkins, "form-browser-wrapper")
+        FoundryFormParameterDefinition definition =
+                (FoundryFormParameterDefinition) formJob(jenkins, "form-browser-wrapper")
                         .getProperty(ParametersDefinitionProperty.class)
                         .getParameterDefinition("DEPLOYMENT");
         JSONObject form = new JSONObject();
@@ -101,7 +101,7 @@ class UnifiedFormIntegrationTest {
         JSONObject submitted = new JSONObject();
         submitted.put("value", JSONArray.fromObject(List.of(form.toString())));
 
-        UnifiedFormParameterValue value = (UnifiedFormParameterValue)
+        FoundryFormParameterValue value = (FoundryFormParameterValue)
                 definition.createValue((org.kohsuke.stapler.StaplerRequest2) null, submitted);
 
         assertEquals("catalog", value.getStructuredValue().get("service"));
@@ -109,7 +109,7 @@ class UnifiedFormIntegrationTest {
 
     @Test
     void rebuildCopyPreservesHistoricalStructuredValueAsDefault(JenkinsRule jenkins) throws Exception {
-        UnifiedFormParameterDefinition definition = (UnifiedFormParameterDefinition) formJob(jenkins, "form-rebuild")
+        FoundryFormParameterDefinition definition = (FoundryFormParameterDefinition) formJob(jenkins, "form-rebuild")
                 .getProperty(ParametersDefinitionProperty.class)
                 .getParameterDefinition("DEPLOYMENT");
         Map<String, Object> historical = Map.of(
@@ -128,9 +128,9 @@ class UnifiedFormIntegrationTest {
                 "ports",
                 List.of(8080L));
 
-        UnifiedFormParameterDefinition copy = assertInstanceOf(
-                UnifiedFormParameterDefinition.class,
-                definition.copyWithDefaultValue(new UnifiedFormParameterValue("DEPLOYMENT", historical)));
+        FoundryFormParameterDefinition copy = assertInstanceOf(
+                FoundryFormParameterDefinition.class,
+                definition.copyWithDefaultValue(new FoundryFormParameterValue("DEPLOYMENT", historical)));
         JSONObject defaultValue = JSONObject.fromObject(copy.getDefaultJson());
 
         assertEquals("catalog", defaultValue.getString("service"));
@@ -140,7 +140,7 @@ class UnifiedFormIntegrationTest {
 
     @Test
     void definitionValidationRejectsSecretWholeFormExportAndUnknownLayoutField() {
-        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("FORM");
+        FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition("FORM");
         FormField secret = new FormField("token", "string");
         secret.setSecret(true);
         FormLayout layout = new FormLayout("main", "section");
@@ -157,9 +157,9 @@ class UnifiedFormIntegrationTest {
 
     @Test
     void definitionValidationRejectsReservedName() {
-        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("__unified_parameters_presence");
+        FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition("__parameter_foundry_presence");
         List<String> errors =
-                io.jenkins.plugins.unifiedparameters.validation.DefinitionValidationService.validateStoredDefinition(
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(
                                 definition)
                         .getErrors();
 
@@ -168,7 +168,7 @@ class UnifiedFormIntegrationTest {
 
     private static FreeStyleProject formJob(JenkinsRule jenkins, String name) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject(name);
-        UnifiedFormParameterDefinition definition = new UnifiedFormParameterDefinition("DEPLOYMENT");
+        FoundryFormParameterDefinition definition = new FoundryFormParameterDefinition("DEPLOYMENT");
 
         FormField service = new FormField("service", "string");
         service.setRequired(true);

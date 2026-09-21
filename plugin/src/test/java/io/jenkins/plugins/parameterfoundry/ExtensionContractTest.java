@@ -1,12 +1,12 @@
-package io.jenkins.plugins.unifiedparameters;
+package io.jenkins.plugins.parameterfoundry;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.jenkins.plugins.unifiedparameters.provider.extension.ScriptProviderSecurityContract;
-import io.jenkins.plugins.unifiedparameters.renderer.RendererSecurityContract;
-import io.jenkins.plugins.unifiedparameters.renderer.TrustedRendererRegistry;
-import io.jenkins.plugins.unifiedparameters.renderer.UnifiedParameterRenderer;
+import io.jenkins.plugins.parameterfoundry.provider.extension.ScriptProviderSecurityContract;
+import io.jenkins.plugins.parameterfoundry.renderer.FoundryParameterRenderer;
+import io.jenkins.plugins.parameterfoundry.renderer.RendererSecurityContract;
+import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import java.lang.reflect.Method;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ExtensionContractTest {
 
     @Test
     void rendererSpiCannotReturnRawMarkupOrScriptSource() {
-        for (Method method : UnifiedParameterRenderer.class.getDeclaredMethods()) {
+        for (Method method : FoundryParameterRenderer.class.getDeclaredMethods()) {
             assertFalse(
                     method.getName().toLowerCase().contains("html")
                             || method.getName().toLowerCase().contains("javascript"),

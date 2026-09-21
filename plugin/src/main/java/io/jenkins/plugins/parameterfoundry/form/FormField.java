@@ -1,10 +1,10 @@
-package io.jenkins.plugins.unifiedparameters.form;
+package io.jenkins.plugins.parameterfoundry.form;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.ListBoxModel;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -197,7 +197,7 @@ public final class FormField extends AbstractDescribableImpl<FormField> implemen
     }
 
     @Extension
-    @Symbol("unifiedFormField")
+    @Symbol("foundryFormField")
     public static final class DescriptorImpl extends Descriptor<FormField> {
         public ListBoxModel doFillTypeItems() {
             return new ListBoxModel(
@@ -217,7 +217,7 @@ public final class FormField extends AbstractDescribableImpl<FormField> implemen
 
         @Override
         public String getDisplayName() {
-            return "Unified Form Field";
+            return "Foundry Form Field";
         }
     }
 }

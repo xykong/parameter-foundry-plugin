@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.companion.script;
+package io.jenkins.plugins.parameterfoundry.companion.script;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -47,7 +47,7 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
     }
 
     @Extension
-    @Symbol("unifiedScriptCatalogEntry")
+    @Symbol("foundryScriptCatalogEntry")
     public static final class DescriptorImpl extends Descriptor<ScriptCatalogEntry> {
         public Descriptor<SecureGroovyScript> getScriptDescriptor() {
             return jenkins.model.Jenkins.get().getDescriptor(SecureGroovyScript.class);
@@ -55,7 +55,7 @@ public final class ScriptCatalogEntry extends AbstractDescribableImpl<ScriptCata
 
         @Override
         public String getDisplayName() {
-            return "Unified Parameters Script Catalog Entry";
+            return "Parameter Foundry Script Catalog Entry";
         }
     }
 }

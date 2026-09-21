@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import hudson.model.ItemGroup;
@@ -14,8 +14,7 @@ public final class ProviderRegistry {
         ItemGroup<?> parent = job.getParent();
         int folderDistance = 0;
         while (parent instanceof AbstractFolder<?> folder) {
-            UnifiedParametersFolderProperty property =
-                    folder.getProperties().get(UnifiedParametersFolderProperty.class);
+            ParameterFoundryFolderProperty property = folder.getProperties().get(ParameterFoundryFolderProperty.class);
             if (property != null) {
                 Optional<SharedProviderDefinition> provider =
                         findVisibleProvider(property.getProviders(), id, folderDistance);
@@ -26,7 +25,7 @@ public final class ProviderRegistry {
             parent = folder.getParent();
             folderDistance++;
         }
-        return findById(UnifiedParametersGlobalConfiguration.get().getProviders(), id)
+        return findById(ParameterFoundryGlobalConfiguration.get().getProviders(), id)
                 .map(provider -> new LocatedProvider(provider, ProviderScope.GLOBAL, "jenkins"));
     }
 
@@ -34,8 +33,7 @@ public final class ProviderRegistry {
         ItemGroup<?> parent = job.getParent();
         int folderDistance = 0;
         while (parent instanceof AbstractFolder<?> folder) {
-            UnifiedParametersFolderProperty property =
-                    folder.getProperties().get(UnifiedParametersFolderProperty.class);
+            ParameterFoundryFolderProperty property = folder.getProperties().get(ParameterFoundryFolderProperty.class);
             if (property != null) {
                 Optional<ConnectionProfile> profile =
                         findVisibleProfile(property.getConnectionProfiles(), id, folderDistance);
@@ -46,7 +44,7 @@ public final class ProviderRegistry {
             parent = folder.getParent();
             folderDistance++;
         }
-        return findProfileById(UnifiedParametersGlobalConfiguration.get().getConnectionProfiles(), id)
+        return findProfileById(ParameterFoundryGlobalConfiguration.get().getConnectionProfiles(), id)
                 .map(profile -> new LocatedProfile(profile, ProviderScope.GLOBAL, "jenkins"));
     }
 

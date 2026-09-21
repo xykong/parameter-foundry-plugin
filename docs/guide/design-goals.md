@@ -8,7 +8,7 @@ value semantics, its own API behaviour, and its own idea of which entry points i
 supports. Teams end up with parameters that cannot be migrated, cannot be tested,
 or behave differently in the browser and in Pipeline.
 
-Unified Parameters provides **one parameter model with one evaluation path** for
+Parameter Foundry provides **one parameter model with one evaluation path** for
 choices and typed input, so the value a user picks in the browser is the value
 Pipeline, CLI, REST, Rebuild, and downstream builds see.
 
@@ -26,10 +26,10 @@ Pipeline, CLI, REST, Rebuild, and downstream builds see.
 
 ## What you get
 
-- `unifiedChoice`: single, multiple, and matrix selection with searchable,
+- `foundryChoice`: single, multiple, and matrix selection with searchable,
   list, checkbox, radio, and table renderers, inline or Provider-backed options,
   reactive dependencies, custom values, and per-mode transports.
-- `unifiedForm`: typed schema with validation, layouts, conditional visibility,
+- `foundryForm`: typed schema with validation, layouts, conditional visibility,
   canonical JSON output, and governed environment export.
 - Migration assistance for twelve source parameter families, with preview,
   classification, decisions, apply/clone, rollback, and a retirement dashboard.
@@ -44,14 +44,14 @@ Pipeline, CLI, REST, Rebuild, and downstream builds see.
 - No automatic conversion of business intent: where source logic cannot be proven
   equivalent, the migration assistant asks rather than guesses.
 - No replacement of Jenkins’ native upload transport; file parameters stay native
-  and keep working alongside Unified parameters.
+  and keep working alongside Foundry parameters.
 
 ## Release scope
 
 | Version line | Scope |
 |---|---|
 | `0.1` | Technical preview: core types, providers, renderers, migration adapters, single-HPI packaging |
-| `0.2` | Unified choice entry (`selectionMode`), matrix tables, localization, provider runtime bounds, unified value type |
+| `0.2` | Foundry choice entry (`selectionMode`), matrix tables, localization, provider runtime bounds, foundry value type |
 | `0.3` | Public documentation and in-plugin help |
 
 See [`CHANGELOG.md`](../../CHANGELOG.md) for the released changes and

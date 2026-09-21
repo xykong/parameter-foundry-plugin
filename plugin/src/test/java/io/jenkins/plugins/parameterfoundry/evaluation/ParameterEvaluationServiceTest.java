@@ -1,11 +1,11 @@
-package io.jenkins.plugins.unifiedparameters.evaluation;
+package io.jenkins.plugins.parameterfoundry.evaluation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import io.jenkins.plugins.unifiedparameters.MultipleChoiceFixtures;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.MultipleChoiceFixtures;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void multipleChoiceUsesStableMachineValueOrder() {
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
 
         List<String> result = ParameterEvaluationService.evaluateMultiple(
                 definition, DecodedInput.present(List.of("web", "android")));
@@ -22,8 +22,8 @@ class ParameterEvaluationServiceTest {
     }
 
     @Test
-    void unifiedChoiceInMultipleModeUsesStableMachineValueOrder() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("TARGETS");
+    void foundryChoiceInMultipleModeUsesStableMachineValueOrder() {
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("TARGETS");
         definition.setSelectionMode("multiple");
         definition.setChoices(List.of(new Option("web"), new Option("android")));
 
@@ -35,7 +35,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void matrixCellValuesAreSelectable() {
-        UnifiedChoiceParameterDefinition definition = matrixDefinition();
+        FoundryChoiceParameterDefinition definition = matrixDefinition();
 
         assertEquals(
                 List.of("android-a", "web-c"),
@@ -45,7 +45,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void matrixDisabledCellIsRejectedAsDisabled() {
-        UnifiedChoiceParameterDefinition definition = matrixDefinition();
+        FoundryChoiceParameterDefinition definition = matrixDefinition();
 
         EvaluationException exception = assertThrows(
                 EvaluationException.class,
@@ -54,23 +54,23 @@ class ParameterEvaluationServiceTest {
         assertEquals(ErrorCode.DISABLED_VALUE, exception.getCode());
     }
 
-    private static UnifiedChoiceParameterDefinition matrixDefinition() {
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+    private static FoundryChoiceParameterDefinition matrixDefinition() {
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setRenderer("table");
-        io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix matrix =
-                new io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix();
+        io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix matrix =
+                new io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix();
         matrix.setRows(List.of(
-                new io.jenkins.plugins.unifiedparameters.model.AxisOption("android", "Android"),
-                new io.jenkins.plugins.unifiedparameters.model.AxisOption("ios", "iOS")));
+                new io.jenkins.plugins.parameterfoundry.model.AxisOption("android", "Android"),
+                new io.jenkins.plugins.parameterfoundry.model.AxisOption("ios", "iOS")));
         matrix.setColumns(List.of(
-                new io.jenkins.plugins.unifiedparameters.model.AxisOption("a", "A"),
-                new io.jenkins.plugins.unifiedparameters.model.AxisOption("c", "C")));
-        io.jenkins.plugins.unifiedparameters.model.MatrixCell androidA =
-                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("android", "a", "android-a");
-        io.jenkins.plugins.unifiedparameters.model.MatrixCell webC =
-                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("android", "c", "web-c");
-        io.jenkins.plugins.unifiedparameters.model.MatrixCell iosA =
-                new io.jenkins.plugins.unifiedparameters.model.MatrixCell("ios", "a", "ios-a");
+                new io.jenkins.plugins.parameterfoundry.model.AxisOption("a", "A"),
+                new io.jenkins.plugins.parameterfoundry.model.AxisOption("c", "C")));
+        io.jenkins.plugins.parameterfoundry.model.MatrixCell androidA =
+                new io.jenkins.plugins.parameterfoundry.model.MatrixCell("android", "a", "android-a");
+        io.jenkins.plugins.parameterfoundry.model.MatrixCell webC =
+                new io.jenkins.plugins.parameterfoundry.model.MatrixCell("android", "c", "web-c");
+        io.jenkins.plugins.parameterfoundry.model.MatrixCell iosA =
+                new io.jenkins.plugins.parameterfoundry.model.MatrixCell("ios", "a", "ios-a");
         iosA.setDisabled(true);
         iosA.setDisabledReason("Not available for iOS");
         matrix.setCells(List.of(androidA, webC, iosA));
@@ -80,7 +80,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void multipleChoiceRejectsDuplicatesByDefault() {
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
 
         EvaluationException exception = assertThrows(
                 EvaluationException.class,
@@ -92,7 +92,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void absentAndExplicitEmptyHaveDifferentSemantics() {
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setDefaultMode("explicit");
         definition.setDefaultValues(List.of("web"));
 
@@ -103,7 +103,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void singleChoiceRejectsUnknownValue() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         definition.setChoices(List.of(new Option("staging"), new Option("production")));
 
         EvaluationException exception = assertThrows(
@@ -115,7 +115,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void firstDefaultSkipsDisabledOptions() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         Option disabled = new Option("legacy");
         disabled.setDisabled(true);
         definition.setChoices(List.of(disabled, new Option("staging")));
@@ -126,7 +126,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void disabledValueIsRejected() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("CHANNEL");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("CHANNEL");
         Option disabled = new Option("production");
         disabled.setDisabled(true);
         definition.setChoices(List.of(new Option("staging"), disabled));
@@ -141,7 +141,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void selectionRangeIsValidated() {
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setMinSelections(2);
         definition.setMaxSelections(2);
 
@@ -163,7 +163,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void deduplicatePolicyUsesStableCanonicalValue() {
-        UnifiedChoiceParameterDefinition definition = multipleDefinition();
+        FoundryChoiceParameterDefinition definition = multipleDefinition();
         definition.setDuplicatePolicy("deduplicate");
 
         assertEquals(
@@ -174,7 +174,7 @@ class ParameterEvaluationServiceTest {
 
     @Test
     void customSingleValueIsDisabledByDefaultAndUsesSharedRegexLengthPolicy() {
-        UnifiedChoiceParameterDefinition definition = new UnifiedChoiceParameterDefinition("RELEASE");
+        FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("RELEASE");
         definition.setChoices(List.of(new Option("stable")));
 
         EvaluationException disabled = assertThrows(
@@ -203,8 +203,8 @@ class ParameterEvaluationServiceTest {
         assertEquals(ErrorCode.CUSTOM_VALUE_INVALID, length.getCode());
     }
 
-    private static UnifiedChoiceParameterDefinition multipleDefinition() {
-        UnifiedChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
+    private static FoundryChoiceParameterDefinition multipleDefinition() {
+        FoundryChoiceParameterDefinition definition = MultipleChoiceFixtures.multipleChoice("TARGETS");
         definition.setChoices(List.of(new Option("web"), new Option("android"), new Option("ios")));
         return definition;
     }

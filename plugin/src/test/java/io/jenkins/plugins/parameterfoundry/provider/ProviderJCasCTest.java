@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static io.jenkins.plugins.casc.misc.Util.toYamlString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +25,7 @@ class ProviderJCasCTest {
     @ConfiguredWithCode("ProviderJCasC.yml")
     void importsAndExportsSharedProvidersWithoutCredentialMaterial(JenkinsConfiguredWithCodeRule jenkins)
             throws Exception {
-        UnifiedParametersGlobalConfiguration configuration = UnifiedParametersGlobalConfiguration.get();
+        ParameterFoundryGlobalConfiguration configuration = ParameterFoundryGlobalConfiguration.get();
 
         StaticProviderDefinition provider = assertInstanceOf(
                 StaticProviderDefinition.class, configuration.getProviders().get(0));
@@ -36,7 +36,7 @@ class ProviderJCasCTest {
         assertEquals("service-credential", profile.getCredentialId());
 
         ConfigurationContext context = new ConfigurationContext(ConfiguratorRegistry.get());
-        CNode node = unclassifiedRoot(context).get("unifiedParameters");
+        CNode node = unclassifiedRoot(context).get("parameterFoundry");
         String exported = toYamlString(node);
 
         assertFalse(exported.contains("password"));

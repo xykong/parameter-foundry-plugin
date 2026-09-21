@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.snapshot;
+package io.jenkins.plugins.parameterfoundry.snapshot;
 
-import io.jenkins.plugins.unifiedparameters.model.ChoiceMatrix;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.List;
 
 public record ResolvedProviderOptions(

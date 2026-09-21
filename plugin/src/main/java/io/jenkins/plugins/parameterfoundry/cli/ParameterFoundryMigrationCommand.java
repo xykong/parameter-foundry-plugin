@@ -1,15 +1,15 @@
-package io.jenkins.plugins.unifiedparameters.cli;
+package io.jenkins.plugins.parameterfoundry.cli;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.ParametersDefinitionProperty;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchEntry;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchPreview;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationBatchResult;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationCoordinator;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationRecord;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationBatchEntry;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationBatchPreview;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationBatchResult;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationCoordinator;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationRecord;
 import java.util.ArrayList;
 import java.util.List;
 import jenkins.model.Jenkins;
@@ -25,7 +25,7 @@ import org.kohsuke.args4j.Option;
  * {@code -apply} is given together with {@code -accept-decisions}, applies one atomic batch.
  */
 @Extension
-public final class UnifiedParametersMigrationCommand extends CLICommand {
+public final class ParameterFoundryMigrationCommand extends CLICommand {
 
     @Option(name = "-job", usage = "Full name of the Job to preview or migrate.")
     public String job;
@@ -46,7 +46,7 @@ public final class UnifiedParametersMigrationCommand extends CLICommand {
 
     @Override
     public String getName() {
-        return "unified-parameters-migration";
+        return "parameter-foundry-migration";
     }
 
     @Override

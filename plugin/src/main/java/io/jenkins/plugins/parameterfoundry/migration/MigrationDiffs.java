@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.migration;
+package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
 import java.util.ArrayList;
@@ -25,10 +25,10 @@ public final class MigrationDiffs {
         if (source == null || target == null) {
             return "";
         }
-        return unified(readable(Jenkins.XSTREAM2.toXML(source)), readable(Jenkins.XSTREAM2.toXML(target)));
+        return foundry(readable(Jenkins.XSTREAM2.toXML(source)), readable(Jenkins.XSTREAM2.toXML(target)));
     }
 
-    static String unified(List<String> before, List<String> after) {
+    static String foundry(List<String> before, List<String> after) {
         if (before.size() > MAX_LINES
                 || after.size() > MAX_LINES
                 || (long) before.size() * after.size() > MAX_MATRIX_CELLS) {

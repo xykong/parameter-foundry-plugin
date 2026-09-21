@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.config-import"/>
+  <st:adjunct includes="io.jenkins.plugins.parameterfoundry.config-import"/>
   <div class="up-parameter-config">
   <j:if test="${!empty instance.configurationWarnings}">
     <div class="jenkins-alert jenkins-alert-warning" role="status">
@@ -36,7 +36,7 @@
   <f:entry title="Import YAML or JSON" field="importSource">
     <div class="up-import-panel" data-up-import-panel="true"
          data-parameter-kind="${instance.multiple ? 'multiple' : 'single'}"
-         data-endpoint="${rootURL}/descriptorByName/io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition/previewImport">
+         data-endpoint="${rootURL}/descriptorByName/io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition/previewImport">
       <f:textarea class="up-import-source" />
       <div class="up-import-actions">
         <button type="button" class="jenkins-button" data-up-import-preview-button="true">Preview import</button>

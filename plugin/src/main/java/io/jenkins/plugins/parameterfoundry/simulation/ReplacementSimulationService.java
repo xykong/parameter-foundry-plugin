@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.simulation;
+package io.jenkins.plugins.parameterfoundry.simulation;
 
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
@@ -6,17 +6,17 @@ import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Run;
-import io.jenkins.plugins.unifiedparameters.definition.AbstractUnifiedParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterDefinition;
-import io.jenkins.plugins.unifiedparameters.definition.UnifiedChoiceParameterValue;
-import io.jenkins.plugins.unifiedparameters.evaluation.CustomValuePolicy;
-import io.jenkins.plugins.unifiedparameters.evaluation.EvaluationException;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationClassification;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationEvidenceService;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationPlan;
-import io.jenkins.plugins.unifiedparameters.migration.MigrationSnippets;
-import io.jenkins.plugins.unifiedparameters.migration.SourceMigrationAdapter;
-import io.jenkins.plugins.unifiedparameters.model.Option;
+import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.evaluation.CustomValuePolicy;
+import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationEvidenceService;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets;
+import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -144,7 +144,7 @@ public final class ReplacementSimulationService {
                         definition,
                         adapter,
                         plan.getClassification().name(),
-                        providerSkeleton ? "Provider (skeleton)" : "Unified Form (skeleton)",
+                        providerSkeleton ? "Provider (skeleton)" : "Foundry Form (skeleton)",
                         providerSkeleton ? NEEDS_PROVIDER : NEEDS_MANUAL_CHECK,
                         plan.getReason(),
                         plan.getDecisions(),
@@ -170,7 +170,7 @@ public final class ReplacementSimulationService {
                     COMPARISON_UNKNOWN,
                     sourceDefault);
         }
-        if (target instanceof UnifiedChoiceParameterDefinition choice && !choice.isProviderBacked()) {
+        if (target instanceof FoundryChoiceParameterDefinition choice && !choice.isProviderBacked()) {
             List<ParameterObservation> observations = compareChoice(job, choice, sourceValues, maxBuilds);
             String optionSetComparison = optionSetComparison(choice, sourceValues);
             String defaultCheck = defaultCheck(choice, sourceDefault);
@@ -190,7 +190,7 @@ public final class ReplacementSimulationService {
                     defaultCheck,
                     sourceDefault);
         }
-        String verdict = target instanceof AbstractUnifiedParameterDefinition unified && unified.isProviderBacked()
+        String verdict = target instanceof AbstractFoundryParameterDefinition foundry && foundry.isProviderBacked()
                 ? NEEDS_PROVIDER
                 : NEEDS_MANUAL_CHECK;
         return entry(
@@ -242,7 +242,7 @@ public final class ReplacementSimulationService {
 
     /** Values that must stay selectable: the target's options, or the recorded source values. */
     private static List<String> requiredValues(
-            UnifiedChoiceParameterDefinition choice,
+            FoundryChoiceParameterDefinition choice,
             List<ParameterObservation> observations,
             List<String> sourceValues) {
         Set<String> values = new LinkedHashSet<>();
@@ -266,7 +266,7 @@ public final class ReplacementSimulationService {
     }
 
     /** Compares the source's current option list with the migrated one, when both are readable. */
-    private static String optionSetComparison(UnifiedChoiceParameterDefinition choice, List<String> sourceValues) {
+    private static String optionSetComparison(FoundryChoiceParameterDefinition choice, List<String> sourceValues) {
         if (sourceValues.isEmpty()) {
             return COMPARISON_UNKNOWN;
         }
@@ -280,7 +280,7 @@ public final class ReplacementSimulationService {
     }
 
     /** Checks that the source default stays selectable, when the source declares one. */
-    private static String defaultCheck(UnifiedChoiceParameterDefinition choice, String sourceDefault) {
+    private static String defaultCheck(FoundryChoiceParameterDefinition choice, String sourceDefault) {
         if (sourceDefault == null || sourceDefault.isBlank()) {
             return COMPARISON_UNKNOWN;
         }
@@ -350,7 +350,7 @@ public final class ReplacementSimulationService {
     }
 
     private static List<ParameterObservation> compareChoice(
-            Job<?, ?> job, UnifiedChoiceParameterDefinition choice, List<String> sourceValues, int maxBuilds) {
+            Job<?, ?> job, FoundryChoiceParameterDefinition choice, List<String> sourceValues, int maxBuilds) {
         List<ParameterObservation> observations = new ArrayList<>();
         for (Run<?, ?> run : job.getBuilds()) {
             if (observations.size() >= maxBuilds) {
@@ -370,7 +370,7 @@ public final class ReplacementSimulationService {
                             .filter(part -> !sourceValues.contains(part))
                             .toList();
             boolean historical = !representable && !droppedBySource.isEmpty();
-            UnifiedChoiceParameterValue targetValue = targetValue(choice, parts);
+            FoundryChoiceParameterValue targetValue = targetValue(choice, parts);
             String targetEnvironment =
                     representable ? MigrationEvidenceService.environmentOf(targetValue, run, choice.getName()) : null;
             boolean environmentMatches = representable && Objects.equals(sourceEnvironment, targetEnvironment);
@@ -435,7 +435,7 @@ public final class ReplacementSimulationService {
     }
 
     private static String note(
-            UnifiedChoiceParameterDefinition choice,
+            FoundryChoiceParameterDefinition choice,
             String sourceValue,
             String sourceEnvironment,
             String targetEnvironment,
@@ -466,7 +466,7 @@ public final class ReplacementSimulationService {
         return null;
     }
 
-    private static boolean represents(UnifiedChoiceParameterDefinition choice, String value) {
+    private static boolean represents(FoundryChoiceParameterDefinition choice, String value) {
         if (value == null) {
             return false;
         }
@@ -486,7 +486,7 @@ public final class ReplacementSimulationService {
         }
     }
 
-    private static List<String> parts(UnifiedChoiceParameterDefinition choice, String sourceValue) {
+    private static List<String> parts(FoundryChoiceParameterDefinition choice, String sourceValue) {
         if (sourceValue == null || sourceValue.isEmpty()) {
             return List.of();
         }
@@ -504,7 +504,7 @@ public final class ReplacementSimulationService {
 
     /** True when both exports carry the same values in a different order. */
     private static boolean sameValues(
-            UnifiedChoiceParameterDefinition choice, String sourceEnvironment, String targetEnvironment) {
+            FoundryChoiceParameterDefinition choice, String sourceEnvironment, String targetEnvironment) {
         if (!choice.isMultiple()) {
             return false;
         }
@@ -515,10 +515,10 @@ public final class ReplacementSimulationService {
         return source.equals(target);
     }
 
-    private static UnifiedChoiceParameterValue targetValue(
-            UnifiedChoiceParameterDefinition choice, List<String> parts) {
+    private static FoundryChoiceParameterValue targetValue(
+            FoundryChoiceParameterDefinition choice, List<String> parts) {
         if (choice.isMultiple()) {
-            return UnifiedChoiceParameterValue.multiple(
+            return FoundryChoiceParameterValue.multiple(
                     choice.getName(),
                     parts,
                     parts,
@@ -529,7 +529,7 @@ public final class ReplacementSimulationService {
                     null);
         }
         String value = parts.isEmpty() ? null : parts.get(0);
-        return UnifiedChoiceParameterValue.single(choice.getName(), value, null, choice.getEnvironmentExport(), null);
+        return FoundryChoiceParameterValue.single(choice.getName(), value, null, choice.getEnvironmentExport(), null);
     }
 
     private static ParameterValue recordedValue(Run<?, ?> run, String parameterName) {

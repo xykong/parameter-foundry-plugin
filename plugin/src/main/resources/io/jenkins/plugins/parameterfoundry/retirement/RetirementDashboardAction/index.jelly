@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
   <l:layout title="${%RetirementPageTitle}">
-    <st:adjunct includes="io.jenkins.plugins.unifiedparameters.retirement"/>
+    <st:adjunct includes="io.jenkins.plugins.parameterfoundry.retirement"/>
     <l:main-panel>
       <div class="up-retirement">
         <header>

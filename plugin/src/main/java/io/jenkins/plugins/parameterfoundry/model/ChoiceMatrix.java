@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.model;
+package io.jenkins.plugins.parameterfoundry.model;
 
 import java.io.Serial;
 import java.io.Serializable;

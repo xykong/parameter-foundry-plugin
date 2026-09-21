@@ -1,6 +1,6 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

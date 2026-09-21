@@ -4,8 +4,8 @@ Two public parameter types form the whole user-facing surface:
 
 | Symbol | Purpose |
 |---|---|
-| `unifiedChoice` | Select one value, several values, or cells of a two-dimensional table |
-| `unifiedForm` | Typed, structured input validated as one JSON object |
+| `foundryChoice` | Select one value, several values, or cells of a two-dimensional table |
+| `foundryForm` | Typed, structured input validated as one JSON object |
 
 Both extend the Jenkins `ParameterDefinition` and expose their configuration
 through `@DataBoundConstructor`/`@DataBoundSetter`, so they work identically in
@@ -14,13 +14,13 @@ the UI, Pipeline, Job DSL, and JCasC.
 ## Naming rules
 
 - Parameter names must be non-empty and must not be
-  `__unified_parameters_presence` (reserved for the presence marker).
+  `__parameter_foundry_presence` (reserved for the presence marker).
 - Option values must be unique, non-empty, and must not contain control
   characters.
 - Provider, profile, and layout IDs use letters, digits, dot, underscore, or
   hyphen and start with a letter or digit.
 
-## `unifiedChoice`
+## `foundryChoice`
 
 ### Fields
 
@@ -117,9 +117,9 @@ to `submitted`, and a value without the field behaves as `canonical`.
 | `buildWithParameters` | `repeated` | `repeated`, `json-array`, or `delimited` per `standardApiInputMode` |
 | Jenkins CLI | one argument | JSON array argument, or the configured delimiter |
 | Typed API (`api/v1/build`, `api/v1/validate`) | JSON string | JSON array |
-| Pipeline `build` step | `unifiedChoice` value | `unifiedChoice` value with a list |
+| Pipeline `build` step | `foundryChoice` value | `foundryChoice` value with a list |
 
-## `unifiedForm`
+## `foundryForm`
 
 Structured input for cases where several related values belong together.
 
@@ -159,8 +159,8 @@ controlling field matches.
 
 ## Typed API
 
-Every Job with Unified parameters exposes a JSON API under
-`…/unified-parameters/api/v1/`:
+Every Job with Foundry parameters exposes a JSON API under
+`…/parameter-foundry/api/v1/`:
 
 | Endpoint | Purpose |
 |---|---|
@@ -171,5 +171,5 @@ Every Job with Unified parameters exposes a JSON API under
 | `providers/health` | Last Provider result per parameter |
 | `import/preview` | Preview of a YAML/JSON option import |
 
-Errors use stable codes such as `UNIFIED_PARAMETER_UNKNOWN_VALUE`; see
+Errors use stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`; see
 [Troubleshooting](./troubleshooting.md).

@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-  <st:adjunct includes="io.jenkins.plugins.unifiedparameters.form-ui"/>
+  <st:adjunct includes="io.jenkins.plugins.parameterfoundry.form-ui"/>
   <j:forEach var="adjunct" items="${it.rendererAdjuncts}">
     <st:adjunct includes="${adjunct}"/>
   </j:forEach>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
-  <f:entry class="unified-parameters-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
+  <f:entry class="parameter-foundry-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="up-form" data-up-form="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
          data-up-schema-load-error="${it.uiSchemaLoadError}"

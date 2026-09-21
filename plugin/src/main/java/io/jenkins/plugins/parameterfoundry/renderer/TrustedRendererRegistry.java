@@ -1,7 +1,7 @@
-package io.jenkins.plugins.unifiedparameters.renderer;
+package io.jenkins.plugins.parameterfoundry.renderer;
 
 import hudson.PluginWrapper;
-import io.jenkins.plugins.unifiedparameters.provider.UnifiedParametersGlobalConfiguration;
+import io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +23,7 @@ public final class TrustedRendererRegistry {
             "schema", Set.of(FAMILY_FORM),
             "accessible-choice-grid", Set.of(FAMILY_SINGLE_CHOICE, FAMILY_MULTI_CHOICE));
     private static final Map<String, List<String>> BUILT_IN_ADJUNCTS =
-            Map.of("accessible-choice-grid", List.of("io.jenkins.plugins.unifiedparameters.accessible-choice-grid"));
+            Map.of("accessible-choice-grid", List.of("io.jenkins.plugins.parameterfoundry.accessible-choice-grid"));
 
     private TrustedRendererRegistry() {}
 
@@ -32,19 +32,19 @@ public final class TrustedRendererRegistry {
         if (builtInFamilies != null) {
             return builtInFamilies.contains(family)
                     && (!"accessible-choice-grid".equals(rendererId)
-                            || UnifiedParametersGlobalConfiguration.accessibleChoiceGridFeatureEnabled());
+                            || ParameterFoundryGlobalConfiguration.accessibleChoiceGridFeatureEnabled());
         }
         if (rendererId == null || !rendererId.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}")) {
             return false;
         }
-        for (UnifiedParameterRenderer renderer : UnifiedParameterRenderer.all()) {
+        for (FoundryParameterRenderer renderer : FoundryParameterRenderer.all()) {
             if (!rendererId.equals(renderer.getId())
                     || !renderer.getSupportedFamilies().contains(family)
                     || !renderer.getSecurityContract().isTrustedV1()) {
                 continue;
             }
             PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
-            if (owner != null && !"unified-parameters".equals(owner.getShortName())) {
+            if (owner != null && !"parameter-foundry".equals(owner.getShortName())) {
                 return true;
             }
         }
@@ -53,13 +53,13 @@ public final class TrustedRendererRegistry {
 
     public static List<String> externalRendererIds(String family) {
         java.util.stream.Stream<String> builtIn =
-                UnifiedParametersGlobalConfiguration.accessibleChoiceGridFeatureEnabled()
+                ParameterFoundryGlobalConfiguration.accessibleChoiceGridFeatureEnabled()
                                 && BUILT_INS.get("accessible-choice-grid").contains(family)
                         ? java.util.stream.Stream.of("accessible-choice-grid")
                         : java.util.stream.Stream.empty();
         return java.util.stream.Stream.concat(
                         builtIn,
-                        UnifiedParameterRenderer.all().stream()
+                        FoundryParameterRenderer.all().stream()
                                 .filter(renderer ->
                                         renderer.getSupportedFamilies().contains(family))
                                 .filter(renderer ->
@@ -67,9 +67,9 @@ public final class TrustedRendererRegistry {
                                 .filter(renderer -> {
                                     PluginWrapper owner =
                                             Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
-                                    return owner != null && !"unified-parameters".equals(owner.getShortName());
+                                    return owner != null && !"parameter-foundry".equals(owner.getShortName());
                                 })
-                                .map(UnifiedParameterRenderer::getId)
+                                .map(FoundryParameterRenderer::getId)
                                 .filter(id -> id.matches("[A-Za-z0-9][A-Za-z0-9._-]{0,127}"))
                                 .filter(id -> !"accessible-choice-grid".equals(id))
                                 .distinct()
@@ -87,13 +87,13 @@ public final class TrustedRendererRegistry {
         if (BUILT_INS.containsKey(rendererId)) {
             return List.of();
         }
-        return UnifiedParameterRenderer.all().stream()
+        return FoundryParameterRenderer.all().stream()
                 .filter(renderer -> rendererId.equals(renderer.getId()))
                 .filter(renderer -> renderer.getSupportedFamilies().contains(family))
                 .filter(renderer -> renderer.getSecurityContract().isTrustedV1())
                 .filter(renderer -> {
                     PluginWrapper owner = Jenkins.get().getPluginManager().whichPlugin(renderer.getClass());
-                    return owner != null && !"unified-parameters".equals(owner.getShortName());
+                    return owner != null && !"parameter-foundry".equals(owner.getShortName());
                 })
                 .flatMap(renderer -> renderer.getSecurityContract().adjuncts().stream())
                 .distinct()

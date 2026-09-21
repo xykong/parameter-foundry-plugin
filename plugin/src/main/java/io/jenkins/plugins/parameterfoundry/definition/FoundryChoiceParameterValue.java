@@ -1,9 +1,9 @@
-package io.jenkins.plugins.unifiedparameters.definition;
+package io.jenkins.plugins.parameterfoundry.definition;
 
 import hudson.EnvVars;
 import hudson.model.ParameterValue;
 import hudson.model.Run;
-import io.jenkins.plugins.unifiedparameters.snapshot.ProviderSnapshotMetadata;
+import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotMetadata;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,12 +15,12 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 /**
- * Canonical value for {@link UnifiedChoiceParameterDefinition}. One type covers both
+ * Canonical value for {@link FoundryChoiceParameterDefinition}. One type covers both
  * cardinalities: {@code selectionMode} states the mode, {@code value} carries the scalar of a
  * single selection, and {@code values} carries the unordered set of a multiple selection.
  */
 @ExportedBean(defaultVisibility = 2)
-public final class UnifiedChoiceParameterValue extends ParameterValue {
+public final class FoundryChoiceParameterValue extends ParameterValue {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,25 +35,25 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
     private final ProviderSnapshotMetadata providerSnapshot;
 
     @DataBoundConstructor
-    public UnifiedChoiceParameterValue(String name, Object value) {
+    public FoundryChoiceParameterValue(String name, Object value) {
         this(name, modeFor(value), value, null, null, null, null, null, null);
     }
 
-    public UnifiedChoiceParameterValue(String name, String value, String description, String exportMode) {
+    public FoundryChoiceParameterValue(String name, String value, String description, String exportMode) {
         this(name, "single", value, description, exportMode, null, null, null, null);
     }
 
-    public static UnifiedChoiceParameterValue single(
+    public static FoundryChoiceParameterValue single(
             String name,
             String value,
             String description,
             String exportMode,
             ProviderSnapshotMetadata providerSnapshot) {
-        return new UnifiedChoiceParameterValue(
+        return new FoundryChoiceParameterValue(
                 name, "single", value, description, exportMode, null, providerSnapshot, null, null);
     }
 
-    public static UnifiedChoiceParameterValue multiple(
+    public static FoundryChoiceParameterValue multiple(
             String name,
             List<String> values,
             String description,
@@ -68,7 +68,7 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
      * the submitted order is only used when the definition exports the environment variable in the
      * order the source control used.
      */
-    public static UnifiedChoiceParameterValue multiple(
+    public static FoundryChoiceParameterValue multiple(
             String name,
             List<String> values,
             List<String> submittedValues,
@@ -77,7 +77,7 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
             String delimiter,
             String exportOrder,
             ProviderSnapshotMetadata providerSnapshot) {
-        return new UnifiedChoiceParameterValue(
+        return new FoundryChoiceParameterValue(
                 name,
                 "multiple",
                 values,
@@ -89,7 +89,7 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
                 exportOrder);
     }
 
-    private UnifiedChoiceParameterValue(
+    private FoundryChoiceParameterValue(
             String name,
             String selectionMode,
             Object rawValue,
@@ -242,7 +242,7 @@ public final class UnifiedChoiceParameterValue extends ParameterValue {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof UnifiedChoiceParameterValue valueObject)) {
+        if (!(other instanceof FoundryChoiceParameterValue valueObject)) {
             return false;
         }
         return Objects.equals(getName(), valueObject.getName())

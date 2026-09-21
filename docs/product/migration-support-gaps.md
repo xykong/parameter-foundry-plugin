@@ -23,12 +23,12 @@ Nothing below requires a partial migration; each item is a preparation task.
 | G5 network guidance | Implemented | Redacted endpoint and detected response fields in the facts, a generated Provider skeleton, and explicit Class D items for controller/shell scripts |
 | G6 nested form editing | Documented boundary | Unchanged: nested values are configured through Pipeline, Job DSL, or JCasC |
 | G7 provider matrices | Documented boundary | Unchanged: `providerId` plus `table` remains rejected until a real requirement exists |
-| G8 batch migration | Implemented | `MigrationCoordinator.previewBatch/applyBatch/rollbackBatch`, a Job-page batch section with the exact diff, and the `unified-parameters-migration` CLI |
+| G8 batch migration | Implemented | `MigrationCoordinator.previewBatch/applyBatch/rollbackBatch`, a Job-page batch section with the exact diff, and the `parameter-foundry-migration` CLI |
 | G9 localized surfaces | Implemented | Migration page, retirement dashboard, fact labels, reasons, decisions, and verification cases resolve through `Messages`; English, Chinese, Japanese, and Korean bundles are complete |
 | G10 repository scan | Implemented | `RetirementScanner.scanRepository()` reports Jobs that read their Pipeline from SCM plus multibranch and organization folders; the dashboard, the JSON report, and the Job page state that those definitions are unseen |
-| G11 A/B verification | Implemented | `MigrationEvidenceService` compares source and target builds (canonical value, environment export, sibling inputs) and stores the result on the migration record; `unified-parameters-migration-verify` records it |
+| G11 A/B verification | Implemented | `MigrationEvidenceService` compares source and target builds (canonical value, environment export, sibling inputs) and stores the result on the migration record; `parameter-foundry-migration-verify` records it |
 | G11b pre-wave simulation | Implemented | `ReplacementSimulationService` replays every recorded production value against the rebuilt target and reports `EQUIVALENT`, `EQUIVALENT_ADDED_ENV`, `MISMATCH`, `NEEDS_PROVIDER`, `NEEDS_MANUAL_CHECK`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter for the whole controller through a read-only endpoint |
-| G12 conditional cascades | Implemented | `unifiedMappingProvider` expresses a dependency value → option list mapping as reviewed data (no code execution), the Active Choices analysis recognises `if (DEP == "value") { return [...] } else { return [...] }`, and the migration tooling derives each mapping from the recorded production builds |
+| G12 conditional cascades | Implemented | `foundryMappingProvider` expresses a dependency value → option list mapping as reviewed data (no code execution), the Active Choices analysis recognises `if (DEP == "value") { return [...] } else { return [...] }`, and the migration tooling derives each mapping from the recorded production builds |
 
 ## What is already good enough
 
@@ -76,7 +76,7 @@ Evidence: 38 of 46 parameters carry a `defaultValue`; Active Choices and
 Extended Choice sources also contain stale defaults (20 parameters need the
 non-selectable-default decision).
 
-Impact: Unified Parameters validates explicit defaults against the option set,
+Impact: Parameter Foundry validates explicit defaults against the option set,
 so a stale default would make the migrated configuration invalid instead of
 silently building with something else. That is the safer behaviour, but the
 decision must be recorded per parameter.
@@ -154,7 +154,7 @@ a single Job write, and restores the backup when the write fails.
 `rollbackBatch` reverts the whole batch and refuses when the Job changed
 afterwards; a single record of a batch can no longer be rolled back on its own.
 The Job page renders the batch diff and the apply button, and
-`unified-parameters-migration` exposes scanning, dry-run, and apply to scripts.
+`parameter-foundry-migration` exposes scanning, dry-run, and apply to scripts.
 
 ### G9. The migration and retirement surfaces are English-only
 
@@ -167,7 +167,7 @@ least Chinese, so the business owners who must accept decisions read them in
 their own language.
 
 Delivered: the view text lives in per-view bundles
-(`api/UnifiedParametersJobAction/index*.properties` and
+(`api/ParameterFoundryJobAction/index*.properties` and
 `retirement/RetirementDashboardAction/index*.properties`), and the adapter
 narration moved to `MigrationText`, which resolves the plugin `Messages` bundle
 when a page renders. Adapter reasons, decisions, fact labels, and verification
@@ -205,7 +205,7 @@ Delivered: `MigrationEvidenceService` selects the newest pre-migration and
 post-migration builds that carry the parameter, compares the canonical value,
 the environment export (the parameter's own variable and any variable that
 carries its name), and the sibling inputs, then stores `PASS`, `FAIL`, or
-`PENDING` on the migration record. `unified-parameters-migration-verify` records
+`PENDING` on the migration record. `parameter-foundry-migration-verify` records
 it from the CLI, and the Job page shows the evidence with a re-run button. The
 plugin never schedules a build: the operator runs the two builds, so no migration
 tool can trigger production work by itself.

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.unifiedparameters.provider;
+package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.FreeStyleProject;
-import io.jenkins.plugins.unifiedparameters.evaluation.ErrorCode;
+import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

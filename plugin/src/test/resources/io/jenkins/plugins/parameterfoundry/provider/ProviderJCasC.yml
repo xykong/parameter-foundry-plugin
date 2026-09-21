@@ -1,7 +1,7 @@
 unclassified:
-  unifiedParameters:
+  parameterFoundry:
     providers:
-      - unifiedStaticProvider:
+      - foundryStaticProvider:
           id: "shared-releases"
           displayName: "Shared Releases"
           usableByChildren: true

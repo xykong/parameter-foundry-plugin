@@ -218,7 +218,7 @@ function validate() {
     return false;
   }
   if (selected.size === 0) {
-    errorElement.textContent = "Select at least one target. [UNIFIED_PARAMETER_MIN_SELECTIONS]";
+    errorElement.textContent = "Select at least one target. [PARAMETER_FOUNDRY_MIN_SELECTIONS]";
     return false;
   }
   errorElement.textContent = "";
@@ -361,7 +361,7 @@ function renderConfigPreview() {
     .map(groovyQuote);
 
   const lines = [
-    "unifiedChoice(",
+    "foundryChoice(",
     `    name: ${groovyQuote(name)},`,
     "    choices: [",
     optionLines.join(",\n"),
