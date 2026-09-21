@@ -82,6 +82,7 @@ help.
 - [September 12 source-plugin Docker canary](./testing/source-plugin-docker-canary-2026-09-12.md)
 - [September 12 Plugin Compatibility Tester verification](./testing/pct-verification-2026-09-12.md)
 - [September 22 source-plugin Docker canary](./testing/source-plugin-docker-canary-2026-09-22.md)
+- [September 22 Plugin Compatibility Tester verification](./testing/pct-verification-2026-09-22.md)
 - [`1.0` Static Choice Foundation implementation status](./testing/1.0-implementation-status.md)
 - [`1.1` Governed Provider Platform implementation status](./testing/1.1-implementation-status.md)
 - [`1.2` Reactive and Cascade implementation status](./testing/1.2-implementation-status.md)
