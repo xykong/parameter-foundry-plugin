@@ -237,7 +237,7 @@ Scriptler 作为 Active Choices 的脚本来源参与分析，但它不是独立
 [`active-choices-compatibility-summary.md`](./active-choices-compatibility-summary.md)。
 
 该结果说明 Active Choices 可以作为迁移候选，但不能被视为所有入口均有官方兼容承诺的
-统一参数平台。
+参数工场平台。
 
 ## 7. 安全性和维护性对比
 
