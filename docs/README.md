@@ -52,6 +52,7 @@ help.
 - [0015: Native file transport boundary](./decisions/0015-native-file-transport-boundary.md)
 - [0016: Single HPI product packaging](./decisions/0016-single-hpi-product-packaging.md)
 - [0017: Product renaming to Parameter Foundry](./decisions/0017-product-renaming-to-parameter-foundry.md)
+- [0018: Public repository hygiene and the private lab overlay](./decisions/0018-public-hygiene-and-private-lab-overlay.md)
 
 ## Architecture
 
