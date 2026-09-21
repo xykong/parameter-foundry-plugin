@@ -1,6 +1,6 @@
 # ADR 0018: Public Repository Hygiene and the Private Lab Overlay
 
-- Status: Proposed
+- Status: Accepted
 - Date: September 21, 2026
 
 ## Context
@@ -85,15 +85,18 @@ private-lab-overlay/          (private, never published)
 
 ## Execution
 
-| Phase | Work | Exit criterion |
-|-------|------|----------------|
-| 0 | Inventory the tree and the history for identifiers | every hit is classified as public-safe or overlay-only |
-| 1 | Introduce the fixture resolver, the bundled synthetic defaults, and the configuration contract | `mvn verify` passes with synthetic fixtures only |
-| 2 | Sanitize the public tree: fixtures, harness data, guides, history notes; move the operational tooling and the dated records to the overlay | a working-tree scan is clean |
-| 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | an internal run reproduces the production regression |
-| 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | a seeded leak fails the check |
-| 5 | Purge the history and re-scan every object | a full-history scan is clean |
-| 6 | Publish and keep the overlay as the internal archive | public repository contains no identifier |
+| Phase | Work | Status |
+|-------|------|--------|
+| 0 | Inventory the tree and the history for identifiers | Done: 122 hits in 19 files, each classified |
+| 1 | Introduce the fixture resolver, the bundled synthetic defaults, and the configuration contract | Done: `LabFixtures` plus `PF_LAB_FIXTURES`; the matrix test passes with synthetic and with real values |
+| 2 | Sanitize the public tree and move the operational tooling and the dated records to the overlay | Done: 17 records, 7 result files, and 6 controller scripts moved out |
+| 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done: `private-lab-overlay` |
+| 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | Done for the hook and the overlay scanner; the overlay also runs a daily scan |
+| 5 | Purge the history and re-scan every object | Done: `git filter-repo --replace-text`, plus a path strip for a binary screenshot; a fresh clone of the remote scans clean over 4,846 objects |
+| 6 | Publish and keep the overlay as the internal archive | Open: requires the repository transfer and a hosting request for the Jenkins organization |
+
+Phases 0 to 5 are complete. Publication is the remaining step and depends on a
+decision outside this repository.
 
 ## Consequences
 
