@@ -30,6 +30,7 @@ help.
 
 - [Competitor and ecosystem analysis](./research/competitive-analysis.md)
 - [Active Choices compatibility validation summary](./research/active-choices-compatibility-summary.md)
+- [Naming and brand evaluation](./research/naming-and-brand-evaluation.md)
 - [Real Jenkins UI Gallery](./ui-gallery/README.md)
 
 ## Decisions
@@ -50,6 +51,7 @@ help.
 - [0014: Technical preview and GA gates](./decisions/0014-technical-preview-and-ga-gates.md)
 - [0015: Native file transport boundary](./decisions/0015-native-file-transport-boundary.md)
 - [0016: Single HPI product packaging](./decisions/0016-single-hpi-product-packaging.md)
+- [0017: Product renaming to Parameter Foundry](./decisions/0017-product-renaming-to-parameter-foundry.md)
 
 ## Architecture
 
