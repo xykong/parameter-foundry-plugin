@@ -9,6 +9,26 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.4.263 - 2026-09-22
+
+The migration evidence report no longer blames a sibling parameter for an
+environment difference, so a Job that keeps a twin parameter next to the
+migrated control reaches `PASS` again.
+
+The HPI is `dist/parameter-foundry-0.4.263.hpi` (SHA-256
+`7cd863271450cdb941ffad67375a266cee5e6376e6c65d6c620aee82d0e88775`, 529,803
+bytes), built from commit `e7cb9b7` and installed on the shared controller over
+`0.4.255`, which stays in the controller rollback directory.
+
+### Fixed
+
+- `parameter-foundry-migration-verify` compared every environment key that
+  contained the migrated parameter's name. A sibling such as `UP_CHANNEL` next
+  to `CHANNEL` was therefore reported as an environment difference and the
+  record was written as `FAIL` although both runs recorded the same canonical
+  value (UP-ISSUE-014). The comparison now reads the parameter's own variable
+  only, and the sibling difference stays in the summary.
+
 ## 0.4.255 - 2026-09-21
 
 No user-visible behaviour change: the plugin behaves exactly as `0.4.245`. This
