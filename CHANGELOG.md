@@ -9,6 +9,23 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.4.270 - 2026-09-23
+
+The Pipeline-declared check of the migration preview now applies to the
+parameters a migration adapter recognizes, so the report stays focused on what a
+wave could actually migrate.
+
+The HPI is `dist/parameter-foundry-0.4.270.hpi` (SHA-256
+`ab093ec9e39115403179dcc2968fa8ae193e30b57271686acce7d6226557519b`, 531,314
+bytes), built from commit `9a496dd` and installed on the shared controller over
+`0.4.267`, which stays in the controller rollback directory.
+
+### Changed
+
+- A parameter the Pipeline declares is only reported as blocked when a
+  migration adapter recognizes it. Plain String, Boolean, and other parameters
+  without an adapter no longer appear in the report (UP-ISSUE-015).
+
 ## 0.4.267 - 2026-09-23
 
 The migration preview refuses the Jobs whose Pipeline declares the parameter it
