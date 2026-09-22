@@ -11,6 +11,7 @@ import example.invalid.InvalidTargetParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
+import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
@@ -146,6 +147,23 @@ class MigrationBatchCoordinatorTest {
         assertEquals(1, preview.getApplicableCount(), String.valueOf(preview.getBlocked()));
         assertEquals(0, preview.getBlockedCount(), String.valueOf(preview.getBlocked()));
         assertTrue(preview.isApplicable());
+    }
+
+    @Test
+    void keepsDeclaredParametersWithoutAnAdapterOutOfTheReport(JenkinsRule jenkins) throws Exception {
+        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "pipeline-plain-parameter");
+        job.setDefinition(new CpsFlowDefinition(declarativePipeline("SOMETHING_ELSE"), true));
+        job.scheduleBuild2(0).get();
+
+        replaceParameters(
+                job,
+                new ParametersDefinitionProperty(
+                        staticSingle(), new StringParameterDefinition("SOMETHING_ELSE", "staging")));
+
+        MigrationBatchPreview preview = MigrationCoordinator.previewBatch(job, List.of());
+
+        assertEquals(1, preview.getApplicableCount());
+        assertEquals(0, preview.getBlockedCount(), String.valueOf(preview.getBlocked()));
     }
 
     private static void replaceParameters(WorkflowJob job, ParametersDefinitionProperty property) throws Exception {

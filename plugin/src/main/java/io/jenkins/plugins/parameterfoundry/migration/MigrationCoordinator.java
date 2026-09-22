@@ -70,15 +70,15 @@ public final class MigrationCoordinator {
                 continue;
             }
             SourceMigrationAdapter adapter = findAdapter(definition);
-            if (declaredByPipeline.contains(definition.getName())) {
-                blocked.add(MigrationBatchEntry.declaredByPipeline(
-                        definition, adapter, Messages.MigrationBatchBlockedPipelineDeclaresParameter()));
-                continue;
-            }
             if (adapter == null) {
                 if (!requested.isEmpty()) {
                     blocked.add(MigrationBatchEntry.unsupported(definition, Messages.MigrationBatchBlockedNoAdapter()));
                 }
+                continue;
+            }
+            if (declaredByPipeline.contains(definition.getName())) {
+                blocked.add(MigrationBatchEntry.declaredByPipeline(
+                        definition, adapter, Messages.MigrationBatchBlockedPipelineDeclaresParameter()));
                 continue;
             }
             MigrationPlan plan;
