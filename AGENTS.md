@@ -69,6 +69,10 @@ changes, and organization-specific Job data do not belong in this repository.
 - Increment the second field when the release scope changes.
 - The third field is the number of commits on `master` at the released commit,
   so `git rev-list --count master` returns that number for the version commit.
+- From the first Jenkins CD release the version becomes
+  `<major>.<minor>.<git-depth>.v<hash>` and the CD workflow computes it; see
+  [ADR 0019](./docs/decisions/0019-release-publication-mechanism.md).
+- Release tags are `parameter-foundry-<version>`.
 - Keep the `-SNAPSHOT` suffix while the build is unpublished and drop it for a
   tagged release.
 - Every publish/release deployment must set the plugin version in `pom.xml`

@@ -31,6 +31,14 @@ fallback when the host only has JDK 17.
 The local Jenkins instance started by `make run` uses the standard Jenkins HPI
 development environment.
 
+## Releases
+
+Until hosting completes, a release is published by committing the built HPI
+into `dist/` and recording its digest in `CHANGELOG.md`. The public release path
+is Jenkins continuous delivery to `repo.jenkins-ci.org`: the version format,
+the tag convention, and the steps that depend on hosting are recorded in
+[`ADR 0019`](./decisions/0019-release-publication-mechanism.md).
+
 ## UI Lab
 
 ```bash
