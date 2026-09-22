@@ -9,6 +9,23 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.4.267 - 2026-09-23
+
+The migration preview refuses the Jobs whose Pipeline declares the parameter it
+would migrate, because those Jobs would revert the change at their next build.
+
+The HPI is `dist/parameter-foundry-0.4.267.hpi` (SHA-256
+`c908cda18161a4841fdb10ba6d73bcfa3d52c311c258a1402b1ab0bb7a606709`, 531,499
+bytes), built from commit `db8bb46` and installed on the shared controller over
+`0.4.263`, which stays in the controller rollback directory.
+
+### Added
+
+- The migration preview reads the declarative tracker the last build left on the
+  Job and reports a parameter the Pipeline declares as blocked, with the reason
+  that the Jenkinsfile has to change (UP-ISSUE-015). Parameters the Pipeline does
+  not declare are still offered.
+
 ## 0.4.263 - 2026-09-22
 
 The migration evidence report no longer blames a sibling parameter for an
