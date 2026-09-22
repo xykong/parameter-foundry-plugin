@@ -2,6 +2,7 @@ package io.jenkins.plugins.parameterfoundry.migration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition;
 import hudson.model.FreeStyleProject;
@@ -9,6 +10,7 @@ import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterValue;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -45,6 +47,34 @@ class MigrationEvidenceServiceTest {
 
         MigrationEvidence forced = MigrationEvidenceService.verify(job, record.getId(), 1, 3);
         assertEquals(MigrationEvidence.FAIL, forced.getStatus());
+    }
+
+    @Test
+    void ignoresSiblingParametersInTheEnvironmentComparison() {
+        List<String> differences = MigrationEvidenceService.compareEnvironment(
+                "LEGACY_CHANNEL",
+                Map.of("LEGACY_CHANNEL", "staging"),
+                Map.of("LEGACY_CHANNEL", "staging", "UP_LEGACY_CHANNEL", "master"));
+
+        assertTrue(differences.isEmpty(), String.valueOf(differences));
+    }
+
+    @Test
+    void reportsTheParameterItsOwnEnvironmentExport() {
+        List<String> differences = MigrationEvidenceService.compareEnvironment(
+                "LEGACY_CHANNEL",
+                Map.of("LEGACY_CHANNEL", "staging"),
+                Map.of("LEGACY_CHANNEL", "production", "UP_LEGACY_CHANNEL", "production"));
+
+        assertEquals(List.of("LEGACY_CHANNEL 'staging' -> 'production'"), differences);
+    }
+
+    @Test
+    void ignoresTheCaseOfTheEnvironmentKey() {
+        List<String> differences = MigrationEvidenceService.compareEnvironment(
+                "legacy_channel", Map.of("LEGACY_CHANNEL", "staging"), Map.of("LEGACY_CHANNEL", "staging"));
+
+        assertTrue(differences.isEmpty(), String.valueOf(differences));
     }
 
     private static void run(FreeStyleProject job, String value) throws Exception {

@@ -207,7 +207,7 @@ public final class MigrationEvidenceService {
         return String.valueOf(raw);
     }
 
-    private static List<String> compareEnvironment(
+    static List<String> compareEnvironment(
             String parameterName, Map<String, String> sourceEnvironment, Map<String, String> targetEnvironment) {
         TreeSet<String> keys = new TreeSet<>();
         for (String key : sourceEnvironment.keySet()) {
@@ -234,7 +234,10 @@ public final class MigrationEvidenceService {
     private static boolean isRelevantKey(String key, String parameterName) {
         String upperKey = key.toUpperCase(java.util.Locale.ROOT);
         String upperName = parameterName.toUpperCase(java.util.Locale.ROOT);
-        return upperKey.equals(upperName) || upperKey.contains(upperName);
+        // Only the parameter's own variable is compared. A sibling parameter that
+        // merely embeds the name (UP_CHANNEL next to CHANNEL) is a different input,
+        // and the sibling list already reports it separately.
+        return upperKey.equals(upperName);
     }
 
     private static List<String> siblingInputDifferences(
