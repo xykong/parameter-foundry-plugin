@@ -309,10 +309,39 @@ until every applicable column passes.
 - Cause: `MigrationEvidenceService.isRelevantKey` treats every environment key
   that *contains* the parameter name as relevant, so a sibling parameter whose
   name embeds `X` is compared as if it were an export of `X`.
-- Fix: not applied yet. The check should match the parameter name exactly or with
-  a delimiter boundary, and keep the sibling difference in the summary only.
-- Verification: pending; the fix needs a unit test for the twin-parameter case
-  and a re-run of the verification on the acceptance fixture.
+- Fix: the comparison reads the parameter's own variable only. The migrated
+  adapters export the parameter under its own name, and a name that merely
+  embeds it belongs to a different input, which the summary already reports as a
+  sibling difference. `MigrationEvidenceServiceTest` pins the sibling case, the
+  parameter's own change, and the key case-insensitivity; the sibling test fails
+  against the previous implementation.
+- Verification: passed 2026-09-22 on plugin `0.4.263` in production. Runs `#2`
+  (source) and `#10` (target) of the acceptance fixture reported `FAIL` before
+  the fix and `PASS` after it, with `Value, environment export, and downstream
+  consumption agree ... Sibling inputs differ: UP_LEGACY_TARGETS`.
+
+### UP-ISSUE-015: A Pipeline that declares its parameters reverts the migration
+
+- Reproduction: migrate a Job whose Pipeline comes from SCM and whose Jenkinsfile
+  declares the parameter, then run the Job. The Job configuration keeps the
+  migrated definition until that build.
+- Expected: either the migration is durable, or the tooling states that the Job
+  cannot be migrated through its configuration.
+- Actual: Declarative re-applies the parameters the Jenkinsfile declares, so the
+  Job configuration silently returns to the source definition. The builds keep
+  succeeding, which hides the revert: the Job simply never uses the migrated
+  definition. Two production Jobs showed it 11 and 26 minutes after a successful
+  migration, each time in the build that followed.
+- Cause: for those Jobs the Jenkinsfile, not the Job configuration, is the source
+  of truth for the parameter list. The migration preview reads Job
+  configurations only, so it cannot see the declaration.
+- Detection: the Job configuration carries the parameters the last build applied
+  in `pipeline-model-definition`'s declarative job property tracker, so the
+  preview can read the declared names from the stored configuration.
+- Fix: not applied yet. The preview should read that tracker and report the Job
+  as needing a Jenkinsfile change instead of offering a configuration batch.
+- Verification: pending. Until the fix, Jobs with a declarative tracker that
+  lists the parameter stay out of the wave plan.
 
 ## Recording Rule
 
