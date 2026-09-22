@@ -338,10 +338,24 @@ until every applicable column passes.
 - Detection: the Job configuration carries the parameters the last build applied
   in `pipeline-model-definition`'s declarative job property tracker, so the
   preview can read the declared names from the stored configuration.
-- Fix: not applied yet. The preview should read that tracker and report the Job
-  as needing a Jenkinsfile change instead of offering a configuration batch.
-- Verification: pending. Until the fix, Jobs with a declarative tracker that
-  lists the parameter stay out of the wave plan.
+- Fix: the preview reads the tracker and reports a parameter the Pipeline
+  declares as blocked with the reason that the Jenkinsfile has to change. The
+  check runs after the adapter lookup, so parameters no adapter recognizes stay
+  out of the report; without that order the shared controller produced 1,310
+  blocked rows for 17 applicable parameters.
+  `MigrationBatchCoordinatorTest.blocksParametersThatThePipelineDeclares` pins
+  the block, `stillMigratesParametersThatThePipelineDoesNotDeclare` and
+  `keepsDeclaredParametersWithoutAnAdapterOutOfTheReport` pin the boundaries.
+  The first test fails without the check.
+- Verification: passed 2026-09-23 on plugins `0.4.267` and `0.4.270` in
+  production. The controller-wide inventory reports 86 source-plugin parameters
+  as blocked for the Jenkinsfile reason and 17 applicable parameters across 14
+  Jobs; the six Jobs that reverted in the previous wave (`ap_build_replay`,
+  `ap_build_replay_dev`, `ap_build_locks`, `ap_job_ai_play_stable`,
+  `preheat_apk`, `testToolScript`) now show 0 applicable parameters. The 17
+  applicable parameters were migrated in the same window and verified: each is
+  stored as a Foundry definition, resolves with options, and simulated as
+  `EQUIVALENT` or `DECIDED_NO_DEFAULT` before the change.
 
 ## Recording Rule
 
