@@ -293,6 +293,27 @@ until every applicable column passes.
 - Verification: passed 2026-09-20 on plugin `0.3.216-SNAPSHOT`; the production
   table rendered with `Selected 0 of 35` and the following build succeeded.
 
+### UP-ISSUE-014: Migration evidence blamed a sibling parameter
+
+- Reproduction: migrate a Job whose parameter `X` is migrated while another
+  parameter of the same Job carries a name that embeds `X` (the acceptance
+  fixture keeps the source control and the migrated twin side by side), then run
+  `parameter-foundry-migration-verify` with a source build from before the
+  migration and a target build after it, both with the same input.
+- Expected: the evidence compares the canonical value and the environment export
+  of `X`. The twin's presence on one side only is a sibling input difference,
+  which the summary already reports separately.
+- Actual: the record was written as `FAIL` with
+  `Environment export differs: UP_X 'null' -> ''` even though both runs recorded
+  the same canonical value for `X`.
+- Cause: `MigrationEvidenceService.isRelevantKey` treats every environment key
+  that *contains* the parameter name as relevant, so a sibling parameter whose
+  name embeds `X` is compared as if it were an export of `X`.
+- Fix: not applied yet. The check should match the parameter name exactly or with
+  a delimiter boundary, and keep the sibling difference in the summary only.
+- Verification: pending; the fix needs a unit test for the twin-parameter case
+  and a re-run of the verification on the acceptance fixture.
+
 ## Recording Rule
 
 For every new failure, add a case or issue before changing code. Record the
