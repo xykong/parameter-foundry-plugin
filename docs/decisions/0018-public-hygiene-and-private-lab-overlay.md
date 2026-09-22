@@ -93,7 +93,7 @@ private-lab-overlay/          (private, never published)
 | 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done: `private-lab-overlay` |
 | 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | Done for the hook and the overlay scanner; the overlay also runs a daily scan |
 | 5 | Purge the history and re-scan every object | Done: `git filter-repo --replace-text`, plus a path strip for a binary screenshot; a fresh clone of the remote scans clean over 4,846 objects |
-| 6 | Publish and keep the overlay as the internal archive | Open: requires the repository transfer and a hosting request for the Jenkins organization |
+| 6 | Publish and keep the overlay as the internal archive | Open: the hosting request starts from the public repository and the Jenkins hosting team forks it into `jenkinsci` ([ADR 0019](./0019-release-publication-mechanism.md)) |
 
 Phases 0 to 5 are complete. Publication is the remaining step and depends on a
 decision outside this repository.
