@@ -45,6 +45,9 @@ Current symbols: `foundryChoice`, `foundryForm`
   Job with its decisions and exact diff, and applies one atomic batch per Job;
   `parameter-foundry-migration-verify` stores the before/after A/B evidence on
   the migration record.
+- A parameter that the Job's Pipeline declares is reported as blocked: the
+  Jenkinsfile has to change, because Declarative re-applies the declared
+  parameters at every build and would revert a configuration migration.
 - Read-only replacement simulation: `…/parameter-foundry-replacement-simulation/report`
   compares every production Job's recorded values and environment exports with
   the simulated foundry control and reports `EQUIVALENT`, `MISMATCH`,

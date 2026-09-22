@@ -64,11 +64,17 @@ public final class MigrationCoordinator {
         List<String> requested = normalizeNames(parameterNames);
         List<MigrationBatchEntry> entries = new ArrayList<>();
         List<MigrationBatchEntry> blocked = new ArrayList<>();
+        Set<String> declaredByPipeline = DeclaredPipelineParameters.of(job);
         for (ParameterDefinition definition : property.getParameterDefinitions()) {
             if (!requested.isEmpty() && !requested.contains(definition.getName())) {
                 continue;
             }
             SourceMigrationAdapter adapter = findAdapter(definition);
+            if (declaredByPipeline.contains(definition.getName())) {
+                blocked.add(MigrationBatchEntry.declaredByPipeline(
+                        definition, adapter, Messages.MigrationBatchBlockedPipelineDeclaresParameter()));
+                continue;
+            }
             if (adapter == null) {
                 if (!requested.isEmpty()) {
                     blocked.add(MigrationBatchEntry.unsupported(definition, Messages.MigrationBatchBlockedNoAdapter()));

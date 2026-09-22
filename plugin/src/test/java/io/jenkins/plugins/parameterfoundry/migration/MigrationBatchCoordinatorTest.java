@@ -16,6 +16,8 @@ import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import java.nio.file.Files;
 import java.util.List;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -106,6 +108,57 @@ class MigrationBatchCoordinatorTest {
         assertTrue(
                 preview.getBlocked().get(0).reason().contains("generated target is invalid"),
                 preview.getBlocked().get(0).reason());
+    }
+
+    @Test
+    void blocksParametersThatThePipelineDeclares(JenkinsRule jenkins) throws Exception {
+        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "pipeline-declared");
+        job.setDefinition(new CpsFlowDefinition(declarativePipeline("LEGACY_CHANNEL"), true));
+        job.scheduleBuild2(0).get();
+
+        // The operator migrated the Job configuration after the last build, but the Pipeline
+        // declares the same name and re-applies its own definition on the next run.
+        replaceParameters(job, new ParametersDefinitionProperty(staticSingle()));
+
+        MigrationBatchPreview preview = MigrationCoordinator.previewBatch(job, List.of());
+
+        assertEquals(0, preview.getApplicableCount());
+        assertEquals(1, preview.getBlockedCount());
+        assertFalse(preview.isApplicable());
+        assertEquals(
+                ExtendedChoiceParameterDefinition.class.getName(),
+                preview.getBlocked().get(0).sourceClass());
+        assertTrue(
+                preview.getBlocked().get(0).reason().contains("Pipeline declares this parameter"),
+                preview.getBlocked().get(0).reason());
+    }
+
+    @Test
+    void stillMigratesParametersThatThePipelineDoesNotDeclare(JenkinsRule jenkins) throws Exception {
+        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "pipeline-other-parameter");
+        job.setDefinition(new CpsFlowDefinition(declarativePipeline("SOMETHING_ELSE"), true));
+        job.scheduleBuild2(0).get();
+
+        replaceParameters(job, new ParametersDefinitionProperty(staticSingle()));
+
+        MigrationBatchPreview preview = MigrationCoordinator.previewBatch(job, List.of());
+
+        assertEquals(1, preview.getApplicableCount(), String.valueOf(preview.getBlocked()));
+        assertEquals(0, preview.getBlockedCount(), String.valueOf(preview.getBlocked()));
+        assertTrue(preview.isApplicable());
+    }
+
+    private static void replaceParameters(WorkflowJob job, ParametersDefinitionProperty property) throws Exception {
+        job.removeProperty(ParametersDefinitionProperty.class);
+        job.addProperty(property);
+    }
+
+    private static String declarativePipeline(String declaredParameter) {
+        return "pipeline {\n"
+                + "  agent any\n"
+                + "  parameters { string(name: '" + declaredParameter + "', defaultValue: 'staging') }\n"
+                + "  stages { stage('run') { steps { echo 'declared' } } }\n"
+                + "}\n";
     }
 
     private static ParameterDefinition definition(FreeStyleProject project, String name) {

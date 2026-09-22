@@ -82,6 +82,21 @@ public record MigrationBatchEntry(
                 "");
     }
 
+    static MigrationBatchEntry declaredByPipeline(
+            ParameterDefinition source, SourceMigrationAdapter adapter, String reason) {
+        return new MigrationBatchEntry(
+                source.getName(),
+                adapter == null ? "" : adapter.getSourcePluginId(),
+                source.getClass().getName(),
+                MigrationClassification.D.name(),
+                false,
+                reason,
+                List.of(),
+                "",
+                "",
+                "");
+    }
+
     public String getParameterName() {
         return parameterName;
     }

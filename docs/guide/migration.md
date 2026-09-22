@@ -95,6 +95,12 @@ many Jobs were skipped (no configure permission, no parameter definitions) or
 could not be scanned, so an incomplete inventory is never mistaken for a
 complete one.
 
+A Job whose Pipeline declares the parameter is reported as blocked with the
+reason that the Jenkinsfile has to change. Declarative re-applies the
+parameters its Jenkinsfile declares at every build, so a configuration
+migration on such a Job would be reverted by the next build; the block keeps
+the wave from writing a definition that cannot survive.
+
 Rolling back a batch restores the Job XML captured before the batch. When the
 Job changed after the batch, the rollback is refused, so a manual edit is never
 silently overwritten.
