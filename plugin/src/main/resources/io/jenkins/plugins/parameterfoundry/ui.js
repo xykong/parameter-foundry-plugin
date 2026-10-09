@@ -906,7 +906,17 @@
     update();
   }
 
+  function gitSelectedOption(field, options) {
+    var value = field.dataset.gitDefaultValue || "";
+    if (field.dataset.gitSelectionMode === "default" && value.trim().length > 0) {
+      return options.find(function (option) { return option.value === value; }) ||
+        options.find(function (option) { return option.value.indexOf(value) !== -1; }) || options[0];
+    }
+    return options[0];
+  }
+
   function enhanceSingle(field, options, initialValues) {
+    var legacyGit = field.dataset.standardApiInputMode === "list-git-branches";
     var allowCustom = field.dataset.allowCustom === "true";
     var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
     if (wantsRadio && options.length <= MAX_RADIO_OPTIONS) {
@@ -928,7 +938,7 @@
     var searchable =
       field.dataset.renderer === "searchable" ||
       wantsRadio ||
-      options.length > MAX_RENDERED_OPTIONS ||
+      (!legacyGit && options.length > MAX_RENDERED_OPTIONS) ||
       allowCustom;
     var customButton = null;
     var customValidation = null;
@@ -953,9 +963,23 @@
 
     function render() {
       var query = searchable ? search.value.toLocaleLowerCase() : "";
+      var gitRegex;
+      if (legacyGit) {
+        try {
+          gitRegex = new RegExp(searchable ? search.value.trim() : "", "i");
+        } catch (_error) {
+          status.textContent = "Invalid regular expression; keeping the previous selection.";
+          return;
+        }
+      }
       var matches = options.filter(function (option) {
-        return option.search.indexOf(query) !== -1;
+        return legacyGit ? gitRegex.test(option.label || option.value) : option.search.indexOf(query) !== -1;
       });
+      if (legacyGit) {
+        selected.clear();
+        var gitSelected = gitSelectedOption(field, matches);
+        if (gitSelected) selected.add(gitSelected.value);
+      }
       removeChildren(select);
       if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches") {
         var none = document.createElement("option");
@@ -976,7 +1000,7 @@
           select.appendChild(custom);
         }
       });
-      matches.slice(0, MAX_RENDERED_OPTIONS).forEach(function (option) {
+      (legacyGit ? matches : matches.slice(0, MAX_RENDERED_OPTIONS)).forEach(function (option) {
         var element = document.createElement("option");
         element.value = option.value;
         element.textContent = option.label || option.value;
@@ -995,12 +1019,15 @@
         select.removeAttribute("size");
       }
       status.textContent =
-        matches.length > MAX_RENDERED_OPTIONS
+        !legacyGit && matches.length > MAX_RENDERED_OPTIONS
           ? formatMessage(
               localized(field, "limitedSingleMatches", "{0} matches; showing {1}. Refine the search."),
               [matches.length, MAX_RENDERED_OPTIONS],
             )
           : formatMessage(localized(field, "matchesSummary", "{0} matching options."), [matches.length]);
+      if (legacyGit) {
+        setSubmittedValues(field, selected, true);
+      }
       if (customButton) {
         var candidate = search.value;
         var maximum = Number(field.dataset.customMaxLength || "256");
@@ -1479,7 +1506,9 @@
     }
     var providerFields = Array.prototype.slice.call(
       form.querySelectorAll('[data-parameter-foundry][data-provider-backed="true"]'),
-    );
+    ).filter(function (field) {
+      return field.dataset.standardApiInputMode !== "list-git-branches";
+    });
     if (!providerFields.length) {
       return;
     }
@@ -1557,12 +1586,7 @@
             : [resolved.defaultValue];
         }
         if (field.dataset.standardApiInputMode === "list-git-branches" && !preserveSelection) {
-          var gitDefault = field.dataset.gitDefaultValue || "";
-          var gitSelected = options[0];
-          if (field.dataset.gitSelectionMode === "default" && gitDefault.trim().length > 0) {
-            gitSelected = options.find(function (option) { return option.value === gitDefault; }) ||
-              options.find(function (option) { return option.value.indexOf(gitDefault) !== -1; }) || gitSelected;
-          }
+          var gitSelected = gitSelectedOption(field, options);
           initialValues = gitSelected ? [gitSelected.value] : [];
         }
         removeRefreshStatus(field);

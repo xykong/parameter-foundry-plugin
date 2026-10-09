@@ -151,6 +151,13 @@ require valid binding and expiry.
 `gitSelectionMode` controls the browser dropdown separately: `default` selects an exact
 stored-default match, then the first containing match, then the first option; `top`
 selects the first option; `none` retains the source native first-option behavior.
+The searchable Git compatibility renderer filters option text with a trimmed,
+case-insensitive regular expression. Invalid expressions retain the previous list.
+Filtering applies the source dropdown selection again and synchronizes the submitted
+value. The native list retains all resolved refs, and literal/default form submissions
+remain available while its advisory Git listing loads. Ordinary Provider choices keep
+their existing search, rendering limits and build gate.
+
 A source nonblank API default remains `defaultMode: explicit`, including when its
 source dropdown is TOP. Review empty sets, unavailable repositories and renamed refs
 against the source before migrating a Job.

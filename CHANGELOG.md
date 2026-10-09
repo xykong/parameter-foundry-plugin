@@ -17,6 +17,7 @@ suffix marks a build that is deployed but not tagged.
 
 ### Fixed
 
+- Git compatibility quick filtering retains case-insensitive regular expressions, all native options and source default selection after filtering; literal form submission remains available while refs load.
 - Git compatibility forms support fresh, uncached ref lists without submitting an immediately expired snapshot; explicitly supplied API snapshots retain binding and expiry checks.
 - Git SMART sorting preserves the source plugin's total-length tie break for equal numeric runs, including leading zeros and Unicode digits.
 

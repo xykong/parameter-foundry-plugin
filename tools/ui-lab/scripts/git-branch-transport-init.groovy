@@ -14,11 +14,15 @@ j.setNumExecutors(2)
 def provider=new StaticProviderDefinition('git-fixture')
 provider.cacheTtlSeconds=0
 provider.options=['main','release/prod-v2','release/prod'].collect{new Option(it)}
-ParameterFoundryGlobalConfiguration.get().providers=[provider]
-[['exact','default','release/prod'],['approximate','default','release'],['missing','default','unlisted'],['top','top','release/prod'],['none','none','release/prod']].each{row ->
+def large=new StaticProviderDefinition('git-large')
+large.cacheTtlSeconds=0
+large.options=(0..<240).collect{new Option(String.format('branch-%03d',it))}
+ParameterFoundryGlobalConfiguration.get().providers=[provider,large]
+[['exact','default','release/prod'],['approximate','default','release'],['missing','default','unlisted'],['top','top','release/prod'],['none','none','release/prod'],['filter','default','release/prod'],['large','default','branch-239'],['loading','default','release/prod']].each{row ->
  def job=j.createProject(FreeStyleProject,'git-transport-'+row[0])
  def parameter=new FoundryChoiceParameterDefinition('REF')
- parameter.providerId='git-fixture'
+ parameter.providerId=row[0]=='large'?'git-large':'git-fixture'
+ parameter.renderer='searchable'
  parameter.standardApiInputMode='list-git-branches'
  parameter.gitSelectionMode=row[1]
  parameter.defaultMode='explicit'

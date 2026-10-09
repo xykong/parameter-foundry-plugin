@@ -93,6 +93,51 @@ async def main():
             await page.get_by_role('button',name='Rebuild',exact=True).click()
             await result(base,4,' retired-revision ')
             checks.append('Rebuild editable historical literal without Provider')
+            base=lab.BASE_URL+'/job/git-transport-filter'
+            await page.goto(base+'/build?delay=0sec')
+            field=page.locator('[data-parameter-name="REF"]')
+            await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+            search=field.locator('[data-up-enhanced] input[type="search"]')
+            select=field.locator('[data-up-enhanced] select')
+            await search.fill(r'^RELEASE/prod-v\d$')
+            assert await select.locator('option').count()==1
+            assert await select.input_value()=='release/prod-v2'
+            await search.fill('[')
+            assert await select.input_value()=='release/prod-v2'
+            assert await select.locator('option').count()==1
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(base,1,'release/prod-v2')
+            checks.append('case-insensitive regex filter updates submitted selection; invalid regex keeps previous values')
+            await page.goto(base+'/build?delay=0sec')
+            await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+            await page.locator('[data-up-enhanced] input[type="search"]').fill('^absent$')
+            assert await page.locator('[data-up-enhanced] select option').count()==0
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(base,2,'release/prod')
+            checks.append('empty filtered list retains source form literal fallback')
+            base=lab.BASE_URL+'/job/git-transport-large'
+            await page.goto(base+'/build?delay=0sec')
+            await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+            select=page.locator('[data-up-enhanced] select')
+            assert await select.locator('option').count()==240
+            assert await select.input_value()=='branch-239'
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(base,1,'branch-239')
+            checks.append('complete native option list and default beyond the ordinary render limit')
+            base=lab.BASE_URL+'/job/git-transport-loading'
+            async def hold_resolve(route):
+                await asyncio.sleep(3)
+                try:await route.continue_()
+                except Exception:pass
+            await page.route('**/parameter-foundry/api/v1/resolve',hold_resolve)
+            await page.goto(base+'/build?delay=0sec')
+            button=page.get_by_role('button',name='Build',exact=True)
+            assert await button.is_enabled()
+            assert await page.locator('[data-parameter-name="REF"]').get_attribute('data-up-interactive')!='true'
+            await button.click()
+            await result(base,1,'release/prod')
+            await page.unroute('**/parameter-foundry/api/v1/resolve',hold_resolve)
+            checks.append('literal default can be submitted while Git listing is loading')
             report={'passed':True,'browser':browser.version,'checks':checks}
             (ROOT/'docs/testing/results/git-branch-transport-ui-lab.json').write_text(json.dumps(report,indent=2)+'\n')
             print(json.dumps(report))

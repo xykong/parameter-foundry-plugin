@@ -10,6 +10,10 @@
     "none dropdown and form output",
     "TOP dropdown independent of literal API default",
     "unlisted form literal retained",
-    "Rebuild editable historical literal without Provider"
+    "Rebuild editable historical literal without Provider",
+    "case-insensitive regex filter updates submitted selection; invalid regex keeps previous values",
+    "empty filtered list retains source form literal fallback",
+    "complete native option list and default beyond the ordinary render limit",
+    "literal default can be submitted while Git listing is loading"
   ]
 }
