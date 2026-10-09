@@ -28,4 +28,3 @@
           <preserveRepeatedSubmissions>true</preserveRepeatedSubmissions>
           <legacyDefaultLiteral> gamma,unknown,alpha,gamma </legacyDefaultLiteral>
         </io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue>
-      

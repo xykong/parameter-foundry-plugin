@@ -24,9 +24,9 @@ equality across entry points, strict ordinary/typed inputs, actual HTTP builds,
 reload, editable Rebuild, canonical constraints and typed export order. The
 historical fixture was extracted from a synthetic build made by the previous
 verified `0.8.291` HPI. It contains only the older `legacyDefaultLiteral` field,
-not `legacySubmissionLiteral`, and verifies loading, export, equality/hash and
+not `legacySubmissionLiteral` (outer document tail whitespace normalized), and verifies loading, export, equality/hash and
 Rebuild copying. Its SHA-256 is
-`5279bbedd80d5ec3b0839686e9e11beedc9911b55f0bc0133016537fd16f07d4`.
+`9f94be3303779de894927839d90e5858ad9c83790f5165a46b06faffcc0d5310`.
 
 Source comparison uses Extended Choice `388.ve7b_d0b_920e10` (archive SHA-256
 `29a02cabeb90c1c6d7973b60dbc641cf2b10a319a057259165c8a82c864fe428`).
