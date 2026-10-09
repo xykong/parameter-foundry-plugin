@@ -119,7 +119,10 @@ Typed JSON rejects Jobs containing binary definitions with HTTP `409` and
 ## Retention, Rebuild and migration
 
 Workspace and stash uploads begin in a plugin-owned staging directory. Cancelled
-queued uploads are removed. Once started, a copy belongs to the build directory
+queued uploads and rejected HTTP/CLI submissions are removed immediately. Crash
+orphans older than 15 minutes are recovered periodically after Jenkins finishes
+starting; pending queue items, running builds and active uploads are protected.
+Once started, a copy belongs to the build directory
 and follows build retention/deletion. Each Rebuild gets its own retained copy;
 removing an earlier build does not invalidate a later copy. Rebuild uses the
 current Job's delivery configuration and limit. A delivery-mode change needs a

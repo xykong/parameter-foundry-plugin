@@ -37,6 +37,18 @@ class FoundryWorkspaceFileParameterTest {
     @TempDir
     Path tmp;
 
+    private FileUploadOwnership.Scope ingestion;
+
+    @org.junit.jupiter.api.BeforeEach
+    void beginIngestion() {
+        ingestion = FileUploadOwnership.open(this);
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void endIngestion() {
+        ingestion.close();
+    }
+
     @Test
     void unifiedModesRoundTripAndHelp(JenkinsRule j) throws Exception {
         var job = j.createFreeStyleProject();

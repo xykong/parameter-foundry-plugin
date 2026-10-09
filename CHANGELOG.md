@@ -21,6 +21,7 @@ suffix marks a build that is deployed but not tagged.
 
 ### Fixed
 
+- Rejected HTTP/CLI file submissions and cancelled queue items clean pending uploads; crash recovery preserves admitted uploads and removes abandoned data.
 - File migrations normalize equivalent duplicate parameter properties so legacy controls cannot shadow the target; conflicting duplicates are refused before writes.
 - Rebuild after file-type migration requires a fresh upload instead of silently falling back to incompatible historical values.
 

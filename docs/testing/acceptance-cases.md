@@ -13,7 +13,7 @@ the case, but production configuration is never committed here.
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
-| Binary file parameters (UP-AC-025–033) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
@@ -74,10 +74,11 @@ content on a disposable localhost controller and never reads production data.
 | UP-AC-031 | Input and read-only binary simulation | Upload through Base64 Pipeline input; reject workspace/stash input without staging data. Simulate a source Core value whose getters throw: report manual binary verification without invoking those getters. | Binary inputs and replay now fail closed at their transport boundary. | `FoundryWorkspaceFileParameterTest`; message coverage and audit parser tests |
 | UP-AC-032 | Migration property integrity | Clone or migrate a Job with equivalent duplicate parameter properties: produce one effective target property and roll back the complete backup. Refuse conflicting duplicates before any write. | Redundant source properties could shadow the migrated one; migration now validates and normalizes equivalent duplicates. | Passed 2026-10-09: Harness and real-browser regression |
 | UP-AC-033 | Legacy Rebuild gate | Upload using Core, migrate the definition, submit Rebuild without a replacement: HTTP 400 and no new build. Rebuild with a fresh upload must succeed. | Rebuild fallback could reattach the legacy value; reject incompatible historical values before scheduling. | Passed 2026-10-09: Harness and real-browser regression |
+| UP-AC-034 | Upload ownership and crash recovery | Submit a valid file followed by an unknown parameter over HTTP/CLI or veto queue admission: no pending file survives rejection. An admitted queued file survives request cleanup and recovery, then cancellation deletes it. An unused successful upload follows build retention. Recover old UUID orphans while protecting active uploads and restored queue/build references. | Rejected submissions could orphan controller files; HTTP/CLI scopes now transfer ownership only after admission, clean failures immediately, and recover crash orphans after initialization. | Passed 2026-10-09: five `FileUploadOwnershipTest` Harness regressions; queue recovery is simulated by clearing in-memory ownership, not a process restart |
 
 [Delivery-mode verification](./file-delivery-modes-verification-2026-10-09.md).
 
-Platform coverage for UP-AC-029–033: macOS Harness with remote agent channels;
+Platform coverage for UP-AC-029–034: macOS Harness with remote agent channels;
 Linux disposable-controller desktop/mobile-viewport Chromium UI Lab. UI, config
 help, API and agent lifecycle are required. Physical devices, Windows execution,
 manual keyboard/screen reader and other engines remain pending; no-JavaScript

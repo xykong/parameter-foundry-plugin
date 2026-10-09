@@ -60,8 +60,8 @@ demonstrate the local contract but do not approve the larger attack surface.
 - [x] Filenames are reduced to basenames and never extracted or executed.
 - [x] Downloads enforce Job read permission and attachment/octet-stream headers.
 - [x] Wrapper directories are unique, agent-local and removed on exit.
-- [x] Cancelled queued uploads are removed; retained copies follow build retention.
-- [ ] Exact release dependencies/advisories and independent security review completed before production release.
+- [x] Rejected submissions and cancelled queued uploads are removed; crash recovery protects admitted ownership; retained copies follow build retention.
+- [x] Exact deployment dependencies/advisories and independent security review completed ([October 9 record](./file-upload-review-2026-10-09.md)); final artifact regression and browser gates remain required before installation.
 
 ## Release Evidence
 

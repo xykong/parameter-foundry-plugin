@@ -52,9 +52,10 @@ public class FoundryStashedFileParameterValue extends AbstractFoundryFileParamet
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(FoundryStashedFileParameterValue.class.getName());
     private long ingestionLimit = FileUploadService.MAX_STASHED_BYTES;
-    private String uploadId;
-    private String storedBuildId;
+    private volatile String uploadId;
+    private volatile String storedBuildId;
     private transient String preparedStashBuildId;
+    private transient volatile boolean queueOwned;
 
     @DataBoundConstructor
     public FoundryStashedFileParameterValue(String name, FileItem file) throws IOException {
@@ -79,12 +80,17 @@ public class FoundryStashedFileParameterValue extends AbstractFoundryFileParamet
 
     private void store(InputStream src) throws IOException {
         uploadId = UUID.randomUUID().toString();
+        FileUploadOwnership.track(this);
         File dir = uploadDirectory();
         Files.createDirectories(dir.toPath());
         try (OutputStream out = Files.newOutputStream(new File(dir, safeName()).toPath())) {
             FileUploadService.copy(src, out, effectiveIngestionLimit());
         } catch (IOException | RuntimeException e) {
-            FileUtils.deleteDirectory(dir);
+            try {
+                FileUtils.deleteDirectory(dir);
+            } finally {
+                FileUploadOwnership.released(uploadId);
+            }
             throw e;
         }
     }
@@ -124,8 +130,7 @@ public class FoundryStashedFileParameterValue extends AbstractFoundryFileParamet
                 if (Files.size(source.toPath()) > limit) {
                     throw new IOException("Retained upload exceeds the current Job limit.");
                 }
-                Files.createDirectories(target.toPath());
-                Files.copy(source.toPath(), content.toPath());
+                copyRetained(source, target, content);
             }
             if (Files.size(content.toPath()) > limit) {
                 throw new IOException("Upload exceeds the current Job limit.");
@@ -145,13 +150,13 @@ public class FoundryStashedFileParameterValue extends AbstractFoundryFileParamet
                 preparedStashBuildId = build.getExternalizableId();
             }
             if (storedBuildId == null) {
-                FileUtils.deleteDirectory(uploadDirectory());
+                discardPending();
             }
             storedBuildId = build.getExternalizableId();
         } catch (IOException e) {
             if (storedBuildId == null) {
                 try {
-                    FileUtils.deleteDirectory(uploadDirectory());
+                    discardPending();
                 } catch (IOException cleanup) {
                     e.addSuppressed(cleanup);
                 }
@@ -221,13 +226,59 @@ public class FoundryStashedFileParameterValue extends AbstractFoundryFileParamet
                 for (var parameter : action.getAllParameters()) {
                     if (parameter instanceof FoundryStashedFileParameterValue value && value.storedBuildId == null) {
                         try {
-                            FileUtils.deleteDirectory(value.uploadDirectory());
+                            value.discardPending();
                         } catch (IOException | IllegalArgumentException e) {
                             LOGGER.log(Level.WARNING, "Cannot clean cancelled Foundry file upload.", e);
                         }
                     }
                 }
             }
+        }
+    }
+
+    String pendingUploadId() {
+        return uploadId;
+    }
+
+    void markQueued() {
+        queueOwned = true;
+        if (storedBuildId == null) FileUploadOwnership.claimed(uploadId);
+    }
+
+    synchronized void discardIfUnclaimed() throws IOException {
+        if (!queueOwned && storedBuildId == null) discardPending();
+    }
+
+    synchronized void discardPending() throws IOException {
+        try {
+            FileUtils.deleteDirectory(uploadDirectory());
+        } finally {
+            FileUploadOwnership.released(uploadId);
+        }
+    }
+
+    synchronized boolean retainUnusedUpload(Run<?, ?> run) throws IOException {
+        if (storedBuildId != null) return false;
+        File target = retainedDirectory(run);
+        File content = new File(target, safeName());
+        if (!content.isFile()) copyRetained(new File(uploadDirectory(), safeName()), target, content);
+        storedBuildId = run.getExternalizableId();
+        discardPending();
+        return true;
+    }
+
+    private static void copyRetained(File source, File directory, File content) throws IOException {
+        Files.createDirectories(directory.toPath());
+        var staging = Files.createTempFile(directory.toPath(), "retaining-", ".tmp");
+        try {
+            Files.copy(source.toPath(), staging, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.move(
+                    staging,
+                    content.toPath(),
+                    java.nio.file.StandardCopyOption.ATOMIC_MOVE,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            Files.deleteIfExists(staging);
         }
     }
 

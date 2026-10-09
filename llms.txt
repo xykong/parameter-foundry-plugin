@@ -14,7 +14,7 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - [User guide index](docs/guide/README.md): who the guide is for and where to go next
 - [Getting started](docs/guide/getting-started.md): five-minute walkthrough
 - [Parameter reference](docs/guide/parameters.md): every field, default, and transport
-- [File parameters](docs/guide/file-parameters.md): bounded Base64/Stashed upload, Pipeline wrappers and migration
+- [File parameters](docs/guide/file-parameters.md): bounded workspace/Base64/stash upload, Pipeline wrappers and migration
 - [Cookbook](docs/guide/examples.md): copy-pasteable configurations
 - [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
 - [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
@@ -69,6 +69,8 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - The core plugin never executes Job-supplied Groovy, JavaScript, HTML, or reads controller file
   paths. Scripting and custom rendering live behind reviewed companion contracts.
 - Foundry file parameters ship in the single HPI without File Parameters dependencies.
+  Rejected HTTP/CLI uploads and cancelled queue items release pending data immediately;
+  crash recovery protects active uploads and admitted queue/build ownership.
   `foundryFile` selects workspace, base64 or stash delivery.
   maxUploadBytes=0 inherits 1 MiB decoded bytes for Base64 or 100 MiB for workspace/stash;
   positive limits override defaults and are enforced for UI/API/CLI, downstream delivery and Rebuild.
