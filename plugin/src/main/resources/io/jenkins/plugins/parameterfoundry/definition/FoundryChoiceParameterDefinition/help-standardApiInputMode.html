@@ -2,6 +2,13 @@
   <p>How <code>buildWithParameters</code> decodes this parameter:</p>
 <ul>
   <li><code>repeated</code> expects one field per value.</li>
+  <li><code>list-git-branches</code> is for migrated Provider-backed single choices without dependencies.
+    CLI non-empty strings and a nonblank first standard request field are accepted literally, including
+    revisions absent from the dropdown. A blank first standard field or empty CLI value uses the configured
+    default. Form JSON joins arrays with commas and uses the stored default literal when the result is empty.
+    Only an omitted first-option default needs Git resolution. Explicit submissions do not create Provider
+    provenance; supplied snapshots are still checked for binding and expiry. This mode disables required and
+    custom-value controls. Typed API accepts strings or null; null clears the value and omission uses the default.</li>
   <li><code>json-array</code> expects exactly one field holding a JSON array of strings.</li>
   <li><code>delimited</code> splits a single field on the delimiter below.</li>
   <li><code>extended-choice</code> preserves static Extended Choice multiple-selection transports:

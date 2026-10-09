@@ -25,6 +25,18 @@ public final class ParameterEvaluationService {
     public static String evaluateSingle(
             FoundryChoiceParameterDefinition definition, DecodedInput input, List<Option> options) {
         DefinitionValidationService.requireValid(definition);
+        if (GitBranchInputCompatibility.enabled(definition)) {
+            if (!input.present()) {
+                return resolveSingleDefault(definition, options);
+            }
+            if (input.values().isEmpty()) {
+                return null;
+            }
+            if (input.values().size() != 1) {
+                throw error(ErrorCode.MALFORMED_INPUT, definition, "Single choice accepts exactly one value.");
+            }
+            return input.values().get(0);
+        }
         if (!input.present()) {
             String defaultValue = resolveSingleDefault(definition, options);
             if (defaultValue != null) {

@@ -40,7 +40,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
-| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice` | `repeated` | How standard transports decode the parameter; compatibility mode requires static multiple choices |
+| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice`, `list-git-branches` | `repeated` | Transport decoding; Extended Choice mode requires static multiple choices; List Git Branches mode requires a Provider-backed single choice without dependencies |
 | `delimiter` | text | `,` | Used by `delimited` input and export |
 | `allowCustomValue` | boolean | `false` | Single selection: accept a value outside the option list |
 | `customValuePattern` | regex | empty | Full-match rule for custom values |
@@ -130,6 +130,26 @@ For migration, use `environmentExportOrder: 'submitted'` and
 `duplicatePolicy: 'deduplicate'`: canonical values remain a sorted set, while
 repeated supported submissions can remain repeated in the legacy exported string.
 This mode is unavailable to Providers, tables and single-choice parameters.
+
+`list-git-branches` preserves literal revision submission for a Provider-backed single
+choice without dependencies. CLI accepts non-empty strings literally; empty input uses
+the API default. Standard requests read only the first field; a blank first field uses
+the default even if later fields are nonblank. Form JSON joins arrays with commas and
+uses the stored `defaultValue` literal when the result is empty. Explicit values and
+explicit defaults do not query Git or require membership in the current ref list.
+Only an omitted `defaultMode: first` needs options. Supplied snapshots still undergo
+binding and expiry checks; literal submissions create no Provider provenance.
+The typed API accepts string or null; null clears the value and omission uses the default.
+Required validation and custom-value controls are unavailable in this compatibility mode.
+Rebuild uses the historical revision in an editable text field, matching the source,
+and does not query the Provider.
+
+`gitSelectionMode` controls the browser dropdown separately: `default` selects an exact
+stored-default match, then the first containing match, then the first option; `top`
+selects the first option; `none` retains the source native first-option behavior.
+A source nonblank API default remains `defaultMode: explicit`, including when its
+source dropdown is TOP. Review empty sets, unavailable repositories and renamed refs
+against the source before migrating a Job.
 
 ## `foundryForm`
 

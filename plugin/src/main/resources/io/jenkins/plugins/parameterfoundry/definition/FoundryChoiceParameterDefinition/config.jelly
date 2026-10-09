@@ -113,6 +113,19 @@
       </f:entry>
     </j:when>
     <j:otherwise>
+      <f:entry title="Standard API input mode" field="standardApiInputMode">
+        <select class="jenkins-select__input" name="parameter.standardApiInputMode">
+          <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Strict single value</option>
+          <option value="list-git-branches" selected="${instance.standardApiInputMode == 'list-git-branches' ? 'selected' : null}">List Git Branches compatibility</option>
+        </select>
+      </f:entry>
+      <f:entry title="Git dropdown selection" field="gitSelectionMode">
+        <select class="jenkins-select__input" name="parameter.gitSelectionMode">
+          <option value="default" selected="${instance.gitSelectionMode == 'default' ? 'selected' : null}">Default match</option>
+          <option value="top" selected="${instance.gitSelectionMode == 'top' ? 'selected' : null}">Top option</option>
+          <option value="none" selected="${instance.gitSelectionMode == 'none' ? 'selected' : null}">Native first option</option>
+        </select>
+      </f:entry>
       <f:entry title="Renderer" field="renderer">
         <select class="jenkins-select__input" name="parameter.renderer">
           <option value="select" selected="${instance.renderer == 'select' ? 'selected' : null}">Select</option>

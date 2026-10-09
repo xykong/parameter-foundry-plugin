@@ -956,7 +956,7 @@
         return option.search.indexOf(query) !== -1;
       });
       removeChildren(select);
-      if (field.dataset.required !== "true") {
+      if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches") {
         var none = document.createElement("option");
         none.value = "";
         none.textContent = localized(field, "noneOption", "None");
@@ -1545,7 +1545,7 @@
               return option.value;
             }),
         );
-        if (field.dataset.allowCustom !== "true") {
+        if (field.dataset.allowCustom !== "true" && field.dataset.standardApiInputMode !== "list-git-branches") {
           initialValues = initialValues.filter(function (value) {
             return knownValues.has(value);
           });
@@ -1554,6 +1554,15 @@
           initialValues = Array.isArray(resolved.defaultValue)
             ? resolved.defaultValue.slice()
             : [resolved.defaultValue];
+        }
+        if (field.dataset.standardApiInputMode === "list-git-branches" && !preserveSelection) {
+          var gitDefault = field.dataset.gitDefaultValue || "";
+          var gitSelected = options[0];
+          if (field.dataset.gitSelectionMode === "default" && gitDefault.trim().length > 0) {
+            gitSelected = options.find(function (option) { return option.value === gitDefault; }) ||
+              options.find(function (option) { return option.value.indexOf(gitDefault) !== -1; }) || gitSelected;
+          }
+          initialValues = gitSelected ? [gitSelected.value] : [];
         }
         removeRefreshStatus(field);
         Array.prototype.forEach.call(

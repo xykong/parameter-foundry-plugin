@@ -96,6 +96,10 @@ class ListGitBranchesMigrationAdapterTest {
         assertTrue(plan.getTargetSkeleton().contains("includePattern: '(?!release/).*'"));
         assertTrue(plan.getTargetSkeleton().contains("sortOrder: 'smart-descending'"));
         assertTrue(plan.getTargetSkeleton().contains("renderer: 'searchable'"));
+        assertTrue(plan.getTargetSkeleton().contains("standardApiInputMode: 'list-git-branches'"));
+        assertTrue(plan.getTargetSkeleton().contains("defaultMode: 'explicit'"));
+        assertTrue(plan.getTargetSkeleton().contains("defaultValue: 'master'"));
+        assertTrue(plan.getTargetSkeleton().contains("gitSelectionMode: 'top'"));
         assertEquals("DESCENDING_SMART", plan.getFacts().get("Source sort"));
         assertEquals("smart-descending", plan.getFacts().get("Target sort"));
         assertEquals("master", plan.getFacts().get("Source default"));
@@ -109,5 +113,15 @@ class ListGitBranchesMigrationAdapterTest {
         // A source fork filter such as .*refs/heads/(*) is not a valid full-match regex.
         assertNull(ListGitBranchesMigrationAdapter.translateFilter(".*refs/heads/(*)", "branch"));
         assertNull(ListGitBranchesMigrationAdapter.translateFilter("refs/heads/(*)/x", "branch"));
+    }
+
+    @Test
+    void preservesNullStoredDefaultRatherThanConvertingItToEmpty() {
+        var source = new ListGitBranchesParameterDefinition("REF", "PT_BRANCH");
+        source.setDefaultValue(null);
+        source.setSelectedValue("TOP");
+        var plan = new ListGitBranchesMigrationAdapter().inspect(source);
+        assertTrue(plan.getTargetSkeleton().contains("defaultValue: null"));
+        assertTrue(plan.getTargetSkeleton().contains("defaultMode: 'first'"));
     }
 }

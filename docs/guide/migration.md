@@ -51,7 +51,7 @@ has to be stated before an equivalent can be generated.
 | Active Choices Groovy list/map | Inline, REST, managed config, or Script Provider |
 | Active Choices `:selected` / `:disabled` | Option defaults and disabled metadata |
 | Active Choices formatted HTML | Structured content or a reviewed renderer; raw HTML is not carried over |
-| List Git Branches | Built-in Git refs Provider behind a Connection Profile |
+| List Git Branches | Built-in Git refs Provider behind a Connection Profile; `standardApiInputMode: list-git-branches` preserves literal inputs, with `gitSelectionMode` separate from API/CLI defaults |
 | HTML parameters | `foundryForm` sections, grids, and conditional layouts |
 | JSON Editor / JSON parameter | `foundryForm` typed schema |
 | Multiselect, Custom Checkbox, Editable Choice, Extensible Choice | `foundryChoice` variants |

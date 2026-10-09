@@ -186,6 +186,19 @@ public final class DefinitionValidationService {
     }
 
     private static void validateSingle(FoundryChoiceParameterDefinition definition, List<String> errors) {
+        if ("list-git-branches".equals(definition.getStandardApiInputMode())) {
+            if (!Set.of("default", "top", "none").contains(definition.getGitSelectionMode())) {
+                errors.add("Git selection mode must be default, top or none.");
+            }
+            if (!definition.isProviderBacked() || !definition.getDependsOn().isEmpty()) {
+                errors.add(
+                        "List Git Branches compatibility requires a Provider-backed single choice without dependencies.");
+            }
+            if (definition.isAllowCustomValue() || definition.isRequired()) {
+                errors.add(
+                        "List Git Branches compatibility does not support custom-value controls or required validation.");
+            }
+        }
         if ("extended-choice".equals(definition.getStandardApiInputMode())) {
             errors.add("Extended Choice transport compatibility requires multiple selection.");
         }
@@ -197,7 +210,9 @@ public final class DefinitionValidationService {
         String defaultValue = definition.getDefaultValue();
         if ("explicit".equals(definition.getDefaultMode())) {
             validateDefaultValue(definition, defaultValue, errors);
-        } else if (defaultValue != null && !defaultValue.isEmpty()) {
+        } else if (defaultValue != null
+                && !defaultValue.isEmpty()
+                && !"list-git-branches".equals(definition.getStandardApiInputMode())) {
             errors.add("defaultValue requires defaultMode=explicit");
         }
         if (!Set.of("string", "none").contains(definition.getEnvironmentExport())) {

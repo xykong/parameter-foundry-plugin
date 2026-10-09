@@ -10,6 +10,7 @@ import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.GitBranchInputCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.InputDecoders;
 import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
 import io.jenkins.plugins.parameterfoundry.model.Option;
@@ -41,6 +42,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     private String selectionMode = "single";
     private String defaultValue;
+    private String gitSelectionMode = "default";
+    private transient boolean gitRebuildInput;
     private String environmentExportOrder = "canonical";
     private boolean allowCustomValue;
     private String customValuePattern;
@@ -86,6 +89,20 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @DataBoundSetter
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    /** Source dropdown selection is independent of the API/CLI default. */
+    public String getGitSelectionMode() {
+        return gitSelectionMode == null ? "default" : gitSelectionMode;
+    }
+
+    @DataBoundSetter
+    public void setGitSelectionMode(String gitSelectionMode) {
+        this.gitSelectionMode = gitSelectionMode;
+    }
+
+    public boolean isGitRebuildInput() {
+        return gitRebuildInput && GitBranchInputCompatibility.enabled(this);
     }
 
     public boolean isAllowCustomValue() {
@@ -139,17 +156,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request) {
         try {
-            ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null);
+            DecodedInput input = InputDecoders.fromStandardRequest(this, request);
+            ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null, input);
             if (isMultiple()) {
-                DecodedInput input = InputDecoders.fromStandardRequest(this, request);
                 List<String> canonical =
                         ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
-                    ParameterEvaluationService.evaluateSingle(
-                            this, InputDecoders.fromStandardRequest(this, request), resolved.options()),
-                    resolved.metadata());
+                    ParameterEvaluationService.evaluateSingle(this, input, resolved.options()), resolved.metadata());
         } catch (EvaluationException exception) {
             throw HttpResponses.errorWithoutStack(400, exception.getSafeMessage());
         }
@@ -158,17 +173,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request, JSONObject submitted) {
         try {
-            ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted);
+            DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
+            ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted, input);
             if (isMultiple()) {
-                DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
                 List<String> canonical =
                         ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
-                    ParameterEvaluationService.evaluateSingle(
-                            this, InputDecoders.fromSubmittedJson(this, submitted), resolved.options()),
-                    resolved.metadata());
+                    ParameterEvaluationService.evaluateSingle(this, input, resolved.options()), resolved.metadata());
         } catch (EvaluationException exception) {
             throw HttpResponses.errorWithoutStack(400, exception.getSafeMessage());
         }
@@ -177,20 +190,20 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(CLICommand command, String value) throws IOException, InterruptedException {
         try {
-            ResolvedProviderOptions resolved = isProviderBacked()
-                    ? ProviderSubmission.resolveForCli(
-                            ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
-                    : new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
+            DecodedInput input = InputDecoders.fromCli(this, value);
+            ResolvedProviderOptions resolved = !needsOptions(input)
+                    ? new ResolvedProviderOptions(List.of(), null, null, null, false)
+                    : isProviderBacked()
+                            ? ProviderSubmission.resolveForCli(
+                                    ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
+                            : new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
             if (isMultiple()) {
-                DecodedInput input = InputDecoders.fromCli(this, value);
                 List<String> canonical =
                         ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
-                    ParameterEvaluationService.evaluateSingle(
-                            this, InputDecoders.fromCli(this, value), resolved.options()),
-                    resolved.metadata());
+                    ParameterEvaluationService.evaluateSingle(this, input, resolved.options()), resolved.metadata());
         } catch (EvaluationException exception) {
             throw new AbortException(exception.getSafeMessage());
         }
@@ -199,7 +212,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue getDefaultParameterValue() {
         try {
-            ResolvedProviderOptions resolved = ProviderSubmission.resolveForDefault(this);
+            ResolvedProviderOptions resolved = needsOptions(DecodedInput.absent())
+                    ? ProviderSubmission.resolveForDefault(this)
+                    : new ResolvedProviderOptions(List.of(), null, null, null, false);
             if (isMultiple()) {
                 return toMultiValue(
                         ParameterEvaluationService.evaluateMultiple(
@@ -219,6 +234,13 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public boolean isValid(ParameterValue value) {
         try {
+            if (GitBranchInputCompatibility.enabled(this)) {
+                DefinitionValidationService.requireValid(this);
+                if (value instanceof FoundryChoiceParameterValue choiceValue) {
+                    return !choiceValue.isMultiple();
+                }
+                return value instanceof StringParameterValue;
+            }
             ResolvedProviderOptions resolved = optionsForOwner(ProviderOperation.VALIDATE);
             if (value instanceof FoundryChoiceParameterValue choiceValue) {
                 if (isMultiple()) {
@@ -264,6 +286,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             return this;
         }
         FoundryChoiceParameterDefinition copy = copyDefinition();
+        copy.gitRebuildInput = GitBranchInputCompatibility.enabled(this);
         copy.setDefaultMode("explicit");
         if (isMultiple()) {
             copy.setDefaultValues(choiceValue.getValues());
@@ -336,6 +359,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setRenderer(getRenderer());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
+        copy.setGitSelectionMode(getGitSelectionMode());
         copy.setDefaultValues(getDefaultValues());
         copy.setMinSelections(getMinSelections());
         copy.setMaxSelections(getMaxSelections());
@@ -353,15 +377,34 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     private ResolvedProviderOptions optionsFor(
-            StaplerRequest2 request, ProviderOperation operation, JSONObject submitted) {
+            StaplerRequest2 request, ProviderOperation operation, JSONObject submitted, DecodedInput input) {
         if (!isProviderBacked()) {
             return new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
         }
-        Job<?, ?> job = request.findAncestorObject(Job.class);
-        if (job == null) {
-            return optionsForOwner(operation);
+        if (request == null
+                && !needsOptions(input)
+                && (submitted == null || submitted.optString("snapshotId", "").isBlank())) {
+            return new ResolvedProviderOptions(List.of(), null, null, null, false);
         }
-        return ProviderSubmission.resolve(job, this, operation, request, submitted);
+        Job<?, ?> job = request == null ? null : request.findAncestorObject(Job.class);
+        if (job == null) {
+            job = ProviderSubmission.requireOwningJob(this);
+        }
+        if (request == null) {
+            return io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore.get()
+                    .resolveForBuild(
+                            job,
+                            this,
+                            java.util.Map.of(),
+                            submitted == null ? null : submitted.optString("snapshotId", null),
+                            operation,
+                            needsOptions(input));
+        }
+        return ProviderSubmission.resolve(job, this, operation, request, submitted, needsOptions(input));
+    }
+
+    public boolean needsOptions(DecodedInput input) {
+        return !GitBranchInputCompatibility.enabled(this) || GitBranchInputCompatibility.requiresOptions(this, input);
     }
 
     private ResolvedProviderOptions optionsForOwner(ProviderOperation operation) {
@@ -372,6 +415,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     private FoundryChoiceParameterValue toValue(String value, ProviderSnapshotMetadata metadata) {
+        if (value == null && GitBranchInputCompatibility.enabled(this)) {
+            return null;
+        }
         return FoundryChoiceParameterValue.single(getName(), value, getDescription(), getEnvironmentExport(), metadata);
     }
 

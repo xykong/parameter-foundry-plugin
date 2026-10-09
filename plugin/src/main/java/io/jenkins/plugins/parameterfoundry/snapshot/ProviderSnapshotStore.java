@@ -74,6 +74,17 @@ public final class ProviderSnapshotStore {
             Map<String, String> dependencies,
             String submittedSnapshotId,
             ProviderOperation operation) {
+        return resolveForBuild(job, definition, dependencies, submittedSnapshotId, operation, true);
+    }
+
+    /** Validates supplied snapshot bindings even when a literal submission needs no options. */
+    public ResolvedProviderOptions resolveForBuild(
+            Job<?, ?> job,
+            AbstractFoundryParameterDefinition definition,
+            Map<String, String> dependencies,
+            String submittedSnapshotId,
+            ProviderOperation operation,
+            boolean requireOptions) {
         if (!definition.isProviderBacked()) {
             ProviderResolution resolution = ProviderResolutionService.resolve(job, definition, operation, dependencies);
             return new ResolvedProviderOptions(resolution.options(), resolution.matrix(), null, null, false);
@@ -85,8 +96,16 @@ public final class ProviderSnapshotStore {
             }
             requireBinding(snapshot, job, definition, dependencies);
             if (Instant.now().isBefore(snapshot.expiresAt())) {
-                return snapshot.toResolved(false);
+                return requireOptions
+                        ? snapshot.toResolved(false)
+                        : new ResolvedProviderOptions(List.of(), null, null, null, false);
             }
+            if (!requireOptions) {
+                throw invalid(definition, "Provider snapshot has expired.");
+            }
+        }
+        if (!requireOptions) {
+            return new ResolvedProviderOptions(List.of(), null, null, null, false);
         }
         ProviderResolution refreshed = ProviderResolutionService.resolve(job, definition, operation, dependencies);
         ResolvedProviderOptions created =
@@ -135,11 +154,14 @@ public final class ProviderSnapshotStore {
                 .append('\u0000')
                 .append(definition.getDefaultMode())
                 .append('\u0000')
+                .append(definition.getStandardApiInputMode())
+                .append('\u0000')
                 .append(definition.isRequired())
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
             value.append('\u0000').append(choice.getSelectionMode());
+            value.append('\u0000').append(choice.getGitSelectionMode());
             if (choice.isMultiple()) {
                 value.append('\u0000')
                         .append(choice.getDefaultValues())

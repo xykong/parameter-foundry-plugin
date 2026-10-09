@@ -23,6 +23,9 @@ public final class InputDecoders {
             AbstractFoundryParameterDefinition definition, StaplerRequest2 request) {
         validatePresenceMarkers(request);
         String[] raw = request.getParameterValues(definition.getName());
+        if (GitBranchInputCompatibility.enabled(definition)) {
+            return GitBranchInputCompatibility.fromStandardFields(raw);
+        }
         boolean marked = hasMarker(
                 request.getParameterValues(AbstractFoundryParameterDefinition.PRESENCE_FIELD), definition.getName());
         if (raw == null) {
@@ -35,6 +38,12 @@ public final class InputDecoders {
     }
 
     public static DecodedInput fromSubmittedJson(AbstractFoundryParameterDefinition definition, JSONObject submitted) {
+        if (GitBranchInputCompatibility.enabled(definition)
+                && definition
+                        instanceof
+                        io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition choice) {
+            return GitBranchInputCompatibility.fromForm(choice, submitted);
+        }
         if (!submitted.containsKey("value")) {
             return DecodedInput.present(List.of());
         }
@@ -58,6 +67,9 @@ public final class InputDecoders {
     }
 
     public static DecodedInput fromCli(AbstractFoundryParameterDefinition definition, String rawValue) {
+        if (GitBranchInputCompatibility.enabled(definition)) {
+            return GitBranchInputCompatibility.fromCli(rawValue);
+        }
         if (rawValue == null) {
             return DecodedInput.absent();
         }

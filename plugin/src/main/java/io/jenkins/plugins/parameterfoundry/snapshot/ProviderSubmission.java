@@ -27,6 +27,16 @@ public final class ProviderSubmission {
             ProviderOperation operation,
             StaplerRequest2 request,
             JSONObject submitted) {
+        return resolve(job, definition, operation, request, submitted, true);
+    }
+
+    public static ResolvedProviderOptions resolve(
+            Job<?, ?> job,
+            AbstractFoundryParameterDefinition definition,
+            ProviderOperation operation,
+            StaplerRequest2 request,
+            JSONObject submitted,
+            boolean requireOptions) {
         JSONObject dependencyObject = submitted == null
                 ? dependenciesFromRequest(definition, request)
                 : DependencyValues.parseJsonObject(definition, submitted.optString("dependenciesJson", null));
@@ -38,7 +48,8 @@ public final class ProviderSubmission {
         if (snapshotId == null || snapshotId.isBlank()) {
             snapshotId = request.getParameter(snapshotRequestField(definition));
         }
-        return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
+        return ProviderSnapshotStore.get()
+                .resolveForBuild(job, definition, dependencies, snapshotId, operation, requireOptions);
     }
 
     public static ResolvedProviderOptions resolveWithoutSubmission(

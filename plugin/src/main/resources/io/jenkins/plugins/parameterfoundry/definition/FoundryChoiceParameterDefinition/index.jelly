@@ -1,5 +1,15 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <j:if test="${it.gitRebuildInput}">
+    <j:set var="escapeEntryTitleAndDescription" value="false"/>
+    <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+      <div name="parameter">
+        <input type="hidden" name="name" value="${it.name}" />
+        <f:textbox name="value" value="${it.defaultValue}" />
+      </div>
+    </f:entry>
+  </j:if>
+  <j:if test="${!it.gitRebuildInput}">
   <st:adjunct includes="io.jenkins.plugins.parameterfoundry.ui"/>
   <j:forEach var="adjunct" items="${it.rendererAdjuncts}">
     <st:adjunct includes="${adjunct}"/>
@@ -13,6 +23,8 @@
          data-multiple="${it.multiple}" data-required="${it.required}" data-option-count="${it.optionCount}"
          data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}"
          data-allow-custom="${it.allowCustomValue}"
+         data-standard-api-input-mode="${it.standardApiInputMode}"
+         data-git-selection-mode="${it.gitSelectionMode}" data-git-default-value="${it.defaultValue}"
          data-custom-pattern="${it.customValuePattern}"
          data-custom-max-length="${it.customValueMaxLength}"
          data-up-search-placeholder="${it.uiSearchPlaceholder}"
@@ -186,4 +198,5 @@
       </j:if>
     </div>
   </f:entry>
+  </j:if>
 </j:jelly>

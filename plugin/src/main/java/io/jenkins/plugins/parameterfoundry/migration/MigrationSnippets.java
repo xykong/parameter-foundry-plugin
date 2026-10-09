@@ -38,9 +38,15 @@ public final class MigrationSnippets {
                     + choices(choice.getChoices())
                     + ",\n  renderer: "
                     + quote(choice.getRenderer())
+                    + ",\n  standardApiInputMode: " + quote(choice.getStandardApiInputMode())
+                    + (choice.isProviderBacked() ? ",\n  providerId: " + quote(choice.getProviderId()) : "")
+                    + ("list-git-branches".equals(choice.getStandardApiInputMode())
+                            ? ",\n  gitSelectionMode: " + quote(choice.getGitSelectionMode())
+                            : "")
                     + ",\n  defaultMode: "
                     + quote(choice.getDefaultMode())
                     + ("explicit".equals(choice.getDefaultMode())
+                                    || "list-git-branches".equals(choice.getStandardApiInputMode())
                             ? ",\n  defaultValue: " + quote(choice.getDefaultValue())
                             : "")
                     + "\n)";

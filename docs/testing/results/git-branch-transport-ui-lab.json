@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "browser": "153.0.8010.12",
+  "checks": [
+    "exact dropdown and form output",
+    "approximate dropdown and form output",
+    "missing dropdown and form output",
+    "compatibility configuration save",
+    "top dropdown and form output",
+    "none dropdown and form output",
+    "TOP dropdown independent of literal API default",
+    "unlisted form literal retained",
+    "Rebuild editable historical literal without Provider"
+  ]
+}

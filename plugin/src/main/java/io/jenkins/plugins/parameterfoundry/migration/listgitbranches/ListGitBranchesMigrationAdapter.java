@@ -53,7 +53,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
         String branchFilter = firstNonEmpty(readString(definition, "getBranchFilter"));
         String tagFilter = firstNonEmpty(readString(definition, "getTagFilter"));
         String sourceSort = firstNonEmpty(readString(definition, "getSortMode"));
-        String sourceDefault = firstNonEmpty(readString(definition, "getDefaultValue"));
+        String sourceDefault = readNullableString(definition, "getDefaultValue");
         String selectedValue = firstNonEmpty(readString(definition, "getSelectedValue"));
         boolean quickFilter = Boolean.parseBoolean(firstNonEmpty(readString(definition, "getQuickFilterEnabled")));
         String sourceFilter = "tag".equals(mapping.refType()) ? tagFilter : branchFilter;
@@ -62,7 +62,8 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
                 ? translatedFilter
                 : (mapping.includePattern().startsWith("<") ? null : mapping.includePattern());
         String targetSort = mapSortOrder(sourceSort);
-        String skeleton = gitProviderSkeleton(definition, mapping, resolvedInclude, targetSort, quickFilter);
+        String skeleton = gitProviderSkeleton(
+                definition, mapping, resolvedInclude, targetSort, quickFilter, sourceDefault, selectedValue);
 
         java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
         facts.put(MigrationText.of("MigrationFactSourceMode"), MigrationText.value(mapping.sourceType()));
@@ -84,7 +85,9 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
                         : MigrationText.value(resolvedInclude));
         facts.put(
                 MigrationText.of("MigrationFactSourceDefault"),
-                sourceDefault.isEmpty() ? MigrationText.of("MigrationValueNone") : MigrationText.value(sourceDefault));
+                sourceDefault == null || sourceDefault.isEmpty()
+                        ? MigrationText.of("MigrationValueNone")
+                        : MigrationText.value(sourceDefault));
         facts.put(
                 MigrationText.of("MigrationFactSourceSelectedValue"),
                 selectedValue.isEmpty()
@@ -113,7 +116,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
         } else {
             decisions.add(MigrationText.of("MigrationDecisionGitFilterTranslated", sourceFilter, translatedFilter));
         }
-        if (!sourceDefault.isEmpty()) {
+        if (sourceDefault != null && !sourceDefault.isEmpty()) {
             decisions.add(MigrationText.of("MigrationDecisionGitDefaultMustExist", sourceDefault));
         }
         if ("TOP".equalsIgnoreCase(selectedValue)) {
@@ -213,7 +216,9 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
             GitMapping mapping,
             String translatedFilter,
             String targetSort,
-            boolean quickFilter) {
+            boolean quickFilter,
+            String sourceDefault,
+            String selectedValue) {
         String providerId = "TODO-git-refs-provider";
         return "foundryGitRefProvider(\n"
                 + "    id: '"
@@ -241,6 +246,17 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
                 + "',\n"
                 + "    renderer: "
                 + quote(quickFilter ? "searchable" : "select")
+                + ",\n    standardApiInputMode: 'list-git-branches',\n    defaultMode: "
+                + quote(
+                        sourceDefault != null && !sourceDefault.isBlank()
+                                ? "explicit"
+                                : "TOP".equalsIgnoreCase(selectedValue) ? "first" : "none")
+                + ",\n    defaultValue: " + quote(sourceDefault)
+                + ",\n    gitSelectionMode: "
+                + quote(
+                        "TOP".equalsIgnoreCase(selectedValue)
+                                ? "top"
+                                : "NONE".equalsIgnoreCase(selectedValue) ? "none" : "default")
                 + "\n"
                 + ")";
     }
@@ -257,6 +273,15 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
             case "BRANCH_TAG" -> new GitMapping(PT_BRANCH_TAG, "ref", "refs/(heads|tags)/.*", false);
             default -> null;
         };
+    }
+
+    private static String readNullableString(Object source, String methodName) {
+        try {
+            Object value = source.getClass().getMethod(methodName).invoke(source);
+            return value == null ? null : String.valueOf(value);
+        } catch (ReflectiveOperationException exception) {
+            return null;
+        }
     }
 
     private static String readString(Object source, String methodName) {
@@ -281,6 +306,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
     }
 
     private static String quote(String value) {
+        if (value == null) return "null";
         return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
     }
 

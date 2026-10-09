@@ -18,6 +18,7 @@ the case, but production configuration is never committed here.
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
+| Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -88,13 +89,17 @@ manual keyboard/screen reader and other engines remain pending; no-JavaScript
 binary transport uses the standard multipart API rather than claiming the normal
 Jenkins JavaScript form works without scripts.
 
-## Platform and Device Cases
-
 ### Git ref sorting parity
 
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
-| UP-AC-037 | Normalize a frozen refs set in SMART ascending/descending order. Numerically equal runs use total name length, matching the source; Unicode numeric runs compare by numeric value. | Remaining-length tie handling made leading-zero branches depend on input order. Use source-compatible numeric comparison and total-length tie handling. | `GitRefProviderDefinitionTest` includes leading-zero, suffix and Unicode cases; private full-ref comparison and exact release Provider gate pending |
+| UP-AC-037 | Normalize a frozen refs set in SMART ascending/descending order. Numerically equal runs use total name length, matching the source; Unicode numeric runs compare by numeric value. | Remaining-length tie handling made leading-zero branches depend on input order. Use source-compatible numeric comparison and total-length tie handling. | Full verify: 324 tests passed. Frozen source/candidate comparison: all 33 compared ordered option sets match after selecting full-ref output for the source full-ref case. Exact release Provider gate pending. |
+
+### Git transport compatibility
+
+| ID | Reproduction / expected result | Actual behavior / fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-038 | Submit an unknown revision, empty/blank CLI or repeated standard fields, and form JSON strings/arrays/scalars. Preserve source scalar output; explicit values/defaults work without Git; omitted TOP resolves the first option. Submitted snapshots retain binding checks. | Strict option membership and eager Provider resolution change legacy behavior. Add source transport decoding and lazy option resolution without changing ordinary choice validation. | Decoder and Jenkins integration tests cover CLI/HTTP, literal defaults, typed strings/null, zero-fetch behavior and snapshot rejection. Final focused verify: 23 tests passed. Chromium 153: 9 checks passed for exact/approximate/missing defaults, TOP/NONE, configuration save, independent API default, unlisted form input and editable historical Rebuild without Provider loading. Final full verify and failure contracts pending. |
 
 ### Mixed file and reactive CLI acceptance
 
@@ -102,6 +107,8 @@ Jenkins JavaScript form works without scripts.
 | --- | --- | --- | --- |
 | UP-AC-035 | Submit a stored upload and reactive choice in one Jenkins CLI build. The Provider resolves the declared dependency, the upload remains attached, and the build succeeds. | Jenkins marks consumed file arguments with null; immutable map copying previously raised a null-pointer exception. A defensive read-only copy now accepts unrelated consumed markers without changing canonical dependency validation. | `ReactiveSnapshotIntegrationTest` covers a consumed marker deterministically and an actual combined CLI build; macOS Harness on baseline Jenkins, production pilot follow-up pending |
 | UP-AC-036 | Compare legacy static multiple selections over CLI comma input, repeated standard requests and form JSON string/array input. Standard requests must not expand a combined comma field. Preserve submitted export including supported duplicates while canonical values remain a set; reject compatibility mode for Providers and tables. | Delimited mode treated REST and CLI alike, while form JSON treated comma strings as one value. Add explicit static Extended Choice transport compatibility and retained repeated exports; expose duplicate policy so saving config preserves it. | Passed candidate 2026-10-09: six `ExtendedChoiceTransportCompatibilityTest` Harness cases and four Chromium/Linux-controller UI Lab checks; [record](./extended-choice-transport-verification-2026-10-09.md). Exact release browser verification remains required before deployment |
+
+## Platform and Device Cases
 
 | ID | Platform/device | Required checks | Status |
 | --- | --- | --- | --- |

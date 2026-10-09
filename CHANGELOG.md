@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- List Git Branches input compatibility for Provider-backed single choices, preserving literal revisions, lazy API defaults, snapshot binding checks, independent dropdown selection and editable historical Rebuild revisions.
+
 ### Fixed
 
 - Git SMART sorting preserves the source plugin's total-length tie break for equal numeric runs, including leading zeros and Unicode digits.

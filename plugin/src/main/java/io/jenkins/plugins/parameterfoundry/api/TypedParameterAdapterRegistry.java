@@ -62,6 +62,8 @@ final class TypedParameterAdapterRegistry {
         }
         if (definition instanceof FoundryChoiceParameterDefinition single) {
             schema.put("selectionMode", single.getSelectionMode());
+            schema.put("standardApiInputMode", single.getStandardApiInputMode());
+            schema.put("gitSelectionMode", single.getGitSelectionMode());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
             schema.put("renderer", single.getRenderer());
@@ -109,17 +111,15 @@ final class TypedParameterAdapterRegistry {
             if (choice.isMultiple()) {
                 return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
             }
-            ResolvedProviderOptions resolved =
-                    ProviderSnapshotStore.get().resolveForBuild(job, choice, dependencies, snapshotId, operation);
             String value = !present || typedValue == null || typedValue instanceof JSONNull
                     ? null
                     : requireString(definition, typedValue);
-            String canonical = ParameterEvaluationService.evaluateSingle(
-                    choice,
-                    present
-                            ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
-                            : DecodedInput.absent(),
-                    resolved.options());
+            DecodedInput input = present
+                    ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
+                    : DecodedInput.absent();
+            ResolvedProviderOptions resolved = ProviderSnapshotStore.get()
+                    .resolveForBuild(job, choice, dependencies, snapshotId, operation, choice.needsOptions(input));
+            String canonical = ParameterEvaluationService.evaluateSingle(choice, input, resolved.options());
             return FoundryChoiceParameterValue.single(
                     choice.getName(),
                     canonical,
