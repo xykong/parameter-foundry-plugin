@@ -9,6 +9,9 @@
     Only an omitted first-option default needs Git resolution. Explicit submissions do not create Provider
     provenance; supplied snapshots are still checked for binding and expiry. This mode disables required and
     custom-value controls. Typed API accepts strings or null; null clears the value and omission uses the default.</li>
+  <li>The compatibility browser form submits literal Git values without a snapshot token, matching the
+    source's independent list and input behavior. Use Provider <code>cacheTtlSeconds=0</code> when each
+    page must list current refs. API clients that explicitly supply a snapshot still require a valid token.</li>
   <li><code>json-array</code> expects exactly one field holding a JSON array of strings.</li>
   <li><code>delimited</code> splits a single field on the delimiter below.</li>
   <li><code>extended-choice</code> preserves static Extended Choice multiple-selection transports:

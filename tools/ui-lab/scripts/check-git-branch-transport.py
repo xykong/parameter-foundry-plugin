@@ -70,6 +70,7 @@ async def main():
                 field=page.locator('[data-parameter-name="REF"]')
                 await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
                 select=field.locator('[data-up-enhanced] select')
+                assert await field.locator('[data-up-snapshot-id]').input_value()==''
                 assert await select.input_value()==expected,(name,await select.input_value(),expected)
                 assert await select.locator('option').count()==3
                 await page.get_by_role('button',name='Build',exact=True).click()

@@ -143,6 +143,10 @@ The typed API accepts string or null; null clears the value and omission uses th
 Required validation and custom-value controls are unavailable in this compatibility mode.
 Rebuild uses the historical revision in an editable text field, matching the source,
 and does not query the Provider.
+The compatibility browser form submits without a snapshot token because its literal
+value is independent of the dropdown lifetime. Set Provider `cacheTtlSeconds: 0` to
+match the source's fresh listing on each page. Explicitly supplied API snapshots still
+require valid binding and expiry.
 
 `gitSelectionMode` controls the browser dropdown separately: `default` selects an exact
 stored-default match, then the first containing match, then the first option; `top`

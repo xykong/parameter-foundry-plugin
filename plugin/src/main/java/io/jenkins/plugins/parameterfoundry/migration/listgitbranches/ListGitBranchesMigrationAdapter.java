@@ -235,6 +235,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
                 + "    sortOrder: "
                 + quote(targetSort == null ? "<reviewed-source-sort-order>" : targetSort)
                 + ",\n"
+                + "    cacheTtlSeconds: 0,\n"
                 + "    maximumRefs: 1000\n"
                 + ")\n"
                 + "foundryChoice(\n"

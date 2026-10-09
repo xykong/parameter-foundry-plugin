@@ -12,6 +12,7 @@ j.setAuthorizationStrategy(hudson.security.AuthorizationStrategy.UNSECURED)
 j.setCrumbIssuer(null)
 j.setNumExecutors(2)
 def provider=new StaticProviderDefinition('git-fixture')
+provider.cacheTtlSeconds=0
 provider.options=['main','release/prod-v2','release/prod'].collect{new Option(it)}
 ParameterFoundryGlobalConfiguration.get().providers=[provider]
 [['exact','default','release/prod'],['approximate','default','release'],['missing','default','unlisted'],['top','top','release/prod'],['none','none','release/prod']].each{row ->

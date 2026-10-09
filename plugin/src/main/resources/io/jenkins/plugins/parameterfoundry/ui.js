@@ -102,7 +102,8 @@
     var snapshot = field.querySelector("[data-up-snapshot-id]");
     var dependencyJson = field.querySelector("[data-up-dependencies-json]");
     if (snapshot) {
-      snapshot.value = snapshotId || "";
+      // Legacy Git accepts literal revisions independently of the list's lifetime.
+      snapshot.value = field.dataset.standardApiInputMode === "list-git-branches" ? "" : snapshotId || "";
     }
     if (dependencyJson) {
       dependencyJson.value = JSON.stringify(dependencies || {});
