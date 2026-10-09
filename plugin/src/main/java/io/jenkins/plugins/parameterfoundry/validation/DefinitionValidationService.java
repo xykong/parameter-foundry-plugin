@@ -77,8 +77,8 @@ public final class DefinitionValidationService {
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
             if (choice.getLegacyDefaultLiteral() != null
-                    && (!choice.isMultiple() || !"extended-choice".equals(choice.getStandardApiInputMode()))) {
-                errors.add("Legacy default literal requires Extended Choice multiple-selection compatibility.");
+                    && !"extended-choice".equals(choice.getStandardApiInputMode())) {
+                errors.add("Legacy default literal requires Extended Choice compatibility.");
             }
             if (!Set.of("single", "multiple").contains(choice.getSelectionMode())) {
                 errors.add("Unsupported selection mode: " + choice.getSelectionMode());
@@ -204,7 +204,16 @@ public final class DefinitionValidationService {
             }
         }
         if ("extended-choice".equals(definition.getStandardApiInputMode())) {
-            errors.add("Extended Choice transport compatibility requires multiple selection.");
+            if (definition.getChoices().stream().anyMatch(Option::isDisabled)) {
+                errors.add("Extended Choice single compatibility does not support disabled choices.");
+            }
+            if (definition.isProviderBacked()
+                    || definition.getTable() != null
+                    || !definition.getDependsOn().isEmpty()
+                    || definition.isAllowCustomValue()
+                    || definition.isRequired())
+                errors.add(
+                        "Extended Choice single compatibility requires static choices without dependencies, required or custom-value controls.");
         }
         if (!SINGLE_RENDERERS.contains(definition.getRenderer())
                 && !TrustedRendererRegistry.isTrusted(

@@ -2,6 +2,12 @@
   <p>How <code>buildWithParameters</code> decodes this parameter:</p>
 <ul>
   <li><code>repeated</code> expects one field per value.</li>
+  <li>For static single choices, <code>extended-choice</code> filters/trims CLI comma fields and
+    repeated standard fields, then joins supported values using the delimiter into one scalar.
+    Omission uses the legacy literal default independently of dropdown selection. Form strings
+    remain literal and arrays join without membership filtering; other form scalar/object values
+    become an empty string. Providers, dependencies, required and custom-value controls are unavailable.
+    Typed omission uses the same default; explicit typed strings retain strict membership validation.</li>
   <li><code>list-git-branches</code> is for migrated Provider-backed single choices without dependencies.
     CLI non-empty strings and a nonblank first standard request field are accepted literally, including
     revisions absent from the dropdown. A blank first standard field or empty CLI value uses the configured

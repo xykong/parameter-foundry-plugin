@@ -19,6 +19,7 @@ the case, but production configuration is never committed here.
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
 | Extended Choice literal/default fidelity (UP-AC-039) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Omission, Pipeline values, Rebuild and persistence |
 | Extended Choice literal forms (UP-AC-040) | Required | Required | Existing renderer coverage | Existing renderer coverage | Existing repeated field coverage | Required | Raw equality, persistence and editable Rebuild |
+| Extended Choice single transport (UP-AC-041) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Scalar defaults, UI selection and Rebuild |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -121,6 +122,12 @@ Jenkins JavaScript form works without scripts.
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-040 | Submit unknown/whitespace strings and arrays with unknown, empty and mixed scalar elements. Preserve exact environment strings, omitted-versus-empty form semantics, raw queue equality, reload and editable Rebuild. Ordinary and typed explicit inputs stay strict. | Shared compatibility retains raw export independently of the supported canonical set. Equality uses the literal, Rebuild preserves an editable historical string, and typed multiple export retains submission order. Contradictory canonical/JSON compatibility policies are rejected explicitly. A real previous-snapshot XML fixture verifies older history. | Passed for characterized multiple scope: final full 355 tests and 11 browser checks; all 408 source multiple cases match. Eight new Harness cases pass, including old XML, HTTP build and Rebuild. [Verification and limits](./extended-choice-form-verification-2026-10-10.md). Single, empty-option and per-Job consumer gates remain open. |
+
+### Extended Choice single transport
+
+| ID | Reproduction / expected result | Actual behavior / fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-041 | Omit a static single parameter with an unlisted default, submit joined/repeated known values over CLI/standard requests and literal strings/arrays over forms. Keep scalar output and editable Rebuild; distinguish API defaults from dropdown/radio selection. Typed explicit strings remain strict. | Shared single compatibility preserves source transports. Static dropdown/radio controls omit the added None option and retain all options; UI defaults use the last matching offered choice. Radio tests inspect ready native controls. Source compatibility rejects disabled choices explicitly. | Passed characterized scope: final 360 tests, 17 browser checks and all 816 source single/multiple cases match. Five new Harness cases include actual HTTP/CLI, config/reload and Rebuild. [Verification and limits](./extended-choice-single-verification-2026-10-10.md). Empty-option and per-Job source/consumer/history gates remain open. |
 
 ## Platform and Device Cases
 

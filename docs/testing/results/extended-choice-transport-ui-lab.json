@@ -12,6 +12,12 @@
     "omitted standard input exports exact literal",
     "unlisted form string retains whitespace and repetitions",
     "mixed form array retains scalar and empty elements",
-    "Rebuild retains and edits historical literal"
+    "Rebuild retains and edits historical literal",
+    "single UI first option and omitted literal default are independent",
+    "single Rebuild preserves quoted HTML literal as text",
+    "single last matching DOM option is selected",
+    "radio without default stays unselected without added None",
+    "radio last matching DOM option is selected",
+    "static single retains all 240 options without truncation notice"
   ]
 }

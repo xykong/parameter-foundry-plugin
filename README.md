@@ -21,7 +21,8 @@ Git branch migrations have a separate literal-input compatibility mode with
 independent dropdown selection and API/CLI defaults.
 The current unreleased candidate retains exact static multiple-choice defaults
 through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
-values. Single-selection source compatibility still requires implementation.
+values. Static single transport compatibility is implemented in the candidate;
+source/browser and empty-option verification remain pending.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

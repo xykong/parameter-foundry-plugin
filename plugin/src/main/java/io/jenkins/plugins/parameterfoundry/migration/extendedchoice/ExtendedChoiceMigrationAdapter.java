@@ -120,9 +120,15 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
         copyCommon(definition, target, options);
         target.setRenderer(RADIO.equals(type) ? "radio" : "select");
-        target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
+        target.setStandardApiInputMode("extended-choice");
+        target.setLegacyDefaultLiteral(readString(definition, "getDefaultValue"));
+        target.setDelimiter(delimiter);
+        target.setDefaultMode(supportedDefaults.isEmpty() ? (RADIO.equals(type) ? "none" : "first") : "explicit");
         if (!supportedDefaults.isEmpty()) {
-            target.setDefaultValue(supportedDefaults.get(0));
+            target.setDefaultValue(optionValues.stream()
+                    .filter(supportedDefaults::contains)
+                    .reduce((a, b) -> b)
+                    .orElse(null));
         }
         List<MigrationText> decisions = new ArrayList<>();
         if (hasEmptyOption) {

@@ -876,7 +876,7 @@
       update(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
     }
 
-    if (field.dataset.required !== "true") {
+    if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "extended-choice") {
       list.appendChild(
         optionRow(
           field,
@@ -917,9 +917,10 @@
 
   function enhanceSingle(field, options, initialValues) {
     var legacyGit = field.dataset.standardApiInputMode === "list-git-branches";
+    var legacyExtended = field.dataset.standardApiInputMode === "extended-choice";
     var allowCustom = field.dataset.allowCustom === "true";
     var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
-    if (wantsRadio && options.length <= MAX_RADIO_OPTIONS) {
+    if (wantsRadio && (legacyExtended || options.length <= MAX_RADIO_OPTIONS)) {
       enhanceSingleRadio(field, options, initialValues);
       return;
     }
@@ -938,7 +939,7 @@
     var searchable =
       field.dataset.renderer === "searchable" ||
       wantsRadio ||
-      (!legacyGit && options.length > MAX_RENDERED_OPTIONS) ||
+      (!legacyGit && !legacyExtended && options.length > MAX_RENDERED_OPTIONS) ||
       allowCustom;
     var customButton = null;
     var customValidation = null;
@@ -981,7 +982,7 @@
         if (gitSelected) selected.add(gitSelected.value);
       }
       removeChildren(select);
-      if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches") {
+      if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches" && field.dataset.standardApiInputMode !== "extended-choice") {
         var none = document.createElement("option");
         none.value = "";
         none.textContent = localized(field, "noneOption", "None");
@@ -1000,7 +1001,7 @@
           select.appendChild(custom);
         }
       });
-      (legacyGit ? matches : matches.slice(0, MAX_RENDERED_OPTIONS)).forEach(function (option) {
+      (legacyGit || legacyExtended ? matches : matches.slice(0, MAX_RENDERED_OPTIONS)).forEach(function (option) {
         var element = document.createElement("option");
         element.value = option.value;
         element.textContent = option.label || option.value;
@@ -1019,7 +1020,7 @@
         select.removeAttribute("size");
       }
       status.textContent =
-        !legacyGit && matches.length > MAX_RENDERED_OPTIONS
+        !legacyGit && !legacyExtended && matches.length > MAX_RENDERED_OPTIONS
           ? formatMessage(
               localized(field, "limitedSingleMatches", "{0} matches; showing {1}. Refine the search."),
               [matches.length, MAX_RENDERED_OPTIONS],

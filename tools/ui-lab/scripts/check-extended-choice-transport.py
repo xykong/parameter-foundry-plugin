@@ -111,7 +111,55 @@ async def main():
             response=await page.request.post(default_base+'/buildWithParameters?delay=0sec')
             assert response.status in [200,201,302],response.status
             await result(2,literal,default_base)
-            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal','unlisted form string retains whitespace and repetitions','mixed form array retains scalar and empty elements','Rebuild retains and edits historical literal']}
+            single_checks=[]
+            async def single_field(name):
+                job_base=lab.BASE_URL+'/job/'+name
+                await page.goto(job_base+'/build?delay=0sec')
+                field=page.locator('[data-parameter-name="SINGLE"]')
+                try:
+                    await page.wait_for_function("document.querySelector('[data-parameter-name=SINGLE]').dataset.upState === 'ready'")
+                    if await field.get_attribute('data-renderer')!='radio':
+                        await field.locator('[data-up-enhanced]').wait_for(state='visible')
+                except Exception:
+                    diagnostics=ROOT/'tools/ui-lab/.cache'
+                    diagnostics.mkdir(parents=True,exist_ok=True)
+                    (diagnostics/'extended-single-failure.html').write_text(await page.content())
+                    await page.screenshot(path=str(diagnostics/'extended-single-failure.png'),full_page=True)
+                    raise
+                return job_base,field
+            single_base,single=await single_field('extended-single-unknown')
+            assert await single.locator('[data-up-enhanced] select').input_value()=='alpha'
+            assert await single.locator('[data-up-enhanced] option[value=""]').count()==0
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(1,'alpha',single_base)
+            response=await page.request.post(single_base+'/buildWithParameters?delay=0sec')
+            assert response.status in [200,201,302],response.status
+            await result(2,'unlisted-default',single_base)
+            single_checks.append('single UI first option and omitted literal default are independent')
+            quoted='<literal "quoted">,unknown'
+            response=await page.request.post(single_base+'/build?delay=0sec',form={'json':json.dumps({'parameter':[{'name':'SINGLE','value':quoted}]})})
+            assert response.status in [200,201,302],response.status
+            await result(3,quoted,single_base)
+            await page.goto(single_base+'/3/rebuild/parameterized')
+            assert await page.locator('input[name="value"]').input_value()==quoted
+            await page.get_by_role('button',name='Rebuild',exact=True).click()
+            await result(4,quoted,single_base)
+            single_checks.append('single Rebuild preserves quoted HTML literal as text')
+            _,single=await single_field('extended-single-last')
+            assert await single.locator('[data-up-enhanced] select').input_value()=='beta'
+            single_checks.append('single last matching DOM option is selected')
+            _,radio=await single_field('extended-radio-empty')
+            assert await radio.locator('input[type="radio"]:checked').count()==0
+            assert await radio.locator('input[type="radio"][value=""]').count()==0
+            single_checks.append('radio without default stays unselected without added None')
+            _,radio=await single_field('extended-radio-last')
+            assert await radio.locator('input[type="radio"]:checked').input_value()=='beta'
+            single_checks.append('radio last matching DOM option is selected')
+            _,single=await single_field('extended-single-long')
+            assert await single.locator('[data-up-enhanced] option').count()==240
+            assert 'showing 200' not in await single.inner_text()
+            single_checks.append('static single retains all 240 options without truncation notice')
+            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal','unlisted form string retains whitespace and repetitions','mixed form array retains scalar and empty elements','Rebuild retains and edits historical literal']+single_checks}
             (ROOT/'docs/testing/results/extended-choice-transport-ui-lab.json').write_text(json.dumps(report,indent=2)+'\n')
             print(json.dumps(report))
             await browser.close()

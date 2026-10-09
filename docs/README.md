@@ -79,6 +79,7 @@ help.
 
 ## Testing
 
+- [October 10 Extended Choice single transport verification](./testing/extended-choice-single-verification-2026-10-10.md)
 - [October 10 Extended Choice literal form verification](./testing/extended-choice-form-verification-2026-10-10.md)
 - [October 10 Extended Choice default compatibility verification](./testing/extended-choice-default-verification-2026-10-10.md)
 - [October 9 unified file delivery modes verification](./testing/file-delivery-modes-verification-2026-10-09.md)

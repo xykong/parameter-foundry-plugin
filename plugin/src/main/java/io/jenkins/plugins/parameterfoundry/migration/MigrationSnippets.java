@@ -49,6 +49,12 @@ public final class MigrationSnippets {
                                     || "list-git-branches".equals(choice.getStandardApiInputMode())
                             ? ",\n  defaultValue: " + quote(choice.getDefaultValue())
                             : "")
+                    + (choice.isExtendedChoiceSingleInput()
+                            ? ",\n  delimiter: " + quote(choice.getDelimiter())
+                                    + (choice.getLegacyDefaultLiteral() != null
+                                            ? ",\n  legacyDefaultLiteral: " + quote(choice.getLegacyDefaultLiteral())
+                                            : "")
+                            : "")
                     + "\n)";
         }
         if (target instanceof AbstractFoundryParameterDefinition multiple && multiple.isMultiple()) {

@@ -110,6 +110,10 @@ final class TypedParameterAdapterRegistry {
             if (choice.isMultiple()) {
                 return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
             }
+            if (!present && choice.isExtendedChoiceSingleInput()) {
+                ProviderSnapshotStore.get().resolveForBuild(job, choice, dependencies, snapshotId, operation);
+                return choice.getDefaultParameterValue();
+            }
             String value = !present || typedValue == null || typedValue instanceof JSONNull
                     ? null
                     : requireString(definition, typedValue);

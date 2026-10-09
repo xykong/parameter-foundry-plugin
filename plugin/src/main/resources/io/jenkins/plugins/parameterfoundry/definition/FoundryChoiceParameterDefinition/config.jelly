@@ -119,8 +119,15 @@
       <f:entry title="Standard API input mode" field="standardApiInputMode">
         <select class="jenkins-select__input" name="parameter.standardApiInputMode">
           <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Strict single value</option>
+          <option value="extended-choice" selected="${instance.standardApiInputMode == 'extended-choice' ? 'selected' : null}">Extended Choice compatibility</option>
           <option value="list-git-branches" selected="${instance.standardApiInputMode == 'list-git-branches' ? 'selected' : null}">List Git Branches compatibility</option>
         </select>
+      </f:entry>
+      <f:entry title="Legacy default literal" field="legacyDefaultLiteral">
+        <f:textbox name="parameter.legacyDefaultLiteral" value="${instance.legacyDefaultLiteral}" />
+      </f:entry>
+      <f:entry title="Delimiter" field="delimiter">
+        <f:textbox name="parameter.delimiter" value="${instance.delimiter}" />
       </f:entry>
       <f:entry title="Git dropdown selection" field="gitSelectionMode">
         <select class="jenkins-select__input" name="parameter.gitSelectionMode">

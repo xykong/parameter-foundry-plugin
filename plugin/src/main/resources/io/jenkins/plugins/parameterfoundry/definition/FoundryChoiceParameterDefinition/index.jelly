@@ -145,7 +145,7 @@
             </j:if>
             <j:choose>
               <j:when test="${it.renderer == 'radio'}">
-                <j:if test="${!it.required}">
+                <j:if test="${!it.required and !it.extendedChoiceSingleInput}">
                   <label>
                     <input type="radio" name="${it.name}" data-up-native-value="true" value=""
                            checked="${it.defaultParameterValue.value == null ? 'checked' : null}" />
@@ -168,7 +168,7 @@
                 <div class="jenkins-select">
                   <select class="jenkins-select__input" name="${it.name}" data-up-native-value="true"
                           size="${it.renderer == 'list' ? it.listVisibleRows : null}">
-                    <j:if test="${!it.required}">
+                    <j:if test="${!it.required and !it.extendedChoiceSingleInput}">
                       <option value="" selected="${it.defaultParameterValue.value == null ? 'selected' : null}">None</option>
                     </j:if>
                     <j:forEach var="option" items="${it.fallbackChoices}">

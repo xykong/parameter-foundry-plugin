@@ -62,11 +62,12 @@ has to be stated before an equivalent can be generated.
 
 ## Boundaries
 
-- The unreleased `0.8.292-SNAPSHOT` candidate adds exact omitted-input default
+- The unreleased `0.8.294-SNAPSHOT` candidate adds exact omitted-input default
   exports through `legacyDefaultLiteral` and corrects option parsing for custom
   output delimiters, literal form submission and editable historical Rebuild.
-  Candidate verification is still required; single-selection and empty-option
-  UI/transport contracts remain open compatibility work.
+  Static single transport compatibility is also implemented in the candidate.
+  Candidate source/browser verification and empty-option UI/transport contracts
+  remain open compatibility work.
 - Extended Choice compatibility in `0.7.288` covers a supported-value subset.
   Exact literal defaults, blank-default omission, unlisted form values, single
   selection transports and custom output delimiters still have known gaps.

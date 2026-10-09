@@ -41,7 +41,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
-| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice`, `list-git-branches` | `repeated` | Transport decoding; Extended Choice mode requires static multiple choices; List Git Branches mode requires a Provider-backed single choice without dependencies |
+| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice`, `list-git-branches` | `repeated` | Transport decoding; Extended Choice mode requires static choices; List Git Branches mode requires a Provider-backed single choice without dependencies |
 | `delimiter` | text | `,` | Used by `delimited` input and export |
 | `allowCustomValue` | boolean | `false` | Single selection: accept a value outside the option list |
 | `customValuePattern` | regex | empty | Full-match rule for custom values |
@@ -134,7 +134,7 @@ Compatibility requires `environmentExportOrder: 'submitted'` with
 `environmentExport: 'delimited'` or `'none'`. Use `duplicatePolicy: 'deduplicate'`
 for migration: canonical values remain a sorted set, while
 repeated supported submissions can remain repeated in the legacy exported string.
-This mode is unavailable to Providers, tables and single-choice parameters.
+This mode is unavailable to Providers and tables.
 Exact literal defaults, blank-default omission and unlisted forms are gaps in
 `0.7.288`; the unreleased `0.8.292-SNAPSHOT` candidate addresses those multiple
 transports. Verify each source contract before
@@ -148,13 +148,24 @@ the literal unset, explicit default values supply their comma-joined string;
 `defaultMode: none` produces no ParameterValue. Null/zero-length standard fields
 and absent CLI/typed input use that factory. An explicit empty field or form
 submission produces an existing empty value. Explicit typed arrays retain strict
-validation. Single-selection compatibility remains open. Literal history uses an
+validation. Literal history uses an
 editable Rebuild textbox, matching the source plugin. Compatibility values use
 their exact string for queue equality; canonical lists still drive typed output.
 Typed multiple submissions honor the configured environment export order.
 Configured disabled options, required/min/max selection and duplicate policies
 still apply to the supported canonical default; a conflicting constraint rejects
 the default rather than producing a value that fails later validation.
+
+The `0.8.294-SNAPSHOT` candidate also supports static single source parameters.
+CLI and standard requests filter/trim supported fields and join them into one
+scalar, even when several values were supplied. Form strings remain literal and
+arrays join without filtering; other scalar/object forms become an existing empty
+string. A blank API default produces no ParameterValue even when the dropdown
+selects its first option. Known UI defaults select the last matching DOM option;
+radio controls without a matching default remain unselected. Compatibility does
+not add a None option or truncate static options. Required/custom controls and
+Providers/dependencies are unavailable. Typed explicit strings stay strict;
+typed omission uses the source default. Source and browser gates remain required.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses

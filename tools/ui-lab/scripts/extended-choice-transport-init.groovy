@@ -37,5 +37,24 @@ defaultJob.addProperty(new ParametersDefinitionProperty(defaultParameter))
 defaultJob.buildersList.add(new Shell('printf "%s" "$TARGETS" > result.txt'))
 defaultJob.publishersList.add(new ArtifactArchiver('result.txt'))
 defaultJob.save()
+def singleFixture={name,renderer,uiDefault,apiDefault,options ->
+    def project=j.createProject(FreeStyleProject,name)
+    def p=new FoundryChoiceParameterDefinition('SINGLE')
+    p.choices=options.collect{new Option(it)}
+    p.standardApiInputMode='extended-choice'
+    p.renderer=renderer
+    p.defaultMode=uiDefault==null ? (renderer=='radio' ? 'none' : 'first') : 'explicit'
+    p.defaultValue=uiDefault
+    p.legacyDefaultLiteral=apiDefault
+    project.addProperty(new ParametersDefinitionProperty(p))
+    project.buildersList.add(new Shell('printf "%s" "$SINGLE" > result.txt'))
+    project.publishersList.add(new ArtifactArchiver('result.txt'))
+    project.save()
+}
+singleFixture('extended-single-unknown','select',null,'unlisted-default',['alpha','beta','gamma'])
+singleFixture('extended-single-last','select','beta','beta,alpha',['alpha','beta','gamma'])
+singleFixture('extended-radio-empty','radio',null,null,['alpha','beta','gamma'])
+singleFixture('extended-radio-last','radio','beta','beta,alpha',['alpha','beta','gamma'])
+singleFixture('extended-single-long','select',null,null,(0..<240).collect{String.format('option-%03d',it)})
 j.save()
 new File(j.rootDir,'extended-choice-transport-ready').text='ready\n'

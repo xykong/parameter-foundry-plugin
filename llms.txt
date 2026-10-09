@@ -46,12 +46,14 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   Version 0.7.288 has known gaps for literal/blank defaults, unlisted form values,
   single selection and custom delimiters. Do not infer full parity from adapter
   classification; see [source contract](docs/research/extended-choice-static-transport-contract.md).
-  The unreleased 0.8.292-SNAPSHOT candidate adds `legacyDefaultLiteral` for exact
+  The unreleased 0.8.294-SNAPSHOT candidate adds `legacyDefaultLiteral` for exact
   omitted-input environment defaults and distinguishes no ParameterValue from an
   explicit empty selection. Canonical values remain lists; explicit typed arrays
   stay strict. Form strings remain literal and arrays join without filtering the
   exported string; Rebuild keeps an editable historical literal. Compatibility
-  requires submitted order and delimited/disabled export. Single compatibility remains pending.
+  requires submitted order and delimited/disabled export. Static single compatibility is implemented, with source/browser verification pending.
+  Single CLI/standard fields filter and join into a scalar; form literals remain raw,
+  and API defaults are independent of UI defaults. Explicit typed strings stay strict.
 - Provider-backed single choices without dependencies can use `standardApiInputMode: list-git-branches`: literal unlisted revisions remain accepted, explicit inputs/defaults do not fetch Git, and supplied snapshots retain binding/expiry validation. `gitSelectionMode` preserves dropdown selection independently of API/CLI defaults.
 - Typed API: `…/parameter-foundry/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
 - Errors carry stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.
