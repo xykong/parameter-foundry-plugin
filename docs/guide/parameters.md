@@ -178,7 +178,7 @@ and canonical multiple values stay non-empty. Typed explicit inputs stay strict;
 form strings/arrays already preserve empty elements. Omitted input still uses
 the source default. This setting is rejected in ordinary modes.
 
-The unreleased `0.9.298-SNAPSHOT` candidate introduces single `active-choices`
+Version `0.9.299` introduces single `active-choices`
 compatibility for unflagged choices without dependencies, required/custom controls,
 disabled options or tables. UI `defaultMode` is `none` for an unselected radio
 or `first` for a dropdown. API defaults independently use `activeChoicesApiDefaultMode`:
@@ -192,7 +192,7 @@ Foundry File definition. Only string environment export is supported. Core
 StringParameterValue preserves scalar values, uppercase environment aliases,
 queue equality and editable old string history. Supplied snapshots remain validated;
 literal inputs create no Provider provenance. Ordinary and typed explicit input
-stay strict; typed omission shares the API default. Verification remains pending.
+stay strict; typed omission shares the API default. Per-Job source/consumer, exact-release and retirement gates still apply.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses

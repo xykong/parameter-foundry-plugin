@@ -1,11 +1,11 @@
 # Active Choices single compatibility verification
 
-Unreleased candidate `0.9.298-SNAPSHOT`, October 10, 2026.
-Final candidate HPI SHA-256:
-`1d3887b98129c21e272c62d874b71b014256dbc6c9419e177ca4383f7054e85a`.
-Manifest version: `0.9.298-SNAPSHOT (private-c38bf059-root)`.
-The artifact predates the milestone commit; release artifacts require their own
-exact gate. The public browser script verifies loaded version and archive digest.
+Release `0.9.299`, October 10, 2026.
+Release HPI SHA-256:
+`0c2df4b87552d854cc19adcb5e8757185409c351c37d576edd53d8b67f536f1c`.
+Manifest version: `0.9.299`.
+The exact release artifact passes all gates below; the public browser script
+verifies loaded version and archive digest.
 
 | Gate | Result |
 | --- | --- |
@@ -17,7 +17,7 @@ exact gate. The public browser script verifies loaded version and archive digest
 | Independent review | No remaining concrete security or target-shape blocker; heuristic script recognition still requires source/consumer review |
 
 Reproduce with `tools/ui-lab/scripts/check-active-choices-single.py --skip-build`
-after building the candidate. [Machine-readable result](./results/active-choices-single-ui-lab.json).
+after building the release. [Machine-readable result](./results/active-choices-single-ui-lab.json).
 The browser is Chromium `153.0.8010.12`, macOS host, disposable Linux Jenkins
 `2.568.2`. Source is UNO `2.8.10`, archive SHA-256
 `3875250959e41c849894eb719b06b8e4a5fee4c6dae15d92a34b8415d9e0d35f`.
@@ -27,7 +27,7 @@ loopback lab.
 
 The successful source radio has no selected value while its API default is first;
 the dropdown selects first. Source empty/unsupported-return samples and the
-candidate empty-policy Provider produce an existing empty Core String value.
+release empty-policy Provider produce an existing empty Core String value.
 Literal/default values retain Core StringParameterValue type, environment aliases,
 queue equality and old-history textbox semantics. They carry no Provider provenance;
 supplied snapshot validation is independent of literal construction.
@@ -35,7 +35,6 @@ supplied snapshot validation is independent of literal construction.
 Scope remains unflagged single choices. Selected/disabled flags, filters/sorting,
 cached source defaults, multiple choices, reactive dependencies and file-form
 payloads require separate contracts. Do not treat the node skeleton's string
-recognition as proof for arbitrary scripts. Exact release, production definition
-preflight, fresh source/node/consumer checks, idle/trigger guards and rollback
-remain required. Desktop checks do not substitute for applicable device/a11y
-coverage. This candidate evidence does not establish complete plugin retirement.
+recognition as proof for arbitrary scripts. The exact release gate passes. Production definition preflight, fresh
+source/node/consumer checks, idle/trigger guards and rollback remain required. Desktop checks do not substitute for applicable device/a11y
+coverage. This release evidence does not establish complete plugin retirement.
