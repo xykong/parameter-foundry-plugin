@@ -30,5 +30,7 @@
     "empty transport adds no visible blank option",
     "repeated HTTP empty fields retain delimiter positions",
     "Rebuild preserves empty token positions"
-  ]
+  ],
+  "pluginVersion": "0.8.296",
+  "pluginSha256": "81ad27c92945a626eabf34c58372ffe3247a7dd61ef4723758238f2b6be9c2ce"
 }

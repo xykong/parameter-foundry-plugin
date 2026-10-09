@@ -19,11 +19,10 @@ Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with
 independent dropdown selection and API/CLI defaults.
-The current unreleased candidate retains exact static multiple-choice defaults
+Version `0.8.296` retains exact static multiple-choice defaults
 through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
-values. Static single transport compatibility is implemented in the candidate;
-source/browser verification is recorded in the testing guide. The current
-candidate adds source empty-token transport, verified against the characterized
+values and static single transport compatibility. Source/browser verification
+is recorded in the testing guide. Empty-token transport preserves the characterized
 source contract; per-Job and exact-release gates still apply.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released

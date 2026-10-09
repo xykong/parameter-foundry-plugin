@@ -9,14 +9,17 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## 0.8.295-SNAPSHOT - Unreleased
+## 0.8.296 - 2026-10-10
+
+The HPI is `dist/parameter-foundry-0.8.296.hpi` (SHA-256
+`81ad27c92945a626eabf34c58372ffe3247a7dd61ef4723758238f2b6be9c2ce`,
+614,668 bytes). Full regression passed 365 tests; the exact release HPI passed
+9,792 source transport cases and 22 browser checks.
 
 ### Fixed
 
 - Extended Choice migration retains empty option tokens in CLI/standard exports without adding empty visible choices.
-
 - Static single Extended Choice migrations preserve omitted literal defaults, joined CLI/standard inputs, literal forms and editable historical Rebuild; dropdown/radio defaults remain independent of transport defaults.
-
 - Extended Choice migration parses static options and UI defaults independently of the output delimiter.
 - Static multiple-choice compatibility preserves exact omitted-input default exports and distinguishes blank defaults from explicitly empty submissions.
 - Extended Choice multiple form submissions retain literal strings and joined arrays, including unlisted values, whitespace and empty elements; Rebuild retains editable historical literals.

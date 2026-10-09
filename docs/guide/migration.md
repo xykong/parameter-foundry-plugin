@@ -62,10 +62,10 @@ has to be stated before an equivalent can be generated.
 
 ## Boundaries
 
-- The unreleased `0.8.295-SNAPSHOT` candidate adds exact omitted-input default
+- Version `0.8.296` adds exact omitted-input default
   exports through `legacyDefaultLiteral` and corrects option parsing for custom
   output delimiters, literal form submission and editable historical Rebuild.
-  Static single transport compatibility is also implemented in the candidate.
+  Static single transport compatibility is also supported.
   Leading/internal empty source entries enable `legacyEmptyChoiceAllowed` for
   CLI/standard transport only; visible choices omit those entries, as the source
   UI does. A trailing separator alone does not enable this flag. Candidate

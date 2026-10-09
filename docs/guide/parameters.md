@@ -137,11 +137,11 @@ for migration: canonical values remain a sorted set, while
 repeated supported submissions can remain repeated in the legacy exported string.
 This mode is unavailable to Providers and tables.
 Exact literal defaults, blank-default omission and unlisted forms are gaps in
-`0.7.288`; the unreleased `0.8.292-SNAPSHOT` candidate addresses those multiple
+`0.7.288`; version `0.8.296` addresses those multiple
 transports. Verify each source contract before
 migration; see [the observed compatibility matrix](../research/extended-choice-static-transport-contract.md).
 
-The `0.8.291-SNAPSHOT` milestone added `legacyDefaultLiteral` for exact omitted-input
+Version `0.8.296` includes `legacyDefaultLiteral` for exact omitted-input
 exports. The migration adapter copies the source's nonblank default verbatim,
 including order, whitespace, duplicates and unavailable placeholders. UI
 `defaultValues` remain selectable values; canonical values remain lists. With
@@ -157,7 +157,7 @@ Configured disabled options, required/min/max selection and duplicate policies
 still apply to the supported canonical default; a conflicting constraint rejects
 the default rather than producing a value that fails later validation.
 
-The `0.8.294-SNAPSHOT` candidate also supports static single source parameters.
+Version `0.8.296` also supports static single source parameters.
 CLI and standard requests filter/trim supported fields and join them into one
 scalar, even when several values were supplied. Form strings remain literal and
 arrays join without filtering; other scalar/object forms become an existing empty
@@ -168,7 +168,7 @@ not add a None option or truncate static options. Required/custom controls and
 Providers/dependencies are unavailable. Typed explicit strings stay strict;
 typed omission uses the source default. Source and browser gates remain required.
 
-The `0.8.295-SNAPSHOT` candidate adds source empty-token transport. The adapter
+Version `0.8.296` adds source empty-token transport. The adapter
 enables `legacyEmptyChoiceAllowed` when the source comma list has a leading or
 internal empty token. A trailing comma alone does not enable it. Accepted empty
 CLI/standard fields preserve their separator positions, while visible options
