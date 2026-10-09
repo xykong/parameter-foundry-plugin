@@ -62,6 +62,11 @@ has to be stated before an equivalent can be generated.
 
 ## Boundaries
 
+- Extended Choice compatibility in `0.7.288` covers a supported-value subset.
+  Exact literal defaults, blank-default omission, unlisted form values, single
+  selection transports and custom output delimiters still have known gaps.
+  Verify these before applying a migration; see the
+  [observed source contract](../research/extended-choice-static-transport-contract.md).
 - Source scripts, markup, repository URLs, and credentials are never copied into
   the generated target.
 - SCM Jenkinsfiles receive a patch or snippet; the plugin never pushes to the
