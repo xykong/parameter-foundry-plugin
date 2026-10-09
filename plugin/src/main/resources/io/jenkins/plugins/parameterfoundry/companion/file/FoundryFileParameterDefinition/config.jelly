@@ -1,0 +1,14 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry field="name" title="Name"><f:textbox/></f:entry>
+  <f:entry field="description" title="Description"><f:textarea/></f:entry>
+  <f:entry field="deliveryMode" title="Delivery mode">
+    <f:select>
+      <f:option value="workspace" selected="${instance.deliveryMode == 'workspace'}">Workspace file</f:option>
+      <f:option value="base64" selected="${instance.deliveryMode == 'base64'}">Base64 content</f:option>
+      <f:option value="stash" selected="${instance.deliveryMode == 'stash'}">Stash</f:option>
+    </f:select>
+  </f:entry>
+  <f:entry field="workspacePath" title="Workspace path"><f:textbox/></f:entry>
+  <f:entry field="maxUploadBytes" title="Upload limit (bytes)"><f:number min="0" step="1" value="${instance.configuredMaxUploadBytes}"/></f:entry>
+</j:jelly>

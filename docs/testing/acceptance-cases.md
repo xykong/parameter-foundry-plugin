@@ -13,7 +13,7 @@ the case, but production configuration is never committed here.
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
-| Binary file parameters (UP-AC-025–028) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Binary file parameters (UP-AC-025–033) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
@@ -64,6 +64,25 @@ File platform matrix: desktop Chromium/macOS and Android-sized Chromium viewport
 passed on Chromium 153.0.8010.12 in `tools/ui-lab/scripts/check-foundry-files.py`; physical devices, manual
 screen reader and other browser engines remain pending. The Lab uses synthetic
 content on a disposable localhost controller and never reads production data.
+
+### Unified file delivery and policy acceptance
+
+| ID | Area | Reproduction / expected behavior | Previous behavior / fix | Verification |
+| --- | --- | --- | --- | --- |
+| UP-AC-029 | Workspace delivery and Core migration | Configure `foundryFile` workspace mode with a relative destination; upload via UI/CLI, run Freestyle and a remote Pipeline wrapper, rebuild and roll back a Core migration. Preserve bytes, original filename variables and path-like Core identities; omitted uploads retain existing workspace files. Reject traversal, drive/stream/device paths and symlinks. | Only Base64/stash existed; added workspace delivery, atomic agent placement and Core class B migration. | Passed 2026-10-09: `FoundryWorkspaceFileParameterTest` and desktop/mobile Chromium UI Lab |
+| UP-AC-030 | Upload policy and mode changes | Round-trip all three modes with `maxUploadBytes=0` and explicit limits. Test UI/REST/CLI, downstream values and Rebuild; reject oversized content and reuse after a mode change. | Fixed caps became inherited defaults and explicit per-parameter policies enforced during ingestion/delivery/reuse. | Passed 2026-10-09: Harness plus browser configuration save and HTTP upload rejection |
+| UP-AC-031 | Input and read-only binary simulation | Upload through Base64 Pipeline input; reject workspace/stash input without staging data. Simulate a source Core value whose getters throw: report manual binary verification without invoking those getters. | Binary inputs and replay now fail closed at their transport boundary. | `FoundryWorkspaceFileParameterTest`; message coverage and audit parser tests |
+| UP-AC-032 | Migration property integrity | Clone or migrate a Job with equivalent duplicate parameter properties: produce one effective target property and roll back the complete backup. Refuse conflicting duplicates before any write. | Redundant source properties could shadow the migrated one; migration now validates and normalizes equivalent duplicates. | Passed 2026-10-09: Harness and real-browser regression |
+| UP-AC-033 | Legacy Rebuild gate | Upload using Core, migrate the definition, submit Rebuild without a replacement: HTTP 400 and no new build. Rebuild with a fresh upload must succeed. | Rebuild fallback could reattach the legacy value; reject incompatible historical values before scheduling. | Passed 2026-10-09: Harness and real-browser regression |
+
+[Delivery-mode verification](./file-delivery-modes-verification-2026-10-09.md).
+
+Platform coverage for UP-AC-029–033: macOS Harness with remote agent channels;
+Linux disposable-controller desktop/mobile-viewport Chromium UI Lab. UI, config
+help, API and agent lifecycle are required. Physical devices, Windows execution,
+manual keyboard/screen reader and other engines remain pending; no-JavaScript
+binary transport uses the standard multipart API rather than claiming the normal
+Jenkins JavaScript form works without scripts.
 
 ## Platform and Device Cases
 

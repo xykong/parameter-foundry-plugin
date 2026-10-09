@@ -295,8 +295,8 @@ class FoundryFileParameterTest {
                 pipeline {
                   agent any
                   parameters {
-                    foundryStashedFile(name: 'UPLOAD')
-                    foundryBase64File(name: 'SMALL')
+                    foundryFile(name: 'UPLOAD', deliveryMode: 'stash')
+                    foundryFile(name: 'SMALL', deliveryMode: 'base64')
                   }
                   stages {
                     stage('Files') {

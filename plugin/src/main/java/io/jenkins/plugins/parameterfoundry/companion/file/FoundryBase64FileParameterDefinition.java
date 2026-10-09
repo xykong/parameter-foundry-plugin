@@ -31,6 +31,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class FoundryBase64FileParameterDefinition extends AbstractFoundryFileParameterDefinition {
+    private static final long serialVersionUID = 1L;
 
     @DataBoundConstructor
     public FoundryBase64FileParameterDefinition(String name) {
@@ -44,10 +45,8 @@ public final class FoundryBase64FileParameterDefinition extends AbstractFoundryF
 
     @Override
     protected AbstractFoundryFileParameterValue createValue(String name, InputStream src) throws IOException {
-        return new FoundryBase64FileParameterValue(name, src);
+        return new FoundryBase64FileParameterValue(name, src, getMaxUploadBytes());
     }
-
-    // TODO equals/hashCode
 
     @Symbol("foundryBase64File")
     @Extension

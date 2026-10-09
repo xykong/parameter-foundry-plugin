@@ -39,19 +39,54 @@ import java.io.InputStream;
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileUploadContentTypeException;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest2;
 
 public abstract class AbstractFoundryFileParameterDefinition extends ParameterDefinition {
+    private static final long serialVersionUID = 1L;
+
+    private long maxUploadBytes;
 
     protected AbstractFoundryFileParameterDefinition(String name) {
         super(name);
-        FileUploadService.checkName(name);
+        validateParameterName(name);
     }
 
     protected Object readResolve() {
-        FileUploadService.checkName(getName());
+        validateConfiguration();
         return this;
+    }
+
+    public void validateConfiguration() {
+        validateParameterName(getName());
+        if (maxUploadBytes < 0) {
+            throw new Failure("Upload limit cannot be negative.");
+        }
+        FileUploadService.checkLimit(getMaxUploadBytes(), valueType() == FoundryBase64FileParameterValue.class);
+    }
+
+    protected void validateParameterName(String name) {
+        FileUploadService.checkName(name);
+    }
+
+    public long getMaxUploadBytes() {
+        return maxUploadBytes > 0
+                ? maxUploadBytes
+                : valueType() == FoundryBase64FileParameterValue.class
+                        ? FileUploadService.MAX_BASE64_BYTES
+                        : FileUploadService.MAX_STASHED_BYTES;
+    }
+
+    public long getConfiguredMaxUploadBytes() {
+        return maxUploadBytes;
+    }
+
+    @DataBoundSetter
+    public void setMaxUploadBytes(long maxUploadBytes) {
+        this.maxUploadBytes = maxUploadBytes == 0
+                ? 0
+                : FileUploadService.checkLimit(maxUploadBytes, valueType() == FoundryBase64FileParameterValue.class);
     }
 
     protected abstract Class<? extends AbstractFoundryFileParameterValue> valueType();
@@ -60,6 +95,14 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
 
     @Override
     public ParameterValue createValue(StaplerRequest2 req, JSONObject jo) {
+        validateConfiguration();
+        boolean input = req.getAncestors().stream().anyMatch(a -> a.getObject()
+                .getClass()
+                .getName()
+                .equals("org.jenkinsci.plugins.workflow.support.steps.input.InputStepExecution"));
+        if (input && valueType() != FoundryBase64FileParameterValue.class) {
+            throw new Failure("Only Base64 file delivery supports Pipeline input uploads.");
+        }
         if (!getName().equals(jo.optString("name"))) {
             throw new Failure("File parameter name does not match its definition.");
         }
@@ -76,6 +119,11 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
 
     /** Only a Rebuild URL's authorized ancestor may supply a historical value. */
     private ParameterValue historicalValue(StaplerRequest2 req) throws IOException {
+        boolean rebuild = req.getAncestors().stream()
+                .anyMatch(a -> a.getObject().getClass().getName().equals("com.sonyericsson.rebuild.RebuildAction"));
+        if (!rebuild) {
+            return null;
+        }
         Run<?, ?> run = req.findAncestorObject(Run.class);
         if (run == null) {
             return null;
@@ -83,8 +131,22 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
         run.getParent().checkPermission(Item.BUILD);
         var action = run.getAction(ParametersAction.class);
         ParameterValue value = action == null ? null : action.getParameter(getName());
-        if (value != null && valueType().isInstance(value)) {
-            return ((AbstractFoundryFileParameterValue) value).copyForRebuild(run);
+        if (value != null && valueType() == value.getClass()) {
+            var copy = ((AbstractFoundryFileParameterValue) value).copyForRebuild(run);
+            try (InputStream in = copy.open(run)) {
+                FileUploadService.copy(in, java.io.OutputStream.nullOutputStream(), getMaxUploadBytes());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted validating retained upload.", e);
+            }
+            if (copy instanceof FoundryWorkspaceFileParameterValue workspace
+                    && this instanceof FoundryFileParameterDefinition file) {
+                workspace.setWorkspacePath(file.getWorkspacePath());
+            }
+            return copy;
+        }
+        if (value != null) {
+            throw new IOException("The file delivery mode or legacy file type changed; upload a replacement file.");
         }
         return null;
     }
@@ -103,6 +165,7 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
 
     @Override
     public ParameterValue createValue(StaplerRequest2 req) {
+        validateConfiguration();
         try {
             FileItem src;
             try {
@@ -121,18 +184,28 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
 
     @Override
     public ParameterValue createValue(CLICommand command, String value) throws IOException, InterruptedException {
+        validateConfiguration();
         AbstractFoundryFileParameterValue p;
         if (value.isEmpty()) {
             p = createValue(getName(), command.stdin);
         } else {
-            byte[] data = FileUploadService.decode(value);
+            byte[] data = FileUploadService.decode(value, Math.min(getMaxUploadBytes(), (Integer.MAX_VALUE / 4L) * 3));
             p = createValue(getName(), new ByteArrayInputStream(data));
         }
         p.setDescription(getDescription());
+        if (p instanceof FoundryWorkspaceFileParameterValue) {
+            p.setFilename(value.isEmpty() ? "stdin" : "upload");
+        }
         return p;
     }
 
     protected abstract static class AbstractFoundryFileParameterDefinitionDescriptor extends ParameterDescriptor {
+
+        public FormValidation doCheckMaxUploadBytes(@QueryParameter long value) {
+            return value >= 0
+                    ? FormValidation.ok()
+                    : FormValidation.error("Use 0 for the transport default or a positive byte limit.");
+        }
 
         public FormValidation doCheckName(@QueryParameter String name) {
             try {

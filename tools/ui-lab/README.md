@@ -95,8 +95,10 @@ make clean
 
 Run `uv run tools/ui-lab/scripts/check-foundry-files.py` from the repository root.
 It builds the exact HPI, starts a disposable localhost controller and verifies
-real browser upload, Pipeline stash and temporary-file access, download bytes,
-Rebuild, Freestyle wrapping, mobile overflow and Typed JSON rejection. Results
-are written to `docs/testing/results/foundry-files-ui-lab.json`; desktop and
-mobile screenshots join the Foundry UI gallery. No source File Parameters HPI
+real browser upload in all three modes, workspace filename semantics, Pipeline
+stash/temporary files, download, restart/Rebuild, automatic Freestyle delivery,
+configurable limits, Core clone/apply/build/rollback, duplicate-property
+normalization, legacy Rebuild rejection/fresh upload, mobile overflow and Typed
+JSON rejection. Results are written to `docs/testing/results/foundry-file-modes-ui-lab.json`;
+desktop/mobile, configuration and Core migration screenshots join the gallery. No source File Parameters HPI
 is installed, so the gate also proves independent operation.

@@ -56,7 +56,7 @@ public final class MigrationCoordinator {
     public static MigrationBatchPreview previewBatch(Job<?, ?> job, List<String> parameterNames) {
         job.checkPermission(Item.READ);
         job.checkPermission(Item.CONFIGURE);
-        ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        ParametersDefinitionProperty property = parameterProperty(job);
         if (property == null) {
             throw new EvaluationException(
                     ErrorCode.CONFIGURATION_INVALID, job.getFullName(), Messages.MigrationErrorNotParameterized());
@@ -311,7 +311,7 @@ public final class MigrationCoordinator {
 
     private static void replaceDefinitions(Job<?, ?> job, List<String> names, List<ParameterDefinition> targets)
             throws IOException {
-        ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        ParametersDefinitionProperty property = parameterProperty(job);
         if (property == null) {
             throw new EvaluationException(
                     ErrorCode.CONFIGURATION_INVALID, job.getFullName(), Messages.MigrationErrorNotParameterized());
@@ -332,7 +332,9 @@ public final class MigrationCoordinator {
         if (!pending.isEmpty()) {
             throw changed(job, Messages.MigrationErrorSourceGone());
         }
-        job.removeProperty(ParametersDefinitionProperty.class);
+        while (job.getProperty(ParametersDefinitionProperty.class) != null) {
+            job.removeProperty(ParametersDefinitionProperty.class);
+        }
         @SuppressWarnings({"rawtypes", "unchecked"})
         Job raw = job;
         raw.addProperty(new ParametersDefinitionProperty(definitions));
@@ -340,7 +342,7 @@ public final class MigrationCoordinator {
     }
 
     private static void replaceDefinition(Job<?, ?> job, String name, ParameterDefinition target) throws IOException {
-        ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        ParametersDefinitionProperty property = parameterProperty(job);
         if (property == null) {
             throw new EvaluationException(
                     ErrorCode.CONFIGURATION_INVALID, job.getFullName(), "Job is not parameterized.");
@@ -358,7 +360,9 @@ public final class MigrationCoordinator {
         if (!replaced) {
             throw changed(job, "Source definition no longer exists.");
         }
-        job.removeProperty(ParametersDefinitionProperty.class);
+        while (job.getProperty(ParametersDefinitionProperty.class) != null) {
+            job.removeProperty(ParametersDefinitionProperty.class);
+        }
         @SuppressWarnings({"rawtypes", "unchecked"})
         Job raw = job;
         raw.addProperty(new ParametersDefinitionProperty(definitions));
@@ -387,7 +391,7 @@ public final class MigrationCoordinator {
     }
 
     private static ParameterDefinition requireDefinition(Job<?, ?> job, String name) {
-        ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        ParametersDefinitionProperty property = parameterProperty(job);
         ParameterDefinition definition = property == null ? null : property.getParameterDefinition(name);
         if (definition == null) {
             throw new EvaluationException(
@@ -424,6 +428,35 @@ public final class MigrationCoordinator {
             }
         }
         return List.copyOf(names);
+    }
+
+    /** Equivalent duplicate properties are redundant; conflicting hidden definitions are ambiguous. */
+    private static ParametersDefinitionProperty parameterProperty(Job<?, ?> job) {
+        var properties = job.getAllProperties().stream()
+                .filter(ParametersDefinitionProperty.class::isInstance)
+                .map(ParametersDefinitionProperty.class::cast)
+                .toList();
+        if (properties.isEmpty()) {
+            return null;
+        }
+        var first = properties.get(0);
+        if (properties.size() > 1) {
+            var fingerprint = first.getParameterDefinitions().stream()
+                    .map(MigrationCoordinator::definitionDigest)
+                    .toList();
+            for (var property : properties) {
+                if (property.getClass() != ParametersDefinitionProperty.class
+                        || !fingerprint.equals(property.getParameterDefinitions().stream()
+                                .map(MigrationCoordinator::definitionDigest)
+                                .toList())) {
+                    throw new EvaluationException(
+                            ErrorCode.CONFIGURATION_INVALID,
+                            job.getFullName(),
+                            "Conflicting duplicate parameter properties must be normalized before migration.");
+                }
+            }
+        }
+        return first;
     }
 
     private static String jobDigest(Job<?, ?> job) {

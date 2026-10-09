@@ -37,7 +37,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 @Symbol("foundryBase64File")
 public final class FoundryBase64FileParameterValue extends AbstractFoundryFileParameterValue {
 
+    private static final long serialVersionUID = 1L;
     private String base64;
+    private long ingestionLimit = FileUploadService.MAX_BASE64_BYTES;
 
     @DataBoundConstructor
     public FoundryBase64FileParameterValue(String name) throws IOException {
@@ -55,19 +57,30 @@ public final class FoundryBase64FileParameterValue extends AbstractFoundryFilePa
     }
 
     FoundryBase64FileParameterValue(String name, InputStream src) throws IOException {
+        this(name, src, FileUploadService.MAX_BASE64_BYTES);
+    }
+
+    FoundryBase64FileParameterValue(String name, InputStream src, long limit) throws IOException {
         super(name);
-        base64 = FileUploadService.encode(src);
+        ingestionLimit = limit;
+        base64 = FileUploadService.encode(src, limit);
     }
 
     @DataBoundSetter
     public void setBase64(String base64) throws IOException {
-        FileUploadService.decode(base64);
+        FileUploadService.decode(base64, (Integer.MAX_VALUE / 4L) * 3);
         this.base64 = base64;
+        ingestionLimit = (Integer.MAX_VALUE / 4L) * 3;
     }
 
     @Override
     public void buildEnvironment(Run<?, ?> build, EnvVars env) {
         super.buildEnvironment(build, env);
+        try {
+            FileUploadService.decode(base64, FileUploadService.limitFor(build, this, effectiveIngestionLimit()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Base64 file violates the Job upload policy.", e);
+        }
         env.put(name, base64);
     }
 
@@ -78,16 +91,26 @@ public final class FoundryBase64FileParameterValue extends AbstractFoundryFilePa
 
     @Override
     protected InputStream open(Run<?, ?> build) throws IOException {
-        return new ByteArrayInputStream(FileUploadService.decode(base64));
+        return new ByteArrayInputStream(FileUploadService.decode(base64, effectiveIngestionLimit()));
     }
 
     @Override
     protected AbstractFoundryFileParameterValue copyForRebuild(Run<?, ?> build) throws IOException {
         var copy = new FoundryBase64FileParameterValue(name);
         copy.setBase64(base64);
+        copy.ingestionLimit = effectiveIngestionLimit();
         copy.setFilename(getFilename());
         copy.setDescription(getDescription());
         return copy;
+    }
+
+    @Override
+    protected void validateForUse(Run<?, ?> build) throws IOException {
+        FileUploadService.decode(base64, FileUploadService.limitFor(build, this, effectiveIngestionLimit()));
+    }
+
+    private long effectiveIngestionLimit() {
+        return ingestionLimit > 0 ? ingestionLimit : FileUploadService.MAX_BASE64_BYTES;
     }
 
     @Override

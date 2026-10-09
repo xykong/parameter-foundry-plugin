@@ -31,4 +31,7 @@ THE SOFTWARE.
     <f:entry field="description" title="${%Description}" help="/help/parameter/description.html">
         <f:textarea codemirror-mode="${app.markupFormatter.codeMirrorMode}" codemirror-config="${app.markupFormatter.codeMirrorConfig}" previewEndpoint="/markupFormatter/previewDescription"/>
     </f:entry>
+    <f:entry field="maxUploadBytes" title="Upload limit (bytes)">
+        <f:number min="0" step="1" value="${instance.configuredMaxUploadBytes}"/>
+    </f:entry>
 </j:jelly>

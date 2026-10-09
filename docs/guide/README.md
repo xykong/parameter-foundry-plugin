@@ -28,7 +28,8 @@ and [`../decisions/`](../decisions/).
 - Choice and structured input entry points: **`foundryChoice`** for value selection
   (single, multiple, or a two-dimensional table) and **`foundryForm`** for typed
   structured input.
-- Binary upload entry points: **`foundryBase64File`**, **`foundryStashedFile`**
+- Binary upload entry point: **`foundryFile`** (workspace, Base64 or stash),
+  compatible **`foundryBase64File`**, **`foundryStashedFile`**
   and **`withFoundryFileParameter`**, using Jenkins multipart transport.
 - The same definition behaves the same way in the browser, CLI, REST, Pipeline,
   Rebuild, and downstream builds, because every entry point calls one server-side

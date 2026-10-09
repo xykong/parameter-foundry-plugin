@@ -1,4 +1,1 @@
-<div>
-    Name of the parameter.
-    Within the wrapper, this environment variable will be bound to the path of a temporary file.
-</div>
+<div>File parameter to deliver. For Base64/stash the block receives an agent-local temporary path in this environment variable and removes its temporary directory on exit. Workspace mode writes to its configured relative path, keeps the original filename environment variable, and leaves the destination in place. Workspace identities may be safe relative paths inherited from Core.</div>

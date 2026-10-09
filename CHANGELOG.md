@@ -13,10 +13,16 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Unified file parameter with workspace, Base64 or stash delivery, configurable per-parameter upload limits, and Core File migration preserving workspace paths and original filenames.
 - Built-in Base64 File and Stashed File parameters, bounded multipart/CLI upload,
   Pipeline and Freestyle temporary-file wrappers, and retained upload Rebuild.
 - Class B migration targets for File Parameters uploads, with explicit upload
   limits, wrapper changes and historical dependency checks.
+
+### Fixed
+
+- File migrations normalize equivalent duplicate parameter properties so legacy controls cannot shadow the target; conflicting duplicates are refused before writes.
+- Rebuild after file-type migration requires a fresh upload instead of silently falling back to incompatible historical values.
 
 ## 0.4.270 - 2026-09-23
 

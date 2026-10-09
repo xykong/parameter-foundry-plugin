@@ -48,11 +48,13 @@ import org.jenkinsci.plugins.workflow.flow.StashManager;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /** Uploads have opaque IDs; retained content belongs to a build, never a caller-supplied path. */
-public final class FoundryStashedFileParameterValue extends AbstractFoundryFileParameterValue {
+public class FoundryStashedFileParameterValue extends AbstractFoundryFileParameterValue {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(FoundryStashedFileParameterValue.class.getName());
+    private long ingestionLimit = FileUploadService.MAX_STASHED_BYTES;
     private String uploadId;
     private String storedBuildId;
+    private transient String preparedStashBuildId;
 
     @DataBoundConstructor
     public FoundryStashedFileParameterValue(String name, FileItem file) throws IOException {
@@ -66,7 +68,12 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
     }
 
     FoundryStashedFileParameterValue(String name, InputStream src) throws IOException {
+        this(name, src, FileUploadService.MAX_STASHED_BYTES);
+    }
+
+    protected FoundryStashedFileParameterValue(String name, InputStream src, long limit) throws IOException {
         super(name);
+        ingestionLimit = FileUploadService.checkLimit(limit, false);
         store(src);
     }
 
@@ -75,7 +82,7 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
         File dir = uploadDirectory();
         Files.createDirectories(dir.toPath());
         try (OutputStream out = Files.newOutputStream(new File(dir, safeName()).toPath())) {
-            FileUploadService.copy(src, out, FileUploadService.MAX_STASHED_BYTES);
+            FileUploadService.copy(src, out, effectiveIngestionLimit());
         } catch (IOException | RuntimeException e) {
             FileUtils.deleteDirectory(dir);
             throw e;
@@ -100,6 +107,7 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
     public synchronized void buildEnvironment(Run<?, ?> build, EnvVars env) {
         super.buildEnvironment(build, env);
         try {
+            long limit = FileUploadService.limitFor(build, this, effectiveIngestionLimit());
             File target = retainedDirectory(build);
             File content = new File(target, safeName());
             if (!content.isFile()) {
@@ -113,25 +121,41 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
                     }
                     source = new File(retainedDirectory(original), safeName());
                 }
+                if (Files.size(source.toPath()) > limit) {
+                    throw new IOException("Retained upload exceeds the current Job limit.");
+                }
                 Files.createDirectories(target.toPath());
                 Files.copy(source.toPath(), content.toPath());
             }
-            StashManager.stash(
-                    build,
-                    name,
-                    new FilePath(target),
-                    new Launcher.LocalLauncher(TaskListener.NULL),
-                    env,
-                    TaskListener.NULL,
-                    safeName(),
-                    null,
-                    false,
-                    false);
+            if (Files.size(content.toPath()) > limit) {
+                throw new IOException("Upload exceeds the current Job limit.");
+            }
+            if (usesStash() && !build.getExternalizableId().equals(preparedStashBuildId)) {
+                StashManager.stash(
+                        build,
+                        name,
+                        new FilePath(target),
+                        new Launcher.LocalLauncher(TaskListener.NULL),
+                        env,
+                        TaskListener.NULL,
+                        safeName(),
+                        null,
+                        false,
+                        false);
+                preparedStashBuildId = build.getExternalizableId();
+            }
             if (storedBuildId == null) {
                 FileUtils.deleteDirectory(uploadDirectory());
             }
             storedBuildId = build.getExternalizableId();
         } catch (IOException e) {
+            if (storedBuildId == null) {
+                try {
+                    FileUtils.deleteDirectory(uploadDirectory());
+                } catch (IOException cleanup) {
+                    e.addSuppressed(cleanup);
+                }
+            }
             throw new IllegalStateException("Cannot prepare uploaded file for the build.", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -148,17 +172,15 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
     }
 
     @Override
-    protected FilePath createTempFile(
-            Run<?, ?> build, FilePath tempDir, EnvVars env, Launcher launcher, TaskListener listener)
-            throws IOException, InterruptedException {
-        FilePath target = tempDir.child(safeName());
-        try (InputStream in = open(build)) {
-            target.copyFrom(in);
+    protected void validateForUse(Run<?, ?> build) throws IOException {
+        if (build == null
+                || Files.size(new File(retainedDirectory(build), safeName()).toPath())
+                        > FileUploadService.limitFor(build, this, effectiveIngestionLimit())) {
+            throw new IOException("Upload exceeds the current Job limit or has no build context.");
         }
-        return target;
     }
 
-    private FoundryStashedFileParameterValue(String name, String uploadId, String storedBuildId) {
+    protected FoundryStashedFileParameterValue(String name, String uploadId, String storedBuildId) {
         super(name);
         this.uploadId = uploadId;
         this.storedBuildId = storedBuildId;
@@ -169,10 +191,23 @@ public final class FoundryStashedFileParameterValue extends AbstractFoundryFileP
         if (!new File(retainedDirectory(build), safeName()).isFile()) {
             throw new IOException("The original upload is no longer retained.");
         }
-        var copy = new FoundryStashedFileParameterValue(name, uploadId, build.getExternalizableId());
+        var copy = newRebuildValue(uploadId, build.getExternalizableId());
+        copy.ingestionLimit = effectiveIngestionLimit();
         copy.setFilename(getFilename());
         copy.setDescription(getDescription());
         return copy;
+    }
+
+    protected boolean usesStash() {
+        return true;
+    }
+
+    protected FoundryStashedFileParameterValue newRebuildValue(String id, String buildId) {
+        return new FoundryStashedFileParameterValue(name, id, buildId);
+    }
+
+    private long effectiveIngestionLimit() {
+        return ingestionLimit > 0 ? ingestionLimit : FileUploadService.MAX_STASHED_BYTES;
     }
 
     @Extension

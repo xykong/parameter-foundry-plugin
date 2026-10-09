@@ -1,45 +1,6 @@
 <div>
-    Binds an (alternative) file parameter to a local file near the workspace for convenience.
-    Parameters can be retrieved in other ways, depending on the specific parameter type.
-</div>
-<div>
-    <p>How to use it in a declarative pipeline:</p>
-    <pre>
-pipeline {
-  agent any
-  parameters {
-    foundryBase64File 'THEFILE'
-  }
-  stages {
-    stage('Example') {
-      steps {
-        withFoundryFileParameter('THEFILE') {
-          sh 'cat $THEFILE'
-        }
-      }
-    }
-  }
-}
-  </pre>
-</div>
-<div>
-    By default, there will be an error if there is no parameter for the build but you can ignore this error using the
-    parameter attribute <code>allowNoFile</code>. In this case your Pipeline must take into account the possibility that the file does not exist:
-    <pre>
-pipeline {
-  agent any
-  parameters {
-    foundryBase64File 'THEFILE'
-  }
-  stages {
-    stage('Example') {
-      steps {
-        withFoundryFileParameter(name:'THEFILE', allowNoFile: true) {
-          sh 'if [ -f "$THEFILE" ]; then cat $THEFILE; fi'
-        }
-      }
-    }
-  }
-}
-  </pre>
+  <p>Use this wrapper after allocating a Pipeline workspace, or configure it as a Freestyle build wrapper.</p>
+  <p>Base64 and stash modes bind the named environment variable to an agent-local temporary file and remove its directory when the block exits, including failure.</p>
+  <p>Workspace mode delivers to the definition's relative destination and retains Core filename environment semantics. It does not replace the variable with a temporary path or remove the destination. Freestyle already performs this delivery automatically.</p>
+  <p>Use <code>allowNoFile: true</code> for optional absence. A wrong-type value always fails. Delivery checks the current Job's file type and upload policy.</p>
 </div>

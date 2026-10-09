@@ -98,6 +98,13 @@ sourceFamilies:
     decisions: [decoded-size-limit, wrapper-symbol-update, historical-dependencies]
     verification: [multipart, base64, api, cli, pipeline, upstream, rebuild]
 
+  - plugin: jenkins-core
+    sourceClass: hudson.model.FileParameterDefinition
+    classification: B
+    target: foundryFile-workspace
+    decisions: [workspace-relative-destination, original-filename-environment, upload-limit, legacy-rebuild]
+    verification: [freestyle-auto-delivery, pipeline-wrapper, multipart, cli, traversal, symlink, rebuild]
+
 notes:
   - These fixtures describe business decisions and verification obligations, not source XML.
   - Class A/B entries may become automatic only after source getter mappings and version-specific fixtures are verified.

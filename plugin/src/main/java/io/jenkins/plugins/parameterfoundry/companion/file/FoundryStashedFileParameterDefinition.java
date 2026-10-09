@@ -31,6 +31,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class FoundryStashedFileParameterDefinition extends AbstractFoundryFileParameterDefinition {
+    private static final long serialVersionUID = 1L;
 
     @DataBoundConstructor
     public FoundryStashedFileParameterDefinition(String name) {
@@ -44,10 +45,8 @@ public final class FoundryStashedFileParameterDefinition extends AbstractFoundry
 
     @Override
     protected AbstractFoundryFileParameterValue createValue(String name, InputStream src) throws IOException {
-        return new FoundryStashedFileParameterValue(name, src);
+        return new FoundryStashedFileParameterValue(name, src, getMaxUploadBytes());
     }
-
-    // TODO equals/hashCode
 
     @Symbol("foundryStashedFile")
     @Extension

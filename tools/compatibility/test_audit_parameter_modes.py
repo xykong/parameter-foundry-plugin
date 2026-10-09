@@ -51,6 +51,13 @@ class AuditParserTest(unittest.TestCase):
             self.assertEqual("foundry-file", family)
             self.assertEqual(kind, mode)
 
+    def test_unified_file_reports_its_delivery_mode(self):
+        for mode in ("workspace", "base64", "stash"):
+            node = ET.fromstring(f"<io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition><deliveryMode>{mode}</deliveryMode></io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition>")
+            self.assertEqual(("foundry-file", mode), MODULE.classify_definition(node)[:2])
+        default = ET.fromstring("<io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition />")
+        self.assertEqual("workspace", MODULE.classify_definition(default)[1])
+
     def test_active_choices_cascade_reports_dependency_presence_only(self):
         node = ET.fromstring(
             """

@@ -2,6 +2,7 @@ package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
@@ -16,6 +17,13 @@ public final class MigrationSnippets {
     private MigrationSnippets() {}
 
     public static String forTarget(ParameterDefinition target) {
+        if (target instanceof FoundryFileParameterDefinition file) {
+            return "foundryFile(name: " + quote(file.getName()) + ", deliveryMode: " + quote(file.getDeliveryMode())
+                    + ("workspace".equals(file.getDeliveryMode())
+                            ? ", workspacePath: " + quote(file.getWorkspacePath())
+                            : "")
+                    + ", maxUploadBytes: " + file.getConfiguredMaxUploadBytes() + ")";
+        }
         if (target instanceof AbstractFoundryFileParameterDefinition) {
             String symbol = target instanceof FoundryStashedFileParameterDefinition
                     ? "foundryStashedFile"

@@ -157,7 +157,8 @@ class ApiSecurityIntegrationTest {
     void foundryBinaryDefinitionsRejectTypedJsonWithoutQueueing(JenkinsRule jenkins) throws Exception {
         var definitions = List.of(
                 new io.jenkins.plugins.parameterfoundry.companion.file.FoundryBase64FileParameterDefinition("SMALL"),
-                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition("LARGE"));
+                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition("LARGE"),
+                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition("WORKSPACE"));
         for (var definition : definitions) {
             var project = jenkins.createFreeStyleProject("binary-" + definition.getName());
             project.addProperty(new ParametersDefinitionProperty(definition));

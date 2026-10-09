@@ -77,6 +77,8 @@ help.
 
 ## Testing
 
+- [October 9 unified file delivery modes verification](./testing/file-delivery-modes-verification-2026-10-09.md)
+
 - [October 9 built-in file parameters verification](./testing/file-parameters-verification-2026-10-09.md)
 
 - [Parity test matrix](./testing/parity-test-matrix.md)

@@ -53,7 +53,7 @@ public final class FoundryFileParameterWrapper extends SimpleBuildWrapper {
 
     @DataBoundConstructor
     public FoundryFileParameterWrapper(String name) {
-        FileUploadService.checkName(name);
+        FileUploadService.checkParameterName(name);
         this.name = name;
     }
 
@@ -76,10 +76,7 @@ public final class FoundryFileParameterWrapper extends SimpleBuildWrapper {
             EnvVars initialEnvironment)
             throws IOException, InterruptedException {
         ParametersAction pa = build.getAction(ParametersAction.class);
-        if (pa == null) {
-            throw new AbortException("No parameters");
-        }
-        ParameterValue pv = pa.getParameter(name);
+        ParameterValue pv = pa == null ? null : pa.getParameter(name);
         if (pv == null && !allowNoFile) {
             throw new AbortException("No parameter named " + name);
         }
@@ -88,6 +85,10 @@ public final class FoundryFileParameterWrapper extends SimpleBuildWrapper {
         }
         if (pv == null && allowNoFile) {
             listener.getLogger().println("Skip file parameter as there is no parameter with name: '" + name + "'");
+            return;
+        }
+        if (pv instanceof FoundryWorkspaceFileParameterValue value) {
+            value.place(build, workspace);
             return;
         }
         FilePath tempDir = WorkspaceList.tempDir(workspace);

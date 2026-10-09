@@ -16,11 +16,20 @@ Ship a first-party file companion inside the single HPI (ADR 0016), isolated
 under `companion.file`. It owns binary ingestion and retention; choices, Forms,
 and Providers never interpret upload bytes as option values or controller paths.
 
-- `foundryBase64File`: at most 1 MiB decoded content; environment value is Base64.
-- `foundryStashedFile`: at most 100 MiB streamed content; stash and contained file
+- `foundryFile` is the unified entry: workspace, Base64 or stash delivery.
+- `maxUploadBytes=0` inherits 1 MiB for Base64 or 100 MiB for stored modes; a
+  positive byte limit overrides the default. The same policy applies to UI, REST,
+  CLI, downstream delivery and retained-upload Rebuild.
+- `foundryBase64File`: compatible Base64 entry; environment value is Base64.
+- `foundryStashedFile`: compatible streamed-content entry; stash and contained file
   retain the parameter name. `<name>_FILENAME` contains only the upload basename.
-- `withFoundryFileParameter`: reads either type into a unique temporary directory
+- `withFoundryFileParameter`: binds Base64/stash into a unique temporary directory
   on the selected agent and removes it when the wrapper exits, including failure.
+- Workspace delivery preserves Core relative destinations and original filename
+  environment keys. Freestyle places automatically; Pipeline uses the wrapper
+  after allocating its workspace. Ordinary targets are atomically replaced;
+  traversal, drive/stream syntax, reserved device names and symlinks fail closed.
+  Missing uploads leave existing workspace files untouched, matching Core.
 - UI and standard Jenkins multipart API ingestion share the same bounded service.
   CLI stdin and Base64 inputs use the same validation. No input accepts a local
   controller path, archive extraction, executable upload, or automatic MIME trust.
@@ -46,8 +55,9 @@ File simulations remain `NEEDS_MANUAL_CHECK`: option-value replay cannot prove
 binary equivalence. Historical source values are never retyped or rewritten. Rebuilding a legacy
 build against a migrated Job requires a fresh upload rather than Foundry reuse.
 Keep the old plugin while historical, queued/running or generated definitions
-still require its classes. Jenkins Core File parameters are a separate contract
-and are not automatically migrated by this decision.
+still require its classes. Core File definitions now have class B workspace-mode targets preserving their
+relative destination, parameter identity and original filename environment key.
+Legacy binary bytes are not converted automatically.
 
 ## Limits
 

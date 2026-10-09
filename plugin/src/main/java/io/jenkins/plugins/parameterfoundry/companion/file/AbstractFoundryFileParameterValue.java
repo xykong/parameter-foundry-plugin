@@ -44,12 +44,13 @@ import org.kohsuke.stapler.StaplerResponse2;
  * Implement either {@link #open} and/or {@link #createTempFile}.
  */
 public abstract class AbstractFoundryFileParameterValue extends ParameterValue {
+    private static final long serialVersionUID = 1L;
 
     private @CheckForNull String filename;
 
     protected AbstractFoundryFileParameterValue(String name) {
         super(name);
-        FileUploadService.checkName(name);
+        FileUploadService.checkParameterName(name);
     }
 
     public final String getFilename() {
@@ -64,6 +65,8 @@ public abstract class AbstractFoundryFileParameterValue extends ParameterValue {
 
     protected abstract InputStream open(@CheckForNull Run<?, ?> build) throws IOException, InterruptedException;
 
+    protected abstract void validateForUse(Run<?, ?> build) throws IOException;
+
     protected abstract AbstractFoundryFileParameterValue copyForRebuild(Run<?, ?> build) throws IOException;
 
     protected FilePath createTempFile(
@@ -73,6 +76,7 @@ public abstract class AbstractFoundryFileParameterValue extends ParameterValue {
             @NonNull Launcher launcher,
             @NonNull TaskListener listener)
             throws IOException, InterruptedException {
+        validateForUse(build);
         FilePath f = tempDir.child(safeName());
         try (InputStream is = open(build)) {
             f.copyFrom(is);
@@ -81,8 +85,7 @@ public abstract class AbstractFoundryFileParameterValue extends ParameterValue {
     }
 
     protected String safeName() {
-        FileUploadService.checkName(name);
-        return name;
+        return name.matches("[A-Za-z_][A-Za-z0-9_.-]{0,99}") ? name : "upload";
     }
 
     public void doDownload(@AncestorInPath Run<?, ?> build, StaplerResponse2 rsp) throws Exception {
@@ -102,8 +105,12 @@ public abstract class AbstractFoundryFileParameterValue extends ParameterValue {
     @Override
     public void buildEnvironment(Run<?, ?> build, EnvVars env) {
         String fname = getFilename();
-        if (fname != null) {
+        if (exportsFilenameSuffix() && fname != null) {
             env.put(name + "_FILENAME", fname);
         }
+    }
+
+    protected boolean exportsFilenameSuffix() {
+        return true;
     }
 }

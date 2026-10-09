@@ -176,7 +176,8 @@ def classify_definition(node: ET.Element) -> tuple[str, str, dict[str, Any]]:
         return "list-git-branches", mode or "UNKNOWN", detail
 
     if class_name.startswith("io.jenkins.plugins.parameterfoundry.companion.file."):
-        return "foundry-file", class_name.rsplit(".", 1)[-1], detail
+        kind = class_name.rsplit(".", 1)[-1]
+        return "foundry-file", (child_text(node, "deliveryMode") or "workspace") if kind == "FoundryFileParameterDefinition" else kind, detail
 
     if class_name.endswith("FileParameterDefinition") or class_name.endswith("StashedFileParameterDefinition"):
         return "file", class_name.rsplit(".", 1)[-1], detail

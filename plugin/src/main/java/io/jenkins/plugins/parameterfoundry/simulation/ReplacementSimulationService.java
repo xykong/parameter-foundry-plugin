@@ -130,10 +130,15 @@ public final class ReplacementSimulationService {
                     null,
                     "");
         }
-        List<ParameterObservation> recorded = observe(job, definition.getName(), maxBuilds);
+        ParameterDefinition target = plan.getTarget();
+        // Binary replay cannot prove upload lifecycle equivalence or safely evaluate source file values.
+        List<ParameterObservation> recorded = target
+                        instanceof
+                        io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition
+                ? List.of()
+                : observe(job, definition.getName(), maxBuilds);
         List<String> sourceValues = adapter.currentSourceValues(definition);
         String sourceDefault = adapter.currentSourceDefault(definition);
-        ParameterDefinition target = plan.getTarget();
         String targetType = target == null ? "" : target.getClass().getSimpleName();
         if (target == null) {
             String skeleton = plan.getTargetSkeleton();

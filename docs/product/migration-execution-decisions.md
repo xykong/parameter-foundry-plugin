@@ -84,7 +84,7 @@ Provider or Form.
 
 ### 6. File uploads migrate through the file companion
 
-ADR 0020 supersedes the native-retention decision. Base64 and Stashed File
+ADR 0020 supersedes the native-retention decision. Core workspace files, Base64 and Stashed File
 parameters have class B Foundry targets in the single HPI. Binary upload,
 stash/agent access and Rebuild need separate verification; value simulation does
 not prove them. Source-plugin historical dependencies still prevent uninstall.

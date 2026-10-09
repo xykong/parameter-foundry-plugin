@@ -57,7 +57,7 @@ has to be stated before an equivalent can be generated.
 | Validating String | `foundryForm` string field with regex and length |
 | REST List | REST Provider plus `foundryChoice` |
 | File Parameters Base64 / Stashed File | Class B target: `foundryBase64File` / `foundryStashedFile`; review limits, wrappers and binary lifecycle |
-| Jenkins Core File | Retain native; no automatic target |
+| Jenkins Core File | Class B `foundryFile` workspace target; preserve relative destination and original filename environment key |
 
 ## Boundaries
 

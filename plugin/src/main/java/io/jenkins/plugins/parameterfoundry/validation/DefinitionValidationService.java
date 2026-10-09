@@ -31,6 +31,16 @@ public final class DefinitionValidationService {
     public static DefinitionValidationResult validateStoredDefinition(ParameterDefinition definition) {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
+        if (definition
+                instanceof
+                io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition file) {
+            try {
+                file.validateConfiguration();
+            } catch (RuntimeException e) {
+                errors.add(e.getMessage());
+            }
+            return new DefinitionValidationResult(errors);
+        }
         if (definition instanceof FoundryFormParameterDefinition form) {
             if (form.getName() == null
                     || form.getName().isEmpty()

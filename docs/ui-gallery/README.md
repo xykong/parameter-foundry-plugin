@@ -5,6 +5,18 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Unified file delivery modes
+
+Snapshot `0.5.274-SNAPSHOT`: [verification](../testing/file-delivery-modes-verification-2026-10-09.md)
+and [browser report](../testing/results/foundry-file-modes-ui-lab.json).
+
+[![Three delivery modes](images/parameter-foundry/file-delivery-modes.png)](images/parameter-foundry/file-delivery-modes.png)
+
+[![Mobile file delivery](images/parameter-foundry/file-delivery-modes-mobile.png)](images/parameter-foundry/file-delivery-modes-mobile.png)
+
+[Configuration](images/parameter-foundry/file-delivery-configuration.png) ·
+[Core migration preview](images/parameter-foundry/core-file-migration-preview.png)
+
 ## Parameter Foundry file uploads
 
 Generated on a disposable Jenkins 2.568.2 controller without File Parameters.

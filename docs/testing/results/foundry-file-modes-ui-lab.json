@@ -1,0 +1,25 @@
+{
+  "browser": "Chromium 153.0.8010.12",
+  "os": "Darwin",
+  "desktop": "1440x1000",
+  "mobileViewport": "412x915",
+  "configurationViewport": "1440x2600",
+  "checks": [
+    "three-mode UI upload",
+    "Pipeline workspace filename and persistent path",
+    "Pipeline stash",
+    "temporary wrapper",
+    "download bytes",
+    "controller restart and Rebuild retained upload",
+    "Freestyle automatic workspace delivery",
+    "mobile overflow and upload submission",
+    "source File Parameters absent",
+    "configuration save and upload limit rejection",
+    "Core migration clone/build/rollback",
+    "duplicate-property normalization",
+    "legacy Rebuild rejection and fresh upload",
+    "binary schema ownership",
+    "typed JSON 409"
+  ],
+  "passed": true
+}

@@ -50,6 +50,6 @@ public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
     }
 
     private static MigrationText verificationFixture(ParameterDefinition definition) {
-        return MigrationText.of("MigrationCaseStashedFile", definition.getName());
+        return MigrationText.of("MigrationCaseFoundryFile", definition.getName());
     }
 }

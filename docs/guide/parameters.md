@@ -176,4 +176,4 @@ Errors use stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`; see
 
 ## Binary uploads
 
-Use `foundryBase64File` or `foundryStashedFile` for file content. Their Name, Description, limits, transports and Pipeline wrapper are documented in [File parameters](./file-parameters.md).
+Use `foundryFile` with workspace, base64 or stash delivery for file content. The earlier `foundryBase64File` and `foundryStashedFile` definitions remain compatible. Their Name, Description, limits, transports and Pipeline wrapper are documented in [File parameters](./file-parameters.md).

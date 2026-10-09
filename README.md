@@ -11,7 +11,7 @@ The current development branch implements the roadmap through the `2.0`
 foundation: static and governed dynamic choices, reactive dependencies and
 Provider snapshots, typed Foundry Forms, migration execution and rollback,
 trusted companion extension contracts, reference Renderer and sandboxed Script
-Provider companions, built-in Base64/Stashed file parameters, source migration
+Provider companions, built-in workspace/Base64/stash file parameters, source migration
 boundaries, and retirement reporting.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released

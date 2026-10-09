@@ -128,6 +128,29 @@ public final class MigrationPreview {
     }
 
     private static String summarize(ParameterDefinition target) {
+        if (target
+                instanceof
+                io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition file) {
+            String mode = file
+                            instanceof
+                            io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition unified
+                    ? unified.getDeliveryMode()
+                    : file
+                                    instanceof
+                                    io.jenkins.plugins.parameterfoundry.companion.file
+                                            .FoundryStashedFileParameterDefinition
+                            ? "stash"
+                            : "base64";
+            String path = file
+                                    instanceof
+                                    io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDefinition
+                                            unified
+                            && "workspace".equals(mode)
+                    ? unified.getWorkspacePath()
+                    : "—";
+            return Messages.MigrationPreviewFileSummary(mode, path, String.valueOf(file.getMaxUploadBytes()));
+        }
+
         if (!(target instanceof AbstractFoundryParameterDefinition foundry)) {
             return Messages.MigrationPreviewNoTarget();
         }

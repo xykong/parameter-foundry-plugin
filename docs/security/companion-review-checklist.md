@@ -55,7 +55,8 @@ demonstrate the local contract but do not approve the larger attack surface.
 
 - [x] First-party file code is isolated under `companion.file` in the single HPI.
 - [x] Names are validated and storage IDs are generated UUIDs; input cannot select controller paths.
-- [x] Shared ingestion bounds Base64 decoded bytes and streamed stashed content.
+- [x] Shared ingestion applies configured decoded-byte limits to UI/API/CLI, downstream delivery and Rebuild.
+- [x] Workspace destinations reject traversal, drive/stream paths, device names and symlinks; staged agent writes atomically replace ordinary files.
 - [x] Filenames are reduced to basenames and never extracted or executed.
 - [x] Downloads enforce Job read permission and attachment/octet-stream headers.
 - [x] Wrapper directories are unique, agent-local and removed on exit.
