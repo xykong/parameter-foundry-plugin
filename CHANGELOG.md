@@ -11,6 +11,12 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.6.282 - 2026-10-09
 
+The HPI is `dist/parameter-foundry-0.6.282.hpi` (SHA-256
+`ce9fcd6ee26675519e8a8079d970d000280c78db62066974254fb400dde5e99b`,
+596,422 bytes), built from release commit `fc6a13e`. Full regression passed
+322 tests; final related regression passed 16 tests after all changes. The exact
+release HPI passed four transport/configuration browser checks.
+
 ### Added
 
 - Static Extended Choice multiple-selection transport compatibility, preserving legacy repeated REST fields, comma-separated CLI input, delimited form JSON and repeated submitted environment exports.

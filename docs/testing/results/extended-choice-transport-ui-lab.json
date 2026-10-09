@@ -7,6 +7,7 @@
     "legacy delimited form JSON with repeated export",
     "standard combined field remains unexpanded"
   ],
-  "pluginVersion": "0.6.281-SNAPSHOT",
-  "artifactSha256": "328df25f6cf3a506129b4d94e2cc87320e3c8b376af06f0c2434a7ab4bc9787a"
+  "pluginVersion": "0.6.282",
+  "artifactSha256": "ce9fcd6ee26675519e8a8079d970d000280c78db62066974254fb400dde5e99b",
+  "sourceCommit": "fc6a13e535599a0b568ff506eb58b83e130dcc53"
 }

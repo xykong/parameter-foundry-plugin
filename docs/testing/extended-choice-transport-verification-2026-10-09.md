@@ -32,3 +32,8 @@ uses the current HPI and `extended-choice-transport-init.groovy`. Exact tagged
 release verification must run again on the published artifact before production
 deployment. Production migration and normal-operation acceptance are separate
 gates; this candidate report does not prove that all production Jobs were migrated.
+
+Release 0.6.282 from commit `fc6a13e` repeated all four browser checks with the
+exact published HPI. Artifact SHA-256:
+`ce9fcd6ee26675519e8a8079d970d000280c78db62066974254fb400dde5e99b`
+(596,422 bytes). The release evidence is included in the linked JSON result.
