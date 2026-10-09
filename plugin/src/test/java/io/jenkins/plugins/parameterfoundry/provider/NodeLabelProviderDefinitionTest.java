@@ -68,6 +68,34 @@ class NodeLabelProviderDefinitionTest {
         assertNotEquals(nodes.configurationDigest(), labels.configurationDigest());
     }
 
+    @Test
+    void configuredNodesRetainControllerOrderAndZeroExecutorNodes(JenkinsRule jenkins) throws Exception {
+        var node = jenkins.createSlave("zero-executor", "", null);
+        node.setNumExecutors(0);
+        jenkins.jenkins.addNode(node);
+        var provider = new NodeLabelProviderDefinition("configured");
+        provider.setSource(NodeLabelProviderDefinition.SOURCE_CONFIGURED_NODES);
+        var expected = new java.util.LinkedHashSet<String>();
+        expected.add(jenkins.jenkins.getSelfLabel().getName());
+        jenkins.jenkins.getNodes().forEach(item -> expected.add(item.getNodeName()));
+        org.junit.jupiter.api.Assertions.assertEquals(List.copyOf(expected), values(provider.load(context())));
+        assertTrue(values(provider.load(context())).contains("zero-executor"));
+        provider.setIncludeBuiltIn(false);
+        org.junit.jupiter.api.Assertions.assertEquals(
+                jenkins.jenkins.getNodes().stream()
+                        .map(hudson.model.Node::getNodeName)
+                        .toList(),
+                values(provider.load(context())));
+    }
+
+    @Test
+    void configuredEmptySourceDoesNotInventAChoice(JenkinsRule jenkins) throws Exception {
+        var provider = new NodeLabelProviderDefinition("configured-empty");
+        provider.setSource(NodeLabelProviderDefinition.SOURCE_CONFIGURED_NODES);
+        provider.setIncludeBuiltIn(false);
+        org.junit.jupiter.api.Assertions.assertEquals(List.of(), provider.load(context()));
+    }
+
     private static ProviderLoadContext context() {
         ProviderRequest request = new ProviderRequest(
                 null,

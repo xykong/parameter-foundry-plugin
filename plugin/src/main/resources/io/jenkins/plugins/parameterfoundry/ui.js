@@ -103,7 +103,7 @@
     var dependencyJson = field.querySelector("[data-up-dependencies-json]");
     if (snapshot) {
       // Legacy Git accepts literal revisions independently of the list's lifetime.
-      snapshot.value = field.dataset.standardApiInputMode === "list-git-branches" ? "" : snapshotId || "";
+      snapshot.value = ["list-git-branches", "active-choices"].includes(field.dataset.standardApiInputMode) ? "" : snapshotId || "";
     }
     if (dependencyJson) {
       dependencyJson.value = JSON.stringify(dependencies || {});
@@ -876,7 +876,7 @@
       update(formatMessage(localized(field, "selectionUpdated", "Selection updated."), []));
     }
 
-    if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "extended-choice") {
+    if (field.dataset.required !== "true" && !["extended-choice", "active-choices"].includes(field.dataset.standardApiInputMode)) {
       list.appendChild(
         optionRow(
           field,
@@ -917,7 +917,7 @@
 
   function enhanceSingle(field, options, initialValues) {
     var legacyGit = field.dataset.standardApiInputMode === "list-git-branches";
-    var legacyExtended = field.dataset.standardApiInputMode === "extended-choice";
+    var legacyExtended = ["extended-choice", "active-choices"].includes(field.dataset.standardApiInputMode);
     var allowCustom = field.dataset.allowCustom === "true";
     var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
     if (wantsRadio && (legacyExtended || options.length <= MAX_RADIO_OPTIONS)) {
@@ -982,7 +982,7 @@
         if (gitSelected) selected.add(gitSelected.value);
       }
       removeChildren(select);
-      if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches" && field.dataset.standardApiInputMode !== "extended-choice") {
+      if (field.dataset.required !== "true" && field.dataset.standardApiInputMode !== "list-git-branches" && !["extended-choice", "active-choices"].includes(field.dataset.standardApiInputMode)) {
         var none = document.createElement("option");
         none.value = "";
         none.textContent = localized(field, "noneOption", "None");
@@ -1508,7 +1508,7 @@
     var providerFields = Array.prototype.slice.call(
       form.querySelectorAll('[data-parameter-foundry][data-provider-backed="true"]'),
     ).filter(function (field) {
-      return field.dataset.standardApiInputMode !== "list-git-branches";
+      return !["list-git-branches", "active-choices"].includes(field.dataset.standardApiInputMode);
     });
     if (!providerFields.length) {
       return;
@@ -1589,6 +1589,9 @@
         if (field.dataset.standardApiInputMode === "list-git-branches" && !preserveSelection) {
           var gitSelected = gitSelectedOption(field, options);
           initialValues = gitSelected ? [gitSelected.value] : [];
+        }
+        if (field.dataset.standardApiInputMode === "active-choices" && !preserveSelection) {
+          initialValues = field.dataset.defaultMode === "none" ? [] : options.length ? [options[0].value] : [];
         }
         removeRefreshStatus(field);
         Array.prototype.forEach.call(

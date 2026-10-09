@@ -1,0 +1,496 @@
+{
+  "sourceVersion": "2.8.10",
+  "sourceSha256": "3875250959e41c849894eb719b06b8e4a5fee4c6dae15d92a34b8415d9e0d35f",
+  "cases": [
+    {
+      "type": "PT_RADIO",
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "built-in",
+        "literal": "built-in",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "built-in",
+        "literal": "built-in",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_RADIO",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "built-in",
+        "literal": "built-in",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "built-in",
+        "literal": "built-in",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      }
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      }
+    }
+  ]
+}

@@ -1,6 +1,14 @@
 <div>
   <p>How <code>buildWithParameters</code> decodes this parameter:</p>
 <ul>
+  <li><code>active-choices</code> is unflagged single string compatibility. CLI strings remain
+    literal (null becomes empty); standard missing fields use the independent API default,
+    exactly one field stays literal, and zero/multiple fields reject. Form missing value
+    becomes empty, JSON null becomes the string null, arrays comma-join and other values
+    stringify. File payloads require Foundry File. UI and API defaults are independent;
+    Core string values retain history, queue equality and uppercase environment aliases.
+    Required/custom/disabled controls, dependencies and tables are unavailable. Supplied
+    snapshots remain validated; ordinary/typed explicit inputs stay strict.</li>
   <li><code>repeated</code> expects one field per value.</li>
   <li>For static single choices, <code>extended-choice</code> filters/trims CLI comma fields and
     repeated standard fields, then joins supported values using the delimiter into one scalar.

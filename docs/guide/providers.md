@@ -20,6 +20,7 @@ through a snapshot, and reject values that are no longer valid.
 |---|---|---|
 | Static | The list rarely changes and belongs to Jenkins | Options |
 | Node / label | The list is the controller's agents or labels (the governed replacement for an Active Choices script that reads `Jenkins.instance.nodes`) | Source (agent or label names), include/exclude pattern, built-in node, online only |
+| Configured node order (unreleased) | Reproduce a built-in-first configured node list without executing source code | `source: configured-nodes`; built-in first, configured order, offline/zero-executor nodes unless online-only is requested |
 | Matrix | A table crosses two governed lists, for example the registries of a Job against the agents that must log into them | Rows, columns, cell templates, cells per row |
 | Dependency mapping | The option list depends on the selected value of another parameter (the governed replacement for an Active Choices cascade that branches on a parameter) | Dependency parameter, cases (value → options), options for every other value |
 | Managed config | The list lives in a Config File Provider file (YAML or JSON) | Config ID, format, path mapping |

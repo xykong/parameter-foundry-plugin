@@ -12,6 +12,7 @@
   <f:entry title="Offer" field="source">
     <select name="_.source" class="jenkins-select__input select">
       <option value="nodes" selected="${instance.source == 'nodes' ? 'selected' : null}">Agent names</option>
+      <option value="configured-nodes" selected="${instance.source == 'configured-nodes' ? 'selected' : null}">Configured node order (built-in first)</option>
       <option value="labels" selected="${instance.source == 'labels' ? 'selected' : null}">Label names</option>
     </select>
   </f:entry>

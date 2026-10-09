@@ -160,6 +160,11 @@ public final class ProviderSnapshotStore {
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
+            if (choice.isActiveChoicesSingleInput())
+                value.append('\u0000')
+                        .append(choice.getActiveChoicesApiDefaultMode())
+                        .append('\u0000')
+                        .append(choice.getActiveChoicesApiDefaultLiteral());
             value.append('\u0000').append(choice.getSelectionMode());
             value.append('\u0000').append(choice.getGitSelectionMode());
             if (choice.isMultiple()) {

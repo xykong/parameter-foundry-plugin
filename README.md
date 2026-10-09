@@ -24,6 +24,10 @@ through `legacyDefaultLiteral`, literal form input and editable historical Rebui
 values and static single transport compatibility. Source/browser verification
 is recorded in the testing guide. Empty-token transport preserves the characterized
 source contract; per-Job and exact-release gates still apply.
+The unreleased `0.9.298-SNAPSHOT` candidate adds an explicit unflagged Active Choices
+single transport path and configured-node order. Verification is pending; use
+[the observed source contract](./docs/research/active-choices-single-transport-contract.md)
+as a migration gate.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

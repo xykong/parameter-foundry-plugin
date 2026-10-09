@@ -123,6 +123,7 @@
         <select class="jenkins-select__input" name="parameter.standardApiInputMode">
           <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Strict single value</option>
           <option value="extended-choice" selected="${instance.standardApiInputMode == 'extended-choice' ? 'selected' : null}">Extended Choice compatibility</option>
+          <option value="active-choices" selected="${instance.standardApiInputMode == 'active-choices' ? 'selected' : null}">Active Choices single compatibility</option>
           <option value="list-git-branches" selected="${instance.standardApiInputMode == 'list-git-branches' ? 'selected' : null}">List Git Branches compatibility</option>
         </select>
       </f:entry>
@@ -134,6 +135,15 @@
       </f:entry>
       <f:entry title="Delimiter" field="delimiter">
         <f:textbox name="parameter.delimiter" value="${instance.delimiter}" />
+      </f:entry>
+      <f:entry title="Active Choices API default mode" field="activeChoicesApiDefaultMode">
+        <select name="parameter.activeChoicesApiDefaultMode" class="jenkins-select__input">
+          <option value="first" selected="${instance.activeChoicesApiDefaultMode == 'first' ? 'selected' : null}">First ordered option</option>
+          <option value="literal" selected="${instance.activeChoicesApiDefaultMode == 'literal' ? 'selected' : null}">Literal default</option>
+        </select>
+      </f:entry>
+      <f:entry title="Active Choices API default literal" field="activeChoicesApiDefaultLiteral">
+        <f:textbox name="parameter.activeChoicesApiDefaultLiteral" value="${instance.activeChoicesApiDefaultLiteral}" />
       </f:entry>
       <f:entry title="Git dropdown selection" field="gitSelectionMode">
         <select class="jenkins-select__input" name="parameter.gitSelectionMode">

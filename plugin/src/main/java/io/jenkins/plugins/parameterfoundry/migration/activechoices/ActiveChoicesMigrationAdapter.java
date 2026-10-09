@@ -163,20 +163,38 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
         if (normalized.contains("nodes") || normalized.contains("getselflabel")) {
             labels = false;
         }
-        String source = labels ? "labels" : "nodes";
+        String type = readString(definition, "getChoiceType");
+        boolean configuredSingle = !labels
+                && (PT_RADIO.equals(type) || "PT_SINGLE_SELECT".equals(type))
+                && normalized.contains("getselflabel")
+                && normalized.contains("nodes.collect")
+                && !normalized.contains(":selected")
+                && !normalized.contains(":disabled")
+                && !normalized.contains("sort")
+                && !normalized.contains("online")
+                && !normalized.contains("offline")
+                && !readBoolean(definition, "getFilterable", false)
+                && !readBoolean(definition, "getCacheDefaultValue", false);
+        String source = labels ? "labels" : configuredSingle ? "configured-nodes" : "nodes";
         String providerId = "TODO-node-provider";
         String skeleton = "foundryNodeProvider(\n"
                 + "    id: '"
                 + providerId
                 + "',\n    source: '"
                 + source
-                + "'\n)\n"
+                + (configuredSingle
+                        ? "',\n    includeBuiltIn: true,\n    onlineOnly: false,\n    cacheTtlSeconds: 0,\n    failurePolicy: 'empty'\n)\n"
+                        : "'\n)\n")
                 + "foundryChoice(\n"
                 + "    name: "
                 + quote(definition.getName())
                 + ",\n    providerId: '"
                 + providerId
-                + "',\n    renderer: 'searchable'\n)";
+                + (configuredSingle
+                        ? "',\n    standardApiInputMode: 'active-choices',\n    activeChoicesApiDefaultMode: 'first',\n    defaultMode: '"
+                                + (PT_RADIO.equals(type) ? "none" : "first") + "',\n    renderer: '"
+                                + (PT_RADIO.equals(type) ? "radio" : "select") + "'\n)"
+                        : "',\n    renderer: 'searchable'\n)");
         java.util.Map<MigrationText, MigrationText> facts = new java.util.LinkedHashMap<>();
         facts.put(MigrationText.of("MigrationFactSourceElement"), MigrationText.value("Active Choices node list"));
         facts.put(MigrationText.of("MigrationFactNodeListing"), MigrationText.value(source));

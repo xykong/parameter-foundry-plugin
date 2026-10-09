@@ -108,3 +108,12 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - [Core architecture](docs/architecture/core-architecture.md)
 - [Architecture decisions](docs/decisions/)
 - [Production verification records](docs/testing/)
+
+- Unreleased 0.9.298-SNAPSHOT: single `standardApiInputMode: active-choices` preserves
+  unflagged source string transports and Core StringParameterValue history/queue/env aliases.
+  `activeChoicesApiDefaultMode: first|literal` and `activeChoicesApiDefaultLiteral`
+  separate omitted API defaults from radio/dropdown UI defaults. Ordinary/typed explicit
+  values stay strict; supplied snapshots remain validated. No source scripts execute.
+  Node Provider `source: configured-nodes` preserves built-in-first configured order,
+  including offline/zero-executor nodes. Existing nodes/labels modes retain behavior.
+  Verification and production migration remain pending; see UP-AC-043.

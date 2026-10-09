@@ -1,0 +1,142 @@
+{
+  "candidateVersion": "0.9.298-SNAPSHOT (private-c38bf059-root)",
+  "artifactSha256": "1d3887b98129c21e272c62d874b71b014256dbc6c9419e177ca4383f7054e85a",
+  "artifactBytes": 620987,
+  "factoryCases": 44,
+  "matches": 44,
+  "viewsAndRuntimeChecks": [
+    {
+      "type": "PT_RADIO",
+      "httpStatus": 405,
+      "values": [
+        {
+          "value": "built-in",
+          "checked": false,
+          "selected": false
+        },
+        {
+          "value": "agent-z",
+          "checked": false,
+          "selected": false
+        },
+        {
+          "value": "agent-a",
+          "checked": false,
+          "selected": false
+        }
+      ]
+    },
+    {
+      "type": "PT_SINGLE_SELECT",
+      "httpStatus": 405,
+      "values": [
+        {
+          "value": "built-in",
+          "checked": false,
+          "selected": true
+        },
+        {
+          "value": "agent-z",
+          "checked": false,
+          "selected": false
+        },
+        {
+          "value": "agent-a",
+          "checked": false,
+          "selected": false
+        }
+      ]
+    },
+    {
+      "target": true,
+      "type": "PT_RADIO",
+      "values": [
+        {
+          "value": "built-in",
+          "checked": false
+        },
+        {
+          "value": "agent-z",
+          "checked": false
+        },
+        {
+          "value": "agent-a",
+          "checked": false
+        }
+      ]
+    },
+    {
+      "target": true,
+      "type": "PT_SINGLE_SELECT",
+      "values": [
+        {
+          "value": "built-in",
+          "selected": true
+        },
+        {
+          "value": "agent-z",
+          "selected": false
+        },
+        {
+          "value": "agent-a",
+          "selected": false
+        }
+      ]
+    },
+    {
+      "dynamic": true,
+      "type": "PT_RADIO",
+      "values": [
+        {
+          "value": "built-in",
+          "checked": false
+        },
+        {
+          "value": "agent-a",
+          "checked": false
+        },
+        {
+          "value": "agent-z",
+          "checked": false
+        }
+      ],
+      "zeroCacheSnapshotOmitted": true
+    },
+    {
+      "dynamic": true,
+      "type": "PT_SINGLE_SELECT",
+      "values": [
+        {
+          "value": "built-in",
+          "selected": true
+        },
+        {
+          "value": "agent-a",
+          "selected": false
+        },
+        {
+          "value": "agent-z",
+          "selected": false
+        }
+      ],
+      "zeroCacheSnapshotOmitted": true
+    },
+    {
+      "upstreamCoreStringCallerPreserved": true,
+      "pipelineParamsRemainString": true,
+      "neutralPipelineBuilds": 2
+    },
+    {
+      "oldUnoCoreStringHistoryRebuildAfterDefinitionMigration": true,
+      "neutralLegacyEchoBuilds": 2
+    },
+    {
+      "realHttpLiteralPreserved": true,
+      "coreStringRebuildEditableAndEscaped": true,
+      "neutralEchoBuilds": 2
+    }
+  ],
+  "sourceJobScriptsExecuted": false,
+  "syntheticLiteralScriptOnly": true,
+  "businessJobsExecuted": false
+}

@@ -70,8 +70,10 @@ class ActiveChoicesMigrationAdapterTest {
         assertEquals(MigrationClassification.B, plan.getClassification());
         assertNull(plan.getTarget());
         assertTrue(plan.getTargetSkeleton().contains("foundryNodeProvider"), plan.getTargetSkeleton());
-        assertTrue(plan.getTargetSkeleton().contains("source: 'nodes'"), plan.getTargetSkeleton());
-        assertEquals("nodes", plan.getFacts().get("Offered node source"));
+        assertTrue(plan.getTargetSkeleton().contains("source: 'configured-nodes'"), plan.getTargetSkeleton());
+        assertEquals("configured-nodes", plan.getFacts().get("Offered node source"));
+        assertTrue(plan.getTargetSkeleton().contains("standardApiInputMode: 'active-choices'"));
+        assertTrue(plan.getTargetSkeleton().contains("cacheTtlSeconds: 0"));
     }
 
     @Test

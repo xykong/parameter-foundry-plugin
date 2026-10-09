@@ -23,7 +23,7 @@
          data-multiple="${it.multiple}" data-required="${it.required}" data-option-count="${it.optionCount}"
          data-provider-backed="${it.providerBacked}" data-depends-on="${it.dependsOnText}"
          data-allow-custom="${it.allowCustomValue}"
-         data-standard-api-input-mode="${it.standardApiInputMode}"
+         data-standard-api-input-mode="${it.standardApiInputMode}" data-default-mode="${it.defaultMode}"
          data-git-selection-mode="${it.gitSelectionMode}" data-git-default-value="${it.defaultValue}"
          data-custom-pattern="${it.customValuePattern}"
          data-custom-max-length="${it.customValueMaxLength}"
@@ -135,7 +135,7 @@
           </j:when>
           <j:otherwise>
             <input type="hidden" name="value" data-up-fallback-json-value="true"
-                   value="${it.defaultParameterValue.value}" />
+                   value="${it.uiDefaultValue}" />
             <j:if test="${it.fallbackTruncated}">
               <div class="parameter-foundry-fallback-warning">
                 This parameter has ${it.optionCount} options. Without JavaScript, the first
@@ -145,7 +145,7 @@
             </j:if>
             <j:choose>
               <j:when test="${it.renderer == 'radio'}">
-                <j:if test="${!it.required and !it.extendedChoiceSingleInput}">
+                <j:if test="${!it.required and !it.extendedChoiceSingleInput and !it.activeChoicesSingleInput}">
                   <label>
                     <input type="radio" name="${it.name}" data-up-native-value="true" value=""
                            checked="${it.defaultParameterValue.value == null ? 'checked' : null}" />
@@ -168,7 +168,7 @@
                 <div class="jenkins-select">
                   <select class="jenkins-select__input" name="${it.name}" data-up-native-value="true"
                           size="${it.renderer == 'list' ? it.listVisibleRows : null}">
-                    <j:if test="${!it.required and !it.extendedChoiceSingleInput}">
+                    <j:if test="${!it.required and !it.extendedChoiceSingleInput and !it.activeChoicesSingleInput}">
                       <option value="" selected="${it.defaultParameterValue.value == null ? 'selected' : null}">None</option>
                     </j:if>
                     <j:forEach var="option" items="${it.fallbackChoices}">

@@ -76,6 +76,14 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (!Set.of("first", "literal").contains(choice.getActiveChoicesApiDefaultMode()))
+                errors.add("Active Choices API default mode must be first or literal.");
+            if (!choice.isActiveChoicesSingleInput()
+                    && (!"first".equals(choice.getActiveChoicesApiDefaultMode())
+                            || !choice.getActiveChoicesApiDefaultLiteral().isEmpty()))
+                errors.add("Active Choices API defaults require single compatibility mode.");
+            if ("active-choices".equals(choice.getStandardApiInputMode()) && choice.isMultiple())
+                errors.add("Active Choices compatibility is single only.");
             if (choice.isLegacyEmptyChoiceAllowed() && !"extended-choice".equals(choice.getStandardApiInputMode())) {
                 errors.add("Legacy empty choice transport requires Extended Choice compatibility.");
             }
@@ -157,7 +165,9 @@ public final class DefinitionValidationService {
             }
             return;
         }
-        if (definition.getSelectableOptions().isEmpty()) {
+        if (definition.getSelectableOptions().isEmpty()
+                && !(definition instanceof FoundryChoiceParameterDefinition choice
+                        && choice.isActiveChoicesSingleInput())) {
             errors.add("At least one option is required");
             return;
         }
@@ -205,6 +215,17 @@ public final class DefinitionValidationService {
                 errors.add(
                         "List Git Branches compatibility does not support custom-value controls or required validation.");
             }
+        }
+        if (definition.isActiveChoicesSingleInput()) {
+            if (!"string".equals(definition.getEnvironmentExport())
+                    || definition.getTable() != null
+                    || !definition.getDependsOn().isEmpty()
+                    || definition.isRequired()
+                    || definition.isAllowCustomValue()
+                    || "explicit".equals(definition.getDefaultMode())
+                    || definition.getChoices().stream().anyMatch(option -> option != null && option.isDisabled()))
+                errors.add(
+                        "Active Choices single compatibility requires unflagged choices without dependencies, required or custom-value controls.");
         }
         if ("extended-choice".equals(definition.getStandardApiInputMode())) {
             if (definition.getChoices().stream().anyMatch(Option::isDisabled)) {

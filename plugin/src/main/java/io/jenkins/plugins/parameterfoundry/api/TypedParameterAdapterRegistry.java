@@ -64,6 +64,8 @@ final class TypedParameterAdapterRegistry {
             schema.put("standardApiInputMode", single.getStandardApiInputMode());
             schema.put("legacyEmptyChoiceAllowed", single.isLegacyEmptyChoiceAllowed());
             schema.put("gitSelectionMode", single.getGitSelectionMode());
+            schema.put("activeChoicesApiDefaultMode", single.getActiveChoicesApiDefaultMode());
+            schema.put("activeChoicesApiDefaultLiteral", single.getActiveChoicesApiDefaultLiteral());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
             schema.put("renderer", single.getRenderer());
@@ -111,6 +113,18 @@ final class TypedParameterAdapterRegistry {
             if (choice.isMultiple()) {
                 return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
             }
+            if (!present && choice.isActiveChoicesSingleInput()) {
+                var resolved = ProviderSnapshotStore.get()
+                        .resolveForBuild(
+                                job,
+                                choice,
+                                dependencies,
+                                snapshotId,
+                                operation,
+                                "first".equals(choice.getActiveChoicesApiDefaultMode()));
+                return io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesSingleCompatibility.defaultValue(
+                        choice, resolved.options(), resolved.metadata());
+            }
             if (!present && choice.isExtendedChoiceSingleInput()) {
                 ProviderSnapshotStore.get().resolveForBuild(job, choice, dependencies, snapshotId, operation);
                 return choice.getDefaultParameterValue();
@@ -122,7 +136,13 @@ final class TypedParameterAdapterRegistry {
                     ? (value == null ? DecodedInput.present(List.of()) : DecodedInput.present(List.of(value)))
                     : DecodedInput.absent();
             ResolvedProviderOptions resolved = ProviderSnapshotStore.get()
-                    .resolveForBuild(job, choice, dependencies, snapshotId, operation, choice.needsOptions(input));
+                    .resolveForBuild(
+                            job,
+                            choice,
+                            dependencies,
+                            snapshotId,
+                            operation,
+                            choice.isActiveChoicesSingleInput() || choice.needsOptions(input));
             String canonical = ParameterEvaluationService.evaluateSingle(choice, input, resolved.options());
             return FoundryChoiceParameterValue.single(
                     choice.getName(),

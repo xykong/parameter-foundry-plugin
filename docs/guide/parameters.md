@@ -38,6 +38,8 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `defaultValue` | value | — | Single selection, `explicit` only |
 | `defaultValues` | value list | empty | Multiple selection, `explicit` only |
 | `legacyDefaultLiteral` | exact string | unset | Static Extended Choice compatibility: preserve omitted-input environment default separately from selectable UI defaults |
+| `activeChoicesApiDefaultMode` | `first`, `literal` | `first` | Unreleased Active Choices single compatibility: omitted API input uses first ordered option or exact literal, independently of UI defaults |
+| `activeChoicesApiDefaultLiteral` | exact string | empty | Literal API default; retains empty and whitespace strings without changing visible choices |
 | `legacyEmptyChoiceAllowed` | boolean | `false` | Extended Choice compatibility only: accept empty CLI/standard tokens from leading/internal source entries without displaying empty choices |
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
@@ -175,6 +177,22 @@ CLI/standard fields preserve their separator positions, while visible options
 and canonical multiple values stay non-empty. Typed explicit inputs stay strict;
 form strings/arrays already preserve empty elements. Omitted input still uses
 the source default. This setting is rejected in ordinary modes.
+
+The unreleased `0.9.298-SNAPSHOT` candidate introduces single `active-choices`
+compatibility for unflagged choices without dependencies, required/custom controls,
+disabled options or tables. UI `defaultMode` is `none` for an unselected radio
+or `first` for a dropdown. API defaults independently use `activeChoicesApiDefaultMode`:
+`first` resolves the first ordered option; `literal` uses
+`activeChoicesApiDefaultLiteral` without loading choices, including empty/whitespace.
+CLI retains strings exactly; null becomes an existing empty string. Absent standard
+fields use the API default; zero/multiple fields reject and a single field stays
+literal. Missing form value becomes empty, JSON null becomes `null`, arrays use
+JSON comma joining and scalar/object values stringify. File payloads require a
+Foundry File definition. Only string environment export is supported. Core
+StringParameterValue preserves scalar values, uppercase environment aliases,
+queue equality and editable old string history. Supplied snapshots remain validated;
+literal inputs create no Provider provenance. Ordinary and typed explicit input
+stay strict; typed omission shares the API default. Verification remains pending.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses

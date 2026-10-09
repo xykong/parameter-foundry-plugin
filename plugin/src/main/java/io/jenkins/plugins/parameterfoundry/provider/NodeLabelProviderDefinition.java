@@ -33,6 +33,7 @@ public final class NodeLabelProviderDefinition extends SharedProviderDefinition 
 
     public static final String SOURCE_NODES = "nodes";
     public static final String SOURCE_LABELS = "labels";
+    public static final String SOURCE_CONFIGURED_NODES = "configured-nodes";
 
     private String source = SOURCE_NODES;
     private String includePattern;
@@ -52,8 +53,8 @@ public final class NodeLabelProviderDefinition extends SharedProviderDefinition 
 
     @DataBoundSetter
     public void setSource(String source) {
-        if (!Set.of(SOURCE_NODES, SOURCE_LABELS).contains(source)) {
-            throw new IllegalArgumentException("Node Provider source must be nodes or labels.");
+        if (!Set.of(SOURCE_NODES, SOURCE_LABELS, SOURCE_CONFIGURED_NODES).contains(source)) {
+            throw new IllegalArgumentException("Node Provider source must be nodes, configured-nodes or labels.");
         }
         this.source = source;
     }
@@ -98,6 +99,25 @@ public final class NodeLabelProviderDefinition extends SharedProviderDefinition 
     @Override
     public List<Option> load(ProviderLoadContext context) {
         context.checkCancelled();
+        if (SOURCE_CONFIGURED_NODES.equals(getSource())) {
+            LinkedHashSet<String> ordered = new LinkedHashSet<>();
+            if (includeBuiltIn) ordered.add(Jenkins.get().getSelfLabel().getName());
+            for (Node node : Jenkins.get().getNodes()) {
+                context.checkCancelled();
+                Computer computer = node.toComputer();
+                if (onlineOnly && (computer == null || computer.isOffline())) continue;
+                ordered.add(node.getNodeName());
+            }
+            Pattern include = compile(includePattern);
+            Pattern exclude = compile(excludePattern);
+            List<Option> result = ordered.stream()
+                    .filter(name -> name != null && !name.isBlank())
+                    .filter(name -> include == null || include.matcher(name).matches())
+                    .filter(name -> exclude == null || !exclude.matcher(name).matches())
+                    .map(Option::new)
+                    .toList();
+            return result;
+        }
         TreeSet<String> names = new TreeSet<>();
         if (SOURCE_LABELS.equals(getSource())) {
             for (Label label : Jenkins.get().getAssignedLabels()) {
