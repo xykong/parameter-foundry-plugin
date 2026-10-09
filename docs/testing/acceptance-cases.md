@@ -21,6 +21,7 @@ the case, but production configuration is never committed here.
 | Extended Choice literal forms (UP-AC-040) | Required | Required | Existing renderer coverage | Existing renderer coverage | Existing repeated field coverage | Required | Raw equality, persistence and editable Rebuild |
 | Extended Choice single transport (UP-AC-041) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Scalar defaults, UI selection and Rebuild |
 | Extended Choice empty transport (UP-AC-042) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Separator positions, omitted defaults and persisted flag |
+| Active Choices single transport (UP-AC-043) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Literal strings, distinct UI/API defaults and configured-node order |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -135,6 +136,12 @@ Jenkins JavaScript form works without scripts.
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-042 | Use a source option string with leading/internal empty entries. CLI/standard requests must keep accepted empty token positions; omitted input still defaults. Empty tokens remain absent from visible/canonical choices and strict typed input. | Filtering against visible choices previously dropped empty separators. A source-derived `legacyEmptyChoiceAllowed` flag preserves transport tokens while canonical evaluation ignores those tokens. Source browser inspection confirms empty entries are not rendered in select/radio/checkbox controls. | Candidate 0.8.295-SNAPSHOT: four Harness cases, adapter regression and 22 browser checks pass. All 9,792 characterized source cases match across single, multiple, Radio and Checkbox types. Initial full run has one stale Chinese UI assertion; it is updated to the new transport-preservation decision. Corrected localized UI and final full 365-test verification pass. All source/browser gates reran on the final candidate and release HPI. [Exact 0.8.296 release verification](./release-0.8.296-verification-2026-10-10.md). [Verification and limits](./extended-choice-empty-verification-2026-10-10.md). |
+
+### Active Choices single transport
+
+| ID | Reproduction / expected result | Actual behavior / required fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-043 | Compare unflagged radio/dropdown source defaults, literal CLI/standard/form values, label expressions, empty versus null, repeated fields and JSON arrays/objects. Preserve configured-node order and editable StringParameterValue history. | Ordinary Foundry single validation, sorting and optional empty handling do not reproduce the source. Add an explicit reviewed transport path with independent UI/API defaults and a governed configured-node source; keep ordinary/typed input strict. | Source characterization completed: 4/44 ordinary target factory cases match, source radio is unselected while API default is first, and dropdown selects first. Compatibility implementation, actual HTTP/CLI, persistence, history/Rebuild, dynamic Provider and target browser gates remain pending. [Observed contract and limits](../research/active-choices-single-transport-contract.md). |
 
 ## Platform and Device Cases
 
