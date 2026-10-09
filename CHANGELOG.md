@@ -11,6 +11,11 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.7.288 - 2026-10-10
 
+The HPI is `dist/parameter-foundry-0.7.288.hpi` (SHA-256
+`03782664326463388c5d51093ea8f50153e7cdb2b0e0fae371c6fe26d53d2c96`,
+601,384 bytes), built from release commit `ea66fd7`. Full regression passed
+338 tests; exact release verification passed 27 related tests and 13 browser checks.
+
 ### Added
 
 - List Git Branches input compatibility for Provider-backed single choices, preserving literal revisions, lazy API defaults, snapshot binding checks, independent dropdown selection and editable historical Rebuild revisions.
