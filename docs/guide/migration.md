@@ -56,7 +56,8 @@ has to be stated before an equivalent can be generated.
 | Multiselect, Custom Checkbox, Editable Choice, Extensible Choice | `foundryChoice` variants |
 | Validating String | `foundryForm` string field with regex and length |
 | REST List | REST Provider plus `foundryChoice` |
-| Stashed File / File parameter | Stay native — uploads are not converted into choices |
+| File Parameters Base64 / Stashed File | Class B target: `foundryBase64File` / `foundryStashedFile`; review limits, wrappers and binary lifecycle |
+| Jenkins Core File | Retain native; no automatic target |
 
 ## Boundaries
 
@@ -162,3 +163,5 @@ in a repository Jenkinsfile, and the multibranch or organization folders that
 generate them. Those definitions are invisible to a configuration scan, so keep
 the source plugins installed until the repository side has been reviewed after a
 full build cycle.
+
+File migrations preserve binary transport. Read [File parameters](./file-parameters.md) for wrapper changes, limits, retention and the separate binary verification gate.

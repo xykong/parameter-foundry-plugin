@@ -2,6 +2,8 @@ package io.jenkins.plugins.parameterfoundry.migration.additional;
 
 import hudson.Extension;
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.file.FoundryBase64FileParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
 import io.jenkins.plugins.parameterfoundry.migration.MigrationPlan;
 import io.jenkins.plugins.parameterfoundry.migration.MigrationText;
@@ -22,7 +24,8 @@ public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
     public boolean supports(ParameterDefinition definition) {
         return definition != null
                 && (SOURCE_CLASS.equals(definition.getClass().getName())
-                        || definition.getClass().getName().endsWith(".StashedFileParameterDefinition"));
+                        || "io.jenkins.plugins.file_parameters.Base64FileParameterDefinition"
+                                .equals(definition.getClass().getName()));
     }
 
     @Override
@@ -30,15 +33,18 @@ public final class StashedFileMigrationAdapter extends SourceMigrationAdapter {
         if (!supports(definition)) {
             throw new IllegalArgumentException("Unsupported source definition");
         }
+        ParameterDefinition target = SOURCE_CLASS.equals(definition.getClass().getName())
+                ? new FoundryStashedFileParameterDefinition(definition.getName())
+                : new FoundryBase64FileParameterDefinition(definition.getName());
+        target.setDescription(definition.getDescription());
         return new MigrationPlan(
-                MigrationClassification.D,
-                MigrationText.of("MigrationReasonStashedFile"),
-                null,
+                MigrationClassification.B,
+                MigrationText.of("MigrationReasonFoundryFile"),
+                target,
                 List.of(
-                        MigrationText.of("MigrationDecisionStashedFile1"),
-                        MigrationText.of("MigrationDecisionStashedFile2"),
-                        MigrationText.of("MigrationDecisionStashedFile3"),
-                        MigrationText.of("MigrationDecisionStashedFile4")),
+                        MigrationText.of("MigrationDecisionFoundryFileLimits"),
+                        MigrationText.of("MigrationDecisionFoundryFileWrapper"),
+                        MigrationText.of("MigrationDecisionFoundryFileHistory")),
                 null,
                 verificationFixture(definition));
     }

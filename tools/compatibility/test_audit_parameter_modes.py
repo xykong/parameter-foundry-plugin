@@ -44,6 +44,13 @@ class AuditParserTest(unittest.TestCase):
         self.assertEqual("file", MODULE.classify_definition(file_node)[0])
         self.assertEqual("file", MODULE.classify_definition(stashed_node)[0])
 
+    def test_foundry_uploads_are_separate_from_source_file_parameters(self):
+        for kind in ("FoundryBase64FileParameterDefinition", "FoundryStashedFileParameterDefinition"):
+            node = ET.fromstring(f"<io.jenkins.plugins.parameterfoundry.companion.file.{kind} />")
+            family, mode, detail = MODULE.classify_definition(node)
+            self.assertEqual("foundry-file", family)
+            self.assertEqual(kind, mode)
+
     def test_active_choices_cascade_reports_dependency_presence_only(self):
         node = ET.fromstring(
             """

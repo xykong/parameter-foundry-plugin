@@ -50,8 +50,8 @@ controller is not an acceptable intermediate state.
    adapter).
 2. List Git Branches parameters, after their Connection Profiles exist.
 3. Active Choices parameters, re-authored against Providers or a Foundry Form.
-4. Stashed File parameters stay native (ADR 0015) and are recorded as a
-   deliberate boundary, not as a migration.
+4. File Parameters uploads migrate to Foundry file definitions after their
+   limits, wrapper changes and binary lifecycle are accepted (ADR 0020).
 
 The order keeps the mechanical work in front of the work that needs a redesign
 conversation, so any unexpected finding is discovered while the risk is still
@@ -82,12 +82,12 @@ simulation, and the semantic decisions from the adapter. The redesign is
 accepted only when the Job's recorded values are all representable by the new
 Provider or Form.
 
-### 6. Stashed File stays native
+### 6. File uploads migrate through the file companion
 
-Uploading a file is a transport capability, not a choice control (ADR 0015).
-The foundry controls do not replace it. If file upload ever needs a governed
-replacement, that is a new product capability with its own design, not part of
-this migration.
+ADR 0020 supersedes the native-retention decision. Base64 and Stashed File
+parameters have class B Foundry targets in the single HPI. Binary upload,
+stash/agent access and Rebuild need separate verification; value simulation does
+not prove them. Source-plugin historical dependencies still prevent uninstall.
 
 ### 7. Permissions
 

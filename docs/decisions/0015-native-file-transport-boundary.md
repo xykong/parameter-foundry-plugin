@@ -1,6 +1,6 @@
 # ADR 0015: Native File Transport Boundary
 
-- Status: Accepted
+- Status: Superseded by [ADR 0020](./0020-built-in-file-parameters.md)
 - Date: September 3, 2026
 
 ## Context

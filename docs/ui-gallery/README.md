@@ -5,6 +5,16 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Parameter Foundry file uploads
+
+Generated on a disposable Jenkins 2.568.2 controller without File Parameters.
+The [UI Lab report](../testing/results/foundry-files-ui-lab.json) records browser
+and platform details, actual desktop/mobile submission, restart and Rebuild.
+
+[![Desktop file upload](images/parameter-foundry/file-upload.png)](images/parameter-foundry/file-upload.png)
+
+[![Mobile file upload](images/parameter-foundry/file-upload-mobile.png)](images/parameter-foundry/file-upload-mobile.png)
+
 ## Active Choices
 
 `uno-choice:2.8.10` · Maintained

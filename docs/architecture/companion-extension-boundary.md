@@ -103,3 +103,12 @@ File upload parameters are transport capabilities rather than option
 Providers. Native Jenkins multipart behavior remains available in mixed Jobs.
 The JSON Typed API rejects unsupported file definitions atomically so it never
 pretends that an omitted upload was accepted.
+
+## First-party binary file companion
+
+[ADR 0020](../decisions/0020-built-in-file-parameters.md) adds an isolated
+`companion.file` capability to the single HPI. It ingests bounded multipart
+content, retains upload copies with builds, exports Base64 or named stashes and
+binds agent-local temporary files. It neither invokes Providers nor evaluates
+file bytes as choices, executable content or controller paths. Historical source
+file values retain their original plugin ownership until retirement.

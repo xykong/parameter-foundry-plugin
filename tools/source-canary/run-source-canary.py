@@ -609,15 +609,15 @@ def main() -> int:
             assert "foundryGitRefProvider" in git_preview
             assert "refType: 'branch'" in git_preview
             assert "example.test" not in git_preview
-            assert "Class D" in stash_preview
-            assert "multipart/file transport" in stash_preview
+            assert "Class B" in stash_preview
+            assert "FoundryStashedFileParameterDefinition" in stash_preview
             report["checks"]["migrationPreviews"] = {
                 "extendedChoiceClassB": True,
                 "activeChoicesClassC": True,
                 "activeChoicesCascadeDependency": True,
                 "listGitBranchesClassC": True,
                 "listGitBranchesGitRefMapping": True,
-                "stashedFileClassD": True,
+                "stashedFileClassB": True,
                 "sensitiveSourceRedacted": True,
                 "passed": True,
             }

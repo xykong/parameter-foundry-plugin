@@ -43,8 +43,8 @@ Pipeline, CLI, REST, Rebuild, and downstream builds see.
 - No controller file paths read on behalf of a Job.
 - No automatic conversion of business intent: where source logic cannot be proven
   equivalent, the migration assistant asks rather than guesses.
-- No replacement of Jenkins’ native upload transport; file parameters stay native
-  and keep working alongside Foundry parameters.
+- Binary uploads keep Jenkins multipart transport and use the built-in file
+  companion; they are never converted into choice values or Form fields.
 
 ## Release scope
 

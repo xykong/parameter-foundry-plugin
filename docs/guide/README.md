@@ -16,6 +16,7 @@ and [`../decisions/`](../decisions/).
 | Create your first parameter | [Getting started](./getting-started.md) |
 | Look up every field and its default | [Parameter reference](./parameters.md) |
 | Copy a working example | [Cookbook](./examples.md) |
+| Upload and consume a file | [File parameters](./file-parameters.md) |
 | Connect a backend (REST, Git, script, managed config) | [Providers](./providers.md) |
 | Move off Active Choices, Extended Choice, Git branches | [Migration](./migration.md) |
 | Decide how to model a real Job | [Best practices](./best-practices.md) |
@@ -24,9 +25,11 @@ and [`../decisions/`](../decisions/).
 
 ## One minute summary
 
-- One parameter family, two entry points: **`foundryChoice`** for value selection
+- Choice and structured input entry points: **`foundryChoice`** for value selection
   (single, multiple, or a two-dimensional table) and **`foundryForm`** for typed
   structured input.
+- Binary upload entry points: **`foundryBase64File`**, **`foundryStashedFile`**
+  and **`withFoundryFileParameter`**, using Jenkins multipart transport.
 - The same definition behaves the same way in the browser, CLI, REST, Pipeline,
   Rebuild, and downstream builds, because every entry point calls one server-side
   evaluation service.

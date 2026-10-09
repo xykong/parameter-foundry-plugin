@@ -8,6 +8,7 @@ import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
+import io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
@@ -45,7 +46,8 @@ final class TypedParameterAdapterRegistry {
         schema.put("supported", supports(definition));
         schema.put(
                 "owner",
-                definition instanceof FoundryChoiceParameterDefinition
+                definition instanceof AbstractFoundryFileParameterDefinition
+                                || definition instanceof FoundryChoiceParameterDefinition
                                 || definition instanceof FoundryFormParameterDefinition
                         ? "parameter-foundry"
                         : "jenkins-core");

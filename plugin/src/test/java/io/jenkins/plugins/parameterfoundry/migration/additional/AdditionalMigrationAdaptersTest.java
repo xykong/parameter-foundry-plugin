@@ -12,6 +12,7 @@ import hudson.plugins.validating_string_parameter.ValidatingStringParameterDefin
 import io.jenkins.plugins.editable_choice.EditableChoiceParameterDefinition;
 import io.jenkins.plugins.file_parameters.StashedFileParameterDefinition;
 import io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.migration.MigrationClassification;
 import io.jenkins.plugins.parameterfoundry.migration.SourceMigrationAdapter;
 import io.jenkins.plugins.restlistparam.RestListParameterDefinition;
 import java.util.List;
@@ -40,17 +41,19 @@ class AdditionalMigrationAdaptersTest {
         for (SourceCase sourceCase : cases) {
             var plan = sourceCase.adapter.inspect(sourceCase.definition);
             if (sourceCase.adapter instanceof StashedFileMigrationAdapter) {
-                assertEquals(
-                        io.jenkins.plugins.parameterfoundry.migration.MigrationClassification.D,
-                        plan.getClassification());
-                assertTrue(plan.getReason().contains("ADR 0015"));
-                assertTrue(plan.getDecisions().stream().anyMatch(decision -> decision.contains("Do not disable")));
+                assertEquals(MigrationClassification.B, plan.getClassification());
+                assertTrue(plan.getReason().contains("multipart"));
+                assertTrue(
+                        plan.getTarget()
+                                instanceof
+                                io.jenkins.plugins.parameterfoundry.companion.file
+                                        .FoundryStashedFileParameterDefinition);
             } else {
-                assertEquals(
-                        io.jenkins.plugins.parameterfoundry.migration.MigrationClassification.C,
-                        plan.getClassification());
+                assertEquals(MigrationClassification.C, plan.getClassification());
             }
-            assertNull(plan.getTarget());
+            if (!(sourceCase.adapter instanceof StashedFileMigrationAdapter)) {
+                assertNull(plan.getTarget());
+            }
             assertTrue(plan.getVerificationFixture().contains("Rebuild"));
             if (plan.getTargetSkeleton() != null) {
                 assertTrue(plan.getTargetSkeleton().contains("TODO"));

@@ -7,13 +7,14 @@
 
 Repository: https://github.com/xykong/parameter-foundry-plugin
 Plugin short name: `parameter-foundry`
-Current symbols: `foundryChoice`, `foundryForm`
+Current symbols: `foundryChoice`, `foundryForm`, `foundryBase64File`, `foundryStashedFile`, `withFoundryFileParameter`
 
 ## Start here
 
 - [User guide index](docs/guide/README.md): who the guide is for and where to go next
 - [Getting started](docs/guide/getting-started.md): five-minute walkthrough
 - [Parameter reference](docs/guide/parameters.md): every field, default, and transport
+- [File parameters](docs/guide/file-parameters.md): bounded Base64/Stashed upload, Pipeline wrappers and migration
 - [Cookbook](docs/guide/examples.md): copy-pasteable configurations
 - [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
 - [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
@@ -67,7 +68,12 @@ Current symbols: `foundryChoice`, `foundryForm`
 
 - The core plugin never executes Job-supplied Groovy, JavaScript, HTML, or reads controller file
   paths. Scripting and custom rendering live behind reviewed companion contracts.
-- Native file parameters keep Jenkins multipart upload and are not converted into choices.
+- Foundry file parameters ship in the single HPI without File Parameters dependencies.
+  Base64 is limited to 1 MiB decoded bytes, Stashed File to 100 MiB.
+  UI/REST multipart and CLI share bounded ingestion. Typed JSON rejects binary definitions.
+  Source file migrations are class B; wrappers change to withFoundryFileParameter,
+  ordinary unstash keeps its name, and binary lifecycle needs manual verification.
+  Keep source plugins until historical and generated references are retired.
 
 ## Internal references (for contributors and reviewers)
 

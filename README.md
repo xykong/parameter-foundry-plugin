@@ -11,7 +11,8 @@ The current development branch implements the roadmap through the `2.0`
 foundation: static and governed dynamic choices, reactive dependencies and
 Provider snapshots, typed Foundry Forms, migration execution and rollback,
 trusted companion extension contracts, reference Renderer and sandboxed Script
-Provider companions, source migration boundaries, and retirement reporting.
+Provider companions, built-in Base64/Stashed file parameters, source migration
+boundaries, and retirement reporting.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.
@@ -30,6 +31,7 @@ New to the plugin? Start with the user guide:
 | Create my first parameter | [docs/guide/getting-started.md](./docs/guide/getting-started.md) |
 | Look up a field, default, or transport | [docs/guide/parameters.md](./docs/guide/parameters.md) |
 | Copy a working configuration | [docs/guide/examples.md](./docs/guide/examples.md) |
+| Upload and consume a file | [docs/guide/file-parameters.md](./docs/guide/file-parameters.md) |
 | Connect a backend | [docs/guide/providers.md](./docs/guide/providers.md) |
 | Move off another parameter plugin | [docs/guide/migration.md](./docs/guide/migration.md) |
 | Fix an error | [docs/guide/troubleshooting.md](./docs/guide/troubleshooting.md) |

@@ -154,6 +154,38 @@ class ApiSecurityIntegrationTest {
     }
 
     @Test
+    void foundryBinaryDefinitionsRejectTypedJsonWithoutQueueing(JenkinsRule jenkins) throws Exception {
+        var definitions = List.of(
+                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryBase64FileParameterDefinition("SMALL"),
+                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition("LARGE"));
+        for (var definition : definitions) {
+            var project = jenkins.createFreeStyleProject("binary-" + definition.getName());
+            project.addProperty(new ParametersDefinitionProperty(definition));
+            var schema = jenkins.createWebClient().getJSON(project.getUrl() + "parameter-foundry/api/v1/schema");
+            assertEquals(
+                    false,
+                    schema.getJSONObject()
+                            .getJSONArray("parameters")
+                            .getJSONObject(0)
+                            .getBoolean("supported"));
+            assertEquals(
+                    "parameter-foundry",
+                    schema.getJSONObject()
+                            .getJSONArray("parameters")
+                            .getJSONObject(0)
+                            .getString("owner"));
+            JSONObject body = new JSONObject();
+            body.put("values", new JSONObject());
+            var response = postJson(
+                    jenkins.createWebClient(), jenkins, project.getUrl() + "parameter-foundry/api/v1/build", body);
+            assertEquals(409, response.getStatusCode());
+            assertTrue(response.getJSONObject().toString().contains("UNSUPPORTED_DEFINITION"));
+            assertEquals(0, project.getBuilds().size());
+            assertEquals(0, jenkins.jenkins.getQueue().getItems().length);
+        }
+    }
+
+    @Test
     void nativeFileParametersRemainAvailableWhileTypedJsonFailsExplicitly(JenkinsRule jenkins) throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("native-file-compatibility");
         FoundryChoiceParameterDefinition targets = MultipleChoiceFixtures.multipleChoice("TARGETS");

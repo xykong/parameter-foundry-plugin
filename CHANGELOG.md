@@ -9,6 +9,15 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## Unreleased — 0.5
+
+### Added
+
+- Built-in Base64 File and Stashed File parameters, bounded multipart/CLI upload,
+  Pipeline and Freestyle temporary-file wrappers, and retained upload Rebuild.
+- Class B migration targets for File Parameters uploads, with explicit upload
+  limits, wrapper changes and historical dependency checks.
+
 ## 0.4.270 - 2026-09-23
 
 The Pipeline-declared check of the migration preview now applies to the

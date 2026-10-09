@@ -82,13 +82,21 @@ sourceFamilies:
     verification: [ssrf, content-type, timeout, fallback, api, cli, pipeline, rebuild]
   - plugin: file-parameters
     sourceClass: io.jenkins.plugins.file_parameters.StashedFileParameterDefinition
-    classification: D
-    target: native-file-or-reviewed-file-companion
+    classification: B
+    target: foundryStashedFile
     decisions:
-      - native-multipart-versus-file-companion
+      - bounded-multipart-upload
+      - wrapper-symbol-update
       - stash-lifecycle
       - downstream-and-rebuild-transport
     verification: [multipart, stash-lifecycle, missing-file, remote, upstream, rebuild]
+
+  - plugin: file-parameters
+    sourceClass: io.jenkins.plugins.file_parameters.Base64FileParameterDefinition
+    classification: B
+    target: foundryBase64File
+    decisions: [decoded-size-limit, wrapper-symbol-update, historical-dependencies]
+    verification: [multipart, base64, api, cli, pipeline, upstream, rebuild]
 
 notes:
   - These fixtures describe business decisions and verification obligations, not source XML.

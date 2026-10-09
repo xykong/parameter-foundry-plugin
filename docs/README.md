@@ -55,6 +55,10 @@ help.
 - [0018: Public repository hygiene and the private lab overlay](./decisions/0018-public-hygiene-and-private-lab-overlay.md)
 - [0019: Release publication mechanism](./decisions/0019-release-publication-mechanism.md)
 
+- [0020: Built-in file parameters](./decisions/0020-built-in-file-parameters.md)
+
+- [File upload user guide](./guide/file-parameters.md)
+
 ## Architecture
 
 - [Core architecture](./architecture/core-architecture.md)
@@ -72,6 +76,8 @@ help.
 - [Migration design fixtures](./migration/README.md)
 
 ## Testing
+
+- [October 9 built-in file parameters verification](./testing/file-parameters-verification-2026-10-09.md)
 
 - [Parity test matrix](./testing/parity-test-matrix.md)
 - [Requirement release and test manifest](./testing/requirements.yaml)

@@ -173,3 +173,7 @@ Every Job with Foundry parameters exposes a JSON API under
 
 Errors use stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`; see
 [Troubleshooting](./troubleshooting.md).
+
+## Binary uploads
+
+Use `foundryBase64File` or `foundryStashedFile` for file content. Their Name, Description, limits, transports and Pipeline wrapper are documented in [File parameters](./file-parameters.md).

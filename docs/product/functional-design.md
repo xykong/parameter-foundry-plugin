@@ -287,9 +287,12 @@ organization/repository/ref 组合后，才能使用 branch candidate。
 
 ### 4.15 File Parameters
 
-文件上传是 multipart transport，不是 Option Provider。Core File 和原生 Stashed File
-参数可继续与 Parameter Foundry 共存。标准 Jenkins 页面和 endpoint 保持原行为；JSON Typed
-API 对包含文件定义的 Job 原子返回 unsupported，不把“未上传”伪装成成功。
+文件上传使用 multipart transport，与 Option Provider 隔离。ADR 0020 将文件能力纳入单 HPI：
+`foundryBase64File`（解码后最多 1 MiB）、`foundryStashedFile`（最多 100 MiB），以及
+`withFoundryFileParameter` 临时文件包装器。保留参数名、stash 名及原始 basename，上传内容由
+构建目录保留，支持 Rebuild；取消排队清理待处理上传。旧 File Parameters 定义通过 B 类迁移，
+明确接受大小限制、包装器更新和历史依赖。JSON Typed API 对文件定义仍返回 unsupported，
+二进制内容通过标准 Jenkins multipart 上传，不转换成选项或字符串路径。
 
 ## 5. 功能架构
 

@@ -51,6 +51,17 @@ demonstrate the local contract but do not approve the larger attack surface.
 - [ ] The exact Git Client release is checked against current Jenkins security
   advisories before release.
 
+## File upload companion (ADR 0020)
+
+- [x] First-party file code is isolated under `companion.file` in the single HPI.
+- [x] Names are validated and storage IDs are generated UUIDs; input cannot select controller paths.
+- [x] Shared ingestion bounds Base64 decoded bytes and streamed stashed content.
+- [x] Filenames are reduced to basenames and never extracted or executed.
+- [x] Downloads enforce Job read permission and attachment/octet-stream headers.
+- [x] Wrapper directories are unique, agent-local and removed on exit.
+- [x] Cancelled queued uploads are removed; retained copies follow build retention.
+- [ ] Exact release dependencies/advisories and independent security review completed before production release.
+
 ## Release Evidence
 
 - [ ] PCT passes for the declared Jenkins Core matrix.

@@ -1,6 +1,8 @@
 package io.jenkins.plugins.parameterfoundry.migration;
 
 import hudson.model.ParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
@@ -14,6 +16,12 @@ public final class MigrationSnippets {
     private MigrationSnippets() {}
 
     public static String forTarget(ParameterDefinition target) {
+        if (target instanceof AbstractFoundryFileParameterDefinition) {
+            String symbol = target instanceof FoundryStashedFileParameterDefinition
+                    ? "foundryStashedFile"
+                    : "foundryBase64File";
+            return symbol + "(name: " + quote(target.getName()) + ")";
+        }
         if (target instanceof FoundryChoiceParameterDefinition choice && !choice.isMultiple()) {
             return "foundryChoice(\n"
                     + "  name: "

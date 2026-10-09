@@ -1,0 +1,21 @@
+<p>
+    Simple file parameter compatible with Pipeline.
+    Transmits file contents as an environment variable in Base64 encoding,
+    so it is best used with fairly small files.
+    Example usage from Declarative Pipeline:
+</p>
+<pre>
+pipeline {
+  agent any
+  parameters {
+    foundryBase64File 'FILE'
+  }
+  stages {
+    stage('Example') {
+      steps {
+        sh 'echo $FILE | base64 -d > config.yaml'
+      }
+    }
+  }
+}
+</pre>

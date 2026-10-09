@@ -90,3 +90,13 @@ make clean
 - 默认 viewport 为 `1440x1100`。
 
 插件版本或 Jenkins Core 变化后，应重新生成 Gallery，并评审视觉和行为差异。
+
+## Built-in Foundry file gate
+
+Run `uv run tools/ui-lab/scripts/check-foundry-files.py` from the repository root.
+It builds the exact HPI, starts a disposable localhost controller and verifies
+real browser upload, Pipeline stash and temporary-file access, download bytes,
+Rebuild, Freestyle wrapping, mobile overflow and Typed JSON rejection. Results
+are written to `docs/testing/results/foundry-files-ui-lab.json`; desktop and
+mobile screenshots join the Foundry UI gallery. No source File Parameters HPI
+is installed, so the gate also proves independent operation.

@@ -13,6 +13,7 @@ the case, but production configuration is never committed here.
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
+| Binary file parameters (UP-AC-025–028) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
@@ -47,6 +48,22 @@ until every applicable column passes.
 | UP-AC-023 | Provider-supplied matrix | Configure a table whose rows come from one Provider list and whose columns come from another, with `rowSelectionMode: at-most-one`. The form must render the live axes with their captions, allow at most one cell per row, reject a second cell in the same row, record exactly the selected cells, and offer one-click row, column, and whole-table selection. | Passed 2026-09-20 with `make e2e` on plugin `0.3.226-SNAPSHOT`: `DOCKER_LOGINS` renders the `BUILD_NODE` caption, the `DOCKER_REGISTRIES` corner header, two rows, three columns, six cells; selecting a second cell of a row clears the first; clicking the `staging` column caption selects that cell in both rows; clicking a row caption fills every cell of that row and a second click clears the row; `Select all` fills every cell, `Invert` complements the whole table, `Clear all` empties it; a selection longer than twelve chips collapses to a `Show selected (n)` toggle and the expanded list scrolls inside a bounded box instead of pushing the table down; a row that carries a rank constraint fills its rank instead of breaking the rule; the build records `["registry.example.com@production", "harbor.example.net@staging"]`. Unit coverage: `MatrixProviderDefinitionTest` asserts the cross product, the templates, the fingerprint, the missing axis, the self reference, and both row constraints |
 | UP-AC-024 | Single-choice list box | Configure a required single choice with `renderer: list` and a shared Provider. The form must render a list box (options visible, no `multiple` attribute, at least four rows), preselect the configured default, and behave like every other renderer for the value. | Passed 2026-09-20 with `make e2e` on plugin `0.3.229-SNAPSHOT`: `NODE_LIST` renders three visible options in a list box, no `multiple` attribute, `size` >= 4, and `staging` preselected. Production: the `demo-node-choice` Job replaced its failing Active Choices script with this renderer and built on the selected agent |
 | UP-AC-022 | Renderer fidelity | Configure Provider-backed single choices with `renderer: radio` (one optional, one required) and a radio group above the render limit. The optional field must render a radio group that includes an explicit None, the required field must render radios without None, the clicked radio must be the submitted value, and the oversized group must degrade to the searchable list with a visible explanation. | Passed 2026-09-20 with `make e2e` on plugin `0.3.216-SNAPSHOT`: `TARGET_NODE` renders four radios (None plus three options) with no select, `LOCKED_NODE` renders three radios, clicking `development` writes the hidden value and the build records `TARGET_NODE=development`, and `WIDE_RADIO` reports `70 options; using the searchable list instead of radio buttons.` |
+
+### Built-in file capability acceptance (October 9, 2026)
+
+| ID | Area | Reproduction / expected behavior | Previous behavior / fix | Verification |
+| --- | --- | --- | --- | --- |
+| UP-AC-025 | Upload and transport | Configure Base64 and Stashed File, submit bytes through UI/multipart/CLI; Base64 exports encoded bytes, Stashed File restores an identically named file. Reject invalid names, Base64, and oversized content. | Foundry had no upload type; added bounded binary companion and shared ingestion. | Passed 2026-10-09: Harness (including Declarative symbols), CLI and Chromium 153 desktop/mobile UI Lab |
+| UP-AC-026 | Agent / lifecycle / Rebuild | Read a stash on an agent; bind a temporary path and exit; rebuild without a replacement; cancel a queued upload. Bytes must survive Rebuild, temporary paths and cancelled pending uploads must be removed. | External plugin required; added build-owned retained copies, isolated wrapper directories and queue cleanup. | Passed 2026-10-09: remote-agent, normal/failed wrapper cleanup, queue cancellation and chained Rebuild after original deletion; UI Lab controller restart and Rebuild |
+| UP-AC-027 | Missing / wrong-type / API isolation | Omit a required upload, then use `allowNoFile`; pass a String value masquerading as a file; call Typed JSON on a file Job. Fail missing required and wrong type; optional absence runs body; JSON returns 409 without queueing. | Source uploads were retained native; new binary definitions remain separate from typed option input. | Passed 2026-10-09: `FoundryFileParameterTest`, `ApiSecurityIntegrationTest` and UI Lab Typed JSON rejection |
+| UP-AC-028 | File migration | Preview source Base64/Stashed File; accept limits/wrapper/history decisions, migrate and rollback. Preserve name/description, show Foundry symbols; never report binary equivalence from option replay. | Class D native retention replaced by class B Foundry targets and binary manual-verification gate. | Passed 2026-10-09: adapter/coordinator apply/rollback Harness, audit parser distinction, and real-source-plugin Canary class B preview |
+
+[Verification evidence](./file-parameters-verification-2026-10-09.md).
+
+File platform matrix: desktop Chromium/macOS and Android-sized Chromium viewport
+passed on Chromium 153.0.8010.12 in `tools/ui-lab/scripts/check-foundry-files.py`; physical devices, manual
+screen reader and other browser engines remain pending. The Lab uses synthetic
+content on a disposable localhost controller and never reads production data.
 
 ## Platform and Device Cases
 

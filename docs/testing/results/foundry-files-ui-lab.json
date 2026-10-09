@@ -1,0 +1,19 @@
+{
+  "browser": "Chromium 153.0.8010.12",
+  "os": "Darwin",
+  "desktop": "1440x1000",
+  "mobileViewport": "412x915",
+  "checks": [
+    "UI upload",
+    "Pipeline stash",
+    "temporary wrapper",
+    "download bytes",
+    "controller restart and Rebuild retained upload",
+    "Freestyle wrapper",
+    "mobile overflow and upload submission",
+    "source File Parameters absent",
+    "binary schema ownership",
+    "typed JSON 409"
+  ],
+  "passed": true
+}
