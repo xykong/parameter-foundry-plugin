@@ -1,0 +1,13 @@
+<div>
+  <p>The exact default string exported by a migrated static Extended Choice multiple parameter
+    when CLI or standard API input is omitted. Available only with
+    <code>standardApiInputMode: extended-choice</code>. Order, repeated values, whitespace and
+    unavailable placeholder values are preserved in the environment export. This does not add
+    unavailable values to the dropdown or permit them in explicit typed submissions.</p>
+  <p>Disabled options, required selection, selection counts and duplicate policy are checked
+    against the supported canonical default. Conflicting constraints reject the default.</p>
+  <p>UI default selections remain configured separately using <code>defaultValues</code>.
+    With this field blank, explicit UI defaults supply their comma-joined transport default;
+    without those defaults, omission produces no ParameterValue, matching the source.
+    An explicitly empty standard field or empty form submission remains an existing empty value.</p>
+</div>

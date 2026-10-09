@@ -170,6 +170,12 @@ final class TypedParameterAdapterRegistry {
         }
         ResolvedProviderOptions resolved =
                 ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, snapshotId, operation);
+        if (!present
+                && io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.enabled(
+                        definition)) {
+            return io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.evaluate(
+                    (FoundryChoiceParameterDefinition) definition);
+        }
         List<String> canonical = ParameterEvaluationService.evaluateMultiple(
                 definition,
                 present ? DecodedInput.present(values) : DecodedInput.absent(),

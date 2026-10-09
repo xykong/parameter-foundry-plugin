@@ -76,6 +76,10 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (choice.getLegacyDefaultLiteral() != null
+                    && (!choice.isMultiple() || !"extended-choice".equals(choice.getStandardApiInputMode()))) {
+                errors.add("Legacy default literal requires Extended Choice multiple-selection compatibility.");
+            }
             if (!Set.of("single", "multiple").contains(choice.getSelectionMode())) {
                 errors.add("Unsupported selection mode: " + choice.getSelectionMode());
             }

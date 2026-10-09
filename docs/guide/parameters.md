@@ -37,6 +37,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `defaultMode` | `none`, `first`, `explicit` | `none` | How an omitted value resolves |
 | `defaultValue` | value | — | Single selection, `explicit` only |
 | `defaultValues` | value list | empty | Multiple selection, `explicit` only |
+| `legacyDefaultLiteral` | exact string | unset | Static multiple Extended Choice compatibility: preserve omitted-input environment default separately from selectable UI defaults |
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
@@ -119,7 +120,7 @@ to `submitted`, and a value without the field behaves as `canonical`.
 | Typed API (`api/v1/build`, `api/v1/validate`) | JSON string | JSON array |
 | Pipeline `build` step | `foundryChoice` value | `foundryChoice` value with a list |
 
-`extended-choice` preserves the source plugin's static multi-select transports.
+`extended-choice` supports a subset of the source plugin's static multi-select transports.
 Standard requests accept repeated fields, trim each value and omit values outside
 the configured choices; a combined comma string is one field and is not expanded.
 CLI input splits on commas and applies the same trimming/filtering. Form JSON can
@@ -130,6 +131,24 @@ For migration, use `environmentExportOrder: 'submitted'` and
 `duplicatePolicy: 'deduplicate'`: canonical values remain a sorted set, while
 repeated supported submissions can remain repeated in the legacy exported string.
 This mode is unavailable to Providers, tables and single-choice parameters.
+Exact literal defaults, blank-default omission and unlisted form strings/arrays
+remain compatibility gaps in `0.7.288`; custom delimiters also affect generated
+option sets incorrectly in that release. Verify each source contract before
+migration; see [the observed compatibility matrix](../research/extended-choice-static-transport-contract.md).
+
+The `0.8.291-SNAPSHOT` candidate adds `legacyDefaultLiteral` for exact omitted-input
+exports. The migration adapter copies the source's nonblank default verbatim,
+including order, whitespace, duplicates and unavailable placeholders. UI
+`defaultValues` remain selectable values; canonical values remain lists. With
+the literal unset, explicit default values supply their comma-joined string;
+`defaultMode: none` produces no ParameterValue. Null/zero-length standard fields
+and absent CLI/typed input use that factory. An explicit empty field or form
+submission produces an existing empty value. Explicit typed arrays retain strict
+validation. These changes require candidate verification and do not resolve
+the remaining single-selection or literal form compatibility gaps.
+Configured disabled options, required/min/max selection and duplicate policies
+still apply to the supported canonical default; a conflicting constraint rejects
+the default rather than producing a value that fails later validation.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses

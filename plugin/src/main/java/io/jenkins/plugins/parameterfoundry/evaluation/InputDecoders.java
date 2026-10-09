@@ -23,6 +23,9 @@ public final class InputDecoders {
             AbstractFoundryParameterDefinition definition, StaplerRequest2 request) {
         validatePresenceMarkers(request);
         String[] raw = request.getParameterValues(definition.getName());
+        if (ExtendedChoiceDefaultCompatibility.enabled(definition) && (raw == null || raw.length == 0)) {
+            return DecodedInput.absent();
+        }
         if (GitBranchInputCompatibility.enabled(definition)) {
             return GitBranchInputCompatibility.fromStandardFields(raw);
         }

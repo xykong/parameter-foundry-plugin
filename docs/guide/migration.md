@@ -62,6 +62,10 @@ has to be stated before an equivalent can be generated.
 
 ## Boundaries
 
+- The unreleased `0.8.291-SNAPSHOT` candidate adds exact omitted-input default
+  exports through `legacyDefaultLiteral` and corrects option parsing for custom
+  output delimiters. Candidate verification is still required; single-selection
+  transports and literal form submission remain open compatibility work.
 - Extended Choice compatibility in `0.7.288` covers a supported-value subset.
   Exact literal defaults, blank-default omission, unlisted form values, single
   selection transports and custom output delimiters still have known gaps.

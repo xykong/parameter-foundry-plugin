@@ -10,6 +10,7 @@ import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.GitBranchInputCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.InputDecoders;
 import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
@@ -42,6 +43,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     private String selectionMode = "single";
     private String defaultValue;
+    private String legacyDefaultLiteral;
     private String gitSelectionMode = "default";
     private transient boolean gitRebuildInput;
     private String environmentExportOrder = "canonical";
@@ -84,6 +86,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    public String getLegacyDefaultLiteral() {
+        return legacyDefaultLiteral;
+    }
+
+    @DataBoundSetter
+    public void setLegacyDefaultLiteral(String literal) {
+        this.legacyDefaultLiteral = literal == null || literal.isBlank() ? null : literal;
     }
 
     @DataBoundSetter
@@ -157,6 +168,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     public ParameterValue createValue(StaplerRequest2 request) {
         try {
             DecodedInput input = InputDecoders.fromStandardRequest(this, request);
+            if (!input.present() && ExtendedChoiceDefaultCompatibility.enabled(this)) {
+                return ExtendedChoiceDefaultCompatibility.evaluate(this);
+            }
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null, input);
             if (isMultiple()) {
                 List<String> canonical =
@@ -191,6 +205,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     public ParameterValue createValue(CLICommand command, String value) throws IOException, InterruptedException {
         try {
             DecodedInput input = InputDecoders.fromCli(this, value);
+            if (!input.present() && ExtendedChoiceDefaultCompatibility.enabled(this)) {
+                return ExtendedChoiceDefaultCompatibility.evaluate(this);
+            }
             ResolvedProviderOptions resolved = !needsOptions(input)
                     ? new ResolvedProviderOptions(List.of(), null, null, null, false)
                     : isProviderBacked()
@@ -212,6 +229,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue getDefaultParameterValue() {
         try {
+            if (ExtendedChoiceDefaultCompatibility.enabled(this)) {
+                return ExtendedChoiceDefaultCompatibility.evaluate(this);
+            }
             ResolvedProviderOptions resolved = needsOptions(DecodedInput.absent())
                     ? ProviderSubmission.resolveForDefault(this)
                     : new ResolvedProviderOptions(List.of(), null, null, null, false);
@@ -234,6 +254,11 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public boolean isValid(ParameterValue value) {
         try {
+            if (value instanceof FoundryChoiceParameterValue choice
+                    && choice.getLegacyDefaultLiteral() != null
+                    && !ExtendedChoiceDefaultCompatibility.enabled(this)) {
+                return false;
+            }
             if (GitBranchInputCompatibility.enabled(this)) {
                 DefinitionValidationService.requireValid(this);
                 if (value instanceof FoundryChoiceParameterValue choiceValue) {
@@ -290,6 +315,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setDefaultMode("explicit");
         if (isMultiple()) {
             copy.setDefaultValues(choiceValue.getValues());
+            copy.setLegacyDefaultLiteral(choiceValue.getLegacyDefaultLiteral());
         } else {
             copy.setDefaultValue(choiceValue.getScalarValue());
         }
@@ -359,6 +385,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setRenderer(getRenderer());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
+        copy.setLegacyDefaultLiteral(getLegacyDefaultLiteral());
+        copy.setEnvironmentExportOrder(getEnvironmentExportOrder());
         copy.setGitSelectionMode(getGitSelectionMode());
         copy.setDefaultValues(getDefaultValues());
         copy.setMinSelections(getMinSelections());

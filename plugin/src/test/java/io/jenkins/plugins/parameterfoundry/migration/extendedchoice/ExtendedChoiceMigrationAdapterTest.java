@@ -51,9 +51,27 @@ class ExtendedChoiceMigrationAdapterTest {
         assertTrue(snippet.contains("standardApiInputMode: 'extended-choice'"));
         assertTrue(snippet.contains("duplicatePolicy: 'deduplicate'"));
         assertEquals(List.of("web", "android"), target.getDefaultValues());
+        assertEquals("web,android", target.getLegacyDefaultLiteral());
+        assertTrue(snippet.contains("legacyDefaultLiteral: 'web,android'"));
         assertEquals("submitted", target.getEnvironmentExportOrder());
         assertEquals("submitted source order", plan.getFacts().get("Target export order"));
         assertEquals(1, plan.getDecisions().size());
+    }
+
+    @Test
+    void outputDelimiterDoesNotSplitOptionConfigurationOrUiDefaults() {
+        var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, "a;b,c", "a;b,c", null);
+        source.setMultiSelectDelimiter(";");
+
+        var target = assertInstanceOf(
+                FoundryChoiceParameterDefinition.class, adapter.inspect(source).getTarget());
+
+        assertEquals(List.of("a;b", "c"), adapter.currentSourceValues(source));
+        assertEquals(
+                List.of("a;b", "c"),
+                target.getChoices().stream().map(option -> option.getValue()).toList());
+        assertEquals(List.of("a;b", "c"), target.getDefaultValues());
+        assertEquals(";", target.getDelimiter());
     }
 
     @Test

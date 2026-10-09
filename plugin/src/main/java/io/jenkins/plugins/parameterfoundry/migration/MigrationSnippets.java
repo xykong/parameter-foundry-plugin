@@ -76,6 +76,9 @@ public final class MigrationSnippets {
                     + quote(multiple.getDelimiter())
                     + (multiple instanceof FoundryChoiceParameterDefinition choice
                             ? ",\n  environmentExportOrder: " + quote(choice.getEnvironmentExportOrder())
+                                    + (choice.getLegacyDefaultLiteral() != null
+                                            ? ",\n  legacyDefaultLiteral: " + quote(choice.getLegacyDefaultLiteral())
+                                            : "")
                             : "")
                     + "\n)";
         }

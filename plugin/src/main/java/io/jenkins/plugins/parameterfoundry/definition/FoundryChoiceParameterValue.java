@@ -34,6 +34,24 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
     private final String exportOrder;
     private final ProviderSnapshotMetadata providerSnapshot;
     private boolean preserveRepeatedSubmissions;
+    private String legacyDefaultLiteral;
+
+    public static FoundryChoiceParameterValue legacyDefault(
+            String name,
+            List<String> canonical,
+            List<String> submitted,
+            String description,
+            String exportMode,
+            String delimiter,
+            String literal) {
+        var result = multiple(name, canonical, submitted, description, exportMode, delimiter, "submitted", null, true);
+        result.legacyDefaultLiteral = Objects.requireNonNull(literal);
+        return result;
+    }
+
+    public String getLegacyDefaultLiteral() {
+        return legacyDefaultLiteral;
+    }
 
     @DataBoundConstructor
     public FoundryChoiceParameterValue(String name, Object value) {
@@ -239,6 +257,10 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
         if ("none".equals(mode)) {
             return;
         }
+        if (legacyDefaultLiteral != null) {
+            environment.put(getName(), legacyDefaultLiteral);
+            return;
+        }
         if (!isMultiple()) {
             if (value != null) {
                 environment.put(getName(), value);
@@ -269,11 +291,12 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
         }
         return Objects.equals(getName(), valueObject.getName())
                 && Objects.equals(selectionMode, valueObject.selectionMode)
+                && Objects.equals(legacyDefaultLiteral, valueObject.legacyDefaultLiteral)
                 && Objects.equals(getValues(), valueObject.getValues());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), selectionMode, getValues());
+        return Objects.hash(getName(), selectionMode, getValues(), legacyDefaultLiteral);
     }
 }

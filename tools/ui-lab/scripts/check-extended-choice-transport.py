@@ -46,9 +46,10 @@ async def main():
             browser=await pw.chromium.launch()
             page=await browser.new_page()
             base=lab.BASE_URL+'/job/extended-choice-transport'
-            async def result(number,expected):
+            async def result(number,expected,job_base=None):
+                result_base=job_base or base
                 for _ in range(120):
-                    response=await page.request.get(base+f'/{number}/api/json?tree=building,result')
+                    response=await page.request.get(result_base+f'/{number}/api/json?tree=building,result')
                     if response.ok:
                         body=await response.json()
                         if not body['building']:
@@ -56,7 +57,7 @@ async def main():
                             break
                     await asyncio.sleep(.5)
                 else:raise AssertionError('Contract build timed out')
-                response=await page.request.get(base+f'/{number}/artifact/result.txt')
+                response=await page.request.get(result_base+f'/{number}/artifact/result.txt')
                 assert response.ok and await response.text()==expected
             await page.goto(base+'/configure')
             mode=page.locator('select[name="parameter.standardApiInputMode"]')
@@ -65,8 +66,9 @@ async def main():
             await page.get_by_role('button',name='Save',exact=True).click()
             await page.goto(base+'/build?delay=0sec')
             field=page.locator('[data-parameter-name="TARGETS"]')
-            await field.locator('label:visible').filter(has_text=re.compile(r'^\s*alpha\s*$')).first.click()
-            await field.locator('label:visible').filter(has_text=re.compile(r'^\s*beta\s*$')).first.click()
+            await field.locator('[data-up-enhanced]').wait_for(state='visible')
+            await field.locator('[data-up-enhanced] label').filter(has_text=re.compile(r'^\s*alpha\s*$')).first.click()
+            await field.locator('[data-up-enhanced] label').filter(has_text=re.compile(r'^\s*beta\s*$')).first.click()
             await page.get_by_role('button',name='Build',exact=True).click()
             await result(1,'alpha,beta')
             body={'parameter':[{'name':'TARGETS','value':'beta,alpha,alpha'}]}
@@ -76,7 +78,26 @@ async def main():
             response=await page.request.post(base+'/buildWithParameters?delay=0sec',form={'TARGETS':'beta,alpha'})
             assert response.status in [200,201,302], (response.status, (await response.text())[:1000])
             await result(3,'')
-            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded']}
+            default_base=lab.BASE_URL+'/job/extended-choice-default'
+            literal=' gamma,unknown,alpha,gamma '
+            await page.goto(default_base+'/configure')
+            literal_field=page.locator('input[name="parameter.legacyDefaultLiteral"]')
+            assert await literal_field.input_value()==literal
+            await page.get_by_role('button',name='Save',exact=True).click()
+            await page.goto(default_base+'/configure')
+            assert await literal_field.input_value()==literal
+            await page.goto(default_base+'/build?delay=0sec')
+            default_field=page.locator('[data-parameter-name="TARGETS"]')
+            await default_field.locator('[data-up-enhanced]').wait_for(state='visible')
+            selected=await default_field.locator('[data-up-enhanced] input[type="checkbox"]:checked').evaluate_all('(inputs) => inputs.map(input => input.value).sort()')
+            assert selected==['alpha','gamma'],selected
+            assert await default_field.locator('label').filter(has_text='unknown').count()==0
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(1,'alpha,gamma',default_base)
+            response=await page.request.post(default_base+'/buildWithParameters?delay=0sec')
+            assert response.status in [200,201,302],response.status
+            await result(2,literal,default_base)
+            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal']}
             (ROOT/'docs/testing/results/extended-choice-transport-ui-lab.json').write_text(json.dumps(report,indent=2)+'\n')
             print(json.dumps(report))
             await browser.close()

@@ -14,11 +14,13 @@
     page must list current refs. API clients that explicitly supply a snapshot still require a valid token.</li>
   <li><code>json-array</code> expects exactly one field holding a JSON array of strings.</li>
   <li><code>delimited</code> splits a single field on the delimiter below.</li>
-  <li><code>extended-choice</code> preserves static Extended Choice multiple-selection transports:
+  <li><code>extended-choice</code> supports a subset of static Extended Choice multiple-selection transports:
     standard requests use repeated fields, trim values and ignore unavailable choices; CLI splits on commas;
     legacy form JSON accepts a delimiter-separated string or an array. Use submitted environment export
     order and duplicate deduplication; canonical values remain a set while repeated submitted values can
-    remain in the exported string. Providers and tables cannot use this compatibility mode.</li>
+    remain in the exported string. Exact literal defaults, blank-default omission and unlisted form
+    values still require compatibility work; verify source behavior before migrating a Job.
+    Providers and tables cannot use this compatibility mode.</li>
 </ul>
 <p>The Jenkins CLI accepts a JSON array in the other multiple-selection modes. Compatibility mode
 matches the source CLI's comma-separated input. The typed API always sends a JSON array.</p>

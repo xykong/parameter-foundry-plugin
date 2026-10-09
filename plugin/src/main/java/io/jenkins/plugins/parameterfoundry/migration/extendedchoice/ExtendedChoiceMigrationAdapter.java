@@ -68,12 +68,14 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         if (delimiter == null) {
             delimiter = ",";
         }
-        List<Option> options = parseOptions(readString(definition, "getValue"), delimiter);
-        List<String> defaults = parseValues(readString(definition, "getDefaultValue"), delimiter);
+        // Source option configuration and UI default selection use commas independently of
+        // the delimiter used to export a submitted multiple value.
+        List<Option> options = parseOptions(readString(definition, "getValue"));
+        List<String> defaults = parseValues(readString(definition, "getDefaultValue"), ",");
         List<String> optionValues = options.stream().map(Option::getValue).toList();
         List<String> supportedDefaults =
                 defaults.stream().filter(optionValues::contains).toList();
-        boolean hasEmptyOption = hasEmptyValue(readString(definition, "getValue"), delimiter);
+        boolean hasEmptyOption = hasEmptyValue(readString(definition, "getValue"), ",");
         boolean hasUnsupportedDefault = supportedDefaults.size() != defaults.size();
 
         if (multiple) {
@@ -83,6 +85,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             target.setRenderer(CHECK_BOX.equals(type) ? "checkbox" : "list");
             target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
             target.setDefaultValues(supportedDefaults);
+            target.setLegacyDefaultLiteral(readString(definition, "getDefaultValue"));
             target.setDelimiter(delimiter);
             target.setStandardApiInputMode("extended-choice");
             target.setDuplicatePolicy("deduplicate");
@@ -143,8 +146,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         if (!supports(definition) || hasUnsafeOrDynamicConfiguration(definition, readString(definition, "getType"))) {
             return List.of();
         }
-        String delimiter = Util.fixEmptyAndTrim(readString(definition, "getMultiSelectDelimiter"));
-        return parseValues(readString(definition, "getValue"), delimiter == null ? "," : delimiter);
+        return parseValues(readString(definition, "getValue"), ",");
     }
 
     /** The source default, which must stay selectable after the migration. */
@@ -161,9 +163,9 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         target.setChoices(options);
     }
 
-    private static List<Option> parseOptions(String raw, String delimiter) {
+    private static List<Option> parseOptions(String raw) {
         List<Option> options = new ArrayList<>();
-        for (String value : parseValues(raw, delimiter)) {
+        for (String value : parseValues(raw, ",")) {
             Option option = new Option(value);
             option.setLabel(value);
             options.add(option);

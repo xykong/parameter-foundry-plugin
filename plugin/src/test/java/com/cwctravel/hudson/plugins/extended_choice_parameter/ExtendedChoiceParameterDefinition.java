@@ -18,7 +18,7 @@ public final class ExtendedChoiceParameterDefinition extends ParameterDefinition
     private final String type;
     private final String value;
     private final String defaultValue;
-    private final String multiSelectDelimiter;
+    private String multiSelectDelimiter;
     private final String groovyScript;
 
     public ExtendedChoiceParameterDefinition(
@@ -45,6 +45,10 @@ public final class ExtendedChoiceParameterDefinition extends ParameterDefinition
 
     public String getMultiSelectDelimiter() {
         return multiSelectDelimiter;
+    }
+
+    public void setMultiSelectDelimiter(String delimiter) {
+        this.multiSelectDelimiter = delimiter;
     }
 
     public String getGroovyScript() {
