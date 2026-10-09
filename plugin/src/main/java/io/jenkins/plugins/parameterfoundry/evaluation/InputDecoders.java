@@ -49,6 +49,11 @@ public final class InputDecoders {
             }
             return DecodedInput.present(values);
         }
+        if (definition.isMultiple() && "extended-choice".equals(definition.getStandardApiInputMode())) {
+            // Source form JSON treated non-string/non-array values as an explicit empty selection.
+            return DecodedInput.present(
+                    raw instanceof String text ? splitDelimited(text, definition.getDelimiter()) : List.of());
+        }
         return DecodedInput.present(List.of(String.valueOf(raw)));
     }
 
@@ -59,7 +64,7 @@ public final class InputDecoders {
         if (!definition.isMultiple()) {
             return DecodedInput.present(List.of(rawValue));
         }
-        if (rawValue.startsWith("[")) {
+        if (rawValue.startsWith("[") && !"extended-choice".equals(definition.getStandardApiInputMode())) {
             try {
                 JSONArray array = JSONArray.fromObject(rawValue);
                 List<String> values = new ArrayList<>();
@@ -72,6 +77,13 @@ public final class InputDecoders {
                         ErrorCode.MALFORMED_INPUT, definition.getName(), "CLI JSON array is malformed.");
             }
         }
+        if ("extended-choice".equals(definition.getStandardApiInputMode())) {
+            // The source CLI splits on commas, trims and silently ignores unavailable values.
+            String[] fields = rawValue.split(",");
+            return fields.length == 0
+                    ? DecodedInput.absent()
+                    : DecodedInput.present(filterLegacyChoices(definition, Arrays.asList(fields)));
+        }
         if ("delimited".equals(definition.getStandardApiInputMode())) {
             return DecodedInput.present(splitDelimited(rawValue, definition.getDelimiter()));
         }
@@ -81,6 +93,7 @@ public final class InputDecoders {
     private static List<String> decodeMultiTransport(AbstractFoundryParameterDefinition definition, List<String> raw) {
         return switch (definition.getStandardApiInputMode()) {
             case "repeated" -> List.copyOf(raw);
+            case "extended-choice" -> filterLegacyChoices(definition, raw);
             case "json-array" -> {
                 if (raw.size() != 1) {
                     throw malformed(definition, "json-array mode accepts exactly one field.");
@@ -112,6 +125,12 @@ public final class InputDecoders {
             return List.of();
         }
         return Arrays.asList(input.split(java.util.regex.Pattern.quote(delimiter), -1));
+    }
+
+    private static List<String> filterLegacyChoices(AbstractFoundryParameterDefinition definition, List<String> raw) {
+        Set<String> offered = new HashSet<>();
+        definition.getSelectableOptions().forEach(option -> offered.add(option.getValue()));
+        return raw.stream().map(String::trim).filter(offered::contains).toList();
     }
 
     private static EvaluationException malformed(AbstractFoundryParameterDefinition definition, String message) {

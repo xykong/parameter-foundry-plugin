@@ -33,6 +33,7 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
     private final List<String> submittedValues;
     private final String exportOrder;
     private final ProviderSnapshotMetadata providerSnapshot;
+    private boolean preserveRepeatedSubmissions;
 
     @DataBoundConstructor
     public FoundryChoiceParameterValue(String name, Object value) {
@@ -87,6 +88,22 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
                 providerSnapshot,
                 submittedValues,
                 exportOrder);
+    }
+
+    public static FoundryChoiceParameterValue multiple(
+            String name,
+            List<String> values,
+            List<String> submittedValues,
+            String description,
+            String exportMode,
+            String delimiter,
+            String exportOrder,
+            ProviderSnapshotMetadata providerSnapshot,
+            boolean preserveRepeatedSubmissions) {
+        var result = multiple(
+                name, values, submittedValues, description, exportMode, delimiter, exportOrder, providerSnapshot);
+        result.preserveRepeatedSubmissions = preserveRepeatedSubmissions;
+        return result;
     }
 
     private FoundryChoiceParameterValue(
@@ -195,6 +212,11 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
     public List<String> getSubmittedValues() {
         if (!isMultiple()) {
             return getValues();
+        }
+        if (preserveRepeatedSubmissions
+                && submittedValues != null
+                && new java.util.HashSet<>(submittedValues).equals(new java.util.HashSet<>(getValues()))) {
+            return submittedValues;
         }
         if (submittedValues == null || submittedValues.size() != getValues().size()) {
             return getValues();

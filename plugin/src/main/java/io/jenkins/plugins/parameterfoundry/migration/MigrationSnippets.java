@@ -64,6 +64,8 @@ public final class MigrationSnippets {
                             : "")
                     + ",\n  standardApiInputMode: "
                     + quote(multiple.getStandardApiInputMode())
+                    + ",\n  duplicatePolicy: "
+                    + quote(multiple.getDuplicatePolicy())
                     + ",\n  delimiter: "
                     + quote(multiple.getDelimiter())
                     + (multiple instanceof FoundryChoiceParameterDefinition choice

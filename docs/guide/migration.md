@@ -45,6 +45,7 @@ has to be stated before an equivalent can be generated.
 | Extended Choice Groovy script | Provider refactor (the script is not copied) |
 | Extended Choice JSON editor | `foundryForm` |
 | Extended Choice custom delimiter | `standardApiInputMode` / `environmentExport` |
+| Extended Choice static multiple-selection transports | `standardApiInputMode: 'extended-choice'`, submitted export and canonical duplicate deduplication |
 | Active Choices choice | Provider plus `foundryChoice` |
 | Active Choices reactive choice/reference | `dependsOn`, or a read-only form field |
 | Active Choices Groovy list/map | Inline, REST, managed config, or Script Provider |

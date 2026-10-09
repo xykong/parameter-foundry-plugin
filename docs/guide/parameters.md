@@ -40,7 +40,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
-| `standardApiInputMode` | `repeated`, `json-array`, `delimited` | `repeated` | How `buildWithParameters` decodes the parameter |
+| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice` | `repeated` | How standard transports decode the parameter; compatibility mode requires static multiple choices |
 | `delimiter` | text | `,` | Used by `delimited` input and export |
 | `allowCustomValue` | boolean | `false` | Single selection: accept a value outside the option list |
 | `customValuePattern` | regex | empty | Full-match rule for custom values |
@@ -114,10 +114,22 @@ to `submitted`, and a value without the field behaves as `canonical`.
 | Entry point | Single | Multiple |
 |---|---|---|
 | Browser form | the selected control | repeated fields, one per value |
-| `buildWithParameters` | `repeated` | `repeated`, `json-array`, or `delimited` per `standardApiInputMode` |
-| Jenkins CLI | one argument | JSON array argument, or the configured delimiter |
+| `buildWithParameters` | `repeated` | `repeated`, `json-array`, `delimited`, or `extended-choice` per `standardApiInputMode` |
+| Jenkins CLI | one argument | JSON array or configured delimiter; compatibility mode follows the source comma-split contract |
 | Typed API (`api/v1/build`, `api/v1/validate`) | JSON string | JSON array |
 | Pipeline `build` step | `foundryChoice` value | `foundryChoice` value with a list |
+
+`extended-choice` preserves the source plugin's static multi-select transports.
+Standard requests accept repeated fields, trim each value and omit values outside
+the configured choices; a combined comma string is one field and is not expanded.
+CLI input splits on commas and applies the same trimming/filtering. Form JSON can
+use a delimiter-separated string or an array. Other modes keep their existing
+decoding and validation behavior; the typed API continues to use arrays.
+
+For migration, use `environmentExportOrder: 'submitted'` and
+`duplicatePolicy: 'deduplicate'`: canonical values remain a sorted set, while
+repeated supported submissions can remain repeated in the legacy exported string.
+This mode is unavailable to Providers, tables and single-choice parameters.
 
 ## `foundryForm`
 

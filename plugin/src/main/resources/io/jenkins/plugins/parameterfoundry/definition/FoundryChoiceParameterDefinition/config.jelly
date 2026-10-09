@@ -93,6 +93,7 @@
           <option value="repeated" selected="${instance.standardApiInputMode == 'repeated' ? 'selected' : null}">Repeated fields</option>
           <option value="json-array" selected="${instance.standardApiInputMode == 'json-array' ? 'selected' : null}">JSON array field</option>
           <option value="delimited" selected="${instance.standardApiInputMode == 'delimited' ? 'selected' : null}">Delimited field</option>
+          <option value="extended-choice" selected="${instance.standardApiInputMode == 'extended-choice' ? 'selected' : null}">Extended Choice compatibility</option>
         </select>
       </f:entry>
       <f:entry title="Delimiter" field="delimiter">
@@ -102,6 +103,12 @@
         <select class="jenkins-select__input" name="parameter.environmentExportOrder">
           <option value="canonical" selected="${instance.environmentExportOrder == 'canonical' ? 'selected' : null}">Canonical (sorted) order</option>
           <option value="submitted" selected="${instance.environmentExportOrder == 'submitted' ? 'selected' : null}">Submitted order</option>
+        </select>
+      </f:entry>
+      <f:entry title="Duplicate policy" field="duplicatePolicy">
+        <select class="jenkins-select__input" name="parameter.duplicatePolicy">
+          <option value="reject" selected="${instance.duplicatePolicy == 'reject' ? 'selected' : null}">Reject duplicates</option>
+          <option value="deduplicate" selected="${instance.duplicatePolicy == 'deduplicate' ? 'selected' : null}">Deduplicate canonical values</option>
         </select>
       </f:entry>
     </j:when>

@@ -23,7 +23,7 @@ public final class DefinitionValidationService {
     private static final Set<String> SINGLE_RENDERERS = Set.of("select", "searchable", "radio", "list");
     private static final Set<String> MULTI_RENDERERS = Set.of("list", "checkbox", "table");
     private static final Set<String> MULTI_SELECTED_DISPLAYS = Set.of("none", "chips");
-    private static final Set<String> MULTI_API_MODES = Set.of("repeated", "json-array", "delimited");
+    private static final Set<String> MULTI_API_MODES = Set.of("repeated", "json-array", "delimited", "extended-choice");
     private static final Set<String> MULTI_EXPORT_MODES = Set.of("delimited", "json", "none");
 
     private DefinitionValidationService() {}
@@ -186,6 +186,9 @@ public final class DefinitionValidationService {
     }
 
     private static void validateSingle(FoundryChoiceParameterDefinition definition, List<String> errors) {
+        if ("extended-choice".equals(definition.getStandardApiInputMode())) {
+            errors.add("Extended Choice transport compatibility requires multiple selection.");
+        }
         if (!SINGLE_RENDERERS.contains(definition.getRenderer())
                 && !TrustedRendererRegistry.isTrusted(
                         definition.getRenderer(), TrustedRendererRegistry.FAMILY_SINGLE_CHOICE)) {
@@ -234,6 +237,12 @@ public final class DefinitionValidationService {
         }
         if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())) {
             errors.add("Unsupported standard API input mode: " + definition.getStandardApiInputMode());
+        }
+        if ("extended-choice".equals(definition.getStandardApiInputMode())
+                && (!(definition instanceof FoundryChoiceParameterDefinition)
+                        || definition.isProviderBacked()
+                        || definition.getTable() != null)) {
+            errors.add("Extended Choice transport compatibility requires a static multiple choice without a table.");
         }
         if (!MULTI_EXPORT_MODES.contains(definition.getEnvironmentExport())) {
             errors.add("Unsupported multi-choice export mode: " + definition.getEnvironmentExport());

@@ -45,7 +45,11 @@ class ExtendedChoiceMigrationAdapterTest {
                 assertInstanceOf(FoundryChoiceParameterDefinition.class, plan.getTarget());
         assertEquals("multiple", target.getSelectionMode());
         assertEquals("checkbox", target.getRenderer());
-        assertEquals("delimited", target.getStandardApiInputMode());
+        assertEquals("extended-choice", target.getStandardApiInputMode());
+        assertEquals("deduplicate", target.getDuplicatePolicy());
+        String snippet = io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target);
+        assertTrue(snippet.contains("standardApiInputMode: 'extended-choice'"));
+        assertTrue(snippet.contains("duplicatePolicy: 'deduplicate'"));
         assertEquals(List.of("web", "android"), target.getDefaultValues());
         assertEquals("submitted", target.getEnvironmentExportOrder());
         assertEquals("submitted source order", plan.getFacts().get("Target export order"));

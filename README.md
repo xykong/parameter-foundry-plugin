@@ -13,6 +13,8 @@ Provider snapshots, typed Foundry Forms, migration execution and rollback,
 trusted companion extension contracts, reference Renderer and sandboxed Script
 Provider companions, built-in workspace/Base64/stash file parameters, source migration
 boundaries, and retirement reporting.
+Static Extended Choice migrations include an explicit transport compatibility
+mode for legacy CLI, repeated REST fields and form JSON submissions.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

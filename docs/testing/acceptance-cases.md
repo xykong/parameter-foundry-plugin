@@ -16,6 +16,7 @@ the case, but production configuration is never committed here.
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
+| Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -93,6 +94,7 @@ Jenkins JavaScript form works without scripts.
 | ID | Reproduction and expected behavior | Actual behavior and fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-035 | Submit a stored upload and reactive choice in one Jenkins CLI build. The Provider resolves the declared dependency, the upload remains attached, and the build succeeds. | Jenkins marks consumed file arguments with null; immutable map copying previously raised a null-pointer exception. A defensive read-only copy now accepts unrelated consumed markers without changing canonical dependency validation. | `ReactiveSnapshotIntegrationTest` covers a consumed marker deterministically and an actual combined CLI build; macOS Harness on baseline Jenkins, production pilot follow-up pending |
+| UP-AC-036 | Compare legacy static multiple selections over CLI comma input, repeated standard requests and form JSON string/array input. Standard requests must not expand a combined comma field. Preserve submitted export including supported duplicates while canonical values remain a set; reject compatibility mode for Providers and tables. | Delimited mode treated REST and CLI alike, while form JSON treated comma strings as one value. Add explicit static Extended Choice transport compatibility and retained repeated exports; expose duplicate policy so saving config preserves it. | Passed candidate 2026-10-09: six `ExtendedChoiceTransportCompatibilityTest` Harness cases and four Chromium/Linux-controller UI Lab checks; [record](./extended-choice-transport-verification-2026-10-09.md). Exact release browser verification remains required before deployment |
 
 | ID | Platform/device | Required checks | Status |
 | --- | --- | --- | --- |

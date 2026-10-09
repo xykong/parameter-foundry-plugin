@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "browser": "153.0.8010.12",
+  "checks": [
+    "compatibility configuration save",
+    "browser array submission",
+    "legacy delimited form JSON with repeated export",
+    "standard combined field remains unexpanded"
+  ],
+  "pluginVersion": "0.6.281-SNAPSHOT",
+  "artifactSha256": "328df25f6cf3a506129b4d94e2cc87320e3c8b376af06f0c2434a7ab4bc9787a"
+}

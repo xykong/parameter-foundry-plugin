@@ -84,7 +84,8 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
             target.setDefaultValues(supportedDefaults);
             target.setDelimiter(delimiter);
-            target.setStandardApiInputMode("delimited");
+            target.setStandardApiInputMode("extended-choice");
+            target.setDuplicatePolicy("deduplicate");
             // The source control exported the submitted order, so the migrated Job keeps it while
             // the canonical value stays the sorted set.
             target.setEnvironmentExportOrder("submitted");

@@ -389,11 +389,19 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                 getEnvironmentExport(),
                 getDelimiter(),
                 getEnvironmentExportOrder(),
-                metadata);
+                metadata,
+                "extended-choice".equals(getStandardApiInputMode()));
     }
 
     /** Keeps the submitted order for the values the canonical evaluation accepted. */
-    private static List<String> submittedOrder(List<String> canonical, List<String> submitted) {
+    private List<String> submittedOrder(List<String> canonical, List<String> submitted) {
+        if ("extended-choice".equals(getStandardApiInputMode()) && submitted != null) {
+            List<String> legacy = submitted.stream()
+                    .filter(java.util.Objects::nonNull)
+                    .filter(canonical::contains)
+                    .toList();
+            if (new HashSet<>(legacy).equals(new HashSet<>(canonical))) return legacy;
+        }
         if (submitted == null || submitted.isEmpty() || submitted.size() == canonical.size()) {
             return submitted == null || submitted.isEmpty() ? canonical : submitted;
         }

@@ -9,6 +9,12 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## Unreleased — 0.6
+
+### Added
+
+- Static Extended Choice multiple-selection transport compatibility, preserving legacy repeated REST fields, comma-separated CLI input, delimited form JSON and repeated submitted environment exports.
+
 ## 0.5.279 - 2026-10-09
 
 The HPI is `dist/parameter-foundry-0.5.279.hpi` (SHA-256

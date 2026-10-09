@@ -40,6 +40,9 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   mapping executes nothing.
 - Environment export: `string` or `none` for single selection, `delimited`, `json`, or `none` for
   multiple selection, `json` or `none` plus per-field variables for forms.
+- Static multiple choices can use `standardApiInputMode: extended-choice` for source-compatible
+  repeated REST fields, comma-split CLI and delimited form JSON. Pair it with submitted export
+  order and duplicate deduplication; repeated supported values remain in the exported string.
 - Typed API: `…/parameter-foundry/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
 - Errors carry stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.
 - Migration CLI: `parameter-foundry-migration` scans the controller, previews a
