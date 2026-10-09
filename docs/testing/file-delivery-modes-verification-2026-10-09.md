@@ -61,5 +61,10 @@ A production release also requires the [companion security review](../security/c
 - Independent [security review](../security/file-upload-review-2026-10-09.md)
   cleared the release blocker after the submission cleanup and startup recovery
   guard were repaired.
-- Exact release HPI browser evidence and artifact digest are recorded when the
-  final package is pinned in `dist/`.
+- The exact `0.5.276` HPI from release commit `6537542` passed all fifteen
+  [real-browser canary checks](./results/foundry-file-modes-ui-lab.json), including
+  controller restart and retained-upload Rebuild, desktop/mobile upload, limits,
+  Core migration and legacy Rebuild rejection. No source File Parameters plugin
+  was installed in the canary.
+- Pinned artifact: `dist/parameter-foundry-0.5.276.hpi`, 594,471 bytes,
+  SHA-256 `3abe4751d1bc9ce05f0b4a0fcdbd426dbc639f53c44a0a1c1e41af596b333274`.

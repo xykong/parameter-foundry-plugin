@@ -11,6 +11,12 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.5.276 - 2026-10-09
 
+The HPI is `dist/parameter-foundry-0.5.276.hpi` (SHA-256
+`3abe4751d1bc9ce05f0b4a0fcdbd426dbc639f53c44a0a1c1e41af596b333274`,
+594,471 bytes), built from release commit `6537542`. The full regression passed
+316 tests; final file regressions and static checks passed after the lifecycle
+repair. The exact HPI passed the disposable real-browser canary.
+
 ### Added
 
 - Unified file parameter with workspace, Base64 or stash delivery, configurable per-parameter upload limits, and Core File migration preserving workspace paths and original filenames.
