@@ -50,3 +50,16 @@ without the sticky navigation or save bar covering them.
 Physical devices, Windows execution, other browser engines and manual keyboard /
 screen-reader sign-off remain pending in the [acceptance matrix](./acceptance-cases.md).
 A production release also requires the [companion security review](../security/companion-review-checklist.md).
+
+## Release verification: 0.5.276
+
+- Full regression: 316 tests passed with zero failures/errors.
+- Final lifecycle and delivery regression after the visibility/nullability repair:
+  27 tests passed; `mvn -B -ntp verify` with the three file test classes passed,
+  including SpotBugs and Spotless. The complete earlier run passed all tests but
+  reported three static findings, which this final gate cleared.
+- Independent [security review](../security/file-upload-review-2026-10-09.md)
+  cleared the release blocker after the submission cleanup and startup recovery
+  guard were repaired.
+- Exact release HPI browser evidence and artifact digest are recorded when the
+  final package is pinned in `dist/`.

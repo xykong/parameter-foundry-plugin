@@ -9,7 +9,7 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## Unreleased — 0.5
+## 0.5.276 - 2026-10-09
 
 ### Added
 
