@@ -46,6 +46,17 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     private String selectionMode = "single";
     private String defaultValue;
     private String legacyDefaultLiteral;
+    private boolean legacyEmptyChoiceAllowed;
+
+    public boolean isLegacyEmptyChoiceAllowed() {
+        return legacyEmptyChoiceAllowed;
+    }
+
+    @DataBoundSetter
+    public void setLegacyEmptyChoiceAllowed(boolean allowed) {
+        this.legacyEmptyChoiceAllowed = allowed;
+    }
+
     private String gitSelectionMode = "default";
     private transient boolean gitRebuildInput;
     private transient boolean extendedChoiceRebuildInput;
@@ -200,8 +211,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             }
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, null, input);
             if (isMultiple()) {
-                List<String> canonical =
-                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
+                List<String> canonical = ExtendedChoiceDefaultCompatibility.evaluateSubmission(
+                        this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -223,8 +234,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted, input);
             if (isMultiple()) {
-                List<String> canonical =
-                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
+                List<String> canonical = ExtendedChoiceDefaultCompatibility.evaluateSubmission(
+                        this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -251,8 +262,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                                     ProviderSubmission.requireOwningJob(this), this, ProviderOperation.BUILD, command)
                             : new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
             if (isMultiple()) {
-                List<String> canonical =
-                        ParameterEvaluationService.evaluateMultiple(this, input, resolved.options(), resolved.matrix());
+                List<String> canonical = ExtendedChoiceDefaultCompatibility.evaluateSubmission(
+                        this, input, resolved.options(), resolved.matrix());
                 return toMultiValue(canonical, submittedOrder(canonical, input.values()), resolved.metadata());
             }
             return toValue(
@@ -440,6 +451,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
         copy.setLegacyDefaultLiteral(getLegacyDefaultLiteral());
+        copy.setLegacyEmptyChoiceAllowed(isLegacyEmptyChoiceAllowed());
         copy.setEnvironmentExportOrder(getEnvironmentExportOrder());
         copy.setGitSelectionMode(getGitSelectionMode());
         copy.setDefaultValues(getDefaultValues());
@@ -542,9 +554,10 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         if ("extended-choice".equals(getStandardApiInputMode()) && submitted != null) {
             List<String> legacy = submitted.stream()
                     .filter(java.util.Objects::nonNull)
-                    .filter(canonical::contains)
+                    .filter(value -> canonical.contains(value) || isLegacyEmptyChoiceAllowed() && value.isEmpty())
                     .toList();
-            if (new HashSet<>(legacy).equals(new HashSet<>(canonical))) return legacy;
+            if (new HashSet<>(legacy.stream().filter(value -> !value.isEmpty()).toList())
+                    .equals(new HashSet<>(canonical))) return legacy;
         }
         if (submitted == null || submitted.isEmpty() || submitted.size() == canonical.size()) {
             return submitted == null || submitted.isEmpty() ? canonical : submitted;

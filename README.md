@@ -22,7 +22,9 @@ independent dropdown selection and API/CLI defaults.
 The current unreleased candidate retains exact static multiple-choice defaults
 through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
 values. Static single transport compatibility is implemented in the candidate;
-source/browser and empty-option verification remain pending.
+source/browser verification is recorded in the testing guide. The current
+candidate adds source empty-token transport, verified against the characterized
+source contract; per-Job and exact-release gates still apply.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

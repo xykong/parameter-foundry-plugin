@@ -76,6 +76,9 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (choice.isLegacyEmptyChoiceAllowed() && !"extended-choice".equals(choice.getStandardApiInputMode())) {
+                errors.add("Legacy empty choice transport requires Extended Choice compatibility.");
+            }
             if (choice.getLegacyDefaultLiteral() != null
                     && !"extended-choice".equals(choice.getStandardApiInputMode())) {
                 errors.add("Legacy default literal requires Extended Choice compatibility.");

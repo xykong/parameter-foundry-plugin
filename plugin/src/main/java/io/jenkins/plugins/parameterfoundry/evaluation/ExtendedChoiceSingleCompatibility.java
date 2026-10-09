@@ -29,6 +29,7 @@ public final class ExtendedChoiceSingleCompatibility {
         if (fields == null || fields.length == 0) return defaultValue(definition);
         var offered = new HashSet<String>();
         definition.getSelectableOptions().forEach(option -> offered.add(option.getValue()));
+        if (definition.isLegacyEmptyChoiceAllowed()) offered.add("");
         var accepted = new ArrayList<String>();
         for (String field : fields) if (offered.contains(field.trim())) accepted.add(field.trim());
         return value(definition, String.join(definition.getDelimiter(), accepted));

@@ -3,6 +3,8 @@ package io.jenkins.plugins.parameterfoundry.evaluation;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,6 +18,20 @@ public final class ExtendedChoiceDefaultCompatibility {
         return definition instanceof FoundryChoiceParameterDefinition
                 && definition.isMultiple()
                 && "extended-choice".equals(definition.getStandardApiInputMode());
+    }
+
+    /** Empty legacy transport tokens are retained for export, not added to the selectable set. */
+    public static List<String> evaluateSubmission(
+            FoundryChoiceParameterDefinition definition,
+            DecodedInput input,
+            List<Option> options,
+            ChoiceMatrix matrix) {
+        DecodedInput canonicalInput = enabled(definition) && definition.isLegacyEmptyChoiceAllowed() && input.present()
+                ? DecodedInput.present(input.values().stream()
+                        .filter(value -> value == null || !value.isEmpty())
+                        .toList())
+                : input;
+        return ParameterEvaluationService.evaluateMultiple(definition, canonicalInput, options, matrix);
     }
 
     public static FoundryChoiceParameterValue evaluate(FoundryChoiceParameterDefinition definition) {

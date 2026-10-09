@@ -51,6 +51,7 @@ public final class MigrationSnippets {
                             : "")
                     + (choice.isExtendedChoiceSingleInput()
                             ? ",\n  delimiter: " + quote(choice.getDelimiter())
+                                    + (choice.isLegacyEmptyChoiceAllowed() ? ",\n  legacyEmptyChoiceAllowed: true" : "")
                                     + (choice.getLegacyDefaultLiteral() != null
                                             ? ",\n  legacyDefaultLiteral: " + quote(choice.getLegacyDefaultLiteral())
                                             : "")
@@ -82,6 +83,7 @@ public final class MigrationSnippets {
                     + quote(multiple.getDelimiter())
                     + (multiple instanceof FoundryChoiceParameterDefinition choice
                             ? ",\n  environmentExportOrder: " + quote(choice.getEnvironmentExportOrder())
+                                    + (choice.isLegacyEmptyChoiceAllowed() ? ",\n  legacyEmptyChoiceAllowed: true" : "")
                                     + (choice.getLegacyDefaultLiteral() != null
                                             ? ",\n  legacyDefaultLiteral: " + quote(choice.getLegacyDefaultLiteral())
                                             : "")

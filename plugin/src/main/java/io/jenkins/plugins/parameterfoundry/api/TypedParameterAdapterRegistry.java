@@ -62,6 +62,7 @@ final class TypedParameterAdapterRegistry {
         if (definition instanceof FoundryChoiceParameterDefinition single) {
             schema.put("selectionMode", single.getSelectionMode());
             schema.put("standardApiInputMode", single.getStandardApiInputMode());
+            schema.put("legacyEmptyChoiceAllowed", single.isLegacyEmptyChoiceAllowed());
             schema.put("gitSelectionMode", single.getGitSelectionMode());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));

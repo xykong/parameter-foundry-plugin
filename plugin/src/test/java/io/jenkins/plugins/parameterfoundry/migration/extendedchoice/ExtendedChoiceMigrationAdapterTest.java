@@ -59,6 +59,29 @@ class ExtendedChoiceMigrationAdapterTest {
     }
 
     @Test
+    void emptySourceTransportIsEnabledForLeadingOrInternalButNotTrailingEntries() {
+        for (String values : List.of(",a,b", "a,,b", "a, ,b")) {
+            var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, values, null, null);
+            var target = assertInstanceOf(
+                    FoundryChoiceParameterDefinition.class,
+                    adapter.inspect(source).getTarget());
+            assertTrue(target.isLegacyEmptyChoiceAllowed());
+            assertEquals(
+                    List.of("a", "b"),
+                    target.getChoices().stream()
+                            .map(option -> option.getValue())
+                            .toList());
+            assertTrue(io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target)
+                    .contains("legacyEmptyChoiceAllowed: true"));
+        }
+        var trailing = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_SINGLE_SELECT, "a,b,", null, null);
+        assertEquals(
+                false,
+                ((FoundryChoiceParameterDefinition) adapter.inspect(trailing).getTarget())
+                        .isLegacyEmptyChoiceAllowed());
+    }
+
+    @Test
     void outputDelimiterDoesNotSplitOptionConfigurationOrUiDefaults() {
         var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, "a;b,c", "a;b,c", null);
         source.setMultiSelectDelimiter(";");

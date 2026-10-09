@@ -9,9 +9,11 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## 0.8.294-SNAPSHOT - Unreleased
+## 0.8.295-SNAPSHOT - Unreleased
 
 ### Fixed
+
+- Extended Choice migration retains empty option tokens in CLI/standard exports without adding empty visible choices.
 
 - Static single Extended Choice migrations preserve omitted literal defaults, joined CLI/standard inputs, literal forms and editable historical Rebuild; dropdown/radio defaults remain independent of transport defaults.
 

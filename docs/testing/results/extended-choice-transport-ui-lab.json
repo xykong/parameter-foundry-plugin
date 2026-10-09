@@ -1,6 +1,12 @@
 {
   "passed": true,
   "browser": "153.0.8010.12",
+  "hostPlatform": "Darwin",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
   "checks": [
     "compatibility configuration save",
     "browser array submission",
@@ -18,6 +24,11 @@
     "single last matching DOM option is selected",
     "radio without default stays unselected without added None",
     "radio last matching DOM option is selected",
-    "static single retains all 240 options without truncation notice"
+    "static single retains all 240 options without truncation notice",
+    "no-JavaScript fallback omits blank choice and submits supported value",
+    "empty transport flag survives configuration save",
+    "empty transport adds no visible blank option",
+    "repeated HTTP empty fields retain delimiter positions",
+    "Rebuild preserves empty token positions"
   ]
 }

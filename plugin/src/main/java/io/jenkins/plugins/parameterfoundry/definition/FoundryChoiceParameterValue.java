@@ -247,6 +247,7 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
 
     /** Order the caller submitted, which the environment export can preserve for migrated Jobs. */
     public List<String> getSubmittedValues() {
+        if (getLegacyExportLiteral() != null && submittedValues != null) return submittedValues;
         if (!isMultiple()) {
             return getValues();
         }

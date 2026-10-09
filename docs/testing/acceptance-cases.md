@@ -20,6 +20,7 @@ the case, but production configuration is never committed here.
 | Extended Choice literal/default fidelity (UP-AC-039) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Omission, Pipeline values, Rebuild and persistence |
 | Extended Choice literal forms (UP-AC-040) | Required | Required | Existing renderer coverage | Existing renderer coverage | Existing repeated field coverage | Required | Raw equality, persistence and editable Rebuild |
 | Extended Choice single transport (UP-AC-041) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Scalar defaults, UI selection and Rebuild |
+| Extended Choice empty transport (UP-AC-042) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Separator positions, omitted defaults and persisted flag |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -128,6 +129,12 @@ Jenkins JavaScript form works without scripts.
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-041 | Omit a static single parameter with an unlisted default, submit joined/repeated known values over CLI/standard requests and literal strings/arrays over forms. Keep scalar output and editable Rebuild; distinguish API defaults from dropdown/radio selection. Typed explicit strings remain strict. | Shared single compatibility preserves source transports. Static dropdown/radio controls omit the added None option and retain all options; UI defaults use the last matching offered choice. Radio tests inspect ready native controls. Source compatibility rejects disabled choices explicitly. | Passed characterized scope: final 360 tests, 17 browser checks and all 816 source single/multiple cases match. Five new Harness cases include actual HTTP/CLI, config/reload and Rebuild. [Verification and limits](./extended-choice-single-verification-2026-10-10.md). Empty-option and per-Job source/consumer/history gates remain open. |
+
+### Extended Choice empty transport
+
+| ID | Reproduction / expected result | Actual behavior / fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-042 | Use a source option string with leading/internal empty entries. CLI/standard requests must keep accepted empty token positions; omitted input still defaults. Empty tokens remain absent from visible/canonical choices and strict typed input. | Filtering against visible choices previously dropped empty separators. A source-derived `legacyEmptyChoiceAllowed` flag preserves transport tokens while canonical evaluation ignores those tokens. Source browser inspection confirms empty entries are not rendered in select/radio/checkbox controls. | Candidate 0.8.295-SNAPSHOT: four Harness cases, adapter regression and 22 browser checks pass. All 9,792 characterized source cases match across single, multiple, Radio and Checkbox types. Initial full run has one stale Chinese UI assertion; it is updated to the new transport-preservation decision. Corrected localized UI and final full 365-test verification pass. All source/browser gates reran on the final HPI. [Verification and limits](./extended-choice-empty-verification-2026-10-10.md). |
 
 ## Platform and Device Cases
 

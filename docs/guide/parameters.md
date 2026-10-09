@@ -37,7 +37,8 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `defaultMode` | `none`, `first`, `explicit` | `none` | How an omitted value resolves |
 | `defaultValue` | value | — | Single selection, `explicit` only |
 | `defaultValues` | value list | empty | Multiple selection, `explicit` only |
-| `legacyDefaultLiteral` | exact string | unset | Static multiple Extended Choice compatibility: preserve omitted-input environment default separately from selectable UI defaults |
+| `legacyDefaultLiteral` | exact string | unset | Static Extended Choice compatibility: preserve omitted-input environment default separately from selectable UI defaults |
+| `legacyEmptyChoiceAllowed` | boolean | `false` | Extended Choice compatibility only: accept empty CLI/standard tokens from leading/internal source entries without displaying empty choices |
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
@@ -166,6 +167,14 @@ radio controls without a matching default remain unselected. Compatibility does
 not add a None option or truncate static options. Required/custom controls and
 Providers/dependencies are unavailable. Typed explicit strings stay strict;
 typed omission uses the source default. Source and browser gates remain required.
+
+The `0.8.295-SNAPSHOT` candidate adds source empty-token transport. The adapter
+enables `legacyEmptyChoiceAllowed` when the source comma list has a leading or
+internal empty token. A trailing comma alone does not enable it. Accepted empty
+CLI/standard fields preserve their separator positions, while visible options
+and canonical multiple values stay non-empty. Typed explicit inputs stay strict;
+form strings/arrays already preserve empty elements. Omitted input still uses
+the source default. This setting is rejected in ordinary modes.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses

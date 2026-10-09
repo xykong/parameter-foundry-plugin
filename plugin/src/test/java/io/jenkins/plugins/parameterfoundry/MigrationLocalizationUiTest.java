@@ -34,7 +34,7 @@ class MigrationLocalizationUiTest {
             assertTrue(text.contains("参数工场迁移预览"), text.substring(0, Math.min(300, text.length())));
             assertTrue(text.contains("原子批量迁移"));
             assertTrue(text.contains("迁移前需要确认的决策"));
-            assertTrue(text.contains("将源中的空选项替换为可选的 None 行为或显式的哨兵值。"), "decision not translated");
+            assertTrue(text.contains("保留旧参数传输中的空选项字段；界面选项列表仍不展示空项。"), "decision not translated");
             assertTrue(text.contains("显式取值以及默认/未传值输入"), "verification cases not translated");
             assertTrue(text.contains("源选项数"), "fact labels not translated");
             assertFalse(text.contains("!Migration"), "unresolved message key in the page");

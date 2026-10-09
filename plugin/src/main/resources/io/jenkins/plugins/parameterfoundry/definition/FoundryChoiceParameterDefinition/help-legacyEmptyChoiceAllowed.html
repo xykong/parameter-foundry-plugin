@@ -1,0 +1,12 @@
+<div>
+  <p>Preserves empty tokens accepted by a static Extended Choice source whose comma-separated
+    option configuration has leading or internal empty entries. Available only in
+    <code>standardApiInputMode: extended-choice</code>. The migration adapter sets this field
+    from the source configuration. A trailing comma alone does not enable it.</p>
+  <p>CLI and repeated standard requests retain accepted empty fields and their separator positions
+    in the exported literal, for example <code>,alpha</code>. The visible option list and canonical
+    multiple values remain non-empty known choices, matching the source UI. Typed explicit values
+    remain strict. Form JSON strings/arrays already preserve empty elements independently.</p>
+  <p>Omitting input still uses the source default; submitting an accepted empty field produces an
+    existing empty value. Ordinary parameter modes cannot use this setting.</p>
+</div>

@@ -99,6 +99,9 @@
       <f:entry title="Delimiter" field="delimiter">
         <f:textbox name="parameter.delimiter" value="${instance.delimiter}" />
       </f:entry>
+      <f:entry title="Legacy empty choice transport" field="legacyEmptyChoiceAllowed">
+        <f:checkbox name="parameter.legacyEmptyChoiceAllowed" checked="${instance.legacyEmptyChoiceAllowed}" />
+      </f:entry>
       <f:entry title="Legacy default literal" field="legacyDefaultLiteral">
         <f:textbox name="parameter.legacyDefaultLiteral" value="${instance.legacyDefaultLiteral}" />
       </f:entry>
@@ -122,6 +125,9 @@
           <option value="extended-choice" selected="${instance.standardApiInputMode == 'extended-choice' ? 'selected' : null}">Extended Choice compatibility</option>
           <option value="list-git-branches" selected="${instance.standardApiInputMode == 'list-git-branches' ? 'selected' : null}">List Git Branches compatibility</option>
         </select>
+      </f:entry>
+      <f:entry title="Legacy empty choice transport" field="legacyEmptyChoiceAllowed">
+        <f:checkbox name="parameter.legacyEmptyChoiceAllowed" checked="${instance.legacyEmptyChoiceAllowed}" />
       </f:entry>
       <f:entry title="Legacy default literal" field="legacyDefaultLiteral">
         <f:textbox name="parameter.legacyDefaultLiteral" value="${instance.legacyDefaultLiteral}" />

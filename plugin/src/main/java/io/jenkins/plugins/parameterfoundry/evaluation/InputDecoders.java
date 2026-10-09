@@ -145,6 +145,8 @@ public final class InputDecoders {
     private static List<String> filterLegacyChoices(AbstractFoundryParameterDefinition definition, List<String> raw) {
         Set<String> offered = new HashSet<>();
         definition.getSelectableOptions().forEach(option -> offered.add(option.getValue()));
+        if (definition instanceof io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition choice
+                && choice.isLegacyEmptyChoiceAllowed()) offered.add("");
         return raw.stream().map(String::trim).filter(offered::contains).toList();
     }
 

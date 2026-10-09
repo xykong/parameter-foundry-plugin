@@ -56,5 +56,18 @@ singleFixture('extended-single-last','select','beta','beta,alpha',['alpha','beta
 singleFixture('extended-radio-empty','radio',null,null,['alpha','beta','gamma'])
 singleFixture('extended-radio-last','radio','beta','beta,alpha',['alpha','beta','gamma'])
 singleFixture('extended-single-long','select',null,null,(0..<240).collect{String.format('option-%03d',it)})
+def emptyJob=j.createProject(FreeStyleProject,'extended-choice-empty-transport')
+def emptyParameter=new FoundryChoiceParameterDefinition('TARGETS')
+emptyParameter.selectionMode='multiple'
+emptyParameter.choices=[new Option('alpha'),new Option('beta')]
+emptyParameter.standardApiInputMode='extended-choice'
+emptyParameter.environmentExportOrder='submitted'
+emptyParameter.duplicatePolicy='deduplicate'
+emptyParameter.defaultMode='none'
+emptyParameter.legacyEmptyChoiceAllowed=true
+emptyJob.addProperty(new ParametersDefinitionProperty(emptyParameter))
+emptyJob.buildersList.add(new Shell('printf "%s" "$TARGETS" > result.txt'))
+emptyJob.publishersList.add(new ArtifactArchiver('result.txt'))
+emptyJob.save()
 j.save()
 new File(j.rootDir,'extended-choice-transport-ready').text='ready\n'

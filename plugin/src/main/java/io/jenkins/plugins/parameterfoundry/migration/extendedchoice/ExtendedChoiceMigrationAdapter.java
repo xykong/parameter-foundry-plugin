@@ -102,7 +102,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                 decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceNullDefault"));
             }
             if (hasEmptyOption) {
-                decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyOption"));
+                decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyTransport"));
             }
             if (hasUnsupportedDefault) {
                 decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceStaleDefault"));
@@ -132,7 +132,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         }
         List<MigrationText> decisions = new ArrayList<>();
         if (hasEmptyOption) {
-            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyOption"));
+            decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceEmptyTransport"));
         }
         if (hasUnsupportedDefault) {
             decisions.add(MigrationText.of("MigrationDecisionExtendedChoiceStaleDefault"));
@@ -162,9 +162,11 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
     }
 
     private static void copyCommon(
-            ParameterDefinition source,
-            io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition target,
-            List<Option> options) {
+            ParameterDefinition source, FoundryChoiceParameterDefinition target, List<Option> options) {
+        String raw = readString(source, "getValue");
+        target.setLegacyEmptyChoiceAllowed(raw != null
+                && !raw.isBlank()
+                && Arrays.stream(raw.trim().split("\\s*,\\s*")).anyMatch(String::isEmpty));
         target.setDescription(source.getDescription());
         target.setChoices(options);
     }
