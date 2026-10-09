@@ -36,6 +36,55 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 class ReactiveSnapshotIntegrationTest {
 
     @Test
+    void reactiveCliAcceptsConsumedUnrelatedFileArgument(JenkinsRule jenkins) throws Exception {
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-file-marker");
+        hudson.cli.BuildCommand command = new hudson.cli.BuildCommand();
+        command.job = project;
+        command.parameters = new java.util.LinkedHashMap<>();
+        command.parameters.put("UPLOAD", null);
+        command.parameters.put("ENVIRONMENT", "staging");
+        var definition = (FoundryChoiceParameterDefinition)
+                project.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("ARTIFACT");
+        var resolved = ProviderSubmission.resolveForCli(project, definition, ProviderOperation.BUILD, command);
+        assertEquals("staging-artifact", resolved.options().get(0).getValue());
+        assertTrue(command.parameters.containsKey("UPLOAD"));
+        assertNull(command.parameters.get("UPLOAD"));
+    }
+
+    @Test
+    void reactiveCliBuildWithStoredFileUpload(JenkinsRule jenkins) throws Exception {
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new DependencyProvider("artifacts")));
+        FreeStyleProject project = reactiveJob(jenkins, "reactive-cli-stored-file");
+        var definitions = new java.util.ArrayList<>(
+                project.getProperty(ParametersDefinitionProperty.class).getParameterDefinitions());
+        definitions.add(
+                0,
+                new io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition("UPLOAD"));
+        project.removeProperty(ParametersDefinitionProperty.class);
+        project.addProperty(new ParametersDefinitionProperty(definitions));
+        var result = new CLICommandInvoker(jenkins, "build")
+                .withStdin(new java.io.ByteArrayInputStream(new byte[] {0, 1, -1}))
+                .invokeWithArgs(
+                        project.getFullName(),
+                        "-p",
+                        "UPLOAD=",
+                        "-p",
+                        "ENVIRONMENT=production",
+                        "-p",
+                        "ARTIFACT=production-artifact",
+                        "-f");
+        assertEquals(0, result.returnCode(), result.stderr());
+        jenkins.waitUntilNoActivity();
+        var run = project.getLastBuild();
+        jenkins.assertBuildStatusSuccess(run);
+        assertEquals(
+                "production-artifact",
+                run.getAction(ParametersAction.class).getParameter("ARTIFACT").getValue());
+        assertNotNull(run.getAction(ParametersAction.class).getParameter("UPLOAD"));
+    }
+
+    @Test
     void standardFormContextUsesParameterScopedSnapshotFields() {
         FoundryChoiceParameterDefinition definition = new FoundryChoiceParameterDefinition("ARTIFACT");
 

@@ -9,6 +9,12 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## Unreleased
+
+### Fixed
+
+- CLI builds combining stored file uploads and reactive Providers preserve dependency resolution after Jenkins consumes the upload argument.
+
 ## 0.5.276 - 2026-10-09
 
 The HPI is `dist/parameter-foundry-0.5.276.hpi` (SHA-256

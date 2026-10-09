@@ -15,6 +15,7 @@ the case, but production configuration is never committed here.
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
+| Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -86,6 +87,12 @@ binary transport uses the standard multipart API rather than claiming the normal
 Jenkins JavaScript form works without scripts.
 
 ## Platform and Device Cases
+
+### Mixed file and reactive CLI acceptance
+
+| ID | Reproduction and expected behavior | Actual behavior and fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-035 | Submit a stored upload and reactive choice in one Jenkins CLI build. The Provider resolves the declared dependency, the upload remains attached, and the build succeeds. | Jenkins marks consumed file arguments with null; immutable map copying previously raised a null-pointer exception. A defensive read-only copy now accepts unrelated consumed markers without changing canonical dependency validation. | `ReactiveSnapshotIntegrationTest` covers a consumed marker deterministically and an actual combined CLI build; macOS Harness on baseline Jenkins, production pilot follow-up pending |
 
 | ID | Platform/device | Required checks | Status |
 | --- | --- | --- | --- |

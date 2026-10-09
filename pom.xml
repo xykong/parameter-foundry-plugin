@@ -45,8 +45,8 @@
   </scm>
 
   <properties>
-    <revision>0.5.276</revision>
-    <changelist />
+    <revision>0.5.278</revision>
+    <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.528</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>

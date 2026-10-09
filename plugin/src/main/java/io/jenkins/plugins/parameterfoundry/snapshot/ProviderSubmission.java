@@ -94,8 +94,10 @@ public final class ProviderSubmission {
                     definition.getName(),
                     "Reactive CLI evaluation requires the Jenkins build command.");
         }
-        Map<String, String> parameters =
-                buildCommand.parameters == null ? Map.of() : Map.copyOf(buildCommand.parameters);
+        // BuildCommand replaces consumed file arguments with null, even when unrelated to this Provider.
+        Map<String, String> parameters = buildCommand.parameters == null
+                ? Map.of()
+                : java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(buildCommand.parameters));
         return resolveForCliParameters(job, definition, operation, parameters);
     }
 
