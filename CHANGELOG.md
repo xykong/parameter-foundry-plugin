@@ -11,6 +11,12 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.5.279 - 2026-10-09
 
+The HPI is `dist/parameter-foundry-0.5.279.hpi` (SHA-256
+`5e812a574a42ee08e26a775bc152cdc84864eb0e06bae351b4eb9955f11fcc23`,
+594,357 bytes), built from release commit `b70814c`. Full Maven verification
+passed 318 tests and static checks; the exact HPI passed all fifteen file-mode
+browser canary checks.
+
 ### Fixed
 
 - CLI builds combining stored file uploads and reactive Providers preserve dependency resolution after Jenkins consumes the upload argument.

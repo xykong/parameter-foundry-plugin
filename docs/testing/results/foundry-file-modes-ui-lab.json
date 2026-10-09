@@ -22,7 +22,7 @@
     "typed JSON 409"
   ],
   "passed": true,
-  "pluginVersion": "0.5.276",
-  "artifactSha256": "3abe4751d1bc9ce05f0b4a0fcdbd426dbc639f53c44a0a1c1e41af596b333274",
-  "sourceCommit": "6537542946d6da4969174edf62e7e58b64919568"
+  "pluginVersion": "0.5.279",
+  "artifactSha256": "5e812a574a42ee08e26a775bc152cdc84864eb0e06bae351b4eb9955f11fcc23",
+  "sourceCommit": "b70814c"
 }
