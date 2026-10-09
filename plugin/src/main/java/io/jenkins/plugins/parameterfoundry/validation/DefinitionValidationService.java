@@ -263,6 +263,15 @@ public final class DefinitionValidationService {
                         || definition.getTable() != null)) {
             errors.add("Extended Choice transport compatibility requires a static multiple choice without a table.");
         }
+        if ("extended-choice".equals(definition.getStandardApiInputMode())) {
+            if (!Set.of("delimited", "none").contains(definition.getEnvironmentExport())) {
+                errors.add("Extended Choice compatibility requires delimited or disabled environment export.");
+            }
+            if (definition instanceof FoundryChoiceParameterDefinition choice
+                    && !"submitted".equals(choice.getEnvironmentExportOrder())) {
+                errors.add("Extended Choice compatibility requires submitted environment export order.");
+            }
+        }
         if (!MULTI_EXPORT_MODES.contains(definition.getEnvironmentExport())) {
             errors.add("Unsupported multi-choice export mode: " + definition.getEnvironmentExport());
         }

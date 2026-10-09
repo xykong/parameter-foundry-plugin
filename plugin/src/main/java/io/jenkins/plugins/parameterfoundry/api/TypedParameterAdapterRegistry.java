@@ -9,7 +9,6 @@ import hudson.model.ParameterValue;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition;
-import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
@@ -153,7 +152,7 @@ final class TypedParameterAdapterRegistry {
 
     private static ParameterValue decodeMultiple(
             Job<?, ?> job,
-            AbstractFoundryParameterDefinition definition,
+            FoundryChoiceParameterDefinition definition,
             boolean present,
             Object typedValue,
             Map<String, String> dependencies,
@@ -181,13 +180,7 @@ final class TypedParameterAdapterRegistry {
                 present ? DecodedInput.present(values) : DecodedInput.absent(),
                 resolved.options(),
                 resolved.matrix());
-        return FoundryChoiceParameterValue.multiple(
-                definition.getName(),
-                canonical,
-                definition.getDescription(),
-                definition.getEnvironmentExport(),
-                definition.getDelimiter(),
-                resolved.metadata());
+        return definition.createEvaluatedMultipleValue(canonical, values, resolved.metadata());
     }
 
     private static String requireString(ParameterDefinition definition, Object value) {

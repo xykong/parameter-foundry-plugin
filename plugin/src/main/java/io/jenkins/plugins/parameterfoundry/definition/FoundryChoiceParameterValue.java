@@ -35,6 +35,25 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
     private final ProviderSnapshotMetadata providerSnapshot;
     private boolean preserveRepeatedSubmissions;
     private String legacyDefaultLiteral;
+    private String legacySubmissionLiteral;
+
+    public static FoundryChoiceParameterValue legacySubmission(
+            String name,
+            List<String> canonical,
+            List<String> submitted,
+            String description,
+            String exportMode,
+            String delimiter,
+            String literal) {
+        var result = multiple(name, canonical, submitted, description, exportMode, delimiter, "submitted", null, true);
+        result.legacySubmissionLiteral = Objects.requireNonNull(literal);
+        return result;
+    }
+
+    /** Also reads the original persisted default field from earlier builds. */
+    public String getLegacyExportLiteral() {
+        return legacySubmissionLiteral != null ? legacySubmissionLiteral : legacyDefaultLiteral;
+    }
 
     public static FoundryChoiceParameterValue legacyDefault(
             String name,
@@ -257,8 +276,8 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
         if ("none".equals(mode)) {
             return;
         }
-        if (legacyDefaultLiteral != null) {
-            environment.put(getName(), legacyDefaultLiteral);
+        if (getLegacyExportLiteral() != null) {
+            environment.put(getName(), getLegacyExportLiteral());
             return;
         }
         if (!isMultiple()) {
@@ -277,7 +296,7 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
 
     @Override
     public String getShortDescription() {
-        Object current = getValue();
+        Object current = getLegacyExportLiteral() != null ? getLegacyExportLiteral() : getValue();
         return getName() + "=" + (current == null ? "" : current);
     }
 
@@ -291,12 +310,13 @@ public final class FoundryChoiceParameterValue extends ParameterValue {
         }
         return Objects.equals(getName(), valueObject.getName())
                 && Objects.equals(selectionMode, valueObject.selectionMode)
-                && Objects.equals(legacyDefaultLiteral, valueObject.legacyDefaultLiteral)
-                && Objects.equals(getValues(), valueObject.getValues());
+                && Objects.equals(getLegacyExportLiteral(), valueObject.getLegacyExportLiteral())
+                && (getLegacyExportLiteral() != null || Objects.equals(getValues(), valueObject.getValues()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), selectionMode, getValues(), legacyDefaultLiteral);
+        return Objects.hash(
+                getName(), selectionMode, getLegacyExportLiteral() != null ? getLegacyExportLiteral() : getValues());
     }
 }

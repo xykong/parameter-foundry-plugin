@@ -19,8 +19,9 @@ Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with
 independent dropdown selection and API/CLI defaults.
-The current unreleased candidate adds `legacyDefaultLiteral` to retain exact
-static multiple-choice default exports separately from selectable UI defaults.
+The current unreleased candidate retains exact static multiple-choice defaults
+through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
+values. Single-selection source compatibility still requires implementation.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

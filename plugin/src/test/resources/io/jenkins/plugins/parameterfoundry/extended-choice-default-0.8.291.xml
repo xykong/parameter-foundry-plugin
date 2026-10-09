@@ -1,0 +1,31 @@
+<io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue plugin="parameter-foundry@0.8.291-SNAPSHOT">
+          <name>TARGETS</name>
+          <selectionMode>multiple</selectionMode>
+          <values class="java.util.ImmutableCollections$List12" resolves-to="java.util.CollSer" serialization="custom">
+            <java.util.CollSer>
+              <default>
+                <tag>1</tag>
+              </default>
+              <int>2</int>
+              <string>alpha</string>
+              <string>gamma</string>
+            </java.util.CollSer>
+          </values>
+          <exportMode>delimited</exportMode>
+          <delimiter>,</delimiter>
+          <submittedValues class="java.util.ImmutableCollections$ListN" resolves-to="java.util.CollSer" serialization="custom">
+            <java.util.CollSer>
+              <default>
+                <tag>1</tag>
+              </default>
+              <int>3</int>
+              <string>gamma</string>
+              <string>alpha</string>
+              <string>gamma</string>
+            </java.util.CollSer>
+          </submittedValues>
+          <exportOrder>submitted</exportOrder>
+          <preserveRepeatedSubmissions>true</preserveRepeatedSubmissions>
+          <legacyDefaultLiteral> gamma,unknown,alpha,gamma </legacyDefaultLiteral>
+        </io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue>
+      

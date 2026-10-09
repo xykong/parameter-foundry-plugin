@@ -123,20 +123,24 @@ to `submitted`, and a value without the field behaves as `canonical`.
 `extended-choice` supports a subset of the source plugin's static multi-select transports.
 Standard requests accept repeated fields, trim each value and omit values outside
 the configured choices; a combined comma string is one field and is not expanded.
-CLI input splits on commas and applies the same trimming/filtering. Form JSON can
-use a delimiter-separated string or an array. Other modes keep their existing
+CLI input splits on commas and applies the same trimming/filtering. Form JSON
+retains a string literally or joins array elements with the delimiter, including
+unlisted values, whitespace, empty elements and mixed scalar array elements.
+Missing/null and non-string/non-array scalar or object values become an existing
+empty value. Other modes keep their existing
 decoding and validation behavior; the typed API continues to use arrays.
 
-For migration, use `environmentExportOrder: 'submitted'` and
-`duplicatePolicy: 'deduplicate'`: canonical values remain a sorted set, while
+Compatibility requires `environmentExportOrder: 'submitted'` with
+`environmentExport: 'delimited'` or `'none'`. Use `duplicatePolicy: 'deduplicate'`
+for migration: canonical values remain a sorted set, while
 repeated supported submissions can remain repeated in the legacy exported string.
 This mode is unavailable to Providers, tables and single-choice parameters.
-Exact literal defaults, blank-default omission and unlisted form strings/arrays
-remain compatibility gaps in `0.7.288`; custom delimiters also affect generated
-option sets incorrectly in that release. Verify each source contract before
+Exact literal defaults, blank-default omission and unlisted forms are gaps in
+`0.7.288`; the unreleased `0.8.292-SNAPSHOT` candidate addresses those multiple
+transports. Verify each source contract before
 migration; see [the observed compatibility matrix](../research/extended-choice-static-transport-contract.md).
 
-The `0.8.291-SNAPSHOT` candidate adds `legacyDefaultLiteral` for exact omitted-input
+The `0.8.291-SNAPSHOT` milestone added `legacyDefaultLiteral` for exact omitted-input
 exports. The migration adapter copies the source's nonblank default verbatim,
 including order, whitespace, duplicates and unavailable placeholders. UI
 `defaultValues` remain selectable values; canonical values remain lists. With
@@ -144,8 +148,10 @@ the literal unset, explicit default values supply their comma-joined string;
 `defaultMode: none` produces no ParameterValue. Null/zero-length standard fields
 and absent CLI/typed input use that factory. An explicit empty field or form
 submission produces an existing empty value. Explicit typed arrays retain strict
-validation. These changes require candidate verification and do not resolve
-the remaining single-selection or literal form compatibility gaps.
+validation. Single-selection compatibility remains open. Literal history uses an
+editable Rebuild textbox, matching the source plugin. Compatibility values use
+their exact string for queue equality; canonical lists still drive typed output.
+Typed multiple submissions honor the configured environment export order.
 Configured disabled options, required/min/max selection and duplicate policies
 still apply to the supported canonical default; a conflicting constraint rejects
 the default rather than producing a value that fails later validation.

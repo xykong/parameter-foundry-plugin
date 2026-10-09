@@ -1,4 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-  <j:out value="${it.value}" />
+  <j:choose>
+    <j:when test="${it.legacyExportLiteral != null}"><j:out value="${it.legacyExportLiteral}" /></j:when>
+    <j:otherwise><j:out value="${it.value}" /></j:otherwise>
+  </j:choose>
 </j:jelly>

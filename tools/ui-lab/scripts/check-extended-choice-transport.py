@@ -78,6 +78,20 @@ async def main():
             response=await page.request.post(base+'/buildWithParameters?delay=0sec',form={'TARGETS':'beta,alpha'})
             assert response.status in [200,201,302], (response.status, (await response.text())[:1000])
             await result(3,'')
+            literal_form=' beta ,unknown,alpha,alpha '
+            response=await page.request.post(base+'/build?delay=0sec',form={'json':json.dumps({'parameter':[{'name':'TARGETS','value':literal_form}]})})
+            assert response.status in [200,201,302],response.status
+            await result(4,literal_form)
+            mixed=[42,True,None,'beta','','unknown']
+            response=await page.request.post(base+'/build?delay=0sec',form={'json':json.dumps({'parameter':[{'name':'TARGETS','value':mixed}]})})
+            assert response.status in [200,201,302],response.status
+            await result(5,'42,true,null,beta,,unknown')
+            await page.goto(base+'/4/rebuild/parameterized')
+            historical=page.locator('input[name="value"]')
+            assert await historical.input_value()==literal_form
+            await historical.fill('gamma,unknown,gamma')
+            await page.get_by_role('button',name='Rebuild',exact=True).click()
+            await result(6,'gamma,unknown,gamma')
             default_base=lab.BASE_URL+'/job/extended-choice-default'
             literal=' gamma,unknown,alpha,gamma '
             await page.goto(default_base+'/configure')
@@ -97,7 +111,7 @@ async def main():
             response=await page.request.post(default_base+'/buildWithParameters?delay=0sec')
             assert response.status in [200,201,302],response.status
             await result(2,literal,default_base)
-            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal']}
+            report={'passed':True,'browser':browser.version,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal','unlisted form string retains whitespace and repetitions','mixed form array retains scalar and empty elements','Rebuild retains and edits historical literal']}
             (ROOT/'docs/testing/results/extended-choice-transport-ui-lab.json').write_text(json.dumps(report,indent=2)+'\n')
             print(json.dumps(report))
             await browser.close()

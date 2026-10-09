@@ -18,6 +18,7 @@ the case, but production configuration is never committed here.
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
 | Extended Choice literal/default fidelity (UP-AC-039) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Omission, Pipeline values, Rebuild and persistence |
+| Extended Choice literal forms (UP-AC-040) | Required | Required | Existing renderer coverage | Existing renderer coverage | Existing repeated field coverage | Required | Raw equality, persistence and editable Rebuild |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -114,6 +115,12 @@ Jenkins JavaScript form works without scripts.
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-039 | Compare static single/multiple definitions across literal/blank defaults, absent/empty fields, CLI, standard requests, form strings/arrays and custom delimiters. Preserve ParameterValue existence and exact source environment export; verify Pipeline consumption separately. | Candidate parses source options/UI defaults using commas independently of the output delimiter. Shared default compatibility preserves `legacyDefaultLiteral`, distinguishes absent and empty values, and applies canonical constraints. Eight `ExtendedChoiceDefaultCompatibilityTest` cases cover real CLI/HTTP builds, typed omission, reload/default copy, config save, equality, constraints and ordinary-mode isolation. UI Lab waits for enhanced controls and checks literal configuration, supported UI defaults and omitted-input export. Single and literal-form transport work remains open. | Partial 2026-10-10: full 347 tests and eight browser checks passed. Actual source/candidate: 72 default/omission cases pass; multiple CLI 132/132 and standard 108/108 match. Overall 378/816 match; 438 differences remain. [Verified scope and limits](./extended-choice-default-verification-2026-10-10.md). Full source/consumer, single/form and history/Rebuild gates remain open. |
+
+### Extended Choice literal forms
+
+| ID | Reproduction / expected result | Actual behavior / fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-040 | Submit unknown/whitespace strings and arrays with unknown, empty and mixed scalar elements. Preserve exact environment strings, omitted-versus-empty form semantics, raw queue equality, reload and editable Rebuild. Ordinary and typed explicit inputs stay strict. | Shared compatibility retains raw export independently of the supported canonical set. Equality uses the literal, Rebuild preserves an editable historical string, and typed multiple export retains submission order. Contradictory canonical/JSON compatibility policies are rejected explicitly. A real previous-snapshot XML fixture verifies older history. | Passed for characterized multiple scope: final full 355 tests and 11 browser checks; all 408 source multiple cases match. Eight new Harness cases pass, including old XML, HTTP build and Rebuild. [Verification and limits](./extended-choice-form-verification-2026-10-10.md). Single, empty-option and per-Job consumer gates remain open. |
 
 ## Platform and Device Cases
 

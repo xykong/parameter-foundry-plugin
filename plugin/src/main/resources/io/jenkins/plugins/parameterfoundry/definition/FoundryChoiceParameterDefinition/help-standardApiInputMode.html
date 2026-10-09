@@ -16,10 +16,13 @@
   <li><code>delimited</code> splits a single field on the delimiter below.</li>
   <li><code>extended-choice</code> supports a subset of static Extended Choice multiple-selection transports:
     standard requests use repeated fields, trim values and ignore unavailable choices; CLI splits on commas;
-    legacy form JSON accepts a delimiter-separated string or an array. Use submitted environment export
+    legacy form JSON retains a string literally or joins array elements with the delimiter, including
+    unavailable values, empty elements and non-string array elements. Missing/null and other scalar/object
+    values become an existing empty string. Use submitted environment export
     order and duplicate deduplication; canonical values remain a set while repeated submitted values can
-    remain in the exported string. Exact literal defaults, blank-default omission and unlisted form
-    values still require compatibility work; verify source behavior before migrating a Job.
+    remain in the exported string. This mode requires submitted order and delimited or disabled
+    environment export. Ordinary and typed explicit inputs retain strict validation; verify source
+    behavior before migrating a Job. Canonical constraints apply to the supported values in a literal.
     Providers and tables cannot use this compatibility mode.</li>
 </ul>
 <p>The Jenkins CLI accepts a JSON array in the other multiple-selection modes. Compatibility mode

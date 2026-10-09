@@ -9,6 +9,9 @@
     "literal default configuration preserves whitespace",
     "UI selects supported defaults only",
     "native default submission exports selected options",
-    "omitted standard input exports exact literal"
+    "omitted standard input exports exact literal",
+    "unlisted form string retains whitespace and repetitions",
+    "mixed form array retains scalar and empty elements",
+    "Rebuild retains and edits historical literal"
   ]
 }

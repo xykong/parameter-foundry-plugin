@@ -11,6 +11,7 @@ import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility;
+import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceFormCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.GitBranchInputCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.InputDecoders;
 import io.jenkins.plugins.parameterfoundry.evaluation.ParameterEvaluationService;
@@ -46,6 +47,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     private String legacyDefaultLiteral;
     private String gitSelectionMode = "default";
     private transient boolean gitRebuildInput;
+    private transient boolean extendedChoiceRebuildInput;
+    private transient String extendedChoiceRebuildLiteral;
     private String environmentExportOrder = "canonical";
     private boolean allowCustomValue;
     private String customValuePattern;
@@ -114,6 +117,14 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     public boolean isGitRebuildInput() {
         return gitRebuildInput && GitBranchInputCompatibility.enabled(this);
+    }
+
+    public boolean isLegacyRebuildInput() {
+        return isGitRebuildInput() || extendedChoiceRebuildInput && ExtendedChoiceDefaultCompatibility.enabled(this);
+    }
+
+    public String getLegacyRebuildValue() {
+        return isGitRebuildInput() ? getDefaultValue() : extendedChoiceRebuildLiteral;
     }
 
     public boolean isAllowCustomValue() {
@@ -187,6 +198,9 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request, JSONObject submitted) {
         try {
+            if (ExtendedChoiceDefaultCompatibility.enabled(this)) {
+                return ExtendedChoiceFormCompatibility.evaluate(this, submitted);
+            }
             DecodedInput input = InputDecoders.fromSubmittedJson(this, submitted);
             ResolvedProviderOptions resolved = optionsFor(request, ProviderOperation.BUILD, submitted, input);
             if (isMultiple()) {
@@ -255,7 +269,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     public boolean isValid(ParameterValue value) {
         try {
             if (value instanceof FoundryChoiceParameterValue choice
-                    && choice.getLegacyDefaultLiteral() != null
+                    && choice.getLegacyExportLiteral() != null
                     && !ExtendedChoiceDefaultCompatibility.enabled(this)) {
                 return false;
             }
@@ -312,10 +326,13 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         }
         FoundryChoiceParameterDefinition copy = copyDefinition();
         copy.gitRebuildInput = GitBranchInputCompatibility.enabled(this);
+        copy.extendedChoiceRebuildInput =
+                ExtendedChoiceDefaultCompatibility.enabled(this) && choiceValue.getLegacyExportLiteral() != null;
+        copy.extendedChoiceRebuildLiteral = choiceValue.getLegacyExportLiteral();
         copy.setDefaultMode("explicit");
         if (isMultiple()) {
             copy.setDefaultValues(choiceValue.getValues());
-            copy.setLegacyDefaultLiteral(choiceValue.getLegacyDefaultLiteral());
+            copy.setLegacyDefaultLiteral(choiceValue.getLegacyExportLiteral());
         } else {
             copy.setDefaultValue(choiceValue.getScalarValue());
         }
@@ -453,8 +470,24 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         return toMultiValue(values, values, metadata);
     }
 
+    /** Constructs a value after shared evaluation, retaining the caller's ordered submission. */
+    public FoundryChoiceParameterValue createEvaluatedMultipleValue(
+            List<String> canonical, List<String> submitted, ProviderSnapshotMetadata metadata) {
+        return toMultiValue(canonical, submittedOrder(canonical, submitted), metadata);
+    }
+
     private FoundryChoiceParameterValue toMultiValue(
             List<String> values, List<String> submittedOrder, ProviderSnapshotMetadata metadata) {
+        if (ExtendedChoiceDefaultCompatibility.enabled(this)) {
+            return FoundryChoiceParameterValue.legacySubmission(
+                    getName(),
+                    values,
+                    submittedOrder,
+                    getDescription(),
+                    getEnvironmentExport(),
+                    getDelimiter(),
+                    String.join(getDelimiter(), submittedOrder));
+        }
         return FoundryChoiceParameterValue.multiple(
                 getName(),
                 values,
