@@ -2,6 +2,7 @@ package io.jenkins.plugins.parameterfoundry.companion.git;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.provider.ConnectionProfile;
@@ -82,7 +83,9 @@ class GitRefProviderDefinitionTest {
                         .map(option -> option.getValue())
                         .toList());
 
-        assertEquals(0, GitRefProviderDefinition.compareSmart("release-01", "release-1"));
+        assertTrue(GitRefProviderDefinition.compareSmart("release-01", "release-1") > 0);
+        assertEquals(0, GitRefProviderDefinition.compareSmart("release-01", "release-1a"));
+        assertEquals(0, GitRefProviderDefinition.compareSmart("release-١", "release-1"));
         assertThrows(IllegalArgumentException.class, () -> ascending.setSortOrder("sideways"));
     }
 

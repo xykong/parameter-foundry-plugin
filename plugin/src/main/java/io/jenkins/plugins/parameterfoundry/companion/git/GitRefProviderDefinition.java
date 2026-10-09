@@ -146,13 +146,8 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
                 while (rightEnd < right.length() && Character.isDigit(right.charAt(rightEnd))) {
                     rightEnd++;
                 }
-                String leftNumber = stripLeadingZeros(left.substring(leftIndex, leftEnd));
-                String rightNumber = stripLeadingZeros(right.substring(rightIndex, rightEnd));
-                int comparison = Integer.compare(leftNumber.length(), rightNumber.length());
-                if (comparison != 0) {
-                    return comparison;
-                }
-                comparison = leftNumber.compareTo(rightNumber);
+                int comparison = new java.math.BigInteger(left.substring(leftIndex, leftEnd))
+                        .compareTo(new java.math.BigInteger(right.substring(rightIndex, rightEnd)));
                 if (comparison != 0) {
                     return comparison;
                 }
@@ -166,15 +161,8 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
             leftIndex++;
             rightIndex++;
         }
-        return Integer.compare(left.length() - leftIndex, right.length() - rightIndex);
-    }
-
-    private static String stripLeadingZeros(String value) {
-        int index = 0;
-        while (index < value.length() - 1 && value.charAt(index) == '0') {
-            index++;
-        }
-        return value.substring(index);
+        // The source SMART comparator resolves equal numeric runs by total name length.
+        return Integer.compare(left.length(), right.length());
     }
 
     static List<Option> normalize(

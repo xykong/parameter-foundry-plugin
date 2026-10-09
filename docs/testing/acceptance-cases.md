@@ -17,6 +17,7 @@ the case, but production configuration is never committed here.
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
+| Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -88,6 +89,12 @@ binary transport uses the standard multipart API rather than claiming the normal
 Jenkins JavaScript form works without scripts.
 
 ## Platform and Device Cases
+
+### Git ref sorting parity
+
+| ID | Reproduction / expected result | Actual behavior / fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-037 | Normalize a frozen refs set in SMART ascending/descending order. Numerically equal runs use total name length, matching the source; Unicode numeric runs compare by numeric value. | Remaining-length tie handling made leading-zero branches depend on input order. Use source-compatible numeric comparison and total-length tie handling. | `GitRefProviderDefinitionTest` includes leading-zero, suffix and Unicode cases; private full-ref comparison and exact release Provider gate pending |
 
 ### Mixed file and reactive CLI acceptance
 
