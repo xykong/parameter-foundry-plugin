@@ -51,7 +51,7 @@ field inside a successful JSON response.
   error responses, network failures and fallback recovery against the exact
   source plugin and candidate artifact.
 
-Current Foundry Active Choices single compatibility rejects dependencies, and
+Released Foundry 0.11.306 Active Choices single compatibility rejects dependencies, and
 its generic REST parser does not implement the source idiom above. These are
 capability gaps; changing Job configuration alone is insufficient.
 
@@ -59,3 +59,20 @@ The maintainer's private operational overlay retains the nine-case source oracle
 and authenticated live read-only response shapes. It contains no replacement
 production configuration or scheduled business builds. See UP-AC-048 in the
 [acceptance index](../testing/acceptance-cases.md).
+
+## Actual source browser characterization
+
+Nine isolated Chromium forms also verify the visible choices. List responses
+retain their order, maps use the characterized sorted key order, and the first
+selectable choice is selected when no selected flag is returned.
+
+- `gamma:selected` renders value/label `gamma` and selects it.
+- `alpha:disabled` renders value/label `alpha` and disables it.
+- A map's null label renders as an empty caption in the ordinary Choice control
+  but as `null` in the Cascade control. These are separate source UI behaviors.
+- An empty root array renders no options. Invalid JSON renders the exception
+  fallback. Application error maps remain visible as choices.
+
+The initial browser run did not exercise filtering: the fixture's filter locator
+matched no control, so filter parity remains explicitly unverified. Target
+response parsing and actual source/target reactive forms are also pending.
