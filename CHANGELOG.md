@@ -9,7 +9,10 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
-## Unreleased
+## 0.11.306 - 2026-10-10
+
+The HPI is `dist/parameter-foundry-0.11.306.hpi` (SHA-256
+`c74801bc12df7e8f5eb3f93d9883cf354a87cfe6a0b47fc880b0b2f21e10e16f`, 622,202 bytes). Full regression passes 381 tests.
 
 ### Fixed
 

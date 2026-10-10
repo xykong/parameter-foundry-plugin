@@ -17,10 +17,11 @@ resolved option order. Canonical values remain sorted sets. Explicit API arrays
 retain caller order, including supported repetitions; ordinary canonical export
 continues to sort values. No provider, permission or network capability changes.
 
-## Development verification
+## Verification
 
-The unpublished `0.11.305-SNAPSHOT` artifact is pinned by SHA-256
-`467c7abec3fc4a39879d4d02aa64aa878d8f9a78e0f62ea24b855cd6d7ce5e36`.
+The exact `0.11.306` release candidate is pinned by SHA-256
+`c74801bc12df7e8f5eb3f93d9883cf354a87cfe6a0b47fc880b0b2f21e10e16f`
+(622,202 bytes).
 
 - The [repository-owned browser suite](./results/extended-choice-transport-ui-lab.json)
   passes 25 checks on Chromium 151.0.7922.34 in an isolated Linux controller.
@@ -34,6 +35,7 @@ The unpublished `0.11.305-SNAPSHOT` artifact is pinned by SHA-256
   source/target form pairs with 32 neutral form builds. No business code is run.
 
 Complete corrected `mvn -B -ntp verify` passes 381 tests with zero failures,
-errors or skips. Exact tagged-release verification remains pending. These development results do not establish production deployment
+errors or skips. Exact release HPI browser gates and validation of 281 existing definitions also pass.
+Publication and production deployment remain pending. These results do not establish production deployment
 or normal business operation acceptance. See UP-AC-047 and UP-ISSUE-016 in the
 [acceptance index](./acceptance-cases.md).

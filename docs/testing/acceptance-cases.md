@@ -482,7 +482,7 @@ after a real browser, CLI/API, or build-log check has passed.
 
 | ID | Reproduction / expected behavior | Actual behavior / planned fix | Verification |
 | --- | --- | --- | --- |
-| UP-AC-047 | Declare nonalphabetic multi-choice options `gamma,alpha,beta` in Extended Choice compatibility mode with submitted environment export. Select gamma and alpha in list and checkbox forms. Both JavaScript and fallback forms must export `gamma,alpha`; explicit API arrays keep their caller order and canonical values stay sorted. | Enhanced controls generated hidden inputs in alphabetic order, exporting `alpha,gamma`. Preserve declared option order when generating Extended Choice multi-choice form inputs. | Reproduced on 0.10.304; corrected snapshot passes actual Chromium 151.0.7922.34 desktop/mobile list and checkbox forms, fallback submission, explicit API caller order and ordinary canonical export. Complete corrected Harness verify passes 381 tests; exact release remains pending. |
+| UP-AC-047 | Declare nonalphabetic multi-choice options `gamma,alpha,beta` in Extended Choice compatibility mode with submitted environment export. Select gamma and alpha in list and checkbox forms. Both JavaScript and fallback forms must export `gamma,alpha`; explicit API arrays keep their caller order and canonical values stay sorted. | Enhanced controls generated hidden inputs in alphabetic order, exporting `alpha,gamma`. Preserve declared option order when generating Extended Choice multi-choice form inputs. | Reproduced on 0.10.304; exact 0.11.306 candidate passes actual Chromium 151.0.7922.34 desktop/mobile list and checkbox forms, fallback submission, explicit API caller order and ordinary canonical export. Complete exact-version Harness verify passes 381 tests; publication and deployment remain pending. |
 
 ### UP-ISSUE-016: Extended Choice multi-choice form changes export order
 
@@ -490,4 +490,4 @@ after a real browser, CLI/API, or build-log check has passed.
 - Expected: environment export matches the original control's declared option order.
 - Actual: hidden submitted fields are alphabetically sorted before the shared evaluator receives them.
 - Fix: pass the full resolved option order into list/checkbox submission only in Extended Choice multiple compatibility mode, while retaining canonical sorting and caller-supplied API order.
-- Verification: corrected 0.11.305-SNAPSHOT HPI passes real-browser desktop/mobile list/checkbox, fallback and API order checks; the targeted seven-test Harness suite passes. Corrected full regression passes 381 tests; tagged-release gates remain pending.
+- Verification: exact 0.11.306 HPI passes real-browser desktop/mobile list/checkbox, fallback and API order checks; the targeted seven-test Harness suite passes. Exact-version full regression passes 381 tests; publication and deployment remain pending.

@@ -34,7 +34,10 @@
     "checkbox preserves declared order on desktop/mobile and no-JavaScript forms; explicit arrays preserve caller order",
     "ordinary canonical multiple-choice export stays sorted"
   ],
-  "targetBaseVersion": "0.11.305-SNAPSHOT",
-  "targetSha256": "467c7abec3fc4a39879d4d02aa64aa878d8f9a78e0f62ea24b855cd6d7ce5e36",
-  "developmentArtifact": true
+  "targetVersion": "0.11.306",
+  "targetSha256": "c74801bc12df7e8f5eb3f93d9883cf354a87cfe6a0b47fc880b0b2f21e10e16f",
+  "productionMutations": false,
+  "businessJobsExecuted": false,
+  "developmentArtifact": false,
+  "targetBaseVersion": "0.11.306"
 }
