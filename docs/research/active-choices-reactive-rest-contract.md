@@ -73,6 +73,11 @@ selectable choice is selected when no selected flag is returned.
 - An empty root array renders no options. Invalid JSON renders the exception
   fallback. Application error maps remain visible as choices.
 
-The initial browser run did not exercise filtering: the fixture's filter locator
-matched no control, so filter parity remains explicitly unverified. Target
-response parsing and actual source/target reactive forms are also pending.
+The corrected browser run uses visible filter controls, excluding a hidden template
+input. On `gamma,alpha`, uppercase `ALPHA` selects the `alpha` match, `.*` retains
+both entries, and invalid `[` retains the preceding list. The source therefore
+supports case-insensitive regular-expression filtering; plain substring search
+alone is insufficient. Switching the synthetic dependency to an exception produces
+`fallback`; restoring it re-creates the original options and first UI selection.
+These source behaviors are verified. Target response parsing and source/target
+filter/reactive browser parity remain pending.
