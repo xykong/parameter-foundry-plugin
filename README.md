@@ -27,7 +27,9 @@ source contract; per-Job and exact-release gates still apply.
 Version `0.9.299` adds an explicit unflagged Active Choices
 single transport path and configured-node order. Use
 [the observed source contract](./docs/research/active-choices-single-transport-contract.md)
-as a migration gate.
+as a migration gate. The unreleased `0.9.300-SNAPSHOT` fix aligns configured-node
+empty-name filtering with source `String.trim()` semantics, preserving Unicode
+whitespace and the original name text.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

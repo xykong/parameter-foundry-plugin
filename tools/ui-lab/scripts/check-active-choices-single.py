@@ -49,12 +49,19 @@ j.save()
  project.addProperty(new ParametersDefinitionProperty(activeParameter));project.save()
 }
 
-['agent-z','agent-a'].each{name ->
+['agent-z','agent-a','\u2003',' ',' padded-agent '].each{name ->
  def node=new hudson.slaves.DumbSlave(name,'/tmp/'+name,new hudson.slaves.JNLPLauncher())
  node.setNumExecutors(0);j.addNode(node)
 }
-def configuredNames=[j.selfLabel.name]+j.nodes*.nodeName
+def configuredNames=([j.selfLabel.name]+j.nodes*.nodeName).findAll{it?.trim()}.unique()
 new File(j.rootDir,'configured-node-expected.json').text=groovy.json.JsonOutput.toJson(configuredNames)
+def whitespaceLiteral=new org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript("return ['\\u2003',' ',' padded-agent '].findAll{it?.trim()}",true,null)
+def whitespaceFallback=new org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript('return []',true,null)
+def whitespaceScript=new org.biouno.unochoice.model.GroovyScript(whitespaceLiteral,whitespaceFallback)
+def whitespaceSource=new ChoiceParameter('NODE','Synthetic whitespace fixture only','synthetic-whitespace',whitespaceScript,'PT_RADIO',false,1)
+def sourceWhitespaceNames=whitespaceSource.choices.keySet().toList()
+assert sourceWhitespaceNames==['\u2003',' padded-agent ']
+new File(j.rootDir,'node-whitespace-source-oracle.json').text=groovy.json.JsonOutput.toJson(sourceWhitespaceNames)
 def orderedProvider=new io.jenkins.plugins.parameterfoundry.provider.NodeLabelProviderDefinition('ordered-nodes')
 orderedProvider.source='configured-nodes';orderedProvider.cacheTtlSeconds=0;orderedProvider.failurePolicy='empty'
 def emptyProvider=new io.jenkins.plugins.parameterfoundry.provider.NodeLabelProviderDefinition('empty-nodes')
@@ -173,6 +180,10 @@ async def main():
    assert all(x['equivalent'] for x in factories['rows']), 'Candidate source mismatch'
 
    expected_nodes=json.loads((lab.HOME_DIR/'configured-node-expected.json').read_text())
+   source_whitespace=json.loads((lab.HOME_DIR/'node-whitespace-source-oracle.json').read_text())
+   assert source_whitespace==[chr(0x2003),' padded-agent ']
+   assert all(value in expected_nodes for value in source_whitespace) and ' ' not in expected_nodes
+   ui.append({'configuredNodeSourceWhitespacePreserved':True,'asciiEmptyNodeOmitted':True,'retainedNamesNotTrimmed':True})
    for index in range(2):
     await page.goto(lab.BASE_URL+'/job/active-dynamic-'+str(index)+'/build?delay=0sec')
     field=page.locator('[data-parameter-name="NODE"]')

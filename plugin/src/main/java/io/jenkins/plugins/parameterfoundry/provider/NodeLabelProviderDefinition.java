@@ -111,7 +111,7 @@ public final class NodeLabelProviderDefinition extends SharedProviderDefinition 
             Pattern include = compile(includePattern);
             Pattern exclude = compile(excludePattern);
             List<Option> result = ordered.stream()
-                    .filter(name -> name != null && !name.isBlank())
+                    .filter(name -> name != null && !name.trim().isEmpty())
                     .filter(name -> include == null || include.matcher(name).matches())
                     .filter(name -> exclude == null || !exclude.matcher(name).matches())
                     .map(Option::new)

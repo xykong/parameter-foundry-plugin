@@ -1,0 +1,153 @@
+[
+  {
+    "type": "PT_RADIO",
+    "httpStatus": 405,
+    "values": [
+      {
+        "value": "built-in",
+        "checked": false,
+        "selected": false
+      },
+      {
+        "value": "agent-z",
+        "checked": false,
+        "selected": false
+      },
+      {
+        "value": "agent-a",
+        "checked": false,
+        "selected": false
+      }
+    ]
+  },
+  {
+    "type": "PT_SINGLE_SELECT",
+    "httpStatus": 405,
+    "values": [
+      {
+        "value": "built-in",
+        "checked": false,
+        "selected": true
+      },
+      {
+        "value": "agent-z",
+        "checked": false,
+        "selected": false
+      },
+      {
+        "value": "agent-a",
+        "checked": false,
+        "selected": false
+      }
+    ]
+  },
+  {
+    "target": true,
+    "type": "PT_RADIO",
+    "values": [
+      {
+        "value": "built-in",
+        "checked": false
+      },
+      {
+        "value": "agent-z",
+        "checked": false
+      },
+      {
+        "value": "agent-a",
+        "checked": false
+      }
+    ]
+  },
+  {
+    "target": true,
+    "type": "PT_SINGLE_SELECT",
+    "values": [
+      {
+        "value": "built-in",
+        "selected": true
+      },
+      {
+        "value": "agent-z",
+        "selected": false
+      },
+      {
+        "value": "agent-a",
+        "selected": false
+      }
+    ]
+  },
+  {
+    "configuredNodeSourceWhitespacePreserved": true,
+    "asciiEmptyNodeOmitted": true,
+    "retainedNamesNotTrimmed": true
+  },
+  {
+    "dynamic": true,
+    "type": "PT_RADIO",
+    "values": [
+      {
+        "value": "built-in",
+        "checked": false
+      },
+      {
+        "value": " padded-agent ",
+        "checked": false
+      },
+      {
+        "value": "agent-a",
+        "checked": false
+      },
+      {
+        "value": "agent-z",
+        "checked": false
+      },
+      {
+        "value": "\u2003",
+        "checked": false
+      }
+    ],
+    "zeroCacheSnapshotOmitted": true
+  },
+  {
+    "dynamic": true,
+    "type": "PT_SINGLE_SELECT",
+    "values": [
+      {
+        "value": "built-in",
+        "selected": true
+      },
+      {
+        "value": " padded-agent ",
+        "selected": false
+      },
+      {
+        "value": "agent-a",
+        "selected": false
+      },
+      {
+        "value": "agent-z",
+        "selected": false
+      },
+      {
+        "value": "\u2003",
+        "selected": false
+      }
+    ],
+    "zeroCacheSnapshotOmitted": true
+  },
+  {
+    "upstreamCoreStringCallerPreserved": true,
+    "pipelineParamsRemainString": true,
+    "neutralPipelineBuilds": 2
+  },
+  {
+    "oldUnoCoreStringHistoryRebuildAfterDefinitionMigration": true,
+    "neutralLegacyEchoBuilds": 2
+  },
+  {
+    "realHttpLiteralPreserved": true,
+    "coreStringRebuildEditableAndEscaped": true,
+    "neutralEchoBuilds": 2
+  }
+]

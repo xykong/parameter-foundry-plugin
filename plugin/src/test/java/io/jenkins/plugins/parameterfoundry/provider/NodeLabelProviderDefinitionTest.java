@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import hudson.model.ParametersDefinitionProperty;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +96,30 @@ class NodeLabelProviderDefinitionTest {
         provider.setSource(NodeLabelProviderDefinition.SOURCE_CONFIGURED_NODES);
         provider.setIncludeBuiltIn(false);
         org.junit.jupiter.api.Assertions.assertEquals(List.of(), provider.load(context()));
+    }
+
+    @Test
+    void configuredNamesUseSourceTrimFilteringWithoutChangingValues(JenkinsRule jenkins) throws Exception {
+        jenkins.createSlave("\u2003", "", null);
+        jenkins.createSlave(" ", "", null);
+        jenkins.createSlave(" padded-agent ", "", null);
+        var provider = new NodeLabelProviderDefinition("source-whitespace");
+        provider.setSource(NodeLabelProviderDefinition.SOURCE_CONFIGURED_NODES);
+        provider.setIncludeBuiltIn(false);
+        provider.setCacheTtlSeconds(0);
+        var expected = List.of(" padded-agent ", "\u2003");
+        org.junit.jupiter.api.Assertions.assertEquals(expected, values(provider.load(context())));
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(provider));
+        var project = jenkins.createFreeStyleProject();
+        var parameter = new FoundryChoiceParameterDefinition("NODE");
+        parameter.setProviderId(provider.getId());
+        parameter.setStandardApiInputMode("active-choices");
+        parameter.setDefaultMode("none");
+        project.addProperty(new ParametersDefinitionProperty(parameter));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                expected,
+                values(ProviderResolutionService.resolve(project, parameter, ProviderOperation.RESOLVE, Map.of())
+                        .options()));
     }
 
     private static ProviderLoadContext context() {

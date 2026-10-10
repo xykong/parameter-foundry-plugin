@@ -9,6 +9,12 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## 0.9.300-SNAPSHOT - Unreleased
+
+### Fixed
+
+- Configured-node Providers preserve Unicode whitespace names and original leading/trailing spaces, matching source scripts that filter empty names with `String.trim()`.
+
 ## 0.9.299 - 2026-10-10
 
 ### Added

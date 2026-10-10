@@ -5,4 +5,4 @@
   reads the Jenkins model itself and never runs Job-provided code.
 </div>
 
-<p><code>configured-nodes</code> returns the built-in self label first, then configured node names in controller configuration order. With online-only disabled it includes offline nodes and nodes without a Computer. Original nonblank names are retained. This mode can return an empty list; it does not execute a Job script. Existing nodes and labels modes retain sorted results.</p>
+<p><code>configured-nodes</code> returns the built-in self label first, then configured node names in controller configuration order. With online-only disabled it includes offline nodes and nodes without a Computer. Names empty after Java <code>String.trim()</code> are filtered; every retained name keeps its original text, including Unicode whitespace and leading/trailing spaces. This mode can return an empty list; it does not execute a Job script. Existing nodes and labels modes retain sorted results.</p>
