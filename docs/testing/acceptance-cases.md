@@ -26,6 +26,7 @@ the case, but production configuration is never committed here.
 | Literal Active Choices preview fidelity (UP-AC-045) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Existing compatibility coverage | Required | Preview-generated Core string defaults and literal inputs |
 | Active Choices empty inline option (UP-AC-046) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Empty option order, default, submission, typed empty vs null and persistence |
 | Extended Choice browser submission order (UP-AC-047) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Existing caller-order coverage | Declared option order in build environment |
+| Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -491,3 +492,9 @@ after a real browser, CLI/API, or build-log check has passed.
 - Actual: hidden submitted fields are alphabetically sorted before the shared evaluator receives them.
 - Fix: pass the full resolved option order into list/checkbox submission only in Extended Choice multiple compatibility mode, while retaining canonical sorting and caller-supplied API order.
 - Verification: exact 0.11.306 HPI passes real-browser desktop/mobile list/checkbox, fallback and API order checks; the targeted seven-test Harness suite passes. Exact-version full regression passes 381 tests; publication and deployment remain pending.
+
+## Reactive Active Choices REST fidelity
+
+| ID | Reproduction / expected behavior | Current limitation / required change | Verification |
+| --- | --- | --- | --- |
+| UP-AC-048 | Use a synthetic GET/JSON source returning `json.data ?: json`, with a dependency and literal exception fallback. Verify list/map responses, missing dependency, defaults, filtering, reactive refresh, empty/error payloads and explicit Core String inputs. A governed replacement must preserve the observed source behavior without executing source code. | Active Choices single compatibility rejects dependencies; generic REST mapping does not preserve data-or-root truthiness and list/map source semantics. | Nine source-only cases characterized on UNO 2.8.10 in isolation; target implementation, Harness, real-browser and exact-artifact gates pending. See [source contract](../research/active-choices-reactive-rest-contract.md). |
