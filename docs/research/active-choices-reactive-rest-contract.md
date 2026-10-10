@@ -81,3 +81,85 @@ alone is insufficient. Switching the synthetic dependency to an exception produc
 `fallback`; restoring it re-creates the original options and first UI selection.
 These source behaviors are verified. Target response parsing and source/target
 filter/reactive browser parity remain pending.
+
+## Non-sandbox response boundary
+
+The target migration profiles use non-sandbox source scripts. Repeating the
+response oracle with explicitly approved synthetic non-sandbox scripts establishes
+a distinct boundary: a successful scalar return such as `data: true` produces
+empty choices, rather than running the fallback. Invalid JSON and failed property
+access still invoke the script's exception fallback.
+
+The non-sandbox map may retain numeric label objects; the replacement compares
+their displayed string labels, preserving null separately. This does not claim
+identical internal map value classes.
+
+For the pinned Groovy/UNO source, both `data: 1e-1000` and `data: -1e-1000` are
+falsey and select the root map, producing the `data` option with `1E-1000` or
+`-1E-1000` label; zero likewise selects the root. Do not replace this observed
+truthiness with a different mathematical nonzero rule. The expanded oracle has
+15 response cases.
+
+## Additional non-sandbox browser metadata boundaries
+
+Eleven additional isolated Chromium forms distinguish UI behavior from response
+map interpretation. A selected marker on a later list item selects that item;
+when multiple items carry the marker, the final item is selected in the single
+select. A disabled first item without a selected marker gives the next enabled
+item the initial selection. An item marked both selected and disabled stays
+selected and disabled, in either tested marker order. Do not silently replace
+that state with the first enabled item.
+
+For a null map label, ordinary Choice shows an empty caption whereas Cascade
+shows `null`. For an object array whose entries lack `data`, the deduplicated
+null key renders as an empty value/caption in ordinary Choice and literal
+`null` value/caption in Cascade. These differences also recur after dependency
+failure and restoration. They require separate governed response modes rather
+than applying the current Option label fallback to both controls.
+
+Discriminating map cases show that state markers are interpreted from labels,
+not keys. A label marker on the later option selects it, whereas the same marker
+on its key alone does not. The ordinary renderer strips a key-only `:selected`
+marker but retains a key-only `:disabled` marker; Cascade strips both without
+disabling the option. If every option is disabled and none is explicitly selected,
+no option is selected. Dependency exception fallback and restoration are verified
+for all eleven cases.
+
+These source-only observations were repeated on Jenkins 2.568.3 and UNO 2.8.10,
+with all eleven browser results identical to the 2.568.2 baseline. Complete
+target metadata, filtering, browser submission parity and exact production-core
+release verification remain required before migration.
+
+## Non-sandbox ordinary API default boundary
+
+The same eleven synthetic responses on Jenkins 2.568.3 expose a separate ordinary
+Choice default contract. The later selected item gives API default `alpha`; two
+selected list entries give Core String default `gamma,alpha`, although the UI
+single-select chooses only `alpha`. Both tested selected/disabled marker orders
+give API default `alpha`. A label marker on the later map entry gives `gamma`,
+whereas a key marker alone does not select it.
+
+Without a selected marker on any label, a disabled first list entry gives API
+default `gamma:disabled`; the all-disabled case also gives that literal. A
+key-only disabled first map entry gives `alpha:disabled` even though neither
+renderer disables that option. A null label gives default `alpha`; the null key
+case gives an empty Core String. Every cascade omission independently gives the
+synthetic exception fallback `fallback`. No business build is scheduled.
+
+The replacement therefore needs source-derived API defaults separately from
+UI values, enabled-state selection and the ordinary unflagged first-item rule.
+Do not silently collapse multiple selected source defaults to one item, remove
+all suffixes from omission defaults, or freeze a live ordinary response to a
+literal. Target integration and form submission parity are still pending.
+
+The expanded API oracle is also supported by the pinned source bytecode:
+`findDefaultValue` tests labels for selection, joins the corresponding keys
+after selected/disabled escaping, and otherwise returns the first raw key
+unchanged. Thus a first key-only marker is not a reason to normalize an omission
+default. Null keys use the empty string. Default-value caching is optional and
+requires a separate migration configuration check.
+
+The data-only response interpreter passes the fifteen-case non-sandbox textual
+source comparison and a complete 387-test Maven verification. This establishes
+the response interpretation component only; it is not yet connected to REST or
+the required source-derived UI/API metadata.
