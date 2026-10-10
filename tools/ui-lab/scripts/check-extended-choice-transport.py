@@ -190,7 +190,49 @@ async def main():
             await no_js.close()
             single_checks.append('no-JavaScript fallback omits blank choice and submits supported value')
             single_checks.extend(['empty transport flag survives configuration save','empty transport adds no visible blank option','repeated HTTP empty fields retain delimiter positions','Rebuild preserves empty token positions'])
-            report={'passed':True,'browser':browser.version,'hostPlatform':platform.system(),'viewport':page.viewport_size,'jenkinsImage':lab.JENKINS_IMAGE,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal','unlisted form string retains whitespace and repetitions','mixed form array retains scalar and empty elements','Rebuild retains and edits historical literal']+single_checks}
+            order_checks=[]
+            for renderer in ['list','checkbox']:
+                ordered_base=lab.BASE_URL+'/job/extended-order-'+renderer
+                for number,viewport in enumerate([{'width':1440,'height':1000},{'width':390,'height':844}],1):
+                    await page.set_viewport_size(viewport)
+                    await page.goto(ordered_base+'/build?delay=0sec')
+                    field=page.locator('[data-parameter-name="TARGETS"]')
+                    enhanced=field.locator('[data-up-enhanced]')
+                    await enhanced.wait_for(state='visible')
+                    if renderer=='list':
+                        select=enhanced.locator('select')
+                        assert await select.locator('option').evaluate_all('(nodes)=>nodes.map(n=>n.value)')==['gamma','alpha','beta']
+                        await select.select_option(['alpha','gamma'])
+                    else:
+                        await enhanced.locator('input[type=checkbox][value=alpha]').check()
+                        await enhanced.locator('input[type=checkbox][value=gamma]').check()
+                    assert await field.locator('[data-up-generated-value]').evaluate_all('(nodes)=>nodes.map(n=>n.value)')==['gamma','alpha']
+                    await page.get_by_role('button',name='Build',exact=True).click()
+                    await result(number,'gamma,alpha',ordered_base)
+                response=await page.request.post(ordered_base+'/build?delay=0sec',form={'json':json.dumps({'parameter':[{'name':'TARGETS','value':['alpha','gamma','alpha']}]})})
+                assert response.status in [200,201,302]
+                await result(3,'alpha,gamma,alpha',ordered_base)
+                fallback=await browser.new_context(java_script_enabled=False)
+                native_page=await fallback.new_page()
+                await native_page.goto(ordered_base+'/build?delay=0sec')
+                native_field=native_page.locator('[data-parameter-name="TARGETS"]')
+                if renderer=='list':await native_field.locator('select[data-up-native-value]').select_option(['alpha','gamma'])
+                else:
+                    await native_field.locator('input[data-up-native-value][value=alpha]').check()
+                    await native_field.locator('input[data-up-native-value][value=gamma]').check()
+                await native_page.get_by_role('button',name='Build without JavaScript',exact=True).click()
+                await result(4,'gamma,alpha',ordered_base)
+                await fallback.close()
+                order_checks.append(renderer+' preserves declared order on desktop/mobile and no-JavaScript forms; explicit arrays preserve caller order')
+            await page.set_viewport_size({'width':1440,'height':1000})
+            canonical_base=lab.BASE_URL+'/job/canonical-order-list'
+            await page.goto(canonical_base+'/build?delay=0sec')
+            field=page.locator('[data-parameter-name="TARGETS"]')
+            await field.locator('[data-up-enhanced] select').select_option(['gamma','alpha'])
+            await page.get_by_role('button',name='Build',exact=True).click()
+            await result(1,'alpha,gamma',canonical_base)
+            order_checks.append('ordinary canonical multiple-choice export stays sorted')
+            report={'passed':True,'browser':browser.version,'hostPlatform':platform.system(),'viewport':page.viewport_size,'jenkinsImage':lab.JENKINS_IMAGE,'checks':['compatibility configuration save','browser array submission','legacy delimited form JSON with repeated export','standard combined field remains unexpanded','literal default configuration preserves whitespace','UI selects supported defaults only','native default submission exports selected options','omitted standard input exports exact literal','unlisted form string retains whitespace and repetitions','mixed form array retains scalar and empty elements','Rebuild retains and edits historical literal']+single_checks+order_checks}
             (ROOT/'docs/testing/results/extended-choice-transport-ui-lab.json').write_text(json.dumps(report,indent=2)+'\n')
             print(json.dumps(report))
             await browser.close()

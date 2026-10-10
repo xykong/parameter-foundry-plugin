@@ -15,6 +15,8 @@ Provider companions, built-in workspace/Base64/stash file parameters, source mig
 boundaries, and retirement reporting.
 Static Extended Choice migrations include an explicit transport compatibility
 mode for legacy CLI, repeated REST fields and form JSON submissions.
+Multiple-choice browser forms preserve declared option order for legacy environment export;
+explicit API inputs retain the caller’s order.
 Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with

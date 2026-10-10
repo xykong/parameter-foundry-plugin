@@ -15,6 +15,9 @@ import java.util.List;
 import net.sf.json.JSONObject;
 import org.htmlunit.HttpMethod;
 import org.htmlunit.WebRequest;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlPage;
 import org.htmlunit.util.NameValuePair;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -30,6 +33,49 @@ class ExtendedChoiceTransportCompatibilityTest {
         d.setEnvironmentExportOrder("submitted");
         d.setDuplicatePolicy("deduplicate");
         return d;
+    }
+
+    @Test
+    void fallbackControlsPreserveDeclaredOrderAndSharedEnvironmentExport(JenkinsRule j) throws Exception {
+        j.jenkins.setCrumbIssuer(null);
+        for (String renderer : List.of("list", "checkbox")) {
+            var d = definition();
+            d.setRenderer(renderer);
+            d.setChoices(List.of(new Option("gamma"), new Option("alpha"), new Option("beta")));
+            var job = j.createFreeStyleProject("declared-order-" + renderer);
+            job.addProperty(new ParametersDefinitionProperty(d));
+            HtmlPage page = (HtmlPage) j.createWebClient()
+                    .withJavaScriptEnabled(false)
+                    .withThrowExceptionOnFailingStatusCode(false)
+                    .getPage(job, "build?delay=0sec");
+            List<DomElement> controls = page.getByXPath(
+                    "list".equals(renderer)
+                            ? "//select[@name='CLOUDS']/option"
+                            : "//input[@name='CLOUDS' and @type='checkbox']");
+            assertEquals(
+                    List.of("gamma", "alpha", "beta"),
+                    controls.stream()
+                            .map(control -> control.getAttribute("value"))
+                            .toList());
+            HtmlButton submit = (HtmlButton) page.getByXPath("//button[normalize-space()='Build without JavaScript']")
+                    .get(0);
+            var request = new WebRequest(
+                    new URL(j.getURL(), job.getUrl() + submit.getAttribute("formaction")), HttpMethod.POST);
+            request.setRequestParameters(List.of(
+                    new NameValuePair("__parameter_foundry_presence", "CLOUDS"),
+                    new NameValuePair("CLOUDS", controls.get(0).getAttribute("value")),
+                    new NameValuePair("CLOUDS", controls.get(1).getAttribute("value"))));
+            assertEquals(
+                    201, j.createWebClient().getPage(request).getWebResponse().getStatusCode());
+            j.waitUntilNoActivity();
+            var value = (FoundryChoiceParameterValue)
+                    job.getLastBuild().getAction(ParametersAction.class).getParameter("CLOUDS");
+            assertEquals(List.of("alpha", "gamma"), value.getValues());
+            assertEquals(List.of("gamma", "alpha"), value.getSubmittedValues());
+            var environment = new EnvVars();
+            value.buildEnvironment(job.getLastBuild(), environment);
+            assertEquals("gamma,alpha", environment.get("CLOUDS"));
+        }
     }
 
     @Test

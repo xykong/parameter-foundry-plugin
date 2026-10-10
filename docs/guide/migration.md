@@ -60,6 +60,10 @@ has to be stated before an equivalent can be generated.
 | File Parameters Base64 / Stashed File | Class B target: `foundryBase64File` / `foundryStashedFile`; review limits, wrappers and binary lifecycle |
 | Jenkins Core File | Class B `foundryFile` workspace target; preserve relative destination and original filename environment key |
 
+Extended Choice multiple-choice browser controls preserve declared option order for
+submitted environment export. Explicit API values keep caller order; canonical values
+remain the sorted set.
+
 ## Boundaries
 
 Literal-only Active Choices single selections without selection markers,

@@ -111,7 +111,9 @@ silently empty.
 
 `environmentExportOrder` only changes the string written to the environment; the canonical value
 stays the unordered, sorted set. Migrations from a control that exported the submitted order set it
-to `submitted`, and a value without the field behaves as `canonical`.
+to `submitted`, and a value without the field behaves as `canonical`. In Extended Choice
+compatibility mode, browser list and checkbox forms submit in declared option order, matching
+the original controls. Explicit API inputs keep the caller’s order.
 
 ### Input decoding
 

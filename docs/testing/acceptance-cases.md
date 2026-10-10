@@ -25,6 +25,7 @@ the case, but production configuration is never committed here.
 | Configured-node whitespace parity (UP-AC-044) | Required | Required | Existing renderer coverage | Existing renderer coverage | N/A | Required | Original values, source trim filtering and shared Provider resolution |
 | Literal Active Choices preview fidelity (UP-AC-045) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Existing compatibility coverage | Required | Preview-generated Core string defaults and literal inputs |
 | Active Choices empty inline option (UP-AC-046) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Empty option order, default, submission, typed empty vs null and persistence |
+| Extended Choice browser submission order (UP-AC-047) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Existing caller-order coverage | Declared option order in build environment |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 
@@ -476,3 +477,17 @@ For every new failure, add a case or issue before changing code. Record the
 exact URL/job path only in local operational notes, not in committed files
 when it exposes private infrastructure. Update the verification column only
 after a real browser, CLI/API, or build-log check has passed.
+
+## Extended Choice browser submission order
+
+| ID | Reproduction / expected behavior | Actual behavior / planned fix | Verification |
+| --- | --- | --- | --- |
+| UP-AC-047 | Declare nonalphabetic multi-choice options `gamma,alpha,beta` in Extended Choice compatibility mode with submitted environment export. Select gamma and alpha in list and checkbox forms. Both JavaScript and fallback forms must export `gamma,alpha`; explicit API arrays keep their caller order and canonical values stay sorted. | Enhanced controls generated hidden inputs in alphabetic order, exporting `alpha,gamma`. Preserve declared option order when generating Extended Choice multi-choice form inputs. | Reproduced on 0.10.304; corrected snapshot passes actual Chromium 151.0.7922.34 desktop/mobile list and checkbox forms, fallback submission, explicit API caller order and ordinary canonical export. Complete corrected Harness verify passes 381 tests; exact release remains pending. |
+
+### UP-ISSUE-016: Extended Choice multi-choice form changes export order
+
+- Reproduction: configure options in nonalphabetic order; select two options and submit the enhanced form.
+- Expected: environment export matches the original control's declared option order.
+- Actual: hidden submitted fields are alphabetically sorted before the shared evaluator receives them.
+- Fix: pass the full resolved option order into list/checkbox submission only in Extended Choice multiple compatibility mode, while retaining canonical sorting and caller-supplied API order.
+- Verification: corrected 0.11.305-SNAPSHOT HPI passes real-browser desktop/mobile list/checkbox, fallback and API order checks; the targeted seven-test Harness suite passes. Corrected full regression passes 381 tests; tagged-release gates remain pending.

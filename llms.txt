@@ -43,6 +43,8 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - Static multiple choices can use `standardApiInputMode: extended-choice` for source-compatible
   repeated REST fields, comma-split CLI and delimited form JSON. Pair it with submitted export
   order and duplicate deduplication; repeated supported values remain in the exported string.
+  Extended Choice list/checkbox browser forms submit in declared option order; explicit API
+  inputs retain their caller order, and canonical values remain sorted.
   Version 0.7.288 has known gaps for literal/blank defaults, unlisted form values,
   single selection and custom delimiters. Do not infer full parity from adapter
   classification; see [source contract](docs/research/extended-choice-static-transport-contract.md).

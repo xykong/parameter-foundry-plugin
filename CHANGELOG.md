@@ -9,6 +9,12 @@ the release scope changes, and the third field is the number of commits on
 `master` at the released commit (`git rev-list --count master`). A `-SNAPSHOT`
 suffix marks a build that is deployed but not tagged.
 
+## Unreleased
+
+### Fixed
+
+- Extended Choice multiple-choice browser forms preserve declared option order in submitted environment export instead of sorting form inputs alphabetically.
+
 ## 0.10.304 - 2026-10-10
 
 The HPI is `dist/parameter-foundry-0.10.304.hpi` (SHA-256

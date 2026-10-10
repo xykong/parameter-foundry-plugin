@@ -69,5 +69,23 @@ emptyJob.addProperty(new ParametersDefinitionProperty(emptyParameter))
 emptyJob.buildersList.add(new Shell('printf "%s" "$TARGETS" > result.txt'))
 emptyJob.publishersList.add(new ArtifactArchiver('result.txt'))
 emptyJob.save()
+def orderFixture={name,renderer,mode ->
+    def project=j.createProject(FreeStyleProject,name)
+    def p=new FoundryChoiceParameterDefinition('TARGETS')
+    p.selectionMode='multiple'
+    p.renderer=renderer
+    p.choices=['gamma','alpha','beta'].collect{new Option(it)}
+    p.standardApiInputMode=mode
+    p.environmentExportOrder=mode=='extended-choice'?'submitted':'canonical'
+    p.duplicatePolicy='deduplicate'
+    p.defaultMode='none'
+    project.addProperty(new ParametersDefinitionProperty(p))
+    project.buildersList.add(new Shell('printf "%s" "$TARGETS" > result.txt'))
+    project.publishersList.add(new ArtifactArchiver('result.txt'))
+    project.save()
+}
+orderFixture('extended-order-list','list','extended-choice')
+orderFixture('extended-order-checkbox','checkbox','extended-choice')
+orderFixture('canonical-order-list','list','repeated')
 j.save()
 new File(j.rootDir,'extended-choice-transport-ready').text='ready\n'

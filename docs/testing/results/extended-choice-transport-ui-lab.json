@@ -1,10 +1,10 @@
 {
   "passed": true,
-  "browser": "153.0.8010.12",
-  "hostPlatform": "Darwin",
+  "browser": "151.0.7922.34",
+  "hostPlatform": "Linux",
   "viewport": {
-    "width": 1280,
-    "height": 720
+    "width": 1440,
+    "height": 1000
   },
   "jenkinsImage": "jenkins/jenkins:2.568.2-lts-jdk21",
   "checks": [
@@ -29,8 +29,12 @@
     "empty transport flag survives configuration save",
     "empty transport adds no visible blank option",
     "repeated HTTP empty fields retain delimiter positions",
-    "Rebuild preserves empty token positions"
+    "Rebuild preserves empty token positions",
+    "list preserves declared order on desktop/mobile and no-JavaScript forms; explicit arrays preserve caller order",
+    "checkbox preserves declared order on desktop/mobile and no-JavaScript forms; explicit arrays preserve caller order",
+    "ordinary canonical multiple-choice export stays sorted"
   ],
-  "pluginVersion": "0.8.296",
-  "pluginSha256": "81ad27c92945a626eabf34c58372ffe3247a7dd61ef4723758238f2b6be9c2ce"
+  "targetBaseVersion": "0.11.305-SNAPSHOT",
+  "targetSha256": "467c7abec3fc4a39879d4d02aa64aa878d8f9a78e0f62ea24b855cd6d7ce5e36",
+  "developmentArtifact": true
 }

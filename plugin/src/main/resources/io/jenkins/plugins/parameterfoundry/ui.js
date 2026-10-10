@@ -169,14 +169,26 @@
     }
   }
 
-  function setSubmittedValues(field, values, notify) {
+  function setSubmittedValues(field, values, notify, options) {
     Array.prototype.forEach.call(
       field.querySelectorAll("[data-up-generated-value]"),
       function (node) {
         node.remove();
       },
     );
-    sortedSetValues(values).forEach(function (value) {
+    var submitted = sortedSetValues(values);
+    if (field.dataset.standardApiInputMode === "extended-choice" && field.dataset.multiple === "true" && options) {
+      // Legacy multi-select and checkbox controls submit selected entries in option order.
+      var remaining = new Set(values);
+      submitted = [];
+      options.forEach(function (option) {
+        if (remaining.delete(option.value)) {
+          submitted.push(option.value);
+        }
+      });
+      remaining.forEach(function (value) { submitted.push(value); });
+    }
+    submitted.forEach(function (value) {
       var input = document.createElement("input");
       input.type = "hidden";
       input.name = "value";
@@ -1189,7 +1201,7 @@
           selected.delete(option.value);
         }
       });
-      setSubmittedValues(field, selected, true);
+      setSubmittedValues(field, selected, true, options);
       status.textContent = selectedSummary(field, selected.size, options.length);
     });
     enhanced.appendChild(search);
@@ -1197,7 +1209,7 @@
     enhanced.appendChild(status);
     disableFallback(field);
     field.appendChild(enhanced);
-    setSubmittedValues(field, selected);
+    setSubmittedValues(field, selected, false, options);
     render();
   }
 
@@ -1374,7 +1386,7 @@
     }
 
     function sync(rerender, message) {
-      setSubmittedValues(field, selected, Boolean(message));
+      setSubmittedValues(field, selected, Boolean(message), options);
       renderChips();
       if (rerender !== false) {
         renderList();
