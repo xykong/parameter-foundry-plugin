@@ -110,6 +110,44 @@ class ActiveChoicesSingleCompatibilityTest {
     }
 
     @Test
+    void inlineEmptyChoicesRemainSelectableLiteralStrings(JenkinsRule j) throws Exception {
+        var job = j.createFreeStyleProject();
+        for (var values : List.of(List.of("", "flags"), List.of("flags", "", "other"), List.of("flags", ""))) {
+            var d = definition();
+            d.setRenderer("select");
+            d.setDefaultMode("first");
+            d.setChoices(values.stream().map(Option::new).toList());
+            assertTrue(DefinitionValidationService.validateStoredDefinition(d).isValid());
+            assertEquals(values.get(0), d.getDefaultParameterValue().getValue());
+            assertEquals(values.get(0), d.getUiDefaultValue());
+            assertEquals("", d.createValue((CLICommand) null, "").getValue());
+            assertEquals("", d.createValue(request(List.of(""))).getValue());
+            assertEquals(
+                    "",
+                    d.createValue(request(null), JSONObject.fromObject("{\"name\":\"NODE\",\"value\":\"\"}"))
+                            .getValue());
+            assertEquals(
+                    "",
+                    TypedParameterAdapterRegistry.decode(job, d, true, "", Map.of(), null, ProviderOperation.VALIDATE)
+                            .getValue());
+            assertNull(
+                    TypedParameterAdapterRegistry.decode(job, d, true, null, Map.of(), null, ProviderOperation.VALIDATE)
+                            .getValue());
+            var restored = (FoundryChoiceParameterDefinition)
+                    jenkins.model.Jenkins.XSTREAM2.fromXML(jenkins.model.Jenkins.XSTREAM2.toXML(d));
+            assertEquals(
+                    values, restored.getChoices().stream().map(Option::getValue).toList());
+            assertEquals("", restored.createValue((CLICommand) null, "").getValue());
+            d.setStandardApiInputMode("repeated");
+            assertFalse(DefinitionValidationService.validateStoredDefinition(d).isValid());
+        }
+        var duplicate = definition();
+        duplicate.setChoices(List.of(new Option(""), new Option("")));
+        assertFalse(
+                DefinitionValidationService.validateStoredDefinition(duplicate).isValid());
+    }
+
+    @Test
     void typedExplicitAndOrdinaryModesKeepValidation(JenkinsRule j) throws Exception {
         var d = definition();
         var job = j.createFreeStyleProject();

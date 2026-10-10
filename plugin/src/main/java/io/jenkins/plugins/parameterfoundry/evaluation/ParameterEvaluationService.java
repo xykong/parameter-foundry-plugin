@@ -44,6 +44,13 @@ public final class ParameterEvaluationService {
             }
             return defaultValue;
         }
+        if (input.values().size() == 1
+                && input.values().get(0).isEmpty()
+                && definition.isActiveChoicesSingleInput()
+                && definition.findOption(options, "") != null) {
+            validateKnownEnabled(definition, options, "");
+            return "";
+        }
         if (input.values().isEmpty()
                 || (input.values().size() == 1 && input.values().get(0).isEmpty())) {
             if (definition.isRequired()) {

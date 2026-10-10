@@ -63,11 +63,12 @@ has to be stated before an equivalent can be generated.
 ## Boundaries
 
 Literal-only Active Choices single selections without selection markers,
-disabled or empty choices, filtering, cached defaults or dependencies use
+disabled choices, filtering, cached defaults or dependencies use
 `standardApiInputMode: 'active-choices'` in the preview target. Dropdowns retain
 their first UI selection; radio groups remain unselected. Both retain the first
 API default and Core string parameter values. The target also keeps the source
-description. Review generating source and fallback behavior before applying.
+description. Empty inline options retain their positions and submit an empty string.
+Review generating source and fallback behavior before applying.
 
 - Version `0.8.296` adds exact omitted-input default
   exports through `legacyDefaultLiteral` and corrects option parsing for custom

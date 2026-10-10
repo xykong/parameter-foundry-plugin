@@ -1,0 +1,2629 @@
+{
+  "sourceVersion": "2.8.10",
+  "targetVersion": "0.10.303-SNAPSHOT (private-635d2d3b-xykong)",
+  "rows": [
+    {
+      "fixture": 0,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 0,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 1,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 2,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 3,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 4,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "DEFAULT",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": "",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": " built-in ",
+      "source": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " built-in ",
+        "literal": " built-in ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": "agent-a",
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": "agent-a || agent-z",
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "CLI",
+      "input": "unknown",
+      "source": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "unknown",
+        "literal": "unknown",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": null,
+      "source": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "flags",
+        "literal": "flags",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": [],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": [
+        ""
+      ],
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a",
+        "literal": "agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a",
+        "agent-z"
+      ],
+      "source": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "target": {
+        "error": "java.lang.IllegalArgumentException"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "STANDARD",
+      "input": [
+        "agent-a || agent-z"
+      ],
+      "source": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-a || agent-z",
+        "literal": "agent-a || agent-z",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":null}",
+      "source": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "null",
+        "literal": "null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\"\"}",
+      "source": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "",
+        "literal": "",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":\" agent-a || agent-z \"}",
+      "source": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": " agent-a || agent-z ",
+        "literal": " agent-a || agent-z ",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[\"agent-z\",\"agent-a\"]}",
+      "source": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "agent-z,agent-a",
+        "literal": "agent-z,agent-a",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":42}",
+      "source": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42",
+        "literal": "42",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":true}",
+      "source": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "true",
+        "literal": "true",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":[42,true,null]}",
+      "source": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "42,true,null",
+        "literal": "42,true,null",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    },
+    {
+      "fixture": 5,
+      "channel": "FORM",
+      "input": "{\"name\":\"NODE\",\"value\":{\"nested\":\"x\"}}",
+      "source": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "target": {
+        "exists": true,
+        "value": "{\"nested\":\"x\"}",
+        "literal": "{\"nested\":\"x\"}",
+        "valueType": "java.lang.String"
+      },
+      "equivalent": true
+    }
+  ],
+  "businessJobsExecuted": false,
+  "exactHpiSha256": "6e55f4e607b1281e13f47e5df191232eeb359c4e9b8a1d5946fd6253a05e168f",
+  "browser": "153.0.8010.12",
+  "ui": [
+    {
+      "fixture": 0,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "",
+            "selected": true
+          },
+          {
+            "value": "flags",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "",
+            "selected": true
+          },
+          {
+            "value": "flags",
+            "selected": false
+          }
+        ]
+      }
+    },
+    {
+      "fixture": 1,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "flags",
+            "selected": true
+          },
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "other",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "flags",
+            "selected": true
+          },
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "other",
+            "selected": false
+          }
+        ]
+      }
+    },
+    {
+      "fixture": 2,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "flags",
+            "selected": true
+          },
+          {
+            "value": "",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "flags",
+            "selected": true
+          },
+          {
+            "value": "",
+            "selected": false
+          }
+        ]
+      }
+    },
+    {
+      "fixture": 3,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "flags",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "flags",
+            "selected": false
+          }
+        ]
+      }
+    },
+    {
+      "fixture": 4,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "flags",
+            "selected": false
+          },
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "other",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "flags",
+            "selected": false
+          },
+          {
+            "value": "",
+            "selected": false
+          },
+          {
+            "value": "other",
+            "selected": false
+          }
+        ]
+      }
+    },
+    {
+      "fixture": 5,
+      "sourceAndTargetOptionsAndDefaultsMatch": true,
+      "values": {
+        "source": [
+          {
+            "value": "flags",
+            "selected": false
+          },
+          {
+            "value": "",
+            "selected": false
+          }
+        ],
+        "target": [
+          {
+            "value": "flags",
+            "selected": false
+          },
+          {
+            "value": "",
+            "selected": false
+          }
+        ]
+      }
+    }
+  ],
+  "neutralFormBuilds": [
+    {
+      "fixture": 0,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 0,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 1,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 1,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 2,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 2,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 3,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 3,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 4,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 4,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 5,
+      "kind": "source",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    },
+    {
+      "fixture": 5,
+      "kind": "target",
+      "value": "",
+      "environmentPresent": true,
+      "buildResult": "SUCCESS"
+    }
+  ],
+  "emptyCoreHistoryEditable": true,
+  "productionMutations": false
+}

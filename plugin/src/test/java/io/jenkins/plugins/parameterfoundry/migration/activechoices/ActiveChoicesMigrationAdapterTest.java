@@ -48,8 +48,8 @@ class ActiveChoicesMigrationAdapterTest {
     }
 
     @Test
-    void emptyFlaggedAndFilterableLiteralsDoNotClaimUnflaggedCompatibility() {
-        for (String script : List.of("return ['debug', '']", "return ['debug:selected', 'release']")) {
+    void flaggedAndFilterableLiteralsDoNotClaimUnflaggedCompatibility() {
+        for (String script : List.of("return ['debug:selected', 'release']", "return ['debug:disabled', 'release']")) {
             ChoiceParameter source = new ChoiceParameter("CHANNEL");
             source.setScript(script);
             var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
@@ -62,6 +62,31 @@ class ActiveChoicesMigrationAdapterTest {
         var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
                 adapter.inspect(filtered).getTarget();
         assertFalse(target.isActiveChoicesSingleInput());
+    }
+
+    @Test
+    void literalEmptyOptionsRetainTheirPositionsAndCoreStringDefaults() throws Exception {
+        for (String script :
+                List.of("return ['', 'debug']", "return ['debug', '', 'release']", "return ['debug', '']")) {
+            ChoiceParameter source = new ChoiceParameter("FLAGS");
+            source.setScript(script);
+            source.setChoiceType("PT_SINGLE_SELECT");
+            var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
+                    adapter.inspect(source).getTarget();
+            assertTrue(target.isActiveChoicesSingleInput());
+            assertTrue(
+                    io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(
+                                    target)
+                            .isValid());
+            assertEquals("first", target.getDefaultMode());
+            assertEquals(
+                    script.startsWith("return [''") ? "" : "debug",
+                    target.getDefaultParameterValue().getValue());
+            assertTrue(target.getChoices().stream()
+                    .anyMatch(option -> option.getValue().isEmpty()));
+            assertEquals(
+                    "", target.createValue((hudson.cli.CLICommand) null, "").getValue());
+        }
     }
 
     @Test

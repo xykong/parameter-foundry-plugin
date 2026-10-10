@@ -82,6 +82,7 @@ help.
 
 - [October 10 literal Active Choices preview verification](./testing/literal-active-preview-verification-2026-10-10.md)
 - [October 10 Active Choices single compatibility verification](./testing/active-choices-single-verification-2026-10-10.md)
+- [October 10 Active Choices empty inline option verification](./testing/active-choices-empty-options-verification-2026-10-10.md)
 - [October 10 Extended Choice single transport verification](./testing/extended-choice-single-verification-2026-10-10.md)
 - [October 10 Extended Choice literal form verification](./testing/extended-choice-form-verification-2026-10-10.md)
 - [October 10 Extended Choice default compatibility verification](./testing/extended-choice-default-verification-2026-10-10.md)

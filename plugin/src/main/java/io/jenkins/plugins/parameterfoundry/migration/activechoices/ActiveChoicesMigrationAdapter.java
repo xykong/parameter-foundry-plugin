@@ -72,6 +72,15 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
 
         java.util.Optional<ActiveChoicesScriptAnalysis.LiteralChoices> literal =
                 script.isBlank() ? java.util.Optional.empty() : ActiveChoicesScriptAnalysis.literalChoices(script);
+        if (literal.isEmpty()
+                && CHOICE.equals(className)
+                && !multiple
+                && !filterable
+                && !readBoolean(definition, "getCacheDefaultValue", false)
+                && (PT_RADIO.equals(choiceType) || "PT_SINGLE_SELECT".equals(choiceType))
+                && ActiveChoicesScriptAnalysis.isPlainUnflaggedStringList(script)) {
+            literal = ActiveChoicesScriptAnalysis.literalChoicesLenient(script);
+        }
         if (literal.isPresent() && !choiceType.startsWith("ET_")) {
             return literalPlan(definition, dependencies, literal.get(), choiceType, multiple, filterable);
         }
@@ -299,9 +308,7 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
                 && selected.isEmpty()
                 && (PT_RADIO.equals(choiceType) || "PT_SINGLE_SELECT".equals(choiceType))
                 && !literal.options().isEmpty()
-                && literal.options().stream()
-                        .noneMatch(option ->
-                                option.isDisabled() || option.getValue().isEmpty());
+                && literal.options().stream().noneMatch(option -> option.isDisabled());
         if (compatibleSingle) {
             target.setStandardApiInputMode("active-choices");
             target.setActiveChoicesApiDefaultMode("first");

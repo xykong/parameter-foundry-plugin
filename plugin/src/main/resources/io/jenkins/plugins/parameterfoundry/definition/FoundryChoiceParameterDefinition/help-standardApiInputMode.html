@@ -8,7 +8,9 @@
     stringify. File payloads require Foundry File. UI and API defaults are independent;
     Core string values retain history, queue equality and uppercase environment aliases.
     Required/custom/disabled controls, dependencies and tables are unavailable. Supplied
-    snapshots remain validated; ordinary/typed explicit inputs stay strict.</li>
+    snapshots remain validated. One empty inline option may remain selectable and submits
+    an empty string; typed empty selects that option while typed null clears selection.
+    Ordinary modes reject empty options; typed explicit inputs retain membership validation.</li>
   <li><code>repeated</code> expects one field per value.</li>
   <li>For static single choices, <code>extended-choice</code> filters/trims CLI comma fields and
     repeated standard fields, then joins supported values using the delimiter into one scalar.

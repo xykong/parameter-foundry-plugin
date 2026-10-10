@@ -178,7 +178,9 @@ public final class DefinitionValidationService {
                 continue;
             }
             String value = option.getValue();
-            if (value == null || value.isEmpty()) {
+            boolean literalEmptyChoice = definition instanceof FoundryChoiceParameterDefinition choice
+                    && choice.isActiveChoicesSingleInput();
+            if (value == null || value.isEmpty() && !literalEmptyChoice) {
                 errors.add("Option values must be non-empty");
                 continue;
             }
