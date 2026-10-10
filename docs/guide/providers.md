@@ -24,7 +24,7 @@ through a snapshot, and reject values that are no longer valid.
 | Matrix | A table crosses two governed lists, for example the registries of a Job against the agents that must log into them | Rows, columns, cell templates, cells per row |
 | Dependency mapping | The option list depends on the selected value of another parameter (the governed replacement for an Active Choices cascade that branches on a parameter) | Dependency parameter, cases (value → options), options for every other value |
 | Managed config | The list lives in a Config File Provider file (YAML or JSON) | Config ID, format, path mapping |
-| REST | The list comes from an HTTP API | Connection Profile, relative path, query parameters, format, path mapping |
+| REST | The list comes from an HTTP API | Connection Profile, relative path, query parameters, format, response mode, path mapping |
 | Script | The list needs logic, but must stay governed | Engine ID (`sandbox-groovy`), catalog source reference |
 | Git refs | The list is branches, tags, or full refs of a repository | Connection Profile, ref type, include/exclude pattern, sort order, maximum refs |
 
@@ -133,6 +133,61 @@ foundryChoice(name: 'BUILD_NODE', providerId: 'agent-nodes', renderer: 'list', r
 `demo-node-choice` deliberately carries both: `BUILD_NODE` is backed by a
 Node/Label Provider and `BUILD_NODE_INLINE` repeats the same list inline, so the two can be
 compared side by side.
+
+## REST source response modes
+
+The default `responseMode: 'mapped'` keeps JSONPath/XPath mapping. Two data-only
+modes support the reviewed Active Choices `json.data ?: json` idiom for
+`PT_SINGLE_SELECT` sources with `filterable: true`:
+
+| Mode | Source control |
+|---|---|
+| `active-choices-choice` | Ordinary Choice dropdown |
+| `active-choices-cascade` | Dependency-bound Cascade dropdown |
+
+These modes require a JSON response and ignore root/field paths. Do not configure
+transforms: source order, values, labels and flags must remain intact. They do
+not execute source Groovy. A Connection Profile still governs the target,
+credentials, allowed path/query names, deadline and response size.
+
+Pair the Provider with a single Foundry Choice using
+`standardApiInputMode: 'active-choices'` and `defaultMode: 'first'`. Copy each source control's `filterLength` to `activeChoicesFilterLength` (default 1). A nonempty query
+shorter than this threshold leaves the previous dropdown and selection intact;
+clearing the query rebuilds the full list. This applies only to the reviewed
+source REST filter and does not change ordinary Foundry search or API values.
+Source label
+markers determine selection and disabled state. Ordinary and cascade modes keep
+their distinct null/blank labels and values. Reactive JSON arrays/objects/numbers
+use the source JavaScript string conversion for captions; ordinary labels use
+the source Java conversion. UI selection and API omission
+defaults are separate: multiple marked selections can produce a comma-joined
+Core String API default even though the dropdown selects the last marked item.
+With no marked label, the ordinary API uses the first raw key, including any
+suffix; explicit legacy strings remain literal and do not require a network
+lookup. A reactive definition must set `activeChoicesApiDefaultMode: 'literal'`
+and its independent `activeChoicesApiDefaultLiteral`.
+
+Configure `fallbackOptions` for the source exception fallback, `cacheTtlSeconds:
+0` for a live source, and avoid last-known-good substitution. With a zero cache TTL these source modes
+also retry immediately after a failure instead of reusing the generic failure
+cooldown. Missing reactive dependencies use the reviewed fallback; an explicitly
+empty/null dropdown dependency is sent as an empty query value, matching source
+UI transport. Unknown dependency names remain rejected. A successful empty
+or scalar response can produce no options without invoking fallback; a successful
+application-error object can itself become choices. Invalid JSON and failed
+property interpretation signal failure for the reviewed fallback. Response
+limits are 10 MiB or the smaller Connection Profile limit, 64 nested JSON
+containers and 10,000 distinct choices. No partial result is returned at a limit.
+
+The browser uses the source case-folded regular-expression filter for these
+modes. Like the source, a successful filter rebuilds plain options and resets
+selection/disabled markers; a dependency refresh restores the source metadata.
+An invalid expression retains the previous list. Configure a dropdown renderer;
+radio/multiple controls require their own source parity review.
+
+This feature does not complete a Job migration by itself. Verify the exact source
+inputs, ordinary/reactive API defaults, empty/error/fallback responses, browser
+filtering, dependency refresh, form submissions and allowed execution branches.
 
 ## Connection Profiles
 

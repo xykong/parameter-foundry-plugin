@@ -17,7 +17,7 @@ and [`../decisions/`](../decisions/).
 | Look up every field and its default | [Parameter reference](./parameters.md) |
 | Copy a working example | [Cookbook](./examples.md) |
 | Upload and consume a file | [File parameters](./file-parameters.md) |
-| Connect a backend (REST, Git, script, managed config) | [Providers](./providers.md) |
+| Connect a backend (REST, source JSON modes, Git, script, managed config) | [Providers](./providers.md) |
 | Move off Active Choices, Extended Choice, Git branches | [Migration](./migration.md) |
 | Decide how to model a real Job | [Best practices](./best-practices.md) |
 | Understand what the plugin is and is not | [Design goals](./design-goals.md) |

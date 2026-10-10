@@ -49,6 +49,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     private String defaultValue;
     private String activeChoicesApiDefaultMode = "first";
     private String activeChoicesApiDefaultLiteral = "";
+    private Integer activeChoicesFilterLength;
     private transient boolean activeChoicesRebuildInput;
 
     public String getActiveChoicesApiDefaultMode() {
@@ -71,6 +72,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     public boolean isActiveChoicesSingleInput() {
         return ActiveChoicesSingleCompatibility.enabled(this);
+    }
+
+    public int getActiveChoicesFilterLength() {
+        return activeChoicesFilterLength == null ? 1 : activeChoicesFilterLength;
+    }
+
+    @DataBoundSetter
+    public void setActiveChoicesFilterLength(int length) {
+        activeChoicesFilterLength = length;
     }
 
     private String legacyDefaultLiteral;
@@ -535,6 +545,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setDefaultValue(getDefaultValue());
         copy.setActiveChoicesApiDefaultMode(getActiveChoicesApiDefaultMode());
         copy.setActiveChoicesApiDefaultLiteral(getActiveChoicesApiDefaultLiteral());
+        copy.setActiveChoicesFilterLength(getActiveChoicesFilterLength());
         copy.setLegacyDefaultLiteral(getLegacyDefaultLiteral());
         copy.setLegacyEmptyChoiceAllowed(isLegacyEmptyChoiceAllowed());
         copy.setEnvironmentExportOrder(getEnvironmentExportOrder());
@@ -588,6 +599,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                             job,
                             this,
                             DependencyValues.fromJson(
+                                    job,
                                     this,
                                     DependencyValues.parseJsonObject(
                                             this,

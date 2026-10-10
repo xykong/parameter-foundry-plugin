@@ -43,7 +43,7 @@ public final class ProviderSubmission {
         if (dependencyObject == null) {
             dependencyObject = dependenciesFromRequest(definition, request);
         }
-        Map<String, String> dependencies = DependencyValues.fromJson(definition, dependencyObject);
+        Map<String, String> dependencies = DependencyValues.fromJson(job, definition, dependencyObject);
         String snapshotId = submitted == null ? null : submitted.optString("snapshotId", null);
         if (snapshotId == null || snapshotId.isBlank()) {
             snapshotId = request.getParameter(snapshotRequestField(definition));
@@ -154,7 +154,7 @@ public final class ProviderSubmission {
             }
             values.put(dependency, value);
         }
-        Map<String, String> dependencies = DependencyValues.fromParameterValues(definition, values);
+        Map<String, String> dependencies = DependencyValues.fromParameterValues(job, definition, values);
         return ProviderSnapshotStore.get().resolveForBuild(job, definition, dependencies, null, operation);
     }
 
@@ -179,8 +179,9 @@ public final class ProviderSubmission {
         for (String dependency : definition.getDependsOn()) {
             String[] values = request.getParameterValues(dependency);
             if (values == null) {
-                throw new EvaluationException(
-                        ErrorCode.DEPENDENCY_INVALID, definition.getName(), "Missing dependency: " + dependency);
+                // Preserve absence until job-aware normalization applies the source cascade policy.
+                // Other providers still reject missing dependencies in DependencyValues.fromJson.
+                continue;
             }
             if (values.length == 1) {
                 dependencies.put(dependency, values[0]);

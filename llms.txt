@@ -140,3 +140,14 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   omitted input uses the configured fallback string, explicit legacy strings do not resolve options,
   and optional snapshots bind dependencies. Typed explicit input stays strict. This transport feature
   does not establish generic REST response or real-browser source parity.
+
+- REST `responseMode` defaults to `mapped`; `active-choices-choice` and
+  `active-choices-cascade` interpret reviewed JSON data-or-root single dropdown
+  responses without executing Groovy. They preserve source metadata and separate
+  ordinary API defaults (including marked comma joins/raw first keys) from UI
+  selection. Cascades retain independent literal API defaults. Mapping paths and
+  transforms do not apply. Configure a governed Connection Profile, source
+  fallback options and live caching policy; per-Job/browser/form and retirement
+  verification remain required. See the Providers guide.
+
+- Reviewed single REST source filters preserve per-parameter activeChoicesFilterLength (default 1); copy source filterLength when migrating. Short nonempty filters retain the previous list; clearing rebuilds it.

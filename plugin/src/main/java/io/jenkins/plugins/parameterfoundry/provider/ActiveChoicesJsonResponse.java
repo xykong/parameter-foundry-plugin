@@ -17,6 +17,12 @@ final class ActiveChoicesJsonResponse {
     private ActiveChoicesJsonResponse() {}
 
     static Map<String, String> parse(byte[] body, String providerId) {
+        Map<String, String> text = new LinkedHashMap<>();
+        parseRaw(body, providerId).forEach((key, label) -> text.put(key, label == null ? null : String.valueOf(label)));
+        return text;
+    }
+
+    static Map<String, Object> parseRaw(byte[] body, String providerId) {
         try {
             if (body.length > MAX_RESPONSE_BYTES) {
                 throw new IllegalArgumentException("Response exceeds the byte limit.");
@@ -40,7 +46,7 @@ final class ActiveChoicesJsonResponse {
             } else {
                 throw new IllegalArgumentException("Response is not a supported data envelope.");
             }
-            Map<String, String> result = new LinkedHashMap<>();
+            Map<String, Object> result = new LinkedHashMap<>();
             if (selected instanceof List<?> list) {
                 for (Object item : list) {
                     String value = item == null ? null : String.valueOf(item);
@@ -48,10 +54,7 @@ final class ActiveChoicesJsonResponse {
                 }
             } else if (selected instanceof Map<?, ?> map) {
                 for (Map.Entry<?, ?> entry : map.entrySet()) {
-                    putChoice(
-                            result,
-                            String.valueOf(entry.getKey()),
-                            entry.getValue() == null ? null : String.valueOf(entry.getValue()));
+                    putChoice(result, String.valueOf(entry.getKey()), entry.getValue());
                 }
             }
             // Non-sandbox source scripts may return a scalar successfully; getChoices
@@ -65,7 +68,7 @@ final class ActiveChoicesJsonResponse {
         }
     }
 
-    private static void putChoice(Map<String, String> choices, String value, String label) {
+    private static void putChoice(Map<String, Object> choices, String value, Object label) {
         choices.put(value, label);
         if (choices.size() > MAX_CHOICES) {
             throw new IllegalArgumentException("Response exceeds the distinct choice limit.");

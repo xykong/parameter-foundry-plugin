@@ -65,6 +65,9 @@ public final class ProviderRuntime {
             String principal) {
         evictExpiredIfNeeded();
         SharedProviderDefinition provider = located.provider();
+        boolean liveSource = provider instanceof RestProviderDefinition rest
+                && rest.isActiveChoicesResponse()
+                && rest.getCacheTtlSeconds() == 0;
         Optional<ConnectionProfile> connectionProfile;
         if (provider instanceof ConnectionProfileConsumer consumer) {
             connectionProfile = ProviderRegistry.findConnectionProfile(job, consumer.getConnectionProfileId())
@@ -105,7 +108,7 @@ public final class ProviderRuntime {
             if (cached != null && now.isBefore(cached.expiresAt)) {
                 return cached.toResolution(true, false, null);
             }
-            FailureEntry previousFailure = failures.get(key);
+            FailureEntry previousFailure = liveSource ? null : failures.get(key);
             if (previousFailure != null && now.isBefore(previousFailure.expiresAt)) {
                 return failure(provider, cached, request, previousFailure.exception, now);
             }
@@ -113,7 +116,7 @@ public final class ProviderRuntime {
                 CacheEntry loaded = loadCoalesced(key, located, request, connectionProfile);
                 return loaded.toResolution(false, false, null);
             } catch (ProviderException exception) {
-                failures.put(key, new FailureEntry(exception, now.plusSeconds(5)));
+                if (!liveSource) failures.put(key, new FailureEntry(exception, now.plusSeconds(5)));
                 return failure(provider, cached, request, exception, now);
             }
         }

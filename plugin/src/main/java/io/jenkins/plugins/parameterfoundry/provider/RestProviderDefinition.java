@@ -21,6 +21,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     private final String relativePath;
     private List<RestQueryParameter> queryParameters = List.of();
     private String format = "auto";
+    private String responseMode = "mapped";
     private String rootPath = "$";
     private String valuePath = "value";
     private String labelPath = "label";
@@ -29,6 +30,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     private String disabledPath = "disabled";
     private String disabledReasonPath = "disabledReason";
     private String tagsPath = "tags";
+    private transient RestProviderClient client;
 
     @DataBoundConstructor
     public RestProviderDefinition(String id, String connectionProfileId, String relativePath) {
@@ -41,6 +43,11 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         }
         this.connectionProfileId = connectionProfileId;
         this.relativePath = relativePath;
+    }
+
+    RestProviderDefinition(String id, String connectionProfileId, String relativePath, RestProviderClient client) {
+        this(id, connectionProfileId, relativePath);
+        this.client = java.util.Objects.requireNonNull(client);
     }
 
     @Override
@@ -63,6 +70,24 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
 
     public String getFormat() {
         return format == null || format.isBlank() ? "auto" : format;
+    }
+
+    public String getResponseMode() {
+        return responseMode == null ? "mapped" : responseMode;
+    }
+
+    @DataBoundSetter
+    public void setResponseMode(String responseMode) {
+        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade")
+                .contains(responseMode)) {
+            throw new IllegalArgumentException("Unsupported REST response mode.");
+        }
+        this.responseMode = responseMode;
+    }
+
+    public boolean isActiveChoicesResponse() {
+        return java.util.Set.of("active-choices-choice", "active-choices-cascade")
+                .contains(getResponseMode());
     }
 
     @DataBoundSetter
@@ -147,6 +172,19 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
 
     @Override
     public List<Option> load(ProviderLoadContext context) {
+        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade")
+                .contains(getResponseMode())) {
+            throw new ProviderException(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    getId(),
+                    "REST Provider response mode is invalid.");
+        }
+        if (isActiveChoicesResponse() && !getTransforms().isEmpty()) {
+            throw new ProviderException(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    getId(),
+                    "Active Choices response modes require an untransformed source response.");
+        }
         ConnectionProfile profile = context.connectionProfile()
                 .orElseThrow(() -> new ProviderException(
                         io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
@@ -162,13 +200,24 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
             }
         }
         java.net.URI uri = profile.buildUri(relativePath, query);
-        RestProviderClient.Response response = new RestProviderClient().get(profile, context.request(), uri);
+        RestProviderClient.Response response =
+                (client == null ? new RestProviderClient() : client).get(profile, context.request(), uri);
         String responseFormat = "auto".equals(getFormat()) ? response.format() : getFormat();
         if (!responseFormat.equals(response.format())) {
             throw new ProviderException(
                     io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
                     getId(),
                     "REST Provider response Content-Type does not match the configured format.");
+        }
+        if (isActiveChoicesResponse()) {
+            if (!"json".equals(responseFormat)) {
+                throw new ProviderException(
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                        getId(),
+                        "Active Choices response modes require JSON.");
+            }
+            return ActiveChoicesChoiceResponse.options(
+                    response.body(), "active-choices-cascade".equals(getResponseMode()), getId());
         }
         return StructuredOptionParser.parse(
                 response.body(),
@@ -199,6 +248,8 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                         .toList()
                 + '\u0000'
                 + getFormat()
+                + '\u0000'
+                + getResponseMode()
                 + '\u0000'
                 + getRootPath()
                 + '\u0000'

@@ -11,6 +11,7 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Queue;
 import hudson.model.queue.ScheduleResult;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.evaluation.DependencyGraph;
 import io.jenkins.plugins.parameterfoundry.evaluation.DependencyValues;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
@@ -25,6 +26,7 @@ import io.jenkins.plugins.parameterfoundry.provider.ProviderRegistry;
 import io.jenkins.plugins.parameterfoundry.provider.ProviderResolution;
 import io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService;
 import io.jenkins.plugins.parameterfoundry.provider.ProviderRuntime;
+import io.jenkins.plugins.parameterfoundry.provider.RestProviderDefinition;
 import io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore;
 import io.jenkins.plugins.parameterfoundry.snapshot.ResolvedProviderOptions;
 import io.jenkins.plugins.parameterfoundry.snapshot.SnapshotAudience;
@@ -95,7 +97,7 @@ public final class V1Api {
             DefinitionValidationService.requireValid(foundry);
             JSONObject submittedDependencies =
                     body.containsKey("dependencies") ? requireObject(body, "dependencies") : null;
-            Map<String, String> dependencies = DependencyValues.fromJson(foundry, submittedDependencies);
+            Map<String, String> dependencies = DependencyValues.fromJson(job, foundry, submittedDependencies);
             ProviderResolution resolution =
                     ProviderResolutionService.resolve(job, foundry, ProviderOperation.RESOLVE, dependencies);
             ResolvedProviderOptions snapshot = ProviderSnapshotStore.get()
@@ -116,6 +118,38 @@ public final class V1Api {
             result.put("parameter", name);
             result.put("version", body.containsKey("version") ? body.get("version") : null);
             result.put("options", options);
+            boolean sourceChoice = foundry instanceof FoundryChoiceParameterDefinition choice
+                    && choice.isActiveChoicesSingleInput()
+                    && foundry.isProviderBacked()
+                    && ProviderRegistry.findProvider(job, foundry.getProviderId())
+                            .map(located -> located.provider() instanceof RestProviderDefinition rest
+                                    && rest.isActiveChoicesResponse())
+                            .orElse(false);
+            if (sourceChoice) {
+                result.put("filterMode", "active-choices-regex");
+                result.put(
+                        "sourceChoiceFilterLength",
+                        ((FoundryChoiceParameterDefinition) foundry).getActiveChoicesFilterLength());
+                boolean renderFailure = resolution.options().stream()
+                        .anyMatch(option -> option.getSourceChoiceMetadata() != null
+                                && option.getSourceChoiceMetadata().renderFailure());
+                result.put("sourceRenderFailure", renderFailure);
+                if (renderFailure) {
+                    JSONArray fallbackOptions = new JSONArray();
+                    ProviderRegistry.findProvider(job, foundry.getProviderId())
+                            .orElseThrow()
+                            .provider()
+                            .getFallbackOptions()
+                            .forEach(option -> {
+                                JSONObject fallback = new JSONObject();
+                                fallback.put("value", option.getValue());
+                                fallback.put("label", option.getLabel());
+                                fallback.put("disabled", option.isDisabled());
+                                fallbackOptions.add(fallback);
+                            });
+                    result.put("sourceFallbackOptions", fallbackOptions);
+                }
+            }
             if (resolution.matrix() != null) {
                 // A Provider-supplied matrix travels with the resolved options so the table renders
                 // the axes the Provider just reported instead of a stale definition copy.
@@ -123,6 +157,26 @@ public final class V1Api {
             }
             Object defaultValue = ParameterEvaluationService.defaultFor(foundry, resolution.options());
             result.put("default", defaultValue);
+            if (sourceChoice) {
+                int index = -1;
+                if (defaultValue != null) {
+                    for (int position = 0; position < resolution.options().size(); position++) {
+                        Option option = resolution.options().get(position);
+                        if (option.getSourceChoiceMetadata() != null
+                                && option.getSourceChoiceMetadata().selected()) index = position;
+                    }
+                    if (index < 0) {
+                        for (int position = 0; position < resolution.options().size(); position++) {
+                            Option option = resolution.options().get(position);
+                            if (!option.isDisabled() && java.util.Objects.equals(defaultValue, option.getValue())) {
+                                index = position;
+                                break;
+                            }
+                        }
+                    }
+                }
+                result.put("sourceChoiceDefaultIndex", index);
+            }
             result.put(
                     "defaults",
                     defaultValue instanceof List<?>
@@ -267,7 +321,7 @@ public final class V1Api {
         for (ParameterDefinition definition : DependencyGraph.topologicalOrder(property.getParameterDefinitions())) {
             boolean present = requestValues.containsKey(definition.getName());
             Map<String, String> dependencies = definition instanceof AbstractFoundryParameterDefinition foundry
-                    ? DependencyValues.fromParameterValues(foundry, decoded)
+                    ? DependencyValues.fromParameterValues(job, foundry, decoded)
                     : Map.of();
             String snapshotId = snapshots.containsKey(definition.getName())
                     ? requireString(snapshots.get(definition.getName()), definition.getName(), "snapshot ID")

@@ -187,7 +187,15 @@ public final class ProviderSnapshotStore {
                         .append(choice.getCustomValueMaxLength());
             }
         }
-        return Digests.sha256(value.toString());
+        String baseDigest = Digests.sha256(value.toString());
+        if (definition instanceof FoundryChoiceParameterDefinition choice
+                && choice.isActiveChoicesSingleInput()
+                && choice.getActiveChoicesFilterLength() != 1) {
+            return Digests.sha256(net.sf.json.JSONArray.fromObject(java.util.List.of(
+                            "active-choices-filter-length-v1", baseDigest, choice.getActiveChoicesFilterLength()))
+                    .toString());
+        }
+        return baseDigest;
     }
 
     private static String newId() {

@@ -1,0 +1,359 @@
+{
+  "sourcePlugin": "uno-choice:2.8.10",
+  "sourceJenkinsCore": "2.568.3",
+  "syntheticOnly": true,
+  "businessJobsScheduled": 0,
+  "cases": [
+    {
+      "caseId": "flag-second",
+      "responseBody": "{\"data\":[\"gamma\",\"alpha:selected\"]}",
+      "ordinaryApiDefault": "alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "multiple-selected",
+      "responseBody": "{\"data\":[\"gamma:selected\",\"alpha:selected\"]}",
+      "ordinaryApiDefault": "gamma,alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "disabled-first",
+      "responseBody": "{\"data\":[\"gamma:disabled\",\"alpha\"]}",
+      "ordinaryApiDefault": "gamma:disabled",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": true
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": true
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "selected-disabled",
+      "responseBody": "{\"data\":[\"gamma\",\"alpha:selected:disabled\"]}",
+      "ordinaryApiDefault": "alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": true
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "caseId": "disabled-selected",
+      "responseBody": "{\"data\":[\"gamma\",\"alpha:disabled:selected\"]}",
+      "ordinaryApiDefault": "alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": true
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": true,
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "caseId": "map-label-flags",
+      "responseBody": "{\"data\":{\"gamma\":\"Gamma label:selected\",\"alpha\":\"Alpha label\"}}",
+      "ordinaryApiDefault": "gamma",
+      "ordinaryUiOptions": [
+        {
+          "value": "alpha",
+          "label": "Alpha label",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": true,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "alpha",
+          "label": "Alpha label",
+          "selected": false,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": true,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "map-key-only-flags",
+      "responseBody": "{\"data\":{\"gamma:selected\":\"Gamma label\",\"alpha\":\"Alpha label\"}}",
+      "ordinaryApiDefault": "alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "alpha",
+          "label": "Alpha label",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "alpha",
+          "label": "Alpha label",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "map-key-only-disabled",
+      "responseBody": "{\"data\":{\"alpha:disabled\":\"Alpha label\",\"gamma\":\"Gamma label\"}}",
+      "ordinaryApiDefault": "alpha:disabled",
+      "ordinaryUiOptions": [
+        {
+          "value": "alpha:disabled",
+          "label": "Alpha label",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "alpha",
+          "label": "Alpha label",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "all-disabled",
+      "responseBody": "{\"data\":[\"gamma:disabled\",\"alpha:disabled\"]}",
+      "ordinaryApiDefault": "gamma:disabled",
+      "ordinaryUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": true
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": false,
+          "disabled": true
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "gamma",
+          "label": "gamma",
+          "selected": false,
+          "disabled": true
+        },
+        {
+          "value": "alpha",
+          "label": "alpha",
+          "selected": false,
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "caseId": "null-label",
+      "responseBody": "{\"data\":{\"gamma\":\"Gamma label\",\"alpha\":null}}",
+      "ordinaryApiDefault": "alpha",
+      "ordinaryUiOptions": [
+        {
+          "value": "alpha",
+          "label": "",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "alpha",
+          "label": "null",
+          "selected": true,
+          "disabled": false
+        },
+        {
+          "value": "gamma",
+          "label": "Gamma label",
+          "selected": false,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "caseId": "missing-map-data",
+      "responseBody": "[{},{}]",
+      "ordinaryApiDefault": "",
+      "ordinaryUiOptions": [
+        {
+          "value": "",
+          "label": "",
+          "selected": true,
+          "disabled": false
+        }
+      ],
+      "cascadeUiOptions": [
+        {
+          "value": "null",
+          "label": "null",
+          "selected": true,
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}

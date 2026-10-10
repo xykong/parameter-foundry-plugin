@@ -179,3 +179,39 @@ Exact-boundary, oversized-valid-input, deeply nested input, escaped delimiter
 and duplicate-collapse tests cover the guards. The earlier 387-test verification
 precedes these new guards. Targeted verification passes eight tests; complete
 Maven verification with the guards passes 390 tests and static checks.
+
+## Raw JSON label conversion in the reactive browser
+
+A paired source/candidate browser run found a boundary that string-only map
+comparison cannot prove: a root-map `data: []` label is `[]` in ordinary Choice,
+but the reactive UI converts its JSON array to an empty string. Reactive arrays
+join elements with commas, null array elements become empty, objects use
+`[object Object]`, and JSON numeric labels follow JavaScript binary64 string
+formatting. Ordinary labels retain the source Java conversion.
+
+The interpreter must retain raw JSON label types until the renderer style is
+selected. API selection remains based on the Java label, while reactive UI
+selection can differ (for example an array containing `Beta:selected`). These
+marker bits are distinct and included in the source option digest. Data-only
+conversion tests include 513 native JavaScript numeric goldens; no JavaScript
+engine or source script is used in the core plugin. Corrected paired browser
+verification remains a gate.
+
+A further rich-label case established a source UI failure boundary: an array
+whose JavaScript string ends in a marker makes the pinned UI call `.replace` on
+the array itself. The update fails before replacing the previous list. The
+data-only target marks this render failure, keeps prior options, and reproduces
+the reviewed initial fallback when no prior list exists. It does not silently
+accept this shape as a newly valid marked selection. The 28-case browser
+retest and actual form submission gate remain pending.
+
+### Source filter activation threshold
+
+Source filter length is per parameter. A nonempty lowercased query shorter than
+the configured length does not touch the current options or selection. An empty
+query still rebuilds all source options, including the source filter's flag-reset
+behavior. The target must preserve this with `activeChoicesFilterLength`;
+threshold-1 synthetic comparisons alone do not prove threshold-3 parity.
+Configuration, snippet binding, Rebuild copies and snapshot fingerprints must
+preserve this field. The additional real-browser and form gate covers lengths
+0, 1 and 3 before this source mode is used for migration.

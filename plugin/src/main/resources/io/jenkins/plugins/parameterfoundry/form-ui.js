@@ -115,7 +115,7 @@
         (field.choices || []).forEach(function (option) {
           var item = document.createElement("option");
           item.value = option.value;
-          item.textContent = option.label || option.value;
+          item.textContent = option.label == null ? option.value : option.label;
           item.disabled = Boolean(option.disabled);
           item.selected = control.multiple
             ? Array.isArray(current) && current.indexOf(option.value) !== -1

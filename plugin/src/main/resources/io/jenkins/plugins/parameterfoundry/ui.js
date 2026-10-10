@@ -143,6 +143,11 @@
           options: body.options || [],
           table: body.table || null,
           defaultValue: body.default,
+          filterMode: body.filterMode || "",
+          sourceChoiceDefaultIndex: body.sourceChoiceDefaultIndex,
+          sourceChoiceFilterLength: body.sourceChoiceFilterLength,
+          sourceRenderFailure: Boolean(body.sourceRenderFailure),
+          sourceFallbackOptions: body.sourceFallbackOptions || [],
           snapshotId: body.snapshotId,
           fallback: Boolean(body.fallback),
           fallbackReason: body.fallbackReason,
@@ -839,7 +844,7 @@
     var copy = document.createElement("span");
     copy.className = "parameter-foundry-option-copy";
     var caption = document.createElement("strong");
-    caption.textContent = option.label || option.value;
+    caption.textContent = option.label == null ? option.value : option.label;
     copy.appendChild(caption);
     if (option.disabledReason) {
       var reason = document.createElement("small");
@@ -930,6 +935,7 @@
   function enhanceSingle(field, options, initialValues) {
     var legacyGit = field.dataset.standardApiInputMode === "list-git-branches";
     var legacyExtended = ["extended-choice", "active-choices"].includes(field.dataset.standardApiInputMode);
+    var legacySource = field.dataset.sourceChoiceFilter === "active-choices-regex";
     var allowCustom = field.dataset.allowCustom === "true";
     var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
     if (wantsRadio && (legacyExtended || options.length <= MAX_RADIO_OPTIONS)) {
@@ -949,7 +955,7 @@
     );
     select.setAttribute("aria-describedby", status.id);
     var searchable =
-      field.dataset.renderer === "searchable" ||
+      legacySource || field.dataset.renderer === "searchable" ||
       wantsRadio ||
       (!legacyGit && !legacyExtended && options.length > MAX_RENDERED_OPTIONS) ||
       allowCustom;
@@ -973,10 +979,23 @@
       enhanced.appendChild(degraded);
     }
     var selected = new Set(initialValues);
+    var sourceFilterUsed = false;
 
-    function render() {
+    function render(fromFilter) {
       var query = searchable ? search.value.toLocaleLowerCase() : "";
       var gitRegex;
+      var sourceRegex;
+      if (legacySource) {
+        var sourceQuery = search.value.toLowerCase();
+        var minimumLength = Number(field.dataset.sourceChoiceFilterLength);
+        if (sourceQuery.length && sourceQuery.length < minimumLength) return;
+        try {
+          sourceRegex = new RegExp(sourceQuery);
+        } catch (_error) {
+          status.textContent = "Invalid regular expression; keeping the previous selection.";
+          return;
+        }
+      }
       if (legacyGit) {
         try {
           gitRegex = new RegExp(searchable ? search.value.trim() : "", "i");
@@ -986,8 +1005,19 @@
         }
       }
       var matches = options.filter(function (option) {
+        if (legacySource) {
+          var caption = document.createElement("option");
+          caption.textContent = option.label == null ? option.value : option.label;
+          return sourceRegex.test(caption.innerHTML.toLowerCase());
+        }
         return legacyGit ? gitRegex.test(option.label || option.value) : option.search.indexOf(query) !== -1;
       });
+      if (legacySource && fromFilter) sourceFilterUsed = true;
+      if (legacySource && sourceFilterUsed) {
+        // The source filter recreates plain options, losing selected/disabled flags.
+        selected.clear();
+        if (matches.length) selected.add(matches[0].value);
+      }
       if (legacyGit) {
         selected.clear();
         var gitSelected = gitSelectedOption(field, matches);
@@ -1016,13 +1046,18 @@
       (legacyGit || legacyExtended ? matches : matches.slice(0, MAX_RENDERED_OPTIONS)).forEach(function (option) {
         var element = document.createElement("option");
         element.value = option.value;
-        element.textContent = option.label || option.value;
-        element.disabled = option.disabled;
+        element.textContent = option.label == null ? option.value : option.label;
+        element.disabled = legacySource && sourceFilterUsed ? false : option.disabled;
         element.title = option.disabledReason || option.description || "";
         element.selected = selected.has(option.value);
         select.appendChild(element);
       });
-      if (searchable) {
+      if (legacySource) {
+        select.selectedIndex = sourceFilterUsed
+          ? (matches.length ? 0 : -1)
+          : Number(field.dataset.sourceChoiceDefaultIndex);
+      }
+      if (searchable && !legacySource) {
         select.size = Math.min(8, Math.max(2, select.options.length));
       } else if (field.dataset.renderer === "list") {
         // A list box keeps the options visible, which is what the migrated node parameter wants.
@@ -1038,7 +1073,7 @@
               [matches.length, MAX_RENDERED_OPTIONS],
             )
           : formatMessage(localized(field, "matchesSummary", "{0} matching options."), [matches.length]);
-      if (legacyGit) {
+      if (legacyGit || legacySource) {
         setSubmittedValues(field, selected, true);
       }
       if (customButton) {
@@ -1075,11 +1110,17 @@
     }
 
     if (searchable) {
-      search.addEventListener("input", render);
+      // Source filters rebuild on keyup, even when a key leaves an empty query unchanged.
+      search.addEventListener(legacySource ? "keyup" : "input", function () { render(true); });
       search.addEventListener("keydown", function (event) {
+        if (legacySource && event.key === "Escape") {
+          // The source text filter retains its query on Escape; suppress native search clearing.
+          event.preventDefault();
+          return;
+        }
         if (event.key === "Escape" && search.value) {
           search.value = "";
-          render();
+          render(true);
           event.preventDefault();
         } else if (event.key === "Enter") {
           // Never let Enter submit the build form: it either creates the custom value or
@@ -1175,7 +1216,7 @@
       matches.slice(0, MAX_RENDERED_OPTIONS).forEach(function (option) {
         var item = document.createElement("option");
         item.value = option.value;
-        item.textContent = option.label || option.value;
+        item.textContent = option.label == null ? option.value : option.label;
         item.disabled = option.disabled;
         item.selected = selected.has(option.value);
         item.title = option.disabledReason || option.description || "";
@@ -1569,6 +1610,20 @@
           return;
         }
         var modelAvailableAt = performance.now();
+        if (resolved.sourceRenderFailure) {
+          if (field.querySelector("[data-up-enhanced]")) {
+            field.dataset.upState = "ready";
+            removeRefreshStatus(field);
+            updateBuildAvailability(field.closest("form"));
+            return;
+          }
+          resolved.options = resolved.sourceFallbackOptions;
+          resolved.defaultValue = resolved.options.length ? resolved.options[0].value : null;
+          resolved.sourceChoiceDefaultIndex = resolved.options.length ? 0 : -1;
+        }
+        field.dataset.sourceChoiceFilter = resolved.filterMode;
+        field.dataset.sourceChoiceFilterLength = String(resolved.sourceChoiceFilterLength == null ? 1 : resolved.sourceChoiceFilterLength);
+        field.dataset.sourceChoiceDefaultIndex = String(resolved.sourceChoiceDefaultIndex == null ? -1 : resolved.sourceChoiceDefaultIndex);
         if (resolved.table) {
           // A Provider-supplied matrix replaces the definition copy for this render.
           field.dataset.upResolvedTable = JSON.stringify(resolved.table);
@@ -1602,7 +1657,9 @@
           var gitSelected = gitSelectedOption(field, options);
           initialValues = gitSelected ? [gitSelected.value] : [];
         }
-        if (field.dataset.standardApiInputMode === "active-choices" && !preserveSelection) {
+        if (field.dataset.standardApiInputMode === "active-choices" && resolved.filterMode === "active-choices-regex") {
+          initialValues = field.dataset.defaultMode === "none" || resolved.defaultValue == null ? [] : [resolved.defaultValue];
+        } else if (field.dataset.standardApiInputMode === "active-choices" && !preserveSelection) {
           initialValues = field.dataset.defaultMode === "none" ? [] : options.length ? [options[0].value] : [];
         }
         removeRefreshStatus(field);

@@ -173,8 +173,13 @@ public final class TransformStep extends AbstractDescribableImpl<TransformStep> 
     }
 
     private static Option copy(Option source, String field, String value, String disabledReason) {
-        Option copy = new Option("value".equals(field) ? value : source.getValue());
-        copy.setLabel("label".equals(field) ? value : source.getLabel());
+        String transformedValue = "value".equals(field) ? value : source.getValue();
+        String transformedLabel = "label".equals(field) ? value : source.getLabel();
+        Option copy = source.getSourceChoiceMetadata() == null
+                ? new Option(transformedValue)
+                : Option.sourceChoice(
+                        transformedValue, transformedLabel, source.isDisabled(), source.getSourceChoiceMetadata());
+        copy.setLabel(transformedLabel);
         copy.setDescription("description".equals(field) ? value : source.getDescription());
         copy.setGroup("group".equals(field) ? value : source.getGroup());
         copy.setDisabled(disabledReason != null || source.isDisabled());

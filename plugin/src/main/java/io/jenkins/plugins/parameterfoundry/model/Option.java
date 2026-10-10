@@ -24,6 +24,7 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
     private boolean disabled;
     private String disabledReason;
     private List<String> tags = List.of();
+    private ChoiceSourceMetadata sourceChoiceMetadata;
 
     @DataBoundConstructor
     public Option(String value) {
@@ -35,7 +36,21 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
     }
 
     public String getLabel() {
+        if (sourceChoiceMetadata != null) return label;
         return label == null || label.isEmpty() ? value : label;
+    }
+
+    /** Runtime metadata supplied by a governed Provider, not a configuration field. */
+    public ChoiceSourceMetadata getSourceChoiceMetadata() {
+        return sourceChoiceMetadata;
+    }
+
+    public static Option sourceChoice(String value, String label, boolean disabled, ChoiceSourceMetadata metadata) {
+        Option option = new Option(Objects.requireNonNull(value));
+        option.label = Objects.requireNonNull(label);
+        option.disabled = disabled;
+        option.sourceChoiceMetadata = Objects.requireNonNull(metadata);
+        return option;
     }
 
     @DataBoundSetter
@@ -119,12 +134,13 @@ public final class Option extends AbstractDescribableImpl<Option> implements Ser
                 && Objects.equals(description, option.description)
                 && Objects.equals(group, option.group)
                 && Objects.equals(disabledReason, option.disabledReason)
-                && Objects.equals(tags, option.tags);
+                && Objects.equals(tags, option.tags)
+                && Objects.equals(sourceChoiceMetadata, option.sourceChoiceMetadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, label, description, group, disabled, disabledReason, tags);
+        return Objects.hash(value, label, description, group, disabled, disabledReason, tags, sourceChoiceMetadata);
     }
 
     @Extension

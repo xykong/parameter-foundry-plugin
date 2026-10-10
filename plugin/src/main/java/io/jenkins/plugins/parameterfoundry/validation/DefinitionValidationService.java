@@ -219,6 +219,9 @@ public final class DefinitionValidationService {
             }
         }
         if (definition.isActiveChoicesSingleInput()) {
+            if (definition.getActiveChoicesFilterLength() < 0) {
+                errors.add("Active Choices filter length must be nonnegative.");
+            }
             if (!"string".equals(definition.getEnvironmentExport())
                     || definition.getTable() != null
                     || definition.isRequired()

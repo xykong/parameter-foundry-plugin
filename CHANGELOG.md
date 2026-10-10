@@ -11,9 +11,12 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+- Preserve each reviewed Active Choices REST dropdown's minimum filter length, including migration snippets and rebuild configuration.
+
 ### Added
 
 - Reactive Active Choices single string compatibility with governed Providers, explicit literal API defaults and dependency-bound snapshots.
+- Data-only REST JSON response modes for ordinary/reactive Active Choices single dropdowns, with source-derived labels, flags, independent API defaults and regular-expression filtering.
 
 ## 0.11.306 - 2026-10-10
 

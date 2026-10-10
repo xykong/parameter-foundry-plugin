@@ -1,0 +1,19 @@
+<div>
+  <p><strong>Mapped JSON/XML</strong> uses the configured root and field paths.</p>
+  <p>The two <strong>Active Choices single JSON</strong> modes interpret a reviewed
+  JSON <code>data</code>-or-root response without executing Groovy. Use ordinary
+  mode for Choice parameters and reactive mode for Cascade parameters. They
+  preserve list/map order, source suffix metadata and their different null/blank
+  captions and values. Root/field mapping and transforms do not apply.</p>
+  <p>Use these modes for reviewed <code>PT_SINGLE_SELECT</code> sources and a
+  dropdown Foundry Choice parameter using
+  <code>standardApiInputMode: 'active-choices'</code>. Ordinary API defaults are
+  derived from the response separately from UI selection. Reactive definitions
+  require an explicit literal API default; missing dependency requests can use
+  reviewed fallback options. Disable caching when the source default is live.</p>
+  <p>Only JSON responses are accepted. The Connection Profile governs the endpoint,
+  query parameters, credentials, deadline and response byte limit. The interpreter
+  also bounds JSON depth to 64 and output to 10,000 distinct choices. Configure
+  fallback options for the source exception fallback; do not use stale data as a
+  substitute. Complete per-Job input and browser verification before migration.</p>
+</div>

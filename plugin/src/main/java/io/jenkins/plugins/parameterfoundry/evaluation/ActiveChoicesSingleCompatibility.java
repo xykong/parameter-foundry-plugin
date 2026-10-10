@@ -49,9 +49,23 @@ public final class ActiveChoicesSingleCompatibility {
     public static StringParameterValue defaultValue(
             FoundryChoiceParameterDefinition definition, List<Option> options, ProviderSnapshotMetadata metadata) {
         requireCompatible(definition);
-        String literal = "literal".equals(definition.getActiveChoicesApiDefaultMode())
-                ? definition.getActiveChoicesApiDefaultLiteral()
-                : options.isEmpty() ? "" : options.get(0).getValue();
+        String literal;
+        if ("literal".equals(definition.getActiveChoicesApiDefaultMode())) {
+            literal = definition.getActiveChoicesApiDefaultLiteral();
+        } else if (options.isEmpty()) {
+            literal = "";
+        } else if (options.get(0).getSourceChoiceMetadata() != null) {
+            List<String> selected = options.stream()
+                    .filter(option -> option.getSourceChoiceMetadata() != null
+                            && option.getSourceChoiceMetadata().apiSelected())
+                    .map(option -> option.getSourceChoiceMetadata().selectedApiValue())
+                    .toList();
+            literal = selected.isEmpty()
+                    ? options.get(0).getSourceChoiceMetadata().apiValue()
+                    : String.join(",", selected);
+        } else {
+            literal = options.get(0).getValue();
+        }
         return new StringParameterValue(definition.getName(), cli(literal));
     }
 

@@ -192,6 +192,20 @@ public final class ParameterEvaluationService {
             return evaluateMultiple(definition, DecodedInput.absent(), options, matrix, false);
         }
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
+            if (choice.isActiveChoicesSingleInput()
+                    && "first".equals(choice.getDefaultMode())
+                    && options.stream().anyMatch(option -> option.getSourceChoiceMetadata() != null)) {
+                DefinitionValidationService.requireValid(choice);
+                Option selected = null;
+                for (Option option : options) {
+                    if (option.getSourceChoiceMetadata() != null
+                            && option.getSourceChoiceMetadata().selected()) selected = option;
+                }
+                // The source single select retains an explicitly selected disabled option.
+                if (selected != null) return selected.getValue();
+                Option first = choice.firstEnabledOption(options);
+                return first == null ? null : first.getValue();
+            }
             return evaluateSingle(choice, DecodedInput.absent(), options);
         }
         throw error(
