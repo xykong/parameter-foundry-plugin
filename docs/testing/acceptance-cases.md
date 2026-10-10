@@ -152,7 +152,7 @@ validation rejected the empty option. Fix: permit it only in single Active Choic
 compatibility and preserve membership checks in the shared evaluator. Verification:
 Full Harness verify passes 380 tests. Exact 0.10.303-SNAPSHOT HPI passes 132/132
 source factory cases, six dropdown/radio pairs, twelve empty-value form builds
-and editable empty Core history. [Verification and limits](./active-choices-empty-options-verification-2026-10-10.md). Ordinary, duplicate,
+and editable empty Core history. Release 0.10.304 repeats the exact artifact gates. [Verification and limits](./active-choices-empty-options-verification-2026-10-10.md). Ordinary, duplicate,
 flagged and reactive configurations must retain their restrictions.
 
 | ID | Reproduction / expected result | Actual behavior / required fix | Verification |
