@@ -10,6 +10,7 @@ import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesSingleCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
+import io.jenkins.plugins.parameterfoundry.evaluation.DependencyValues;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
 import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceFormCompatibility;
@@ -586,7 +587,11 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                     .resolveForBuild(
                             job,
                             this,
-                            java.util.Map.of(),
+                            DependencyValues.fromJson(
+                                    this,
+                                    DependencyValues.parseJsonObject(
+                                            this,
+                                            submitted == null ? null : submitted.optString("dependenciesJson", null))),
                             submitted == null ? null : submitted.optString("snapshotId", null),
                             operation,
                             needsOptions(input));

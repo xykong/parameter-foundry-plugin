@@ -221,13 +221,16 @@ public final class DefinitionValidationService {
         if (definition.isActiveChoicesSingleInput()) {
             if (!"string".equals(definition.getEnvironmentExport())
                     || definition.getTable() != null
-                    || !definition.getDependsOn().isEmpty()
                     || definition.isRequired()
                     || definition.isAllowCustomValue()
                     || "explicit".equals(definition.getDefaultMode())
                     || definition.getChoices().stream().anyMatch(option -> option != null && option.isDisabled()))
                 errors.add(
-                        "Active Choices single compatibility requires unflagged choices without dependencies, required or custom-value controls.");
+                        "Active Choices single compatibility requires unflagged choices without required or custom-value controls.");
+            if (!definition.getDependsOn().isEmpty()
+                    && !"literal".equals(definition.getActiveChoicesApiDefaultMode())) {
+                errors.add("Reactive Active Choices single compatibility requires an explicit literal API default.");
+            }
         }
         if ("extended-choice".equals(definition.getStandardApiInputMode())) {
             if (definition.getChoices().stream().anyMatch(Option::isDisabled)) {

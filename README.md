@@ -108,3 +108,7 @@ Refer to the Jenkins project
 ## LICENSE
 
 Licensed under MIT, see [LICENSE](LICENSE.md)
+
+Reactive Active Choices single transports can use a governed Provider with an explicit literal
+API default and dependency-bound snapshots. REST response and real-browser parity remain separate
+[per-Job gates](./docs/research/active-choices-reactive-rest-contract.md).

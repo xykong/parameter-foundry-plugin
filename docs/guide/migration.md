@@ -192,3 +192,14 @@ the source plugins installed until the repository side has been reviewed after a
 full build cycle.
 
 File migrations preserve binary transport. Read [File parameters](./file-parameters.md) for wrapper changes, limits, retention and the separate binary verification gate.
+
+### Reactive Active Choices single transports
+
+Reactive single Active Choices compatibility requires a shared Provider and an explicit
+`activeChoicesApiDefaultMode: literal` with the reviewed missing-dependency API default.
+Explicit CLI and standard/form inputs remain Core strings without fetching choices.
+Supplied snapshots must still match the dependency values. Typed explicit inputs stay strict.
+REST response interpretation and browser parity need separate migration verification.
+
+See the [characterized REST response contract](../research/active-choices-reactive-rest-contract.md)
+before replacing a source cascade. Transport support alone does not establish response, filter or UI parity.

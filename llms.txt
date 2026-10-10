@@ -135,3 +135,8 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   preserving its position, empty-string submission and typed empty vs null.
   UP-AC-046 passes 380 Harness tests, 132/132 source cases, six browser pairs,
   twelve empty-string form builds and editable Core history. The exact release artifact passes the same gates; per-Job acceptance remains.
+
+- Reactive single `active-choices` compatibility requires a Provider and `activeChoicesApiDefaultMode: literal`;
+  omitted input uses the configured fallback string, explicit legacy strings do not resolve options,
+  and optional snapshots bind dependencies. Typed explicit input stays strict. This transport feature
+  does not establish generic REST response or real-browser source parity.

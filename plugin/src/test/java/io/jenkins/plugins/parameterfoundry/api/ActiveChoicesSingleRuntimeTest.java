@@ -76,6 +76,67 @@ class ActiveChoicesSingleRuntimeTest {
     }
 
     @Test
+    void reactiveLiteralInputsAndDefaultsDoNotResolveButSnapshotsBindDependencies(JenkinsRule j) throws Exception {
+        var calls = new AtomicInteger();
+        ParameterFoundryGlobalConfiguration.get().setProviders(List.of(new CountingProvider(calls)));
+        var d = definition();
+        d.setProviderId("active-nodes");
+        d.setDependsOn(List.of("DEP"));
+        d.setActiveChoicesApiDefaultMode("literal");
+        d.setActiveChoicesApiDefaultLiteral("fallback");
+        var job = j.createFreeStyleProject();
+        job.addProperty(new ParametersDefinitionProperty(new hudson.model.StringParameterDefinition("DEP"), d));
+        assertTrue(
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(d)
+                        .isValid());
+        assertEquals("fallback", d.getDefaultParameterValue().getValue());
+        assertEquals(
+                " unlisted ", d.createValue((CLICommand) null, " unlisted ").getValue());
+        assertEquals("", d.createValue((CLICommand) null, "").getValue());
+        assertEquals(0, calls.get());
+        var now = Instant.now();
+        var resolution = new ProviderResolution(
+                List.of(new Option("known")),
+                null,
+                ProviderResolutionService.currentProviderDigest(job, d),
+                "options",
+                now,
+                now.plusSeconds(60),
+                false,
+                false,
+                null,
+                "test");
+        var snapshot = ProviderSnapshotStore.get()
+                .create(job, d, Map.of("DEP", "first"), resolution, SnapshotAudience.BUILD_VALUE);
+        var submitted = JSONObject.fromObject(Map.of(
+                "name",
+                "node",
+                "value",
+                " unlisted ",
+                "snapshotId",
+                snapshot.snapshotId(),
+                "dependenciesJson",
+                "{\"DEP\":\"first\"}"));
+        assertEquals(
+                " unlisted ",
+                d.createValue((org.kohsuke.stapler.StaplerRequest2) null, submitted)
+                        .getValue());
+        submitted.put("dependenciesJson", "{\"DEP\":\"other\"}");
+        assertThrows(
+                RuntimeException.class, () -> d.createValue((org.kohsuke.stapler.StaplerRequest2) null, submitted));
+        assertEquals(0, calls.get());
+        d.setActiveChoicesApiDefaultMode("first");
+        assertFalse(
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(d)
+                        .isValid());
+        d.setActiveChoicesApiDefaultMode("literal");
+        d.setProviderId(null);
+        assertFalse(
+                io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(d)
+                        .isValid());
+    }
+
+    @Test
     void explicitInputsAndLiteralDefaultsDoNotFetchButSnapshotsStillBind(JenkinsRule j) throws Exception {
         var calls = new AtomicInteger();
         var provider = new CountingProvider(calls);

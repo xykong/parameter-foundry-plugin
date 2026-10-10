@@ -199,6 +199,12 @@ typed input. Typed null still clears a selection; ordinary modes reject empty op
 Ordinary and typed explicit input
 stay strict; typed omission shares the API default. Per-Job source/consumer, exact-release and retirement gates still apply.
 
+Reactive single Active Choices compatibility requires a shared Provider and an explicit
+`activeChoicesApiDefaultMode: literal` with the reviewed missing-dependency API default.
+Explicit CLI and standard/form inputs remain Core strings without fetching choices.
+Supplied snapshots must still match the dependency values. Typed explicit inputs stay strict.
+REST response interpretation and browser parity need separate migration verification.
+
 `list-git-branches` preserves literal revision submission for a Provider-backed single
 choice without dependencies. CLI accepts non-empty strings literally; empty input uses
 the API default. Standard requests read only the first field; a blank first field uses
