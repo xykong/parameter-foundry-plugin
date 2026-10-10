@@ -284,11 +284,29 @@ public final class ActiveChoicesMigrationAdapter extends SourceMigrationAdapter 
             boolean multiple,
             boolean filterable) {
         FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
+        target.setDescription(definition.getDescription());
         target.setSelectionMode(multiple ? "multiple" : "single");
         target.setRenderer(rendererFor(choiceType, multiple, filterable));
         target.setChoices(literal.options());
         target.setDependsOn(dependencies);
         List<String> selected = literal.selectedValues();
+        boolean compatibleSingle = CHOICE.equals(definition.getClass().getName())
+                && ActiveChoicesScriptAnalysis.isPlainUnflaggedStringList(readScript(definition))
+                && !multiple
+                && dependencies.isEmpty()
+                && !filterable
+                && !readBoolean(definition, "getCacheDefaultValue", false)
+                && selected.isEmpty()
+                && (PT_RADIO.equals(choiceType) || "PT_SINGLE_SELECT".equals(choiceType))
+                && !literal.options().isEmpty()
+                && literal.options().stream()
+                        .noneMatch(option ->
+                                option.isDisabled() || option.getValue().isEmpty());
+        if (compatibleSingle) {
+            target.setStandardApiInputMode("active-choices");
+            target.setActiveChoicesApiDefaultMode("first");
+            target.setDefaultMode(PT_RADIO.equals(choiceType) ? "none" : "first");
+        }
         if (!selected.isEmpty()) {
             target.setDefaultMode("explicit");
             if (multiple) {

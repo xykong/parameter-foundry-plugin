@@ -17,6 +17,70 @@ class ActiveChoicesMigrationAdapterTest {
     private final ActiveChoicesMigrationAdapter adapter = new ActiveChoicesMigrationAdapter();
 
     @Test
+    void unflaggedLiteralSinglesPreserveUiDefaultsAndCoreStringValues() throws Exception {
+        for (String type : List.of("PT_SINGLE_SELECT", "PT_RADIO")) {
+            ChoiceParameter source = new ChoiceParameter("CHANNEL");
+            source.setScript("return ['debug', 'release']");
+            source.setChoiceType(type);
+            source.setDescription("Build's channel\nChoose a channel");
+            var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
+                    adapter.inspect(source).getTarget();
+            assertEquals("Build's channel\nChoose a channel", target.getDescription());
+            assertEquals("active-choices", target.getStandardApiInputMode());
+            assertEquals("first", target.getActiveChoicesApiDefaultMode());
+            assertEquals("PT_RADIO".equals(type) ? "none" : "first", target.getDefaultMode());
+            assertTrue(
+                    io.jenkins.plugins.parameterfoundry.validation.DefinitionValidationService.validateStoredDefinition(
+                                    target)
+                            .isValid());
+            assertEquals(
+                    hudson.model.StringParameterValue.class,
+                    target.getDefaultParameterValue().getClass());
+            assertEquals("debug", target.getDefaultParameterValue().getValue());
+            assertEquals(
+                    "unlisted",
+                    target.createValue((hudson.cli.CLICommand) null, "unlisted").getValue());
+            assertTrue(io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target)
+                    .contains("standardApiInputMode: 'active-choices'"));
+            assertTrue(io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target)
+                    .contains("description: 'Build\\'s channel\\nChoose a channel'"));
+        }
+    }
+
+    @Test
+    void emptyFlaggedAndFilterableLiteralsDoNotClaimUnflaggedCompatibility() {
+        for (String script : List.of("return ['debug', '']", "return ['debug:selected', 'release']")) {
+            ChoiceParameter source = new ChoiceParameter("CHANNEL");
+            source.setScript(script);
+            var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
+                    adapter.inspect(source).getTarget();
+            assertTrue(target == null || !target.isActiveChoicesSingleInput());
+        }
+        ChoiceParameter filtered = new ChoiceParameter("CHANNEL");
+        filtered.setScript("return ['debug', 'release']");
+        filtered.setFilterable(true);
+        var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
+                adapter.inspect(filtered).getTarget();
+        assertFalse(target.isActiveChoicesSingleInput());
+    }
+
+    @Test
+    void ambiguousMapsInterpolationAndEscapesDoNotClaimPlainStringCompatibility() {
+        for (String script : List.of(
+                "return [\"$CHANNEL\"]",
+                "return [[value: 'debug', disabled: true]]",
+                "return [[selected: true, value: 'debug']]",
+                "return ['debug\\nrelease']",
+                "return ['debug\\\\release']")) {
+            ChoiceParameter source = new ChoiceParameter("CHANNEL");
+            source.setScript(script);
+            var target = (io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition)
+                    adapter.inspect(source).getTarget();
+            assertTrue(target == null || !target.isActiveChoicesSingleInput(), script);
+        }
+    }
+
+    @Test
     void aConditionalCascadeWithAnEmptyOptionStillBecomesAMapping() {
         CascadeChoiceParameter source = new CascadeChoiceParameter("CPPFLAGS", "BUILD_MODE");
         source.setScript("if (BUILD_MODE == \"production\") {\n"

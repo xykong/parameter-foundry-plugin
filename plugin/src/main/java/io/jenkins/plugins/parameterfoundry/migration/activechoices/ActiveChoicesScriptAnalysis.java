@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 final class ActiveChoicesScriptAnalysis {
 
     private static final Pattern QUOTED = Pattern.compile("^(['\"])(.*)\\1$", Pattern.DOTALL);
+    private static final Pattern PLAIN_STRING_LIST =
+            Pattern.compile("\\A\\s*return\\s*\\[\\s*(?:'[^'\\\\\\r\\n]*'|\"[^\"\\\\$\\r\\n]*\")"
+                    + "(?:\\s*,\\s*(?:'[^'\\\\\\r\\n]*'|\"[^\"\\\\$\\r\\n]*\"))*\\s*]\\s*;?\\s*\\z");
     private static final Pattern MAP_ENTRY = Pattern.compile("^([A-Za-z][A-Za-z0-9_]*)\\s*:\\s*(.+)$", Pattern.DOTALL);
     private static final Pattern URL = Pattern.compile("https?://[^\\s'\"()]+");
     private static final Set<String> OPTION_KEYS = Set.of("value", "label", "description", "group");
@@ -32,6 +35,14 @@ final class ActiveChoicesScriptAnalysis {
     private ActiveChoicesScriptAnalysis() {}
 
     record LiteralChoices(List<Option> options, List<String> selectedValues) {}
+
+    /** Narrow proof for compatibility: no maps, interpolation, escapes or selection markers. */
+    static boolean isPlainUnflaggedStringList(String script) {
+        return script != null
+                && PLAIN_STRING_LIST.matcher(script).matches()
+                && !script.contains(":selected")
+                && !script.contains(":disabled");
+    }
 
     /** A script that branches on one parameter and returns a literal list per branch. */
     record ConditionalChoices(

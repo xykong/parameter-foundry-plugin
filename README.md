@@ -30,6 +30,8 @@ single transport path and configured-node order. Use
 as a migration gate. Version `0.9.301` aligns configured-node
 empty-name filtering with source `String.trim()` semantics, preserving Unicode
 whitespace and the original name text.
+Unreleased migration previews select this compatibility mode for eligible literal
+single choices and preserve their descriptions and distinct UI/API defaults.
 Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
 number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
 changes and `AGENTS.md` for the release rules.

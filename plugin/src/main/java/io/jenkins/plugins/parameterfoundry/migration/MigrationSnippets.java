@@ -34,6 +34,7 @@ public final class MigrationSnippets {
             return "foundryChoice(\n"
                     + "  name: "
                     + quote(choice.getName())
+                    + (choice.getDescription() == null ? "" : ",\n  description: " + quote(choice.getDescription()))
                     + ",\n  choices: "
                     + choices(choice.getChoices())
                     + ",\n  renderer: "
@@ -113,6 +114,10 @@ public final class MigrationSnippets {
         if (value == null) {
             return "null";
         }
-        return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
+        return "'"
+                + value.replace("\\", "\\\\")
+                        .replace("'", "\\'")
+                        .replace("\r", "\\r")
+                        .replace("\n", "\\n") + "'";
     }
 }

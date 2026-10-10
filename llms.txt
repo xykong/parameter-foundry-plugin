@@ -121,3 +121,10 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - Version 0.9.301 fixes configured-node empty-name filtering to match
   Java `String.trim()` source semantics; it preserves Unicode whitespace and
   original leading/trailing spaces. UP-AC-044 shared-resolution and exact release browser gates pass; full regression passes 375 tests. Per-Job migration and retirement gates remain.
+
+- Literal Active Choices preview targets use the single compatibility mode only
+  for nonempty, unflagged, unfiltered choices without dependencies or cached
+  defaults. Preserve descriptions, first API defaults and dropdown/radio UI
+  defaults. Snapshot UP-AC-045 passes 378 regression tests, 44/44 adapter factory cases,
+  real-browser defaults and description snippet round-trip. It is not deployed;
+  per-Job, exact release and retirement gates remain.
