@@ -62,4 +62,41 @@ class ActiveChoicesJsonResponseTest {
         assertThrows(ProviderException.class, () -> parse("null"));
         assertTrue(parse("{\"data\":true}").isEmpty());
     }
+
+    @Test
+    void rejectsOversizedResponsesBeforeParsingButAcceptsTheExactByteBoundary() {
+        String response = "[]" + " ".repeat(10 * 1024 * 1024 - 2);
+        assertTrue(parse(response).isEmpty());
+        assertThrows(ProviderException.class, () -> parse(response + " "));
+    }
+
+    @Test
+    void boundsRecursiveNestingBeforeParsingAndIgnoresEscapedStringDelimiters() {
+        assertEquals(1, parse(nestedResponse(64)).size());
+        assertThrows(ProviderException.class, () -> parse(nestedResponse(65)));
+        assertThrows(ProviderException.class, () -> parse(nestedResponse(20_000)));
+        String value = "[".repeat(128) + "\\\"{}" + "}".repeat(128);
+        assertEquals(Map.of(value, value), parse(groovy.json.JsonOutput.toJson(Map.of("data", List.of(value)))));
+    }
+
+    @Test
+    void boundsDistinctOutputChoicesWithoutRejectingDuplicates() {
+        List<String> values = java.util.stream.IntStream.range(0, 10_000)
+                .mapToObj(index -> "value-" + index)
+                .toList();
+        assertEquals(
+                10_000,
+                parse(groovy.json.JsonOutput.toJson(Map.of("data", values))).size());
+        List<String> overflow = new java.util.ArrayList<>(values);
+        overflow.add("overflow");
+        assertThrows(ProviderException.class, () -> parse(groovy.json.JsonOutput.toJson(Map.of("data", overflow))));
+        assertEquals(
+                1,
+                parse(groovy.json.JsonOutput.toJson(Map.of("data", java.util.Collections.nCopies(10_001, "same"))))
+                        .size());
+    }
+
+    private static String nestedResponse(int depth) {
+        return "{\"data\":" + "{\"nested\":".repeat(depth - 1) + "\"leaf\"" + "}".repeat(depth);
+    }
 }

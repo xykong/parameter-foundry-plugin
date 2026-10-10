@@ -10,11 +10,20 @@ import java.util.Map;
 
 /** Data-only interpretation of the reviewed JSON data-or-root source idiom. */
 final class ActiveChoicesJsonResponse {
+    private static final int MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
+    private static final int MAX_DEPTH = 64;
+    private static final int MAX_CHOICES = 10_000;
+
     private ActiveChoicesJsonResponse() {}
 
     static Map<String, String> parse(byte[] body, String providerId) {
         try {
-            Object root = new JsonSlurper().parseText(new String(body, StandardCharsets.UTF_8));
+            if (body.length > MAX_RESPONSE_BYTES) {
+                throw new IllegalArgumentException("Response exceeds the byte limit.");
+            }
+            String text = new String(body, StandardCharsets.UTF_8);
+            requireBoundedDepth(text);
+            Object root = new JsonSlurper().parseText(text);
             Object selected;
             if (root instanceof Map<?, ?> map) {
                 Object data = map.get("data");
@@ -35,11 +44,12 @@ final class ActiveChoicesJsonResponse {
             if (selected instanceof List<?> list) {
                 for (Object item : list) {
                     String value = item == null ? null : String.valueOf(item);
-                    result.put(value, value);
+                    putChoice(result, value, value);
                 }
             } else if (selected instanceof Map<?, ?> map) {
                 for (Map.Entry<?, ?> entry : map.entrySet()) {
-                    result.put(
+                    putChoice(
+                            result,
                             String.valueOf(entry.getKey()),
                             entry.getValue() == null ? null : String.valueOf(entry.getValue()));
                 }
@@ -52,6 +62,40 @@ final class ActiveChoicesJsonResponse {
                     ErrorCode.PROVIDER_UNAVAILABLE,
                     providerId,
                     "Provider JSON does not match the reviewed Active Choices response contract.");
+        }
+    }
+
+    private static void putChoice(Map<String, String> choices, String value, String label) {
+        choices.put(value, label);
+        if (choices.size() > MAX_CHOICES) {
+            throw new IllegalArgumentException("Response exceeds the distinct choice limit.");
+        }
+    }
+
+    /** Check nesting before the recursive JSON parser, ignoring delimiters inside strings. */
+    private static void requireBoundedDepth(String text) {
+        int depth = 0;
+        boolean quoted = false;
+        boolean escaped = false;
+        for (int index = 0; index < text.length(); index++) {
+            char character = text.charAt(index);
+            if (quoted) {
+                if (escaped) {
+                    escaped = false;
+                } else if (character == '\\') {
+                    escaped = true;
+                } else if (character == '"') {
+                    quoted = false;
+                }
+            } else if (character == '"') {
+                quoted = true;
+            } else if (character == '[' || character == '{') {
+                if (++depth > MAX_DEPTH) {
+                    throw new IllegalArgumentException("Response exceeds the nesting limit.");
+                }
+            } else if (character == ']' || character == '}') {
+                depth--;
+            }
         }
     }
 

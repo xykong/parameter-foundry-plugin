@@ -163,3 +163,19 @@ The data-only response interpreter passes the fifteen-case non-sandbox textual
 source comparison and a complete 387-test Maven verification. This establishes
 the response interpretation component only; it is not yet connected to REST or
 the required source-derived UI/API metadata.
+
+## Governed response resource limits
+
+Before REST integration, the interpreter rejects input beyond 10 MiB (the
+Connection Profile upper bound), nesting beyond 64 JSON containers, and more
+than 10,000 distinct returned choices (the existing Provider runtime limit).
+Depth is scanned before recursive parsing, excluding quoted and escaped string
+content. The distinct-choice guard preserves the source duplicate-key collapse.
+These are intentional resource limits; exceeding them signals Provider failure
+for the configured fallback, rather than truncating or returning partial data.
+The actual Connection Profile may impose a smaller response limit.
+
+Exact-boundary, oversized-valid-input, deeply nested input, escaped delimiter
+and duplicate-collapse tests cover the guards. The earlier 387-test verification
+precedes these new guards. Targeted verification passes eight tests; complete
+Maven verification with the guards passes 390 tests and static checks.
