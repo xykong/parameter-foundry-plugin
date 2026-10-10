@@ -109,7 +109,7 @@ Refer to the Jenkins project
 
 Licensed under MIT, see [LICENSE](LICENSE.md)
 
-Reactive Active Choices single transports can use a governed Provider with an explicit literal
+Version `0.12.314` adds reactive Active Choices single transports using a governed Provider with an explicit literal
 API default and dependency-bound snapshots. REST Providers offer data-only ordinary/cascade
 JSON response modes with source-derived UI/API metadata and per-parameter minimum filter
 length (`activeChoicesFilterLength`, default 1); see the [Provider guide](./docs/guide/providers.md#rest-source-response-modes). Real-browser and input parity remain separate

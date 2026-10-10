@@ -11,6 +11,11 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+## 0.12.314 - 2026-10-11
+
+The HPI is `dist/parameter-foundry-0.12.314.hpi` (SHA-256
+`e17c278564cab2baf498477b823bf69ef9b3e9c57e65323241d9726c31af2692`, 644,061 bytes). Full implementation regression passes 402 tests.
+
 - Preserve each reviewed Active Choices REST dropdown's minimum filter length, including migration snippets and rebuild configuration.
 
 ### Added
