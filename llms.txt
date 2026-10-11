@@ -7,13 +7,14 @@
 
 Repository: https://github.com/xykong/parameter-foundry-plugin
 Plugin short name: `parameter-foundry`
-Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64File`, `foundryStashedFile`, `withFoundryFileParameter`
+Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64File`, `foundryStashedFile`, `withFoundryFileParameter`, `foundryParameterText`
 
 ## Start here
 
 - [User guide index](docs/guide/README.md): who the guide is for and where to go next
 - [Getting started](docs/guide/getting-started.md): five-minute walkthrough
 - [Parameter reference](docs/guide/parameters.md): every field, default, and transport
+- [Saved parameter text](docs/guide/pipeline-parameter-text.md): current-build legacy raw strings, security filtering and unsupported historical values
 - [File parameters](docs/guide/file-parameters.md): bounded workspace/Base64/stash upload, Pipeline wrappers and migration
 - [Cookbook](docs/guide/examples.md): copy-pasteable configurations
 - [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs

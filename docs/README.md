@@ -7,6 +7,7 @@ Start here if you are configuring or using the plugin:
 - [User guide index](./guide/README.md)
 - [Getting started](./guide/getting-started.md)
 - [Parameter reference](./guide/parameters.md)
+- [Saved parameter text in Pipeline](./guide/pipeline-parameter-text.md)
 - [Cookbook](./guide/examples.md)
 - [Providers](./guide/providers.md)
 - [Migration](./guide/migration.md)

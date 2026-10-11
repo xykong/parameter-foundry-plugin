@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- `foundryParameterText` reads supported saved parameter strings from the current Pipeline build, preserving legacy literals independently of canonical choices and environment overrides.
+
 ## 0.13.316 - 2026-10-11
 
 The HPI is `dist/parameter-foundry-0.13.316.hpi` (SHA-256

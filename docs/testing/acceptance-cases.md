@@ -32,6 +32,7 @@ the case, but production configuration is never committed here.
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
+| Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder and saved-value coverage | Sandbox/CPS, Declarative when, current-run filtering and persistence |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -41,6 +42,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload and sandbox/Declarative consumers. | Harness passed; no renderer changes |
 | UP-AC-001 | FoundryChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
@@ -525,3 +527,21 @@ after a real browser, CLI/API, or build-log check has passed.
 - **Real-browser coverage:** Desktop and mobile source/target comparison, manual selection followed by parent changes, plus ordinary mapping retention. Passed on an isolated Jenkins 2.568.3 controller with Chromium 151.0.7922.34, desktop 1440×1000 and mobile 390×844. Both source-native/candidate pairs, manual choice changes, rapid changes, transport recovery, ordinary retention and none defaults passed. No forms were submitted. Production migration is not approved by this case.
 
 - **UI Lab automation:** Seed an empty loopback UI Lab controller with `tools/ui-lab/scripts/active-choices-mapping-init.groovy` and UNO 2.8.10 installed, then run `uv run tools/ui-lab/scripts/check-active-choices-mapping.py`. The browser check covers both viewport sizes, valid-selection retention outside compatibility mode, empty defaults, unknown/null resolver dependencies, rapid changes and failed-request recovery without submitting builds.
+
+### UP-AC-052 — Saved Pipeline parameter text
+
+- Reproduction: configure a static multiple choice with Extended Choice compatibility,
+  submit the literal `red-custom`, and call `foundryParameterText('CHOICES')` in a
+  sandboxed Pipeline and a Declarative `when` expression. Override the environment
+  separately and reload the saved value. Also try sensitive, file, unknown, missing,
+  filtered and historical multiple values without original text.
+- Expected: return the saved literal, preserving substring predicates, whitespace,
+  empty strings and nullable singles, independently of the canonical list or environment.
+  Reject inaccessible/unsupported values without exposing them or running a Provider.
+- Actual before fix: consumers joining `params.CHOICES` lost unlisted literal text;
+  environment-based consumers could observe unrelated environment overrides.
+- Fix: a current-Run-only Pipeline step reads reviewed saved value types through
+  Jenkins parameter security filtering.
+- Verification: `FoundryParameterTextStepTest`: six Harness cases passed, including sandbox/CPS, Declarative when, saved-value reload/reuse, security filtering and descriptor help.
+  Shared backend/Pipeline case; no build-form renderer changes.
+
