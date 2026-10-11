@@ -114,3 +114,5 @@ API default and dependency-bound snapshots. REST Providers offer data-only ordin
 JSON response modes with source-derived UI/API metadata and per-parameter minimum filter
 length (`activeChoicesFilterLength`, default 1); see the [Provider guide](./docs/guide/providers.md#rest-source-response-modes). Real-browser and input parity remain separate
 [per-Job gates](./docs/research/active-choices-reactive-rest-contract.md).
+
+Reviewed data-only Active Choices mappings use a plain dropdown and reset to the new list default on dependency changes, while keeping an independent literal API default. See [reactive Providers](./docs/guide/providers.md#reactive-providers).

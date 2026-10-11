@@ -102,3 +102,17 @@ normalization, legacy Rebuild rejection/fresh upload, mobile overflow and Typed
 JSON rejection. Results are written to `docs/testing/results/foundry-file-modes-ui-lab.json`;
 desktop/mobile, configuration and Core migration screenshots join the gallery. No source File Parameters HPI
 is installed, so the gate also proves independent operation.
+
+## Active Choices data mapping regression
+
+Use a fresh loopback controller with Parameter Foundry and `uno-choice:2.8.10`.
+The standalone initializer `scripts/active-choices-mapping-init.groovy` refuses
+a nonempty controller, sets zero executors and creates four synthetic jobs with
+no builders. It is separate from the multi-profile gallery seed.
+
+Run `uv run tools/ui-lab/scripts/check-active-choices-mapping.py` with the
+controller listening on localhost:8080. The check compares native source
+cascades with Foundry mappings at desktop and mobile sizes, exercises manual
+choices, ordinary retention, empty defaults, dependency errors, rapid changes
+and failed-request recovery, and never submits a build. Artifacts are written
+to the ignored `.cache/active-choices-mapping` directory.

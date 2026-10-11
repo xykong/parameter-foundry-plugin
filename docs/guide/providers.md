@@ -238,6 +238,18 @@ foundryMappingProvider(
 foundryChoice(name: 'BUILD_TYPE', providerId: 'build-type', dependsOn: ['BUILD_MODE'])
 ```
 
+For a reviewed Active Choices single cascade, use `renderer: 'select'`,
+`defaultMode: 'first'` and `standardApiInputMode: 'active-choices'`. The mapping
+refresh selects the new list's first option, including when the old selection
+still belongs to that list. A plain mapping dropdown has no source regex filter.
+Set `activeChoicesApiDefaultMode: 'literal'` and
+`activeChoicesApiDefaultLiteral` when the source's omitted API value is independent
+of the browser selection. The option-resolution API still requires all declared
+dependency values; omitting a raw build parameter uses the independent literal
+default without resolving the mapping. Ordinary Foundry mapping choices keep
+valid user selections when their dependencies change.
+
+
 The parameter offers the case options while the dependency has that value, and the default list
 otherwise (including when the build form has no dependency value yet). Nothing is executed: the
 mapping is configured data that an administrator reviews. An Active Choices script of the form

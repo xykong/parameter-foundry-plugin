@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Fixed
+
+- Active Choices single choices backed by dependency mappings reselect the new list default when a parent changes, even if the previous value remains valid.
+
 ## 0.12.314 - 2026-10-11
 
 The HPI is `dist/parameter-foundry-0.12.314.hpi` (SHA-256

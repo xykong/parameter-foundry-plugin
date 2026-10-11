@@ -151,3 +151,5 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   verification remain required. See the Providers guide.
 
 - Reviewed single REST source filters preserve per-parameter activeChoicesFilterLength (default 1); copy source filterLength when migrating. Short nonempty filters retain the previous list; clearing rebuilds it.
+
+- Reviewed Active Choices single Mapping Providers reset UI selection on dependency changes; renderer select has no source regex filter. Literal API defaults are independent; option resolution requires declared dependencies. Ordinary mapping Providers retain valid selections.

@@ -1659,7 +1659,9 @@
         }
         if (field.dataset.standardApiInputMode === "active-choices" && resolved.filterMode === "active-choices-regex") {
           initialValues = field.dataset.defaultMode === "none" || resolved.defaultValue == null ? [] : [resolved.defaultValue];
-        } else if (field.dataset.standardApiInputMode === "active-choices" && !preserveSelection) {
+        } else if (field.dataset.standardApiInputMode === "active-choices") {
+          // A source cascade rebuilds its selection when dependencies change,
+          // even when the previous value remains in the new option list.
           initialValues = field.dataset.defaultMode === "none" ? [] : options.length ? [options[0].value] : [];
         }
         removeRefreshStatus(field);
