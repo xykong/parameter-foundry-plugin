@@ -42,7 +42,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
-| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload and sandbox/Declarative consumers. | Harness passed; no renderer changes |
+| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload and sandbox/Declarative consumers. | Harness and exact 0.14.320 runtime passed; snippet/help browser checks passed |
 | UP-AC-001 | FoundryChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
@@ -543,4 +543,6 @@ after a real browser, CLI/API, or build-log check has passed.
 - Fix: a current-Run-only Pipeline step reads reviewed saved value types through
   Jenkins parameter security filtering.
 - Verification: `FoundryParameterTextStepTest`: six Harness cases passed, including sandbox/CPS, Declarative when, saved-value reload/reuse, security filtering and descriptor help.
+  Exact 0.14.320 HPI checks passed on Jenkins 2.568.3: five neutral Pipeline builds,
+  including expected rejection builds, plus Chromium snippet registration and help-page checks.
   Shared backend/Pipeline case; no build-form renderer changes.
