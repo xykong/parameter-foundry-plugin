@@ -51,10 +51,10 @@ class FoundryParameterTextStepTest {
     @Test
     void rejectsMissingSensitiveFileUnknownAndLostHistoricalText(JenkinsRule j) throws Exception {
         assertThrows(AbortException.class, () -> FoundryParameterTextStep.savedText(null));
-        var secret = assertThrows(
+        var rejection = assertThrows(
                 AbortException.class,
                 () -> FoundryParameterTextStep.savedText(new PasswordParameterValue("SECRET", "do-not-expose")));
-        assertFalse(secret.getMessage().contains("do-not-expose"));
+        assertFalse(rejection.getMessage().contains("do-not-expose"));
         var file = Files.createTempFile("parameter-text-test-", ".txt");
         try {
             assertThrows(

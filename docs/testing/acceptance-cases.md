@@ -32,7 +32,7 @@ the case, but production configuration is never committed here.
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
-| Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder and saved-value coverage | Sandbox/CPS, Declarative when, current-run filtering and persistence |
+| Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder, saved-value and rejection coverage | Sandbox/CPS, Declarative when, current-run filtering and persistence |
 
 Platform-specific runs must record browser, browser version, OS, viewport,
 input method, and screen-reader/device details. A shared case is not complete
@@ -42,7 +42,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
-| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload and sandbox/Declarative consumers. | Harness and exact 0.14.320 runtime passed; snippet/help browser checks passed |
+| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload and sandbox/Declarative consumers. | Six focused Harness checks and exact 0.14.320 runtime passed; snippet/help browser checks passed |
 | UP-AC-001 | FoundryChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
