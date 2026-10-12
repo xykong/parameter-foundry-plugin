@@ -11,6 +11,8 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+## 0.18.335 - 2026-10-12
+
 ### Added
 
 - Git refs Providers support `sortOrder: none` for the unsorted Java HashSet order used by a List Git Branches ref category.
