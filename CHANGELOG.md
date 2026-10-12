@@ -11,9 +11,11 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+## 0.16.327 - 2026-10-12
+
 ### Added
 
-- Choice lists support explicit visible row counts, including empty lists and pages without JavaScript; Extended Choice multiple-list migration retains the original count.
+- Choice lists support explicit visible row counts, including empty lists and pages without JavaScript; Extended Choice multiple-list migration retains positive configured row counts.
 
 ### Fixed
 
