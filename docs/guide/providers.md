@@ -28,6 +28,16 @@ through a snapshot, and reject values that are no longer valid.
 | Script | The list needs logic, but must stay governed | Engine ID (`sandbox-groovy`), catalog source reference |
 | Git refs | The list is branches, tags, or full refs of a repository | Connection Profile, ref type, include/exclude pattern, sort order, maximum refs |
 
+Git sort orders are `ascending`, `descending`, `smart-ascending`,
+`smart-descending`, and `none`. `none` uses the default-sized Java HashSet
+iteration of an unsorted List Git Branches ref category, rather than alphabetical
+or advertisement order. It offers no stable order guarantee across runtimes.
+For sources that submit full branch refs, use `refType: ref` with a reviewed
+`refs/heads/.*` include pattern; `refType: branch` instead returns short names.
+Verify actual names, order, defaults and transport on the source runtime.
+Combined branch/tag sources may group categories separately and require their
+own mapping review; this option does not establish combined-category parity.
+
 Path mapping (`rootPath`, `valuePath`, `labelPath`, `descriptionPath`,
 `groupPath`, `disabledPath`, `disabledReasonPath`, `tagsPath`) decides which part
 of the payload becomes which option attribute. Only `valuePath` is required;

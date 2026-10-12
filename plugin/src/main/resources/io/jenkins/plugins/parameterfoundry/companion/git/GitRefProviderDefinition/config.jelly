@@ -32,6 +32,7 @@
       <option value="descending" selected="${instance.sortOrder == 'descending' ? 'selected' : null}">Descending</option>
       <option value="smart-ascending" selected="${instance.sortOrder == 'smart-ascending' ? 'selected' : null}">Smart ascending</option>
       <option value="smart-descending" selected="${instance.sortOrder == 'smart-descending' ? 'selected' : null}">Smart descending</option>
+      <option value="none" selected="${instance.sortOrder == 'none' ? 'selected' : null}">Unsorted (List Git Branches compatibility)</option>
     </select>
   </f:entry>
   <f:entry title="Maximum refs" field="maximumRefs">

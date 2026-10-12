@@ -90,6 +90,40 @@ class GitRefProviderDefinitionTest {
     }
 
     @Test
+    void noneSortRetainsCharacterizedLegacyFullRefOrderAndLimits() {
+        Map<String, String> refs = new LinkedHashMap<>();
+        for (String name : List.of(
+                "3.x",
+                "dependabot-config",
+                "master",
+                "old-baselines-cleanup",
+                "simple-jenkinsfile-with-windows-build")) {
+            refs.put("refs/heads/" + name, "revision");
+        }
+        refs.put("refs/tags/v1", "revision");
+        GitRefProviderDefinition provider = new GitRefProviderDefinition("unsorted", "git", ignored -> refs);
+        provider.setRefType("ref");
+        provider.setIncludePattern("refs/heads/.*");
+        provider.setSortOrder("none");
+        // Ordered golden captured from the native source plugin's NONE branch listing.
+        assertEquals(
+                List.of(
+                        "refs/heads/3.x",
+                        "refs/heads/master",
+                        "refs/heads/dependabot-config",
+                        "refs/heads/simple-jenkinsfile-with-windows-build",
+                        "refs/heads/old-baselines-cleanup"),
+                provider.load(context(provider)).stream()
+                        .map(option -> option.getValue())
+                        .toList());
+        provider.setMaximumRefs(4);
+        assertEquals(
+                ErrorCode.PROVIDER_UNAVAILABLE,
+                assertThrows(ProviderException.class, () -> provider.load(context(provider)))
+                        .getCode());
+    }
+
+    @Test
     void rejectsInvalidConfigurationAndOversizedResults() {
         GitRefProviderDefinition provider = new GitRefProviderDefinition("branches", "git", ignored -> REFS);
         assertThrows(IllegalArgumentException.class, () -> provider.setRefType("commit"));

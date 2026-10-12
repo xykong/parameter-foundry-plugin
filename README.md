@@ -26,6 +26,8 @@ Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with
 independent dropdown selection and API/CLI defaults.
+Git Providers also support `sortOrder: none` for unsorted legacy ref categories;
+verify full versus short ref values and actual dropdown order for each migration.
 Version `0.14.320` adds [`foundryParameterText`](./docs/guide/pipeline-parameter-text.md)
 for Pipeline consumers that need saved legacy parameter strings without environment
 overrides or reconstruction from canonical lists.

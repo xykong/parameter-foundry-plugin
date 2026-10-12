@@ -18,6 +18,7 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - [File parameters](docs/guide/file-parameters.md): bounded workspace/Base64/stash upload, Pipeline wrappers and migration
 - [Cookbook](docs/guide/examples.md): copy-pasteable configurations
 - [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
+- Git `sortOrder: none` preserves unsorted List Git Branches category order through Java HashSet iteration; full-ref values and combined-category grouping require separate verification.
 - [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
 - [Best practices](docs/guide/best-practices.md): modelling, defaults, security, scale
 - [Design goals](docs/guide/design-goals.md): principles, scope, non-goals

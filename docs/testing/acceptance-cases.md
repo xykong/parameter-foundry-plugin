@@ -33,7 +33,7 @@ the case, but production configuration is never committed here.
 | REST single source metadata (UP-AC-050) | Required | Required | Required | Required | Required | Required | Ordinary/cascade captions, flags, source API defaults, regex filter, minimum length and snapshots |
 | Active Choices JSON response interpretation (UP-AC-049) | Source renderer coverage | Source renderer coverage | N/A | N/A | N/A | Parser/source oracle | Response order, null labels, fallback and resource boundaries |
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
-| Git ref sorting parity (UP-AC-037) | Existing Provider coverage | Existing Provider coverage | N/A | N/A | N/A | Required | Controller normalization |
+| Git ref sorting parity (UP-AC-037) | Existing Provider coverage; NONE browser gate pending | Existing Provider coverage; NONE browser gate pending | N/A | N/A | N/A | Required | Controller normalization, unsorted category order |
 | Git transport compatibility (UP-AC-038) | Required | Required | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment and snapshot binding |
 | Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder, saved-value, explicit fallback and rejection coverage | Sandbox/CPS, definition-default merge, Declarative when, current-run filtering and persistence |
 
@@ -113,11 +113,40 @@ Jenkins JavaScript form works without scripts.
 | --- | --- | --- | --- |
 | UP-AC-037 | Normalize a frozen refs set in SMART ascending/descending order. Numerically equal runs use total name length, matching the source; Unicode numeric runs compare by numeric value. | Remaining-length tie handling made leading-zero branches depend on input order. Use source-compatible numeric comparison and total-length tie handling. | Full verify: 324 tests passed. Frozen source/candidate comparison: all 33 compared ordered option sets match after selecting full-ref output for the source full-ref case. Exact release Provider gate pending. |
 
+- NONE regression: compare a native source's five full branch refs with an
+  ascending short-name Provider. Both values and order differ. Previous migration
+  mapping incorrectly converted `NONE` to `ascending`.
+- Fix: explicit `sortOrder: none` uses the source category's default-sized
+  HashSet iteration; the adapter maps NONE to that option. A full-ref source
+  additionally requires reviewed `refType: ref` and category filtering.
+- Added checks: a native-source ordered golden, category filtering, maximum-ref
+  rejection and adapter sort mapping. Targeted verify passed 16 tests including
+  field-help coverage, without failures, errors or skips. Complete `mvn -B -ntp verify`
+  passed 421 tests. The exact candidate's five real full refs matched the native
+  diagnostic source's ordered values and labels on isolated Jenkins 2.568.3.
+  Desktop page comparison exposed the separate NONE/20-row selection regression
+  recorded in UP-AC-038; full browser/form parity remains pending. No combined-category or production migration
+  equivalence is claimed. An independently observed missing-credential source
+  GUI failure must not be hidden by a repaired diagnostic source clone.
+
 ### Git transport compatibility
 
 | ID | Reproduction / expected result | Actual behavior / fix | Verification |
 | --- | --- | --- | --- |
 | UP-AC-038 | Submit an unknown revision, empty/blank CLI or repeated standard fields, and form JSON strings/arrays/scalars. Preserve source scalar output; explicit values/defaults work without Git; omitted TOP resolves the first option. Submitted snapshots retain binding checks. | Strict option membership and eager Provider resolution change legacy behavior. Add source transport decoding and lazy option resolution without changing ordinary choice validation. | Decoder and Jenkins integration tests cover CLI/HTTP, literal defaults, typed strings/null, zero-fetch behavior and snapshot rejection. Final focused verify: 23 tests passed. Chromium 153: 13 checks passed for exact/approximate/missing defaults, TOP/NONE, configuration save, independent API default, unlisted form input and editable historical Rebuild without Provider loading. Full verify: 338 tests passed. Zero-TTL browser listings, regex/default filtering, full native options and loading submission parity pass the browser gate; failure contracts remain a per-Job migration gate. |
+
+- Open NONE/list regression: configure a native source single list with
+  `SelectedValue.NONE`, 20 visible rows and a nonblank API default; use an
+  explicitly empty credential ID for an unauthenticated repository. The native
+  list remains unselected, but the target currently selects its first option.
+  This changes a default form submission even when option values/order agree.
+- Expected: retain an empty UI selection in the multi-row single list while
+  preserving the separate literal API default. One-row dropdown behavior needs
+  its own unchanged regression check.
+- Verification: observed on desktop Chromium in an isolated Jenkins 2.568.3
+  source/candidate pair. Fix and desktop/mobile/form verification pending.
+  The repaired credential configuration is a diagnostic variant; the original
+  null-credential source fails before listing and has no demonstrated GUI parity.
 
 ### Mixed file and reactive CLI acceptance
 

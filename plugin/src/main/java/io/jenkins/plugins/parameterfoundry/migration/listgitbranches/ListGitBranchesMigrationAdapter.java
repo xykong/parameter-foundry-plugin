@@ -206,7 +206,7 @@ public final class ListGitBranchesMigrationAdapter extends SourceMigrationAdapte
             case "DESCENDING_SMART", "SMART_DESCENDING" -> "smart-descending";
             case "ASCENDING", "ASCENDING_ALPHABETICAL" -> "ascending";
             case "DESCENDING", "DESCENDING_ALPHABETICAL" -> "descending";
-            case "NONE" -> "ascending";
+            case "NONE" -> "none";
             default -> null;
         };
     }

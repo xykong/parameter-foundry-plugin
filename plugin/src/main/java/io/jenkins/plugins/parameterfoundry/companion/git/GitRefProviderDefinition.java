@@ -92,10 +92,10 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
 
     @DataBoundSetter
     public void setSortOrder(String sortOrder) {
-        if (!Set.of("ascending", "descending", "smart-ascending", "smart-descending")
+        if (!Set.of("ascending", "descending", "smart-ascending", "smart-descending", "none")
                 .contains(sortOrder)) {
             throw new IllegalArgumentException(
-                    "Git ref sort order must be ascending, descending, smart-ascending, or smart-descending.");
+                    "Git ref sort order must be ascending, descending, smart-ascending, smart-descending, or none.");
         }
         this.sortOrder = sortOrder;
     }
@@ -185,12 +185,20 @@ public final class GitRefProviderDefinition extends SharedProviderDefinition imp
             }
             names.add(name);
         }
-        boolean smart = sortOrder != null && sortOrder.startsWith("smart-");
-        Comparator<String> order = smart ? GitRefProviderDefinition::compareSmart : Comparator.naturalOrder();
-        if (sortOrder != null && sortOrder.endsWith("descending")) {
-            order = order.reversed();
+        if ("none".equals(sortOrder)) {
+            // List Git Branches collects each ref category in a default-sized HashSet.
+            // Preserve its unsorted iteration rather than imposing alphabetical order.
+            Set<String> unsorted = new java.util.HashSet<>();
+            names.forEach(unsorted::add);
+            names = new ArrayList<>(unsorted);
+        } else {
+            boolean smart = sortOrder != null && sortOrder.startsWith("smart-");
+            Comparator<String> order = smart ? GitRefProviderDefinition::compareSmart : Comparator.naturalOrder();
+            if (sortOrder != null && sortOrder.endsWith("descending")) {
+                order = order.reversed();
+            }
+            names.sort(order);
         }
-        names.sort(order);
         if (names.size() > maximumRefs) {
             throw new ProviderException(
                     ErrorCode.PROVIDER_UNAVAILABLE,

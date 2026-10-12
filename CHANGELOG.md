@@ -11,6 +11,14 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- Git refs Providers support `sortOrder: none` for the unsorted Java HashSet order used by a List Git Branches ref category.
+
+### Fixed
+
+- List Git Branches migration previews no longer translate `SortMode.NONE` into alphabetical order.
+
 ## 0.17.331 - 2026-10-12
 
 The HPI is `dist/parameter-foundry-0.17.331.hpi` (SHA-256

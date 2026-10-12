@@ -2,6 +2,10 @@
   <p>Order of the returned refs:</p>
   <ul>
     <li><code>ascending</code> / <code>descending</code> compare names as text.</li>
+    <li><code>none</code> retains the default-sized Java HashSet iteration used by an
+      unsorted List Git Branches ref category. This is neither alphabetical order nor
+      Git advertisement order, and is not a stable ordering guarantee across runtimes.
+      Verify actual values, category grouping and dropdown selection before migration.</li>
     <li><code>smart-ascending</code> / <code>smart-descending</code> compare numeric runs by value, so
       <code>1.9</code> sorts before <code>1.10</code>. Use these to match the source plugin's
       <code>*_SMART</code> sort modes.</li>

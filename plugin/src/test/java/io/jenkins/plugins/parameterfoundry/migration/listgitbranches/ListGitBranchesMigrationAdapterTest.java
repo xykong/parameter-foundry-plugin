@@ -81,7 +81,7 @@ class ListGitBranchesMigrationAdapterTest {
     void mapsSourceSortModesAndKeepsThemInTheSkeleton() {
         assertEquals("smart-descending", ListGitBranchesMigrationAdapter.mapSortOrder("DESCENDING_SMART"));
         assertEquals("smart-ascending", ListGitBranchesMigrationAdapter.mapSortOrder("ASCENDING_SMART"));
-        assertEquals("ascending", ListGitBranchesMigrationAdapter.mapSortOrder("NONE"));
+        assertEquals("none", ListGitBranchesMigrationAdapter.mapSortOrder("NONE"));
         assertNull(ListGitBranchesMigrationAdapter.mapSortOrder("SOMETHING_ELSE"));
 
         ListGitBranchesParameterDefinition source = new ListGitBranchesParameterDefinition("REF", "PT_BRANCH");
