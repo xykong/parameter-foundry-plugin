@@ -117,3 +117,16 @@ contract, so controlled retirement and rollback are part of its supported use.
 Until an implementation passes these gates, retain the source plugin or use an
 explicitly approved history-preservation plan; this accepted design is not a
 released capability.
+
+## Extended Choice implementation extension (unreleased)
+
+The second reader is the characterized Extended Choice string value after native
+current definitions and generators have been replaced. Native JSON file behavior
+is conditional on a still-native current definition; its consumer migration is
+an independent mandatory gate. The reader includes no native definition, editor,
+scripts or controller path access. It uses a separate fixed bundle and opt-in,
+with the same reviewed injection helper and full restart lifecycle. Fixed family
+entry sets reject substituting one bundle for another. The internal manifest must
+carry plugin ownership and version for ordinary JEP200 acceptance. See the
+[contract and bounded evidence](../research/extended-choice-history-reader-contract.md).
+Prototype results do not replace actual product HPI/CPS/UI or per-Job acceptance.

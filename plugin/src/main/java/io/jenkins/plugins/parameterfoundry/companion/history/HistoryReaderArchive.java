@@ -6,6 +6,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -23,20 +24,42 @@ final class HistoryReaderArchive {
     static final String RESOURCE = "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar";
     static final String LEGACY = "com.syhuang.hudson.plugins.listgitbranchesparameter.ListGitBranchesParameterValue";
     private static final int LIMIT = 32768;
-    private static final Set<String> ENTRIES = Set.of(
-            "META-INF/MANIFEST.MF", LEGACY.replace('.', '/') + ".class", LEGACY.replace('.', '/') + "/value.jelly");
+
+    enum Family {
+        GIT(RESOURCE, LEGACY),
+        EXTENDED_CHOICE(
+                "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar",
+                "com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterValue");
+
+        final String resource;
+        final String legacy;
+        final Set<String> entries;
+
+        Family(String resource, String legacy) {
+            this.resource = resource;
+            this.legacy = legacy;
+            this.entries = Set.of(
+                    "META-INF/MANIFEST.MF",
+                    legacy.replace('.', '/') + ".class",
+                    legacy.replace('.', '/') + "/value.jelly");
+        }
+    }
 
     private HistoryReaderArchive() {}
 
     static byte[] packagedBytes() throws IOException {
-        URL archive = ownedResource(RESOURCE);
-        URL checksumResource = ownedResource(RESOURCE + ".sha256");
+        return packagedBytes(Family.GIT);
+    }
+
+    static byte[] packagedBytes(Family family) throws IOException {
+        URL archive = ownedResource(family.resource);
+        URL checksumResource = ownedResource(family.resource + ".sha256");
         try (var jar = archive.openStream();
                 var checksum = checksumResource.openStream()) {
             byte[] bytes = jar.readNBytes(LIMIT + 1);
             byte[] hash = checksum.readNBytes(129);
             if (hash.length > 128) throw new IOException("History reader checksum is oversized");
-            verify(bytes, new String(hash, StandardCharsets.US_ASCII).trim());
+            verify(bytes, new String(hash, StandardCharsets.US_ASCII).trim(), family);
             return bytes;
         }
     }
@@ -59,6 +82,10 @@ final class HistoryReaderArchive {
     }
 
     static void verify(byte[] bytes, String expected) throws IOException {
+        verify(bytes, expected, Family.GIT);
+    }
+
+    static void verify(byte[] bytes, String expected, Family family) throws IOException {
         if (bytes.length > LIMIT
                 || !expected.matches("[0-9a-f]{64}")
                 || !digest(bytes).equals(expected)) {
@@ -73,35 +100,34 @@ final class HistoryReaderArchive {
                 if (expanded > LIMIT) throw new IOException("History reader expanded content is oversized");
                 if (entry.isDirectory()) {
                     String directory = entry.getName();
-                    if (content.length != 0 || ENTRIES.stream().noneMatch(name -> name.startsWith(directory))) {
+                    if (content.length != 0 || family.entries.stream().noneMatch(name -> name.startsWith(directory))) {
                         throw new IOException("History reader contains an unexpected directory");
                     }
                     continue;
                 }
-                if (!ENTRIES.contains(entry.getName()) || !names.add(entry.getName())) {
+                if (!family.entries.contains(entry.getName()) || !names.add(entry.getName())) {
                     throw new IOException("History reader contains an unexpected entry");
                 }
                 if ("META-INF/MANIFEST.MF".equals(entry.getName())) {
                     var attributes = new Manifest(new ByteArrayInputStream(content)).getMainAttributes();
-                    if (!"parameter-foundry".equals(attributes.getValue("Short-Name"))) {
+                    if (!"parameter-foundry".equals(attributes.getValue("Short-Name"))
+                            || attributes.getValue("Plugin-Version") == null) {
                         throw new IOException("History reader manifest ownership is invalid");
                     }
                 }
             }
         }
-        if (!names.equals(ENTRIES)) throw new IOException("History reader content is incomplete");
+        if (!names.equals(family.entries)) throw new IOException("History reader content is incomplete");
     }
 
     static Path retain(Path managedRoot, byte[] bytes) throws IOException {
+        return retain(managedRoot, bytes, Family.GIT);
+    }
+
+    static Path retain(Path managedRoot, byte[] bytes, Family family) throws IOException {
         String hash = digest(bytes);
-        verify(bytes, hash);
-        if (Files.exists(managedRoot, LinkOption.NOFOLLOW_LINKS)) {
-            if (!Files.isDirectory(managedRoot, LinkOption.NOFOLLOW_LINKS)) {
-                throw new IOException("History reader storage is not a regular directory");
-            }
-        } else {
-            Files.createDirectory(managedRoot);
-        }
+        verify(bytes, hash, family);
+        ensureManagedRoot(managedRoot);
         Path target = managedRoot.resolve(hash + ".jar");
         if (Files.exists(target, LinkOption.NOFOLLOW_LINKS)) {
             verifyRetained(target, bytes);
@@ -130,6 +156,17 @@ final class HistoryReaderArchive {
             if (!MessageDigest.isEqual(bytes, stream.readNBytes(LIMIT + 1))) {
                 throw new IOException("History reader retained archive differs from the packaged resource");
             }
+        }
+    }
+
+    static void ensureManagedRoot(Path root) throws IOException {
+        try {
+            Files.createDirectory(root);
+        } catch (FileAlreadyExistsException existing) {
+            // Another family can create the same fixed managed directory concurrently.
+        }
+        if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS)) {
+            throw new IOException("History reader storage is not a regular directory");
         }
     }
 

@@ -13,11 +13,13 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Add a separately enabled historical Extended Choice string reader for Jobs with migrated current definitions.
 - Add an opt-in historical Git string value reader with full-restart activation, source ownership checks and administrative status reporting.
 
 ### Fixed
 
 - Preserve pre-migration Git string values when copying historical defaults for Rebuild, without changing the configured Job default.
+- Preserve pre-migration Extended Choice string values in editable single and multiple Rebuild forms without changing configured defaults.
 - Exclude sensitive historical values from ordinary choice default copies.
 
 ## 0.19.340 - 2026-10-13

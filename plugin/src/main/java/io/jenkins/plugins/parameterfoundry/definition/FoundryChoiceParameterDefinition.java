@@ -150,7 +150,12 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     private String gitSelectionMode = "default";
     private transient boolean gitRebuildInput;
     private transient boolean extendedChoiceRebuildInput;
+
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "SE_TRANSIENT_FIELD_NOT_RESTORED",
+            justification = "Rebuild text belongs only to a transient definition copy; XStream must clear it.")
     private transient String extendedChoiceRebuildLiteral;
+
     private String environmentExportOrder = "canonical";
     private boolean allowCustomValue;
     private String customValuePattern;
@@ -497,6 +502,23 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             copy.gitRebuildInput = true;
             copy.setDefaultMode("explicit");
             copy.setDefaultValue(string.getValue());
+            return copy;
+        }
+        if ((ExtendedChoiceDefaultCompatibility.enabled(this) || isExtendedChoiceSingleInput())
+                && defaultValue instanceof StringParameterValue string) {
+            FoundryChoiceParameterDefinition copy = copyDefinition();
+            copy.extendedChoiceRebuildInput = true;
+            copy.extendedChoiceRebuildLiteral = string.getValue() == null ? "" : string.getValue();
+            copy.setDefaultMode("explicit");
+            copy.setLegacyDefaultLiteral(string.getValue());
+            if (isMultiple()) {
+                copy.setDefaultValues(List.of());
+            } else {
+                String historical = string.getValue();
+                boolean offered = historical != null && findOption(historical) != null;
+                copy.setDefaultMode(offered ? "explicit" : "none");
+                copy.setDefaultValue(offered ? historical : null);
+            }
             return copy;
         }
         if (!(defaultValue instanceof FoundryChoiceParameterValue choiceValue)) {

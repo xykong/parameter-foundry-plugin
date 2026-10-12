@@ -52,6 +52,50 @@ class ExtendedChoiceFormCompatibilityTest {
     }
 
     @Test
+    void preMigrationCoreStringHistoryKeepsEditableLiteralWithoutChangingDefaults(JenkinsRule j) {
+        for (String mode : List.of("single", "multiple")) {
+            var d = definition();
+            d.setSelectionMode(mode);
+            d.setDefaultMode("explicit");
+            d.setDefaultValue("a");
+            d.setDefaultValues(List.of("a"));
+            d.setLegacyDefaultLiteral("b");
+            for (String literal : List.of("", " ", "a", " b,unknown,a,b ", "quote\"&<value>", "中文")) {
+                var historical = new hudson.model.StringParameterValue("SAMPLE", literal);
+                var copy = (FoundryChoiceParameterDefinition) d.copyWithDefaultValue(historical);
+                assertNotSame(d, copy);
+                assertTrue(copy.isLegacyRebuildInput());
+                assertEquals(literal, copy.getLegacyRebuildValue());
+                assertEquals(literal, export(form(copy, literal)));
+                if (literal.isBlank()) assertNull(copy.getDefaultParameterValue());
+                else assertEquals(literal, export(copy.getDefaultParameterValue()));
+                assertEquals("b", d.getLegacyDefaultLiteral());
+                assertEquals("a", d.getDefaultValue());
+                assertEquals(List.of("a"), d.getDefaultValues());
+                var persisted = (FoundryChoiceParameterDefinition)
+                        jenkins.model.Jenkins.XSTREAM2.fromXML(jenkins.model.Jenkins.XSTREAM2.toXML(copy));
+                assertFalse(persisted.isLegacyRebuildInput());
+                assertNull(persisted.getLegacyRebuildValue());
+            }
+        }
+    }
+
+    @Test
+    void actualRebuildFormPrefillsPreMigrationCoreStringHistory(JenkinsRule j) throws Exception {
+        String literal = " b,unknown,a,b ";
+        var job = j.createFreeStyleProject("source-string-history");
+        job.addProperty(new ParametersDefinitionProperty(new hudson.model.StringParameterDefinition("SAMPLE", "")));
+        var run = job.scheduleBuild2(0, new ParametersAction(new hudson.model.StringParameterValue("SAMPLE", literal)))
+                .get();
+        j.assertBuildStatusSuccess(run);
+        job.removeProperty(ParametersDefinitionProperty.class);
+        job.addProperty(new ParametersDefinitionProperty(definition()));
+        var page = (HtmlPage) j.createWebClient().withJavaScriptEnabled(false).getPage(run, "rebuild/parameterized");
+        assertFalse(page.getByXPath("//input[@name='value' and @value=' b,unknown,a,b ']")
+                .isEmpty());
+    }
+
+    @Test
     void formStringsRemainLiteralAcrossOutputDelimiters(JenkinsRule j) {
         for (String delimiter : List.of(",", ";")) {
             var d = definition();

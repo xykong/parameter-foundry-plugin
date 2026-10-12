@@ -171,8 +171,7 @@ public final class LegacyGitHistoryReader extends AdministrativeMonitor {
         Path root = managedRoot();
         if (!bootEnabled && !Files.exists(root, LinkOption.NOFOLLOW_LINKS)) return;
         try {
-            if (!Files.exists(root, LinkOption.NOFOLLOW_LINKS)) Files.createDirectory(root);
-            if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS)) throw new IOException("Invalid history storage");
+            HistoryReaderArchive.ensureManagedRoot(root);
             Path target = root.resolve("git-reader-state.txt");
             if (Files.exists(target, LinkOption.NOFOLLOW_LINKS)
                     && !Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS)) {

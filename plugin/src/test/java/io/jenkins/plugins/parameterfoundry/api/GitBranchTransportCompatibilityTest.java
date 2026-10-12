@@ -336,7 +336,7 @@ class GitBranchTransportCompatibilityTest {
                 throw new AssertionError("Sensitive history must not be read for a choice default");
             }
         };
-        for (String mode : List.of("list-git-branches", "active-choices", "strict")) {
+        for (String mode : List.of("list-git-branches", "active-choices", "extended-choice", "strict")) {
             var configured = definition();
             configured.setStandardApiInputMode(mode);
             assertSame(configured, configured.copyWithDefaultValue(sensitive));

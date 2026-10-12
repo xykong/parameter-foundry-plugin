@@ -24,6 +24,7 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
     private boolean gitRefsProviderEnabled = true;
     private boolean accessibleChoiceGridEnabled = true;
     private boolean legacyGitHistoryEnabled;
+    private boolean legacyExtendedChoiceHistoryEnabled;
 
     public ParameterFoundryGlobalConfiguration() {
         load();
@@ -31,6 +32,16 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
 
     public static ParameterFoundryGlobalConfiguration get() {
         return GlobalConfiguration.all().get(ParameterFoundryGlobalConfiguration.class);
+    }
+
+    public boolean isLegacyExtendedChoiceHistoryEnabled() {
+        return legacyExtendedChoiceHistoryEnabled;
+    }
+
+    @DataBoundSetter
+    public void setLegacyExtendedChoiceHistoryEnabled(boolean enabled) {
+        legacyExtendedChoiceHistoryEnabled = enabled;
+        save();
     }
 
     public boolean isLegacyGitHistoryEnabled() {

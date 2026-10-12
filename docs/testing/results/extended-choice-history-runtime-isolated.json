@@ -1,0 +1,645 @@
+{
+  "scope": "Isolated product candidate; no production migration or source retirement approval",
+  "status": "Implementation milestone validated; production release and retirement remain pending",
+  "focusedTests": 43,
+  "ui": {
+    "core": "2.568.3",
+    "browser": "153.0.8010.12",
+    "sha256": "37852bf7b78f6e75ac940af029a6f0a0c560607bc99ca5c4c61e0cffa6b2612c",
+    "checks": [
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "single",
+        "history": 1,
+        "historicalLiteral": "feature/jenkins_test",
+        "submittedLiteral": " b,unknown,a,b ",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "single",
+        "history": 2,
+        "historicalLiteral": "",
+        "submittedLiteral": "",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "single",
+        "history": 3,
+        "historicalLiteral": " b,unknown,a,b ",
+        "submittedLiteral": "quote\"&<value>",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "multiple",
+        "history": 1,
+        "historicalLiteral": "feature/jenkins_test",
+        "submittedLiteral": " b,unknown,a,b ",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "multiple",
+        "history": 2,
+        "historicalLiteral": "",
+        "submittedLiteral": "",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "mode": "multiple",
+        "history": 3,
+        "historicalLiteral": " b,unknown,a,b ",
+        "submittedLiteral": "quote\"&<value>",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "single",
+        "history": 1,
+        "historicalLiteral": "feature/jenkins_test",
+        "submittedLiteral": " b,unknown,a,b ",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "single",
+        "history": 2,
+        "historicalLiteral": "",
+        "submittedLiteral": "",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "single",
+        "history": 3,
+        "historicalLiteral": " b,unknown,a,b ",
+        "submittedLiteral": "quote\"&<value>",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "multiple",
+        "history": 1,
+        "historicalLiteral": "feature/jenkins_test",
+        "submittedLiteral": " b,unknown,a,b ",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "multiple",
+        "history": 2,
+        "historicalLiteral": "",
+        "submittedLiteral": "",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "mode": "multiple",
+        "history": 3,
+        "historicalLiteral": " b,unknown,a,b ",
+        "submittedLiteral": "quote\"&<value>",
+        "result": "SUCCESS",
+        "configuredDefault": "a"
+      }
+    ],
+    "scope": "Source-absent product HPI, twelve actual neutral Rebuilds, config/help; no production operations"
+  },
+  "startup": [
+    {
+      "core": "2.528.3",
+      "candidateSha256": "7256cdfb7aed742c83410237e8d684b1c91cf837a84d8e4c0ae203abc72f1216",
+      "states": [
+        {
+          "core": "2.528.3",
+          "mode": "off",
+          "state": "DISABLED",
+          "accepted": false,
+          "enabled": false,
+          "legacyPresent": false,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "absent",
+          "state": "ACTIVE",
+          "accepted": true,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "native",
+          "state": "NATIVE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "disabled-jpi",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "disabled-hpi",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "corrupt",
+          "state": "STAGED_SOURCE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.528.3",
+          "mode": "failed-dependency",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ],
+      "failedFixture": "Native source manifest with explicit nonexistent test-only dependency; other cases exact source"
+    },
+    {
+      "core": "2.568.3",
+      "candidateSha256": "7256cdfb7aed742c83410237e8d684b1c91cf837a84d8e4c0ae203abc72f1216",
+      "states": [
+        {
+          "core": "2.568.3",
+          "mode": "off",
+          "state": "DISABLED",
+          "accepted": false,
+          "enabled": false,
+          "legacyPresent": false,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "absent",
+          "state": "ACTIVE",
+          "accepted": true,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "native",
+          "state": "NATIVE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "disabled-jpi",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "disabled-hpi",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "corrupt",
+          "state": "STAGED_SOURCE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        },
+        {
+          "core": "2.568.3",
+          "mode": "failed-dependency",
+          "state": "SOURCE_UNAVAILABLE",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ],
+      "failedFixture": "Native source manifest with explicit nonexistent test-only dependency; other cases exact source"
+    }
+  ],
+  "coldRestore": [
+    {
+      "core": "2.528.3",
+      "proof": {
+        "sha256": "7256cdfb7aed742c83410237e8d684b1c91cf837a84d8e4c0ae203abc72f1216",
+        "stages": [
+          {
+            "stage": "native-paused",
+            "state": "NATIVE",
+            "number": 1,
+            "building": true
+          },
+          {
+            "stage": "bridge-paused",
+            "state": "ACTIVE",
+            "building": true
+          },
+          {
+            "stage": "native-finished",
+            "state": "NATIVE",
+            "result": "SUCCESS"
+          }
+        ],
+        "scope": "one synthetic Pipeline; two full process restarts; no production operations"
+      }
+    },
+    {
+      "core": "2.568.3",
+      "proof": {
+        "sha256": "7256cdfb7aed742c83410237e8d684b1c91cf837a84d8e4c0ae203abc72f1216",
+        "stages": [
+          {
+            "stage": "native-paused",
+            "state": "NATIVE",
+            "number": 1,
+            "building": true
+          },
+          {
+            "stage": "bridge-paused",
+            "state": "ACTIVE",
+            "building": true
+          },
+          {
+            "stage": "native-finished",
+            "state": "NATIVE",
+            "result": "SUCCESS"
+          }
+        ],
+        "scope": "one synthetic Pipeline; two full process restarts; no production operations"
+      }
+    }
+  ],
+  "remaining": [
+    "Production release version/artifact/operational review and deployment gates",
+    "Per-Job producers, consumers, source definitions, JSON-file workflow, Replay/history and reverse-dependency retirement gates",
+    "File history product implementation and acceptance"
+  ],
+  "hotConflict": [
+    {
+      "core": "2.568.3",
+      "state": "CONFLICT",
+      "accepted": false,
+      "monitor": true,
+      "nativeActive": true,
+      "jobs": 0,
+      "builds": 0,
+      "productionWrites": 0
+    },
+    {
+      "core": "2.528.3",
+      "state": "CONFLICT",
+      "accepted": false,
+      "monitor": true,
+      "nativeActive": true,
+      "jobs": 0,
+      "builds": 0,
+      "productionWrites": 0
+    }
+  ],
+  "extraLifecycle": {
+    "coldDisable": [
+      {
+        "core": "2.528.3",
+        "state": "DISABLED",
+        "accepted": false,
+        "monitor": false,
+        "legacyPresent": false,
+        "retainedArchive": true,
+        "jobs": 0,
+        "builds": 0,
+        "productionWrites": 0
+      },
+      {
+        "core": "2.568.3",
+        "state": "DISABLED",
+        "accepted": false,
+        "monitor": false,
+        "legacyPresent": false,
+        "retainedArchive": true,
+        "jobs": 0,
+        "builds": 0,
+        "productionWrites": 0
+      }
+    ],
+    "otherExporterBaseline": {
+      "sha256": "37852bf7b78f6e75ac940af029a6f0a0c560607bc99ca5c4c61e0cffa6b2612c",
+      "cases": [
+        {
+          "core": "2.528.3",
+          "mode": "other-exporter",
+          "state": "OTHER_EXPORTER",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "otherExporterNewCore": {
+      "sha256": "37852bf7b78f6e75ac940af029a6f0a0c560607bc99ca5c4c61e0cffa6b2612c",
+      "cases": [
+        {
+          "core": "2.568.3",
+          "mode": "other-exporter",
+          "state": "OTHER_EXPORTER",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "unsupportedCore": {
+      "sha256": "37852bf7b78f6e75ac940af029a6f0a0c560607bc99ca5c4c61e0cffa6b2612c",
+      "cases": [
+        {
+          "core": "2.580.1",
+          "mode": "unsupported",
+          "state": "ERROR",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "coldDowngrade": [
+      {
+        "core": "2.568.3",
+        "foundryEnabled": true,
+        "foundryActive": true,
+        "legacyPresent": true,
+        "retainedArchive": true,
+        "jobs": 1,
+        "historicalBuilds": 15,
+        "newBuilds": 0,
+        "productionWrites": 0
+      }
+    ]
+  },
+  "verify": {
+    "r2": "454 tests passed; one intentionally transient field SpotBugs warning",
+    "correction": "Field-local justified annotation; XStream transient-clear regression passes",
+    "r3": "BUILD SUCCESS; 454 tests passed, zero SpotBugs bugs/errors and Spotless passed"
+  },
+  "finalCandidate": {
+    "identity": {
+      "sha256": "0538c46f1bdacd9464bd8954427a236ad28ab55fe7635e1328f051346c545d15",
+      "bytes": 685926,
+      "comparisons": [
+        {
+          "oldCandidate": "product-ecp-candidate",
+          "sha256": "7256cdfb7aed742c83410237e8d684b1c91cf837a84d8e4c0ae203abc72f1216",
+          "changedLibraryEntries": [
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar.sha256",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar.sha256",
+            "io/jenkins/plugins/parameterfoundry/definition/FoundryChoiceParameterDefinition$DescriptorImpl.class",
+            "io/jenkins/plugins/parameterfoundry/definition/FoundryChoiceParameterDefinition.class"
+          ],
+          "bundles": {
+            "git": {
+              "payloadIdentical": true,
+              "digestBound": true
+            },
+            "extendedChoice": {
+              "payloadIdentical": true,
+              "digestBound": true
+            }
+          }
+        },
+        {
+          "oldCandidate": "product-ecp-rebuild-candidate",
+          "sha256": "37852bf7b78f6e75ac940af029a6f0a0c560607bc99ca5c4c61e0cffa6b2612c",
+          "changedLibraryEntries": [
+            "io/jenkins/plugins/parameterfoundry/companion/file/AbstractFoundryFileParameterDefinition/AbstractFoundryFileParameterDefinitionDescriptor/doCheckName.stapler",
+            "io/jenkins/plugins/parameterfoundry/companion/file/FoundryFileParameterDefinition/DescriptorImpl/doCheckName.stapler",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar.sha256",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar",
+            "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar.sha256",
+            "io/jenkins/plugins/parameterfoundry/definition/FoundryChoiceParameterDefinition$DescriptorImpl.class",
+            "io/jenkins/plugins/parameterfoundry/definition/FoundryChoiceParameterDefinition.class"
+          ],
+          "bundles": {
+            "git": {
+              "payloadIdentical": true,
+              "digestBound": true
+            },
+            "extendedChoice": {
+              "payloadIdentical": true,
+              "digestBound": true
+            }
+          }
+        }
+      ],
+      "scope": "Final snapshot milestone; not production release"
+    },
+    "instructions": [
+      {
+        "class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition",
+        "instructionsIdentical": true
+      },
+      {
+        "class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition$DescriptorImpl",
+        "instructionsIdentical": true
+      }
+    ],
+    "dualStartup": [
+      {
+        "sha256": "0538c46f1bdacd9464bd8954427a236ad28ab55fe7635e1328f051346c545d15",
+        "cases": [
+          {
+            "core": "2.528.3",
+            "mode": "absent",
+            "state": "ACTIVE",
+            "accepted": true,
+            "enabled": true,
+            "legacyPresent": true,
+            "monitor": false,
+            "jobs": 0,
+            "builds": 0,
+            "productionWrites": 0
+          }
+        ]
+      },
+      {
+        "sha256": "0538c46f1bdacd9464bd8954427a236ad28ab55fe7635e1328f051346c545d15",
+        "cases": [
+          {
+            "core": "2.568.3",
+            "mode": "absent",
+            "state": "ACTIVE",
+            "accepted": true,
+            "enabled": true,
+            "legacyPresent": true,
+            "monitor": false,
+            "jobs": 0,
+            "builds": 0,
+            "productionWrites": 0
+          }
+        ]
+      }
+    ],
+    "fileValidator": {
+      "sha256": "0538c46f1bdacd9464bd8954427a236ad28ab55fe7635e1328f051346c545d15",
+      "cases": [
+        {
+          "core": "2.568.3",
+          "mode": "absent",
+          "state": "ACTIVE",
+          "accepted": true,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": false,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0,
+          "fileNameValidator": [
+            {
+              "name": "UPLOAD",
+              "expected": "ok",
+              "passed": true
+            },
+            {
+              "name": "",
+              "expected": "error",
+              "passed": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

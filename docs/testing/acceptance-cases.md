@@ -37,6 +37,7 @@ the case, but production configuration is never committed here.
 | Active Choices JSON response interpretation (UP-AC-049) | Source renderer coverage | Source renderer coverage | N/A | N/A | N/A | Parser/source oracle | Response order, null labels, fallback and resource boundaries |
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage; NONE browser gate pending | Existing Provider coverage; NONE browser gate pending | N/A | N/A | N/A | Required | Controller normalization, unsorted category order |
+| Extended Choice history (UP-AC-062) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Checkbox/help passed | Twelve actual neutral Rebuilds passed | Text input | 43 focused cases, two Core source-state/cold CPS matrices | Full verify/final artifact and remaining lifecycle pending |
 | History reader lifecycle (UP-AC-061) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Checkbox and help passed | Historical rendering and Rebuild passed | N/A | Nine focused cases; two Core startup/cold CPS matrices | Final verify/artifact and remaining lifecycle gates pending |
 | History reader packaging (UP-AC-060) | N/A inactive resource | N/A inactive resource | N/A | N/A | N/A | Digest, exact entries, UID and literal behavior | Activation/lifecycle/UI remain separate gates |
 | Git source string history (UP-AC-059) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Existing textbox semantics | Passed actual Rebuild | Text input | Literal/default copy and Rebuild submission | Legacy string subclasses and unchanged current defaults |
@@ -51,6 +52,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-062 | Extended Choice string history | Separate opt-in/bundle, current-definition boundary, default-off/restart lifecycle and family substitution rejection. | 43 combined focused tests, two Core source-state/cold CPS matrices and 12 real browser submits passed; full verify/final artifact pending |
 | UP-AC-061 | Opt-in Git history reader | Default-off, restart-bound activation, integrity/storage checks, source-state and conflict handling. | Nine focused cases, two Core startup/cold CPS matrices and bridge UI passed; final verify/artifact and remaining lifecycle gates pending |
 | UP-AC-060 | Isolated history bundle | Keep legacy-named classes outside the initial plugin classpath; inspect the digest-bound nested jar independently. | Passed 438 full tests and two actual-HPI independent-process isolation cases; no reader activation |
 | UP-AC-059 | Git source string history | Rebuild with a pre-migration Core String subclass after replacing its definition; preserve literal input without fetching the Provider. | Passed 436 full tests and six desktop/mobile actual Rebuild submissions |
@@ -795,3 +797,106 @@ production Job acceptance. No release
 or source-plugin uninstall approved by these checks alone.
 
 [Isolated runtime evidence and remaining gates](./results/history-reader-runtime-isolated.json).
+
+### UP-AC-062: Extended Choice post-migration string history
+
+Shared case. Package Git and Extended Choice value classes into separate fixed
+bundles outside the initial classpath. Reject cross-family substitution. Each
+setting defaults off and save-only changes require restart; source-disabled,
+failed/staged/exporter states do not silently activate. Native UID, passive
+history view and literal environment/resolver must match the characterized
+post-definition-migration boundary. Validate native JSON file consumers before
+retirement; do not reinterpret them as plain text.
+
+Actual prior prototype: bidirectional Java/River/three XML formats and a neutral
+paused Pipeline cold switch/rollback pass. Two incomplete internal manifests
+were rejected by JEP200; both failures retained. Product bundles require a plugin
+version as well as Short-Name, without whitelist or Core modifications. Product
+packaging/family/lifecycle and help coverage pass sixteen combined focused tests,
+including incomplete-manifest rejection, family substitution, isolated UID/value
+ownership, default-off and same-JVM restart-required state, and failure invalidation.
+Independent review found a shared-root creation race between parallel family
+initializers. Both retention and status persistence now use an idempotent creation
+helper followed by nofollow directory validation. Ten barrier-synchronized
+two-family fresh-root pairs pass; existing symlink rejection still passes. Code
+review closes the finding. Actual frozen candidate dual-opt-in startup passes on
+2.528.3 and 2.568.3: both states/status files ACTIVE, both classes owned by Foundry,
+two independently retained jars and JEP200 ECP XML roundtrip, zero Jobs/builds.
+Product source-state matrices, CPS/UI, final artifact and complete verify remain
+pending.
+
+The first product candidate passes seven source-state cases per reviewed Core:
+off, absent, native, jpi/hpi disabled, corrupt/staged and failed mandatory
+dependency. The failure fixture adds a nonexistent test-only dependency to the
+source manifest; other cases use the exact source artifact. Git remains DISABLED
+in each single-family case. Both Cores also pass a neutral paused Pipeline's
+native-to-Foundry-to-native full-process sequence, preserving historical action,
+CPS local, description, resolver and environment, ending SUCCESS.
+
+UI preparation found a separate Rebuild gap: pre-migration Core string values
+were not copied into editable Extended Choice inputs. The new single/multiple
+copy preserves the literal and configured defaults, including empty/unlisted
+text. Harness copy/form regressions are running. The superseded full verify was
+intentionally terminated for this implementation change; it is not a passed gate.
+
+The corrected Rebuild copy and combined history/transport/help tests pass 43
+cases. Six literal forms in both single/multiple modes preserve current defaults;
+blank factory defaults remain absent while form input stays literal. Unlisted
+single history is retained as text without assigning an invalid selectable default.
+XStream roundtrip clears the transient Rebuild presentation fields. Actual Harness
+Rebuild prefill and ECP sensitive-value exclusion pass. Rebuilt product UI submits
+and the restarted complete verify remain pending.
+
+Rebuilt source-absent product HPI passes Chromium 153.0.8010.12 at 1440×1000 and
+390×844: single/multiple historical text and empty/padded prefills, twelve actual
+neutral Rebuild submissions, exact environment strings (including empty and
+quote/XML characters), unchanged current default, configuration field and help.
+Desktop padded and mobile empty forms plus mobile configuration/help screenshots
+were visually inspected. Earlier system-Python dependency and empty-history locator
+failures are retained. Empty readonly values use N/A rather than a pre node; normal
+scrolling/clicks are used. Complete verify/final artifact remain pending.
+[Product evidence and limits](./results/extended-choice-history-runtime-isolated.json).
+
+Actual source hot reinstallation after ECP activation reports sticky CONFLICT,
+visible monitor, acceptance false and persisted conflict on both reviewed Cores,
+with zero Jobs/builds. This detects an unsupported transition; it does not permit
+hot source rollback or make it safe.
+
+Both reviewed Cores also pass a mixed cold configuration: ECP off, Git on,
+retained jars still present. The ECP type is absent, state/status DISABLED and
+monitor inactive; Git remains ACTIVE. This verifies independent cold deactivation,
+not removal of historical dependencies.
+
+The rebuilt candidate also passes OTHER_EXPORTER startup on both reviewed Cores
+without extracting its reader jar, and unsupported 2.580.1 reports ERROR with no
+legacy type exposure. These use synthetic exporter fixtures/zero Jobs and retain
+ordinary class filtering.
+
+Cold downgrade to Foundry 0.19.340 with native ECP restored on 2.568.3 reads the
+neutral Job's original nonempty/empty source histories and current Foundry
+definition, retains all fifteen existing idle builds and schedules none.
+
+Full verify r2 passes 454 tests but flags the intentionally transient Rebuild
+literal as not restored. A field-local SpotBugs annotation documents that the
+copied textbox state must disappear on deserialization, already covered by the
+XStream regression; enforcement remains enabled. Complete verify runs again,
+so r2 is not a passed release gate.
+
+Corrected complete verify r3 passes 454 tests, zero SpotBugs bugs/errors and
+Spotless. Final frozen snapshot is 685926 bytes, SHA256
+`0538c46f1bdacd9464bd8954427a236ad28ab55fe7635e1328f051346c545d15`.
+Both reviewed Cores pass actual final dual activation/ownership/status and ECP
+JEP200 XML roundtrip. Both nested bundles' class/view/manifest payloads are
+identical to the source/CPS and UI candidates and their final digests match.
+Changed Choice definition/descriptor instructions match the UI candidate after
+constant-pool-index normalization; annotation/debug metadata accounts for the
+class-byte change. Generated file-validator argument metadata relocates between
+abstract/concrete descriptors and requires an actual endpoint check. Production
+publication/version/operational and per-Job retirement gates remain open.
+
+Final-HPI file-name validator endpoint passes actual UPLOAD=ok and empty=error on
+2.568.3. Native empty ok markup is `<div/>`; the initial overly strict response
+matcher and container-variable cleanup issue are retained and corrected in the
+test runner. The known owned zero-job controller was explicitly inspected/removed;
+successful fresh run exits zero and removes its own controller. No product change
+was needed for the generated metadata relocation.

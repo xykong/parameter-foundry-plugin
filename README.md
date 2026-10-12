@@ -139,4 +139,4 @@ Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–100
 
 Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
 
-Unreleased history retirement controls are described in the [historical Git parameter guide](docs/guide/history-compatibility.md); activation and rollout validation remain pending.
+Unreleased history retirement controls are described in the [historical parameter guide](docs/guide/history-compatibility.md); activation and rollout validation remain pending.

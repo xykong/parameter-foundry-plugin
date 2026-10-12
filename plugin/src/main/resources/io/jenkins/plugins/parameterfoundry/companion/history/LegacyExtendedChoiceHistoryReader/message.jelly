@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <div class="alert alert-warning">
+    Parameter Foundry Extended Choice history compatibility: ${it.state}.
+    Complete the source-specific retirement checks and restart Jenkins completely.
+    Historical compatibility acceptance is unavailable in this state.
+    Hot installation of the retired source plugin is unsupported.
+  </div>
+</j:jelly>

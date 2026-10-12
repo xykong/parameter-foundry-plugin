@@ -1,4 +1,4 @@
-# Historical Git parameter values
+# Historical parameter values
 
 The unreleased history reader is an optional retirement companion for the
 characterized List Git Branches string value. It is disabled by default and does
@@ -52,3 +52,28 @@ are independent gates, even when value deserialization works.
 This page describes the unreleased implementation. Actual-HPI source-state,
 cold-restore/rollback, JEP-200, historical UI and security acceptance remain release
 requirements; do not infer readiness from the configuration checkbox alone.
+
+## Extended Choice string history (unreleased)
+
+A separate default-off setting, **Enable retired Extended Choice history reader**
+(`legacyExtendedChoiceHistoryEnabled`), preserves the characterized historical
+Core-string value after replacing the native current definitions and generators.
+It uses its own isolated bundle, state file and administrative monitor. The Git
+and Extended Choice resources reject substitution and activation is independent.
+The same complete-restart, ownership, conflict and rollback rules apply.
+
+The native resolver writes a JSON file only when its current definition is still
+native PT_JSON with saving enabled. Under a migrated definition it returns the
+stored string. Validate and preserve any JSON-file consumer workflow before
+retirement; this reader supplies neither the native definition nor its editor,
+scripts or file-writing behavior. Old definitions/source/Replay and captured
+resolver types remain separate gates. File Parameters history is not included.
+The implementation is under test; prototype storage/CPS results alone do not
+approve product deployment or source-plugin removal.
+
+Rebuild uses an editable literal input for historical Core string values in the
+Extended Choice single/multiple compatibility modes. Its transient copied
+definition preserves historical text without changing the Job's current defaults.
+Blank historical defaults retain the source's absent-default semantics; an
+explicit form submission preserves the entered literal. Typed inputs and ordinary
+choice definitions keep their existing validation.

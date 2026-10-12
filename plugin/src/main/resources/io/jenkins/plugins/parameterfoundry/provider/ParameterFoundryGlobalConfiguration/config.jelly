@@ -5,6 +5,10 @@
              description="Explicit retirement mode; changes require a complete Jenkins restart.">
       <f:checkbox />
     </f:entry>
+    <f:entry title="Enable retired Extended Choice history reader" field="legacyExtendedChoiceHistoryEnabled"
+             description="Post-definition-migration string history only; complete restart required.">
+      <f:checkbox />
+    </f:entry>
     <f:entry title="Enable migration adapters" field="migrationAdaptersEnabled"
              description="Expose source-plugin migration previews and apply/clone actions.">
       <f:checkbox />

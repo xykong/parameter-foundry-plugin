@@ -156,7 +156,7 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>isolate-legacy-git-history-reader</id>
+            <id>isolate-legacy-history-readers</id>
             <goals>
               <goal>run</goal>
             </goals>
@@ -173,13 +173,20 @@
                   <fileset dir="${project.basedir}/src/history/resources" />
                 </copy>
                 <mkdir dir="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history" />
-                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar">
+                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" includes="com/syhuang/**">
                   <manifest>
                     <attribute name="Short-Name" value="parameter-foundry" />
                     <attribute name="Plugin-Version" value="${project.version}" />
                   </manifest>
                 </jar>
                 <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" fileext=".sha256" />
+                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" includes="com/cwctravel/**">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" fileext=".sha256" />
               </target>
             </configuration>
           </execution>
