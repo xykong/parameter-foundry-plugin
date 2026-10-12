@@ -13,6 +13,9 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.16.327 - 2026-10-12
 
+The HPI is `dist/parameter-foundry-0.16.327.hpi` (SHA-256
+`d5645196c51de921c6915d6fe8dd4e7fa959b1b06e0bf97033919b248f02a393`, 650,819 bytes).
+
 ### Added
 
 - Choice lists support explicit visible row counts, including empty lists and pages without JavaScript; Extended Choice multiple-list migration retains positive configured row counts.
