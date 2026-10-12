@@ -11,6 +11,11 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+## 0.21.348 - 2026-10-13
+
+The HPI is `dist/parameter-foundry-0.21.348.hpi` (SHA-256
+`de1a0102aa36b84b159a9b82650a79f28fe8e3f014d7a978483a28fe4b01df57`, 685,808 bytes).
+
 ### Added
 
 - Add a separately enabled historical Extended Choice string reader for Jobs with migrated current definitions.

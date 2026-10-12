@@ -1,6 +1,6 @@
 # Historical parameter values
 
-The unreleased history reader is an optional retirement companion for the
+The history reader introduced in 0.21.348 is an optional retirement companion for the
 characterized List Git Branches string value. It is disabled by default and does
 not migrate parameter definitions or Jenkinsfiles. Extended Choice and file
 history require separate compatibility work.
@@ -49,11 +49,12 @@ path. It reads historical values without bulk-rewriting build files; new Jobs us
 Foundry definitions and values. Old Pipeline symbols/source and arbitrary Replay
 are independent gates, even when value deserialization works.
 
-This page describes the unreleased implementation. Actual-HPI source-state,
-cold-restore/rollback, JEP-200, historical UI and security acceptance remain release
-requirements; do not infer readiness from the configuration checkbox alone.
+Source-state, cold-restore/rollback, JEP-200 and historical UI acceptance use
+isolated synthetic controllers. Production activation still requires the
+source-specific retirement and rollback checks; the checkbox alone does not
+establish whole-Job or arbitrary Replay compatibility.
 
-## Extended Choice string history (unreleased)
+## Extended Choice string history
 
 A separate default-off setting, **Enable retired Extended Choice history reader**
 (`legacyExtendedChoiceHistoryEnabled`), preserves the characterized historical
@@ -68,8 +69,8 @@ stored string. Validate and preserve any JSON-file consumer workflow before
 retirement; this reader supplies neither the native definition nor its editor,
 scripts or file-writing behavior. Old definitions/source/Replay and captured
 resolver types remain separate gates. File Parameters history is not included.
-The implementation is under test; prototype storage/CPS results alone do not
-approve product deployment or source-plugin removal.
+Isolated product HPI and storage/CPS results do not approve production activation
+or source-plugin removal.
 
 Rebuild uses an editable literal input for historical Core string values in the
 Extended Choice single/multiple compatibility modes. Its transient copied

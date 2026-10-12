@@ -71,4 +71,24 @@ directory; it never opens the stored controller tmpFile path. Non-null source
 references explicitly remain outside this prototype's contract and must be
 investigated without silently dropping them. No upload factories, download API,
 wrapper, product opt-in/lifecycle or universal CPS guarantee is provided by this
-research result. Java/River reverse storage and remaining states still need proof.
+research result. Remaining states and product integration still need proof.
+
+
+The prototype's separate-JVM storage test now passes 120 directional combinations:
+twelve typed metadata values across Java, River and Jenkins/Items/Run XML, written
+by native then read by prototype and vice versa. Filename cases include Unicode,
+XML metacharacters and empty text; Base64 cases include empty and binary data.
+Names/descriptions, filename environment and encoded-byte identity match, with
+another XML roundtrip after read. Completed Stashed storage here covers metadata;
+its available/missing byte parity is the separate real-controller result above.
+Pending references and the remaining product/permission/wrapper/CPS gates are
+still unproven.
+
+The private typed prototype also passes a Jenkins 2.568.3 native-to-reader-to-native
+paused Pipeline sequence through two full process restarts. Base64 and completed
+Stashed values are retained as saved CPS locals; metadata and encoded value survive,
+and the reader restores both thirteen-byte payloads from historical ParametersAction.
+The same Pipeline resumes under the native plugin and completes SUCCESS. No
+business logic or production build/history is used. This does not cover a paused
+native wrapper execution, pending source temp reference, download/permission UI,
+or product packaging/default-off/activation controls.
