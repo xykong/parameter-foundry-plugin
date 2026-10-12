@@ -11,6 +11,7 @@ import hudson.model.StringParameterValue;
 import io.jenkins.plugins.parameterfoundry.companion.file.AbstractFoundryFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryReferenceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
@@ -32,6 +33,7 @@ final class TypedParameterAdapterRegistry {
 
     static boolean supports(ParameterDefinition definition) {
         return definition instanceof FoundryChoiceParameterDefinition
+                || definition instanceof FoundryReferenceParameterDefinition
                 || definition instanceof FoundryFormParameterDefinition
                 || definition instanceof ChoiceParameterDefinition
                 || definition instanceof BooleanParameterDefinition
@@ -47,6 +49,7 @@ final class TypedParameterAdapterRegistry {
                 "owner",
                 definition instanceof AbstractFoundryFileParameterDefinition
                                 || definition instanceof FoundryChoiceParameterDefinition
+                                || definition instanceof FoundryReferenceParameterDefinition
                                 || definition instanceof FoundryFormParameterDefinition
                         ? "parameter-foundry"
                         : "jenkins-core");
@@ -110,6 +113,14 @@ final class TypedParameterAdapterRegistry {
                 throw invalidType(definition, "Expected a JSON object.");
             }
             return form.createTypedValue(typedValue, present);
+        }
+        if (definition instanceof FoundryReferenceParameterDefinition reference) {
+            if (snapshotId != null) {
+                throw invalidType(definition, "Literal references do not accept Provider snapshots.");
+            }
+            return present
+                    ? reference.createValue(requireString(definition, typedValue))
+                    : reference.getDefaultParameterValue();
         }
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
             if (!present && choice.isActiveChoicesInput()) {

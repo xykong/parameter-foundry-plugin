@@ -1,0 +1,102 @@
+{
+  "viewports": [
+    {
+      "viewport": 1440,
+      "sourceTargetEqual": true,
+      "control": {
+        "presentation": "presentation only",
+        "value": "",
+        "type": "text",
+        "hidden": true
+      },
+      "sanitizer": true
+    },
+    {
+      "viewport": 390,
+      "sourceTargetEqual": true,
+      "control": {
+        "presentation": "presentation only",
+        "value": "",
+        "type": "text",
+        "hidden": true
+      },
+      "sanitizer": true
+    }
+  ],
+  "httpPairs": [
+    {
+      "index": 0,
+      "value": ""
+    },
+    {
+      "index": 1,
+      "value": ""
+    },
+    {
+      "index": 2,
+      "value": " outside "
+    },
+    {
+      "index": 3,
+      "value": ""
+    },
+    {
+      "index": 4,
+      "value": "a,b,quote\\\""
+    },
+    {
+      "index": 5,
+      "value": "null"
+    },
+    {
+      "index": 6,
+      "value": "true"
+    },
+    {
+      "index": 7,
+      "value": "7"
+    },
+    {
+      "index": 8,
+      "value": "{\"nested\":\"object\"}"
+    }
+  ],
+  "typedHttp": [
+    {
+      "values": {},
+      "value": ""
+    },
+    {
+      "values": {
+        "NOTICE": ""
+      },
+      "value": ""
+    },
+    {
+      "values": {
+        "NOTICE": " outside "
+      },
+      "value": " outside "
+    }
+  ],
+  "typedRejectedTypes": 4,
+  "browserFormsSubmitted": 4,
+  "neutralQueueItemsCancelled": 25,
+  "businessBuildsScheduled": 0,
+  "finalQueueEmpty": true,
+  "scope": "Constant literal formatted HTML with an empty hidden field; dynamic scripts and embedded input forms are not covered.",
+  "candidate": {
+    "version": "0.19.339-SNAPSHOT (private-60ce8e94-xykong)",
+    "sha256": "4b11b4bc3aa34188611df55956bc97876f86c2f9afa6d4a8f12779481b882c96",
+    "state": "UNPUBLISHED_REFERENCE_CANDIDATE_RENDER_BOUND_FIXED"
+  },
+  "case": "UP-AC-058",
+  "jenkins": "2.568.3",
+  "targetedHarnessTests": 6,
+  "visualInspection": "Desktop target and both mobile full pages inspected; normal wheel scrolling leaves content unobscured.",
+  "fullVerify": "PASSED",
+  "fullVerifyTests": 433,
+  "implementationEntries": 570,
+  "implementationResourceMatch": true,
+  "finalVerifyHpiSha256": "17022e7261005d7511f1e50ed739933412ddaa949e9c881f3e15d2232f5c682d"
+}

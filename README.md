@@ -136,3 +136,5 @@ length (`activeChoicesFilterLength`, default 1); see the [Provider guide](./docs
 Version `0.13.316` fixes reviewed data-only Active Choices mappings: they use a plain dropdown and reset to the new list default on dependency changes, while keeping an independent literal API default. See [reactive Providers](./docs/guide/providers.md#reactive-providers).
 
 Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves positive configured row counts. Legacy zero-row sizing needs separate UI verification.
+
+Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).

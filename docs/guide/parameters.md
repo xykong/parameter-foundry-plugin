@@ -5,6 +5,7 @@ Two public parameter types form the whole user-facing surface:
 | Symbol | Purpose |
 |---|---|
 | `foundryChoice` | Select one value, several values, or cells of a two-dimensional table |
+| `foundryReference` | Sanitized literal HTML presentation with an independent string value |
 | `foundryForm` | Typed, structured input validated as one JSON object |
 
 Both extend the Jenkins `ParameterDefinition` and expose their configuration
@@ -328,3 +329,17 @@ Core string API values or independent API defaults. Both fields are copied into
 Rebuild definitions and migration snippets, and invalidate previously issued
 Provider snapshots when changed. Choose a policy only after source/target browser
 verification. Formatted HTML references require separate redesign.
+
+## `foundryReference`
+
+Use `foundryReference(name: 'NOTICE', html: '<b>Read before building</b>')`
+for literal presentation references. HTML is cleaned using Jenkins Safe HTML;
+scripts, event handlers and embedded inputs are removed. The maximum source
+length is 65,536 characters. No source scripts execute. This is constant
+presentation; dynamic reference scripts require a separately reviewed redesign.
+
+Normal forms submit an empty hidden string field. CLI and standard JSON use the
+Active Choices literal string codec, preserving array order and escaping; the
+Typed API accepts strings only. Omitted values default to an empty Core
+StringParameterValue. Presentation does not affect the submitted value. The
+native reference history-copy behavior keeps its empty form field.

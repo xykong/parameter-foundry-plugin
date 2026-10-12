@@ -1,0 +1,160 @@
+{
+  "sourcePlugin": "uno-choice",
+  "sourceVersion": "2.8.10",
+  "sourceSha256": "3875250959e41c849894eb719b06b8e4a5fee4c6dae15d92a34b8415d9e0d35f",
+  "choiceType": "ET_FORMATTED_HTML",
+  "omitValueField": false,
+  "presentation": "<b>presentation only</b>",
+  "scope": "Literal presentation reference; no source business scripts executed.",
+  "cli": [
+    {
+      "input": null,
+      "type": "hudson.model.StringParameterValue",
+      "value": "",
+      "env": ""
+    },
+    {
+      "input": "",
+      "type": "hudson.model.StringParameterValue",
+      "value": "",
+      "env": ""
+    },
+    {
+      "input": " ",
+      "type": "hudson.model.StringParameterValue",
+      "value": " ",
+      "env": " "
+    },
+    {
+      "input": "outside",
+      "type": "hudson.model.StringParameterValue",
+      "value": "outside",
+      "env": "outside"
+    },
+    {
+      "input": "small,large",
+      "type": "hudson.model.StringParameterValue",
+      "value": "small,large",
+      "env": "small,large"
+    },
+    {
+      "input": "large,small",
+      "type": "hudson.model.StringParameterValue",
+      "value": "large,small",
+      "env": "large,small"
+    }
+  ],
+  "form": [
+    {
+      "input": {},
+      "type": "hudson.model.StringParameterValue",
+      "value": "",
+      "env": ""
+    },
+    {
+      "input": {
+        "value": ""
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "",
+      "env": ""
+    },
+    {
+      "input": {
+        "value": " "
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": " ",
+      "env": " "
+    },
+    {
+      "input": {
+        "value": "raw,comma"
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "raw,comma",
+      "env": "raw,comma"
+    },
+    {
+      "input": {
+        "value": []
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "",
+      "env": ""
+    },
+    {
+      "input": {
+        "value": [
+          "small",
+          "large"
+        ]
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "small,large",
+      "env": "small,large"
+    },
+    {
+      "input": {
+        "value": [
+          "large",
+          "small"
+        ]
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "large,small",
+      "env": "large,small"
+    },
+    {
+      "input": {
+        "value": [
+          "a,b",
+          "quote\""
+        ]
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "a,b,quote\\\"",
+      "env": "a,b,quote\\\""
+    },
+    {
+      "input": {
+        "value": null
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "null",
+      "env": "null"
+    },
+    {
+      "input": {
+        "value": true
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "true",
+      "env": "true"
+    },
+    {
+      "input": {
+        "value": 7
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "7",
+      "env": "7"
+    },
+    {
+      "input": {
+        "value": {
+          "nested": "object"
+        }
+      },
+      "type": "hudson.model.StringParameterValue",
+      "value": "{\"nested\":\"object\"}",
+      "env": "{\"nested\":\"object\"}"
+    }
+  ],
+  "default": {
+    "type": "hudson.model.StringParameterValue",
+    "value": "",
+    "env": "",
+    "description": null
+  }
+}

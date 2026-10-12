@@ -6,6 +6,7 @@ import io.jenkins.plugins.parameterfoundry.companion.file.FoundryFileParameterDe
 import io.jenkins.plugins.parameterfoundry.companion.file.FoundryStashedFileParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.AbstractFoundryParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterDefinition;
+import io.jenkins.plugins.parameterfoundry.definition.FoundryReferenceParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.util.List;
@@ -17,6 +18,12 @@ public final class MigrationSnippets {
     private MigrationSnippets() {}
 
     public static String forTarget(ParameterDefinition target) {
+        if (target instanceof FoundryReferenceParameterDefinition reference) {
+            return "foundryReference(name: " + quote(reference.getName())
+                    + ", html: " + quote(reference.getHtml())
+                    + (reference.getDescription() == null ? "" : ", description: " + quote(reference.getDescription()))
+                    + ")";
+        }
         if (target instanceof FoundryFileParameterDefinition file) {
             return "foundryFile(name: " + quote(file.getName()) + ", deliveryMode: " + quote(file.getDeliveryMode())
                     + ("workspace".equals(file.getDeliveryMode())
