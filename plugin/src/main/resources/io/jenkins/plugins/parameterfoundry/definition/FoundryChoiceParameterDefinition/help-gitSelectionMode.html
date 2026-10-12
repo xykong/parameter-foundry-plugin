@@ -3,6 +3,9 @@
   dropdown selection separately from the default used by API and CLI callers.
   <code>default</code> selects an exact stored-default match, then the first option containing that
   default, then the first option. <code>top</code> selects the first option. <code>none</code> leaves
-  the source's native first-option behavior. Empty option sets have no selection.
+  native selection: a one-row dropdown uses its first option; a multi-row list renderer or a
+  searchable list explicitly configured with more than one visible row stays unselected.
+  Searchable controls without an explicit row count retain their existing first-option behavior.
+  Empty option sets have no selection.
   Changing this field does not change <code>defaultMode</code> or <code>defaultValue</code>.
 </div>

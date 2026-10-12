@@ -934,6 +934,12 @@
   }
 
   function gitSelectedOption(field, options) {
+    if (field.dataset.gitSelectionMode === "none" &&
+        ((field.dataset.renderer === "list" &&
+          listRows(field, Math.min(12, Math.max(4, options.length))) > 1) ||
+         (field.dataset.renderer === "searchable" && Number(field.dataset.visibleItemCount) > 1))) {
+      return null;
+    }
     var value = field.dataset.gitDefaultValue || "";
     if (field.dataset.gitSelectionMode === "default" && value.trim().length > 0) {
       return options.find(function (option) { return option.value === value; }) ||
@@ -1068,13 +1074,20 @@
           : Number(field.dataset.sourceChoiceDefaultIndex);
       }
       if (searchable && !legacySource) {
-        select.size = Math.min(8, Math.max(2, select.options.length));
+        select.size = legacyGit && Number(field.dataset.visibleItemCount) > 0
+          ? listRows(field, 8)
+          : Math.min(8, Math.max(2, select.options.length));
       } else if (field.dataset.renderer === "list") {
         // A list box keeps the options visible, which is what the migrated node parameter wants.
         select.size = listRows(field, Math.min(12, Math.max(4, select.options.length)));
       } else {
         // A plain select renderer stays a dropdown; only the searchable renderer lists matches.
         select.removeAttribute("size");
+      }
+      if (legacyGit && field.dataset.gitSelectionMode === "none" &&
+          selected.size === 0 && select.size > 1) {
+        // Appending options before setting size can auto-select the first dropdown option.
+        select.selectedIndex = -1;
       }
       status.textContent =
         !legacyGit && !legacyExtended && matches.length > MAX_RENDERED_OPTIONS

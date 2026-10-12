@@ -18,6 +18,7 @@ suffix marks a build that is deployed but not tagged.
 ### Fixed
 
 - List Git Branches migration previews no longer translate `SortMode.NONE` into alphabetical order.
+- Git compatibility lists with `gitSelectionMode: none` and multiple visible rows retain an empty UI selection while keeping the API default unchanged.
 
 ## 0.17.331 - 2026-10-12
 

@@ -19,6 +19,7 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - [Cookbook](docs/guide/examples.md): copy-pasteable configurations
 - [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
 - Git `sortOrder: none` preserves unsorted List Git Branches category order through Java HashSet iteration; full-ref values and combined-category grouping require separate verification.
+- Git `gitSelectionMode: none` leaves multi-row list renderers and explicitly sized searchable lists unselected; one-row dropdowns and unconfigured searchable controls retain their existing selection behavior. API defaults remain independent.
 - [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
 - [Best practices](docs/guide/best-practices.md): modelling, defaults, security, scale
 - [Design goals](docs/guide/design-goals.md): principles, scope, non-goals

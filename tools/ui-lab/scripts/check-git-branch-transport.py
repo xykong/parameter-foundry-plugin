@@ -77,6 +77,54 @@ async def main():
                 await result(base,1,expected)
                 checks.append(name+' dropdown and form output')
             base=lab.BASE_URL+'/job/git-transport-top'
+            for width,height in [(1440,1000),(390,844)]:
+                await page.set_viewport_size({'width':width,'height':height})
+                for name,rows,selection in [('none-list',20,[]),('none-one-row',1,['main']),('none-filter-list',20,[])]:
+                    base=lab.BASE_URL+'/job/git-transport-'+name
+                    await page.goto(base+'/build?delay=0sec')
+                    await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+                    select=page.locator('[data-up-enhanced] select')
+                    assert await select.evaluate('s=>s.size')==rows
+                    assert await select.evaluate('s=>Array.from(s.selectedOptions).map(o=>o.value)')==selection
+                    if name=='none-filter-list':
+                        await page.locator('[data-up-enhanced] input[type=search]').fill('^release/')
+                        assert await select.locator('option').count()==2
+                        assert await select.evaluate('s=>Array.from(s.selectedOptions).map(o=>o.value)')==[]
+                    number=(await (await page.request.get(base+'/api/json?tree=nextBuildNumber')).json())['nextBuildNumber']
+                    await page.get_by_role('button',name='Build',exact=True).click()
+                    await result(base,number,'main' if rows==1 else 'release/prod')
+                    checks.append(name+' selection, rows and literal form default at '+str(width))
+                    if rows==20:
+                        await page.goto(base+'/build?delay=0sec')
+                        await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+                        select=page.locator('[data-up-enhanced] select')
+                        if name=='none-filter-list':
+                            search=page.locator('[data-up-enhanced] input[type=search]')
+                            await search.fill('^absent$')
+                            assert await select.locator('option').count()==0
+                            assert await select.evaluate('s=>s.selectedIndex')==-1
+                            number=(await (await page.request.get(base+'/api/json?tree=nextBuildNumber')).json())['nextBuildNumber']
+                            await page.get_by_role('button',name='Build',exact=True).click()
+                            await result(base,number,'release/prod')
+                            checks.append('NONE empty filtered form retains API default at '+str(width))
+                            await page.goto(base+'/build?delay=0sec')
+                            await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+                            search=page.locator('[data-up-enhanced] input[type=search]')
+                            await search.fill('^absent$')
+                            await search.fill('')
+                            select=page.locator('[data-up-enhanced] select')
+                            assert await select.locator('option').count()==3
+                            assert await select.evaluate('s=>s.selectedIndex')==-1
+                        await select.select_option('release/prod-v2')
+                        if name=='none-filter-list':
+                            await search.fill('[')
+                            assert await select.input_value()=='release/prod-v2'
+                        number=(await (await page.request.get(base+'/api/json?tree=nextBuildNumber')).json())['nextBuildNumber']
+                        await page.get_by_role('button',name='Build',exact=True).click()
+                        await result(base,number,'release/prod-v2')
+                        checks.append('NONE manual selection retained on submit at '+str(width)+' '+name)
+            await page.set_viewport_size({'width':1440,'height':1000})
+            base=lab.BASE_URL+'/job/git-transport-top'
             response=await page.request.post(base+'/buildWithParameters?delay=0sec')
             assert response.status in [200,201,302],response.status
             await result(base,2,'release/prod')

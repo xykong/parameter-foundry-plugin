@@ -206,7 +206,12 @@ Supplied snapshots must still match the dependency values. Typed explicit inputs
 REST response interpretation and browser parity need separate migration verification.
 
 `list-git-branches` preserves literal revision submission for a Provider-backed single
-choice without dependencies. CLI accepts non-empty strings literally; empty input uses
+choice without dependencies. With `gitSelectionMode: none`, a one-row dropdown
+selects its first option, while a multi-row list renderer or a searchable list
+explicitly configured with more than one visible row remains unselected.
+A positive `visibleItemCount` also preserves rows for a searchable Git
+list; without it, searchable controls retain their existing presentation. The API
+default is independent of UI selection. CLI accepts non-empty strings literally; empty input uses
 the API default. Standard requests read only the first field; a blank first field uses
 the default even if later fields are nonblank. Form JSON joins arrays with commas and
 uses the stored `defaultValue` literal when the result is empty. Explicit values and

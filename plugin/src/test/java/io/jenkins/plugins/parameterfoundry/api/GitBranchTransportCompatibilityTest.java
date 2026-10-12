@@ -77,6 +77,40 @@ class GitBranchTransportCompatibilityTest {
     }
 
     @Test
+    void unselectedListFormKeepsLiteralDefaultWithoutLoadingGit(JenkinsRule j) throws Exception {
+        j.jenkins.setNumExecutors(0);
+        j.jenkins.setCrumbIssuer(null);
+        var job = j.createFreeStyleProject();
+        var parameter = definition();
+        parameter.setRenderer("list");
+        parameter.setVisibleItemCount(20);
+        parameter.setGitSelectionMode("none");
+        job.addProperty(new ParametersDefinitionProperty(parameter));
+        var client = j.createWebClient().withJavaScriptEnabled(false);
+        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        var page = client.goTo(job.getUrl() + "build?delay=0sec");
+        var field = (org.htmlunit.html.HtmlDivision) page.getFirstByXPath("//div[@data-parameter-name='REF']");
+        assertEquals("20", field.getAttribute("data-visible-item-count"));
+        assertEquals("none", field.getAttribute("data-git-selection-mode"));
+        var request = new WebRequest(new URL(j.getURL(), job.getUrl() + "build?delay=0sec"), HttpMethod.POST);
+        request.setRequestParameters(
+                List.of(new NameValuePair("json", "{\"parameter\":[{\"name\":\"REF\",\"value\":[]}]}")));
+        j.createWebClient().getPage(request);
+        var items = j.jenkins.getQueue().getItems();
+        assertEquals(1, items.length);
+        try {
+            var value = items[0].getAction(ParametersAction.class).getParameter("REF");
+            assertEquals("release/default", scalar(value));
+            var environment = new hudson.EnvVars();
+            value.buildEnvironment(null, environment);
+            assertEquals("release/default", environment.get("REF"));
+            assertTrue(job.getBuilds().isEmpty());
+        } finally {
+            j.jenkins.getQueue().cancel(items[0]);
+        }
+    }
+
+    @Test
     void formFallbackKeepsStoredLiteralInsteadOfFetchingTop(JenkinsRule j) {
         var definition = definition();
         definition.setDefaultMode("first");
