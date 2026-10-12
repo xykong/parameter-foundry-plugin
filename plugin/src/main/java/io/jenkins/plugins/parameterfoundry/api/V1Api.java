@@ -125,8 +125,16 @@ public final class V1Api {
                             .map(located -> located.provider() instanceof RestProviderDefinition rest
                                     && rest.isActiveChoicesResponse())
                             .orElse(false);
+            if (foundry instanceof FoundryChoiceParameterDefinition policy
+                    && policy.isActiveChoicesInput()
+                    && !"auto".equals(policy.getActiveChoicesFilterMode())) {
+                result.put(
+                        "filterMode",
+                        "regex".equals(policy.getActiveChoicesFilterMode()) ? "active-choices-regex" : "none");
+                result.put("sourceChoiceFilterLength", policy.getActiveChoicesFilterLength());
+            }
             if (sourceChoice) {
-                result.put("filterMode", "active-choices-regex");
+                if (!result.containsKey("filterMode")) result.put("filterMode", "active-choices-regex");
                 result.put(
                         "sourceChoiceFilterLength",
                         ((FoundryChoiceParameterDefinition) foundry).getActiveChoicesFilterLength());

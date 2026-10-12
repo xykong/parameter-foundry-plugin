@@ -188,6 +188,17 @@ public final class ProviderSnapshotStore {
             }
         }
         String baseDigest = Digests.sha256(value.toString());
+        if (definition instanceof FoundryChoiceParameterDefinition policy
+                && policy.isActiveChoicesInput()
+                && (!"auto".equals(policy.getActiveChoicesFilterMode())
+                        || !"default".equals(policy.getActiveChoicesRefreshMode()))) {
+            baseDigest = Digests.sha256(net.sf.json.JSONArray.fromObject(java.util.List.of(
+                            "active-choices-ui-policy-v1",
+                            baseDigest,
+                            policy.getActiveChoicesFilterMode(),
+                            policy.getActiveChoicesRefreshMode()))
+                    .toString());
+        }
         if (definition instanceof FoundryChoiceParameterDefinition choice
                 && choice.isActiveChoicesInput()
                 && choice.getActiveChoicesFilterLength() != 1) {

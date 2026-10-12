@@ -46,6 +46,8 @@ public final class MigrationSnippets {
                             ? ",\n  activeChoicesApiDefaultMode: " + quote(choice.getActiveChoicesApiDefaultMode())
                                     + ",\n  activeChoicesApiDefaultLiteral: "
                                     + quote(choice.getActiveChoicesApiDefaultLiteral())
+                                    + ",\n  activeChoicesFilterMode: " + quote(choice.getActiveChoicesFilterMode())
+                                    + ",\n  activeChoicesRefreshMode: " + quote(choice.getActiveChoicesRefreshMode())
                                     + ",\n  activeChoicesFilterLength: " + choice.getActiveChoicesFilterLength()
                                     + ",\n  dependsOn: ["
                                     + choice.getDependsOn().stream()
@@ -100,6 +102,8 @@ public final class MigrationSnippets {
                                     + quote(active.getActiveChoicesApiDefaultMode())
                                     + ",\n  activeChoicesApiDefaultLiteral: "
                                     + quote(active.getActiveChoicesApiDefaultLiteral())
+                                    + ",\n  activeChoicesFilterMode: " + quote(active.getActiveChoicesFilterMode())
+                                    + ",\n  activeChoicesRefreshMode: " + quote(active.getActiveChoicesRefreshMode())
                                     + ",\n  activeChoicesFilterLength: " + active.getActiveChoicesFilterLength()
                                     + ",\n  dependsOn: ["
                                     + active.getDependsOn().stream()

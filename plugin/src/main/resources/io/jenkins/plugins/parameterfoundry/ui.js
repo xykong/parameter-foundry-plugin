@@ -952,6 +952,7 @@
     var legacyGit = field.dataset.standardApiInputMode === "list-git-branches";
     var legacyExtended = ["extended-choice", "active-choices"].includes(field.dataset.standardApiInputMode);
     var legacySource = field.dataset.sourceChoiceFilter === "active-choices-regex";
+    var hideSourceFilter = field.dataset.activeChoicesFilterMode === "none";
     var allowCustom = field.dataset.allowCustom === "true";
     var wantsRadio = field.dataset.renderer === "radio" && !allowCustom;
     if (wantsRadio && (legacyExtended || options.length <= MAX_RADIO_OPTIONS)) {
@@ -970,11 +971,11 @@
       field.dataset.parameterName || "Select an option",
     );
     select.setAttribute("aria-describedby", status.id);
-    var searchable =
+    var searchable = !hideSourceFilter && (
       legacySource || field.dataset.renderer === "searchable" ||
       wantsRadio ||
       (!legacyGit && !legacyExtended && options.length > MAX_RENDERED_OPTIONS) ||
-      allowCustom;
+      allowCustom);
     var customButton = null;
     var customValidation = null;
     if (searchable) {
@@ -1212,6 +1213,10 @@
 
   function enhanceMultipleList(field, options, initialValues) {
     var selected = new Set(initialValues);
+    var legacyActive = field.dataset.standardApiInputMode === "active-choices";
+    var sourceRegexMode = field.dataset.sourceChoiceFilter === "active-choices-regex";
+    var hideFilter = field.dataset.activeChoicesFilterMode === "none";
+    var sourceFilterUsed = false;
     var enhanced = document.createElement("div");
     enhanced.className = "parameter-foundry-enhanced";
     enhanced.dataset.upEnhanced = "true";
@@ -1226,34 +1231,47 @@
     );
     select.setAttribute("aria-describedby", status.id);
 
-    function filtered() {
-      var query = search.value.toLocaleLowerCase();
-      return options.filter(function (option) {
-        return option.search.indexOf(query) !== -1;
-      });
-    }
-
-    function render() {
-      var matches = filtered();
+    function render(fromFilter) {
+      var matches;
+      if (sourceRegexMode) {
+        var query = search.value.toLowerCase();
+        var minimumLength = Number(field.dataset.sourceChoiceFilterLength);
+        if (query.length && query.length < minimumLength) return;
+        var expression;
+        try { expression = new RegExp(query); }
+        catch (_error) { status.textContent = "Invalid regular expression; keeping the previous selection."; return; }
+        matches = options.filter(function (option) {
+          var caption = document.createElement("option");
+          caption.textContent = option.label == null ? option.value : option.label;
+          return expression.test(caption.innerHTML.toLowerCase());
+        });
+        if (fromFilter) sourceFilterUsed = true;
+        if (sourceFilterUsed) selected.clear();
+      } else {
+        var query = search.value.toLocaleLowerCase();
+        matches = options.filter(function (option) { return option.search.indexOf(query) !== -1; });
+      }
       removeChildren(select);
-      matches.slice(0, MAX_RENDERED_OPTIONS).forEach(function (option) {
+      (legacyActive ? matches : matches.slice(0, MAX_RENDERED_OPTIONS)).forEach(function (option) {
         var item = document.createElement("option");
         item.value = option.value;
         item.textContent = option.label == null ? option.value : option.label;
-        item.disabled = option.disabled;
+        item.disabled = sourceRegexMode && sourceFilterUsed ? false : option.disabled;
         item.selected = selected.has(option.value);
         item.title = option.disabledReason || option.description || "";
         select.appendChild(item);
       });
       select.size = listRows(field, Math.min(10, Math.max(1, select.options.length)));
       status.textContent = selectedSummary(field, selected.size, options.length);
+      if (sourceRegexMode && sourceFilterUsed) setSubmittedValues(field, selected, Boolean(fromFilter), options);
     }
 
-    search.addEventListener("input", render);
+    search.addEventListener(sourceRegexMode ? "keyup" : "input", function () { render(true); });
     search.addEventListener("keydown", function (event) {
+      if (sourceRegexMode && event.key === "Escape") { event.preventDefault(); return; }
       if (event.key === "Escape" && search.value) {
         search.value = "";
-        render();
+        render(true);
         event.preventDefault();
       }
     });
@@ -1268,7 +1286,7 @@
       setSubmittedValues(field, selected, true, options);
       status.textContent = selectedSummary(field, selected.size, options.length);
     });
-    enhanced.appendChild(search);
+    if (!hideFilter) enhanced.appendChild(search);
     enhanced.appendChild(select);
     enhanced.appendChild(status);
     disableFallback(field);
@@ -1751,9 +1769,16 @@
           resolved.defaultValue = resolved.options.length ? resolved.options[0].value : null;
           resolved.sourceChoiceDefaultIndex = resolved.options.length ? 0 : -1;
         }
-        field.dataset.sourceChoiceFilter = resolved.filterMode;
-        field.dataset.sourceChoiceFilterLength = String(resolved.sourceChoiceFilterLength == null ? 1 : resolved.sourceChoiceFilterLength);
-        field.dataset.sourceChoiceDefaultIndex = String(resolved.sourceChoiceDefaultIndex == null ? -1 : resolved.sourceChoiceDefaultIndex);
+        var configuredFilter = field.dataset.activeChoicesFilterMode;
+        field.dataset.sourceChoiceFilter = configuredFilter === "regex" ? "active-choices-regex" :
+          configuredFilter === "none" ? "none" : resolved.filterMode;
+        field.dataset.sourceChoiceFilterLength = String(configuredFilter === "regex" ? field.dataset.sourceChoiceFilterLength : resolved.sourceChoiceFilterLength == null ? 1 : resolved.sourceChoiceFilterLength);
+        var sourceDefaultIndex = resolved.sourceChoiceDefaultIndex;
+        if (configuredFilter === "regex" && sourceDefaultIndex == null && field.dataset.multiple !== "true") {
+          sourceDefaultIndex = field.dataset.defaultMode === "none" ? -1 :
+            resolved.options.findIndex(function (option) { return option.value === resolved.defaultValue; });
+        }
+        field.dataset.sourceChoiceDefaultIndex = String(sourceDefaultIndex == null ? -1 : sourceDefaultIndex);
         if (resolved.table) {
           // A Provider-supplied matrix replaces the definition copy for this render.
           field.dataset.upResolvedTable = JSON.stringify(resolved.table);
@@ -1787,10 +1812,11 @@
           var gitSelected = gitSelectedOption(field, options);
           initialValues = gitSelected ? [gitSelected.value] : [];
         }
-        if (field.dataset.standardApiInputMode === "active-choices" && resolved.filterMode === "active-choices-regex") {
+        var resetActiveSelection = !preserveSelection || field.dataset.activeChoicesRefreshMode !== "retain-valid";
+        if (resetActiveSelection && field.dataset.standardApiInputMode === "active-choices" && resolved.filterMode === "active-choices-regex") {
           initialValues = field.dataset.defaultMode === "none" || resolved.defaultValue == null ? [] :
             Array.isArray(resolved.defaultValue) ? resolved.defaultValue.slice() : [resolved.defaultValue];
-        } else if (field.dataset.standardApiInputMode === "active-choices") {
+        } else if (resetActiveSelection && field.dataset.standardApiInputMode === "active-choices") {
           // A source cascade rebuilds its selection when dependencies change,
           // even when the previous value remains in the new option list.
           initialValues = field.dataset.defaultMode === "none" ? [] : options.length ? [options[0].value] : [];

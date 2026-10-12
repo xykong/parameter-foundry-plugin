@@ -148,6 +148,8 @@ class ActiveChoicesMultipleCompatibilityTest {
                 original.setActiveChoicesApiDefaultMode("literal");
                 original.setActiveChoicesApiDefaultLiteral(" raw default ");
                 original.setActiveChoicesFilterLength(5);
+                original.setActiveChoicesFilterMode("regex");
+                original.setActiveChoicesRefreshMode("retain-valid");
             }
             String snippet = io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(original);
             String mapLiteral = "[" + snippet.substring("foundryChoice(".length(), snippet.lastIndexOf(')')) + "]";
@@ -162,6 +164,8 @@ class ActiveChoicesMultipleCompatibilityTest {
             assertEquals(original.getProviderId(), rebound.getProviderId());
             assertEquals(original.getDependsOn(), rebound.getDependsOn());
             assertEquals(original.getActiveChoicesFilterLength(), rebound.getActiveChoicesFilterLength());
+            assertEquals(original.getActiveChoicesFilterMode(), rebound.getActiveChoicesFilterMode());
+            assertEquals(original.getActiveChoicesRefreshMode(), rebound.getActiveChoicesRefreshMode());
             assertEquals(original.getVisibleItemCount(), rebound.getVisibleItemCount());
             assertEquals(
                     original.getDefaultParameterValue().getValue(),
@@ -174,5 +178,57 @@ class ActiveChoicesMultipleCompatibilityTest {
                     rebound.getDefaultParameterValue().getValue(),
                     restored.getDefaultParameterValue().getValue());
         }
+    }
+
+    @Test
+    void uiPoliciesPersistAndInvalidateProviderSnapshots(JenkinsRule j) throws Exception {
+        var definition = definition();
+        definition.setActiveChoicesFilterMode("regex");
+        definition.setActiveChoicesRefreshMode("retain-valid");
+        definition.setActiveChoicesFilterLength(5);
+        var restored = (FoundryChoiceParameterDefinition)
+                jenkins.model.Jenkins.XSTREAM2.fromXML(jenkins.model.Jenkins.XSTREAM2.toXML(definition));
+        assertEquals("regex", restored.getActiveChoicesFilterMode());
+        assertEquals("retain-valid", restored.getActiveChoicesRefreshMode());
+        assertEquals(5, restored.getActiveChoicesFilterLength());
+        var ordinary = definition();
+        ordinary.setStandardApiInputMode("repeated");
+        ordinary.setEnvironmentExport("delimited");
+        ordinary.setActiveChoicesFilterMode("regex");
+        assertFalse(
+                DefinitionValidationService.validateStoredDefinition(ordinary).isValid());
+        restored.setActiveChoicesRefreshMode("unknown");
+        assertFalse(
+                DefinitionValidationService.validateStoredDefinition(restored).isValid());
+        definition.setProviderId("regions");
+        definition.setChoices(List.of());
+        definition.setActiveChoicesApiDefaultMode("literal");
+        definition.setActiveChoicesApiDefaultLiteral("fallback");
+        var provider = new io.jenkins.plugins.parameterfoundry.provider.StaticProviderDefinition("regions");
+        provider.setOptions(List.of(new Option("fallback"), new Option("other")));
+        io.jenkins.plugins.parameterfoundry.provider.ParameterFoundryGlobalConfiguration.get()
+                .setProviders(List.of(provider));
+        var project = j.createFreeStyleProject();
+        project.addProperty(new hudson.model.ParametersDefinitionProperty(definition));
+        var resolution = io.jenkins.plugins.parameterfoundry.provider.ProviderResolutionService.resolve(
+                project, definition, ProviderOperation.RESOLVE, Map.of());
+        var snapshot = io.jenkins.plugins.parameterfoundry.snapshot.ProviderSnapshotStore.get()
+                .create(
+                        project,
+                        definition,
+                        Map.of(),
+                        resolution,
+                        io.jenkins.plugins.parameterfoundry.snapshot.SnapshotAudience.BUILD_VALUE);
+        definition.setActiveChoicesRefreshMode("default");
+        assertThrows(
+                EvaluationException.class,
+                () -> TypedParameterAdapterRegistry.decode(
+                        project,
+                        definition,
+                        true,
+                        JSONArray.fromObject(List.of("fallback")),
+                        Map.of(),
+                        snapshot.snapshotId(),
+                        ProviderOperation.BUILD));
     }
 }

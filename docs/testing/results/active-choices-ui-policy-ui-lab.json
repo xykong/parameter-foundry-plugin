@@ -1,0 +1,449 @@
+{
+  "case": "UP-AC-057",
+  "candidate": {
+    "version": "0.19.338-SNAPSHOT (private-9fcd367d-xykong)",
+    "sha256": "482031b881e1909769d12b90b1a4344111d3b2840578bd7bc094601d549bf6c1",
+    "state": "UNPUBLISHED_FINAL_UI_POLICY_CANDIDATE",
+    "sourceUiResourceMatch": true
+  },
+  "jenkins": "2.568.3",
+  "viewports": [
+    {
+      "viewport": 1440,
+      "filterPairs": [
+        {
+          "case": "initial",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "manual",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [
+              "other"
+            ],
+            "size": 4
+          }
+        },
+        {
+          "case": "fall",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [
+              "other"
+            ],
+            "size": 4
+          }
+        },
+        {
+          "case": "fallb",
+          "state": {
+            "values": [
+              "fallback"
+            ],
+            "labels": [
+              "fallback"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "^alph",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "xxxxx",
+          "state": {
+            "values": [],
+            "labels": [],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "[xxxx",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "a&amp",
+          "state": {
+            "values": [
+              "a&amp;b"
+            ],
+            "labels": [
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "unchanged-keyup",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "escape",
+          "query": "^alph",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        }
+      ],
+      "cascade": [
+        {
+          "role": "source",
+          "selectedAfterParentChange": "large"
+        },
+        {
+          "role": "core-source",
+          "selectedAfterParentChange": "small"
+        },
+        {
+          "role": "retain-valid",
+          "selectedAfterParentChange": "large"
+        },
+        {
+          "role": "default",
+          "selectedAfterParentChange": "small"
+        },
+        {
+          "role": "drop-invalid",
+          "selectedAfterParentChange": "small"
+        }
+      ],
+      "large": [
+        {
+          "role": "source",
+          "options": 181,
+          "tailSelectable": true
+        },
+        {
+          "role": "target",
+          "options": 181,
+          "tailSelectable": true
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "filterPairs": [
+        {
+          "case": "initial",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "manual",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [
+              "other"
+            ],
+            "size": 4
+          }
+        },
+        {
+          "case": "fall",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [
+              "other"
+            ],
+            "size": 4
+          }
+        },
+        {
+          "case": "fallb",
+          "state": {
+            "values": [
+              "fallback"
+            ],
+            "labels": [
+              "fallback"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "^alph",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "xxxxx",
+          "state": {
+            "values": [],
+            "labels": [],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "[xxxx",
+          "state": {
+            "values": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "labels": [
+              "fallback",
+              "other",
+              "ALPHA",
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "a&amp",
+          "state": {
+            "values": [
+              "a&amp;b"
+            ],
+            "labels": [
+              "a&amp;b"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "unchanged-keyup",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        },
+        {
+          "case": "escape",
+          "query": "^alph",
+          "state": {
+            "values": [
+              "ALPHA"
+            ],
+            "labels": [
+              "ALPHA"
+            ],
+            "selected": [],
+            "size": 4
+          }
+        }
+      ],
+      "cascade": [
+        {
+          "role": "source",
+          "selectedAfterParentChange": "large"
+        },
+        {
+          "role": "core-source",
+          "selectedAfterParentChange": "small"
+        },
+        {
+          "role": "retain-valid",
+          "selectedAfterParentChange": "large"
+        },
+        {
+          "role": "default",
+          "selectedAfterParentChange": "small"
+        },
+        {
+          "role": "drop-invalid",
+          "selectedAfterParentChange": "small"
+        }
+      ],
+      "large": [
+        {
+          "role": "source",
+          "options": 181,
+          "tailSelectable": true
+        },
+        {
+          "role": "target",
+          "options": 181,
+          "tailSelectable": true
+        }
+      ]
+    }
+  ],
+  "terminal": {
+    "queueEmpty": true,
+    "businessBuildsScheduled": 0
+  },
+  "formsSubmitted": 0,
+  "visualInspection": "Mobile regex list and desktop invalid-child fallback controls inspected; control captures are unobscured.",
+  "scope": "Synthetic literal source scripts only; no production migration or complete business acceptance.",
+  "fullVerifyTests": 427,
+  "implementationEntries": 564,
+  "finalVerifyHpiSha256": "02ae1d6b765c0bc4b4e4bf9e1f9dd4eaf438d099ed1b62c8f009403c1c523c23",
+  "implementationResourceMatch": true
+}

@@ -66,6 +66,8 @@ final class TypedParameterAdapterRegistry {
             schema.put("gitSelectionMode", single.getGitSelectionMode());
             schema.put("activeChoicesApiDefaultMode", single.getActiveChoicesApiDefaultMode());
             schema.put("activeChoicesApiDefaultLiteral", single.getActiveChoicesApiDefaultLiteral());
+            schema.put("activeChoicesFilterMode", single.getActiveChoicesFilterMode());
+            schema.put("activeChoicesRefreshMode", single.getActiveChoicesRefreshMode());
             schema.put("providerBacked", single.isProviderBacked());
             schema.put("dependsOn", JSONArray.fromObject(single.getDependsOn()));
             schema.put("renderer", single.getRenderer());

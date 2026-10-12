@@ -309,3 +309,22 @@ Errors use stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`; see
 ## Binary uploads
 
 Use `foundryFile` with workspace, base64 or stash delivery for file content. The earlier `foundryBase64File` and `foundryStashedFile` definitions remain compatible. Their Name, Description, limits, transports and Pipeline wrapper are documented in [File parameters](./file-parameters.md).
+
+### Reviewed Active Choices UI policies
+
+`activeChoicesFilterMode` defaults to `auto`, preserving the existing renderer and
+REST-source filter policy. Use `none` to hide filtering or `regex` to reproduce
+lowercase source regular-expression matching with `activeChoicesFilterLength`.
+A query below the minimum length retains the current control; invalid expressions
+also retain it. Source regex filters run on keyup, including keys that leave the query unchanged; Escape retains the query. A successful source-style multiple filter recreates the visible
+options and clears selection, including when the query is cleared. Option captions
+use the same escaped HTML representation as native source options for matching.
+
+`activeChoicesRefreshMode` defaults to `default`, retaining the existing
+reset-to-default behavior. `retain-valid` preserves enabled selections still
+present after dependency refresh and uses the UI default when none survive. Core-parent and mixed Foundry-parent legacy cascades can differ; compare the actual parent/child combination. Unfiltered compatibility lists retain the complete option set rather than limiting the list to the modern search window.
+These policies require `standardApiInputMode: active-choices`; they do not change
+Core string API values or independent API defaults. Both fields are copied into
+Rebuild definitions and migration snippets, and invalidate previously issued
+Provider snapshots when changed. Choose a policy only after source/target browser
+verification. Formatted HTML references require separate redesign.

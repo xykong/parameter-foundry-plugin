@@ -18,6 +18,9 @@
   <f:entry class="parameter-foundry-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="parameter-foundry-field" data-parameter-foundry="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
+         data-active-choices-filter-mode="${it.activeChoicesFilterMode}"
+         data-source-choice-filter-length="${it.activeChoicesFilterLength}"
+         data-active-choices-refresh-mode="${it.activeChoicesRefreshMode}"
          data-visible-item-count="${it.visibleItemCount}"
          data-selected-display="${it.selectedDisplay}"
          data-table="${it.tableJson}"

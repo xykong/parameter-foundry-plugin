@@ -88,6 +88,27 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         activeChoicesFilterLength = length;
     }
 
+    private String activeChoicesFilterMode;
+    private String activeChoicesRefreshMode;
+
+    public String getActiveChoicesFilterMode() {
+        return activeChoicesFilterMode == null ? "auto" : activeChoicesFilterMode;
+    }
+
+    @DataBoundSetter
+    public void setActiveChoicesFilterMode(String mode) {
+        activeChoicesFilterMode = mode;
+    }
+
+    public String getActiveChoicesRefreshMode() {
+        return activeChoicesRefreshMode == null ? "default" : activeChoicesRefreshMode;
+    }
+
+    @DataBoundSetter
+    public void setActiveChoicesRefreshMode(String mode) {
+        activeChoicesRefreshMode = mode;
+    }
+
     private int visibleItemCount;
 
     public int getVisibleItemCount() {
@@ -581,6 +602,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setActiveChoicesApiDefaultMode(getActiveChoicesApiDefaultMode());
         copy.setActiveChoicesApiDefaultLiteral(getActiveChoicesApiDefaultLiteral());
         copy.setActiveChoicesFilterLength(getActiveChoicesFilterLength());
+        copy.setActiveChoicesFilterMode(getActiveChoicesFilterMode());
+        copy.setActiveChoicesRefreshMode(getActiveChoicesRefreshMode());
         copy.setLegacyDefaultLiteral(getLegacyDefaultLiteral());
         copy.setLegacyEmptyChoiceAllowed(isLegacyEmptyChoiceAllowed());
         copy.setLegacyEmptyOptionsOmitCli(isLegacyEmptyOptionsOmitCli());

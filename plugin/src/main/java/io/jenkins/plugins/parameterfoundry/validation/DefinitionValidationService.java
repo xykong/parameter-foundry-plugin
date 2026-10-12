@@ -79,6 +79,14 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (!Set.of("auto", "none", "regex").contains(choice.getActiveChoicesFilterMode()))
+                errors.add("Active Choices filter mode must be auto, none or regex.");
+            if (!Set.of("default", "retain-valid").contains(choice.getActiveChoicesRefreshMode()))
+                errors.add("Active Choices refresh mode must be default or retain-valid.");
+            if (!choice.isActiveChoicesInput()
+                    && (!"auto".equals(choice.getActiveChoicesFilterMode())
+                            || !"default".equals(choice.getActiveChoicesRefreshMode())))
+                errors.add("Active Choices UI policies require compatibility mode.");
             validateActiveChoicesInput(choice, errors);
             if (choice.getVisibleItemCount() < 0 || choice.getVisibleItemCount() > 1000) {
                 errors.add("Visible item count must be between 0 and 1000.");
