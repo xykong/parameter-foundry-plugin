@@ -174,3 +174,5 @@ Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–100
 - Reviewed Active Choices UI policies: `activeChoicesFilterMode` auto/none/regex and `activeChoicesRefreshMode` default/retain-valid. Defaults retain existing behavior. Regex uses source lowercase/minimum-length rules; successful multiple filtering clears selection. Policy changes invalidate snapshots and must survive configuration/snippet/Rebuild copies. HTML reference migration remains separate.
 
 Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
+
+- Unreleased source-specific Git history reader: `legacyGitHistoryEnabled` defaults false, takes effect only after full restart, and requires source absence, immutable resource integrity and class ownership. Initial Core targets2.528.3/2.568.3; Beta/internal API exception is method-local and checker remains enabled. Status conflicts invalidate acceptance; hot native reinstall unsupported. See [history guide](docs/guide/history-compatibility.md). Actual-HPI activation/cold restore/rollback/UI gates pending.

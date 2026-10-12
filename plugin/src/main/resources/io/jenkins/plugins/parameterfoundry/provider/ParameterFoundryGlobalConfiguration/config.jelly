@@ -1,6 +1,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <f:section title="Parameter Foundry feature switches">
+    <f:entry title="Enable retired Git parameter history reader" field="legacyGitHistoryEnabled"
+             description="Explicit retirement mode; changes require a complete Jenkins restart.">
+      <f:checkbox />
+    </f:entry>
     <f:entry title="Enable migration adapters" field="migrationAdaptersEnabled"
              description="Expose source-plugin migration previews and apply/clone actions.">
       <f:checkbox />

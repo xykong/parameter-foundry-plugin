@@ -138,3 +138,5 @@ Version `0.13.316` fixes reviewed data-only Active Choices mappings: they use a 
 Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves positive configured row counts. Legacy zero-row sizing needs separate UI verification.
 
 Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
+
+Unreleased history retirement controls are described in the [historical Git parameter guide](docs/guide/history-compatibility.md); activation and rollout validation remain pending.

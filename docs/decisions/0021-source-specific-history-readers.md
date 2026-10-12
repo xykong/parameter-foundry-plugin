@@ -1,6 +1,6 @@
 # ADR 0021: Source-specific history readers
 
-- Status: Accepted design; implementation pending
+- Status: Accepted design; Git value implementation under release validation
 - Date: October 13, 2026
 - Extends: ADR 0008
 - Preserves: ADR 0016
@@ -50,9 +50,25 @@ reflection are not an implementation path.
 Initialize after plugin availability and before persisted configuration is
 consumed. Confirm explicit opt-in, genuine source absence, no failed or staged
 source installation, and no other exporter of the legacy class. Expose the jar
-through the actual Foundry PluginWrapper using the supported API, clear miss
-caches through the supported API, and verify resulting class ownership. Failure
+through the actual Foundry PluginWrapper, clear miss caches, and verify resulting
+class ownership. These calls require the reviewed API exception below. Failure
 must produce an explicit unavailable/error state rather than a compatibility claim.
+
+## Reviewed Core API exception
+
+`PluginWrapper.injectJarsToClasspath` is restricted Beta, and
+`CachingClassLoader` is restricted NoExternalUse. Public bytecode visibility does
+not make them stable plugin APIs. No stable interface satisfying both conditional
+exposure and existing Uber miss invalidation was identified in the inspected Core.
+
+The companion may use the official `SuppressRestrictedWarnings` declaration on
+one minimal helper, limited to these two owner classes. The access checker remains
+fully enabled; new restricted calls do not inherit a class/package/build-wide
+exemption. No reflective substitute or changed call expression is permitted.
+This exception requires maintenance and actual-HPI verification on each supported
+Core/loader combination. Initial tested targets are 2.528.3 and 2.568.3; unknown
+versions or loader shapes fail unavailable, never ACTIVE. This is an internal/Beta
+API dependency and development permission, not a production release approval.
 
 ## Supported lifecycle
 

@@ -1,0 +1,287 @@
+{
+  "scope": "Isolated synthetic Jenkins controllers; no production Job acceptance or source retirement approval",
+  "status": "Git implementation milestone validated; production retirement and other history families pending",
+  "coldRestore": [
+    {
+      "core": "2.568.3",
+      "candidateSha256": "365697a4311de3309e1f3ba6cc8fa5064ba06a642eedd3c87b561e62557cbdcb",
+      "stages": [
+        {
+          "stage": "native-paused",
+          "state": "NATIVE",
+          "number": 1,
+          "building": true
+        },
+        {
+          "stage": "bridge-paused",
+          "state": "ACTIVE",
+          "building": true
+        },
+        {
+          "stage": "native-finished",
+          "state": "NATIVE",
+          "result": "SUCCESS"
+        }
+      ],
+      "scope": "one synthetic Pipeline; two full process restarts; no production operations"
+    },
+    {
+      "core": "2.528.3",
+      "candidateSha256": "d0b52e200885afbafe58e6a7651b9287763650cb1bd453f6102a33a6d13861d5",
+      "stages": [
+        {
+          "stage": "native-paused",
+          "state": "NATIVE",
+          "number": 1,
+          "building": true
+        },
+        {
+          "stage": "bridge-paused",
+          "state": "ACTIVE",
+          "building": true
+        },
+        {
+          "stage": "native-finished",
+          "state": "NATIVE",
+          "result": "SUCCESS"
+        }
+      ],
+      "scope": "one synthetic Pipeline; two full process restarts; no production operations"
+    }
+  ],
+  "ui": {
+    "core": "2.568.3",
+    "browser": "153.0.8010.12",
+    "checks": [
+      {
+        "viewport": [
+          1440,
+          1000
+        ],
+        "historical": "feature/jenkins_test",
+        "submitted": " feature/custom_test ",
+        "expected": " feature/custom_test ",
+        "result": "SUCCESS"
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "historical": "feature/jenkins_test",
+        "submitted": "",
+        "expected": "current/default",
+        "result": "SUCCESS"
+      }
+    ],
+    "scope": "actual bridge history and two neutral Rebuilds; no source plugin"
+  },
+  "helpStatus": {
+    "browser": "153.0.8010.12",
+    "checks": [
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "help": true
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "help": true
+      },
+      {
+        "savedDisabled": true,
+        "state": "RESTART_REQUIRED",
+        "monitorVisible": true
+      }
+    ],
+    "readback": {
+      "state": "RESTART_REQUIRED",
+      "accepted": false
+    }
+  },
+  "verify": {
+    "first": "444 tests passed; SpotBugs URL.equals check failed",
+    "correction": "Exact external-form text comparison avoids DNS; complete verify running again",
+    "corrected": "mvn -B -ntp verify: BUILD SUCCESS, 444 tests, zero SpotBugs bugs/errors, Spotless passed"
+  },
+  "review": "No new High/Medium code findings; release approval not granted",
+  "remaining": [
+    "Production release artifact/version/review and operational gates",
+    "Source definitions/generators/reverse dependencies and queue/build/history/Replay gates",
+    "Extended Choice and File historical compatibility; whole-Job verification"
+  ],
+  "additionalLifecycle": {
+    "otherExporter": {
+      "sha256": "d0b52e200885afbafe58e6a7651b9287763650cb1bd453f6102a33a6d13861d5",
+      "cases": [
+        {
+          "core": "2.528.3",
+          "mode": "other-exporter",
+          "state": "OTHER_EXPORTER",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "stagedAfterActivation": {
+      "sha256": "d0b52e200885afbafe58e6a7651b9287763650cb1bd453f6102a33a6d13861d5",
+      "cases": [
+        {
+          "core": "2.528.3",
+          "mode": "staged-after-activation",
+          "state": "RESTART_REQUIRED",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": true,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "coldDisable": [
+      {
+        "core": "2.528.3",
+        "state": "DISABLED",
+        "accepted": false,
+        "monitor": false,
+        "legacyPresent": false,
+        "retainedArchive": true,
+        "jobs": 0,
+        "builds": 0,
+        "productionWrites": 0
+      }
+    ],
+    "pluginDisabled": [
+      {
+        "core": "2.528.3",
+        "foundryEnabled": false,
+        "foundryActive": false,
+        "legacyPresent": false,
+        "retainedArchive": true,
+        "jobs": 0,
+        "builds": 0,
+        "productionWrites": 0
+      }
+    ],
+    "unsupportedCore": {
+      "sha256": "d0b52e200885afbafe58e6a7651b9287763650cb1bd453f6102a33a6d13861d5",
+      "cases": [
+        {
+          "core": "2.580.1",
+          "mode": "unsupported",
+          "state": "ERROR",
+          "accepted": false,
+          "enabled": true,
+          "legacyPresent": false,
+          "monitor": true,
+          "jobs": 0,
+          "builds": 0,
+          "productionWrites": 0
+        }
+      ]
+    },
+    "coldDowngradeWithNative": [
+      {
+        "core": "2.568.3",
+        "foundryEnabled": true,
+        "foundryActive": true,
+        "legacyPresent": true,
+        "retainedArchive": true,
+        "jobs": 1,
+        "historicalBuilds": 3,
+        "newBuilds": 0,
+        "productionWrites": 0
+      }
+    ]
+  },
+  "finalCandidate": {
+    "identity": {
+      "hpiSha256": "6d3ab5fb6c5f9f01c052f21d395b54bc1711c3a26fbde0b1434e9a88a0f0b0ea",
+      "bytes": 676226,
+      "entries": {
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "io/jenkins/plugins/parameterfoundry/companion/history/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "io/jenkins/plugins/parameterfoundry/companion/history/LegacyGitHistoryReader/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-gitRefsProviderEnabled.html": "ad3d43e38fd6f0dab1e5233a8af78e25e9c3d1a96fa7270693367fee915df4b7",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-accessibleChoiceGridEnabled.html": "b3d7e442aafebe2fbe55d34d2a4152d5c7b56257b8a0e073a7e0fb5f089f86a7",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-providers.html": "a9dd29b53c48996e0b75437e33214a1a41575c4f11deb108d5d716856a8e16df",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-migrationAdaptersEnabled.html": "546dffb7ac07f57ad32869f69ab2bf74c8932a037c8e4070d512a7e2a7d8232f",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/config.jelly": "d9eb85d648903c5d799218d14bf2c740f55df0ebcfb77f424fd8c7fc03c34a55",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-legacyGitHistoryEnabled.html": "cd9d3365bdfe0dda1055251040e2254e5d076e36b168b3801f3678f66c3721dd",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-connectionProfiles.html": "73d5fae8053665c7e621b76879eed9acc9056baaab234ae963be3f7ed95e09a5",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration/help-scriptProviderEnabled.html": "343c82ba73fe684a8257215f251dfe9ed44138f9a04b815e6536694632c54c7e",
+        "io/jenkins/plugins/parameterfoundry/provider/ParameterFoundryGlobalConfiguration.class": "ad01ab7edaad06ddbef1070a07d4bc815935d7fa6542ec5e410d2810d5627b8d",
+        "io/jenkins/plugins/parameterfoundry/companion/history/HistoryReaderArchive.class": "61b3407949f2cb6ad85387a52f3e82df4d5ff9aa765688b288567ce6222b51d5",
+        "io/jenkins/plugins/parameterfoundry/companion/history/LegacyGitHistoryReader$State.class": "6ce28e897b1756443fec4eeb749a1c315d67a44eb5266f59a3234fce62d816fd",
+        "io/jenkins/plugins/parameterfoundry/companion/history/HistoryReaderClasspath.class": "32d89a11f853cafca4ff0a23a2a148e588a170489deb7935acf3032283c67016",
+        "io/jenkins/plugins/parameterfoundry/companion/history/LegacyGitHistoryReader$ConflictDetection.class": "8b4c7e74095bd7b0014fdc571926224faa7a3be1b22e22e3d2aed1e1f6219054",
+        "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar.sha256": "c7b8d5ad994e44b303fa1eb6500d30f82bc9ed8cae97a56f56f6d94b3df8af45",
+        "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar": "0b44f1751b08bed750b4aeaa4c5dd0a956cc7b67d9dc29940194c055ea87b94f",
+        "io/jenkins/plugins/parameterfoundry/companion/history/LegacyGitHistoryReader.class": "68a4eb02493d9531006588b9f68e099b1affda5ff7d930a8bf766f7345fc743f",
+        "io/jenkins/plugins/parameterfoundry/companion/history/LegacyGitHistoryReader/message.jelly": "3f68978a9e976f627360880f77698b3d12927a4f3e23040d254776ead9a7548e"
+      }
+    },
+    "comparison": {
+      "oldHpiSha256": "365697a4311de3309e1f3ba6cc8fa5064ba06a642eedd3c87b561e62557cbdcb",
+      "finalHpiSha256": "6d3ab5fb6c5f9f01c052f21d395b54bc1711c3a26fbde0b1434e9a88a0f0b0ea",
+      "libraryChangedEntries": [
+        "io/jenkins/plugins/parameterfoundry/companion/file/AbstractFoundryFileParameterDefinition/AbstractFoundryFileParameterDefinitionDescriptor/doCheckName.stapler",
+        "io/jenkins/plugins/parameterfoundry/companion/file/FoundryFileParameterDefinition/DescriptorImpl/doCheckName.stapler",
+        "io/jenkins/plugins/parameterfoundry/companion/history/HistoryReaderArchive.class",
+        "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar",
+        "io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar.sha256"
+      ],
+      "nestedPayloadIdentical": true,
+      "nestedDigestBound": true,
+      "scope": "Payload comparison; changed Archive class requires actual-HPI retest; does not imply production release"
+    },
+    "startup": [
+      {
+        "sha256": "6d3ab5fb6c5f9f01c052f21d395b54bc1711c3a26fbde0b1434e9a88a0f0b0ea",
+        "cases": [
+          {
+            "core": "2.528.3",
+            "mode": "absent",
+            "state": "ACTIVE",
+            "accepted": true,
+            "enabled": true,
+            "legacyPresent": true,
+            "monitor": false,
+            "jobs": 0,
+            "builds": 0,
+            "productionWrites": 0
+          }
+        ]
+      },
+      {
+        "sha256": "6d3ab5fb6c5f9f01c052f21d395b54bc1711c3a26fbde0b1434e9a88a0f0b0ea",
+        "cases": [
+          {
+            "core": "2.568.3",
+            "mode": "absent",
+            "state": "ACTIVE",
+            "accepted": true,
+            "enabled": true,
+            "legacyPresent": true,
+            "monitor": false,
+            "jobs": 0,
+            "builds": 0,
+            "productionWrites": 0
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -37,6 +37,7 @@ the case, but production configuration is never committed here.
 | Active Choices JSON response interpretation (UP-AC-049) | Source renderer coverage | Source renderer coverage | N/A | N/A | N/A | Parser/source oracle | Response order, null labels, fallback and resource boundaries |
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage; NONE browser gate pending | Existing Provider coverage; NONE browser gate pending | N/A | N/A | N/A | Required | Controller normalization, unsorted category order |
+| History reader lifecycle (UP-AC-061) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Checkbox and help passed | Historical rendering and Rebuild passed | N/A | Nine focused cases; two Core startup/cold CPS matrices | Final verify/artifact and remaining lifecycle gates pending |
 | History reader packaging (UP-AC-060) | N/A inactive resource | N/A inactive resource | N/A | N/A | N/A | Digest, exact entries, UID and literal behavior | Activation/lifecycle/UI remain separate gates |
 | Git source string history (UP-AC-059) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Existing textbox semantics | Passed actual Rebuild | Text input | Literal/default copy and Rebuild submission | Legacy string subclasses and unchanged current defaults |
 | Git transport compatibility (UP-AC-038) | Passed NONE/list20, list1 and searchable20 | Passed same cases at 390×844 | Existing renderer coverage | Existing renderer coverage | Repeated fields | Empty-list HTTP/default coverage | Build environment and snapshot binding |
@@ -50,6 +51,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-061 | Opt-in Git history reader | Default-off, restart-bound activation, integrity/storage checks, source-state and conflict handling. | Nine focused cases, two Core startup/cold CPS matrices and bridge UI passed; final verify/artifact and remaining lifecycle gates pending |
 | UP-AC-060 | Isolated history bundle | Keep legacy-named classes outside the initial plugin classpath; inspect the digest-bound nested jar independently. | Passed 438 full tests and two actual-HPI independent-process isolation cases; no reader activation |
 | UP-AC-059 | Git source string history | Rebuild with a pre-migration Core String subclass after replacing its definition; preserve literal input without fetching the Provider. | Passed 436 full tests and six desktop/mobile actual Rebuild submissions |
 | UP-AC-058 | Literal HTML reference | Preserve native literal string values separately from sanitized HTML presentation. | Passed Harness, paired browser and complete verify |
@@ -718,3 +720,78 @@ child-loader ownership (rather than accidentally inspecting the same-name test
 fixture). Complete `mvn -B -ntp verify` passes 438 tests, SpotBugs and Spotless. Two independent Jenkins 2.568.3 processes use the actual HPI without a same-name test fixture: native absent yields no legacy class; native present retains native ownership; Foundry exports neither class nor same-path view. HPI/main-library inspection finds no legacy FQN outside the fixed nested resource, and both processes match its sealed digest. Zero Jobs/builds. [Isolation record](./results/history-reader-packaging-isolation.json). This only packages an inactive
 resource: no startup loader, opt-in setting or retirement capability is advertised.
 Cold-switching, conflicts, JEP200 and reader UI require later acceptance cases.
+
+### UP-AC-061: Opt-in history lifecycle and managed resources
+
+Shared case. A fresh install must remain DISABLED without extracting a jar. Saving
+legacyGitHistoryEnabled=true persists the choice but returns RESTART_REQUIRED in
+the current JVM, with no class exposure. Only a cold start with genuine source
+absence may verify the fixed resource, retain it safely, and expose the value class.
+Native/disabled/failed/staged/other-exporter states must not silently activate.
+Conflict after activation remains unavailable until a complete restart.
+
+Focused verification: resource integrity, content and expanded-size bounds, altered
+retained files, symlink directory/archive rejection, exact package entries/UID and
+field help pass. Default-off, save/reload and same-JVM toggle state test passes.
+Access checker first rejected Beta injection and NoExternalUse cache type; the
+independent review permits only a method-local official annotation exception,
+not disabling the checker. Nine focused tests now pass with enforcement enabled,
+including a runtime ownership-check failure that must persist ERROR and invalidate
+acceptance instead of returning stale ACTIVE status.
+
+Isolated actual-HPI startup matrices pass seven cases each on Jenkins 2.528.3 and
+2.568.3: default-off, opt-in/source-absent, native present, both archive disable
+markers, corrupt staged source and failed source dependency. Hot source installation
+after activation reports CONFLICT and invalidates acceptance on both versions;
+this detects an unsupported transition and does not make hot installation safe.
+On 2.528.3, an independently packaged neutral test exporter owning the same
+historical type yields OTHER_EXPORTER, visible monitor and acceptance false,
+without extracting the reader jar. This is a synthetic loader ownership check,
+not a second business plugin migration.
+Adding a source `.hpi.disabled` marker after ACTIVE yields RESTART_REQUIRED,
+persists the status and invalidates acceptance. Removing the marker in the same
+JVM does not reactivate acceptance or unload the existing class.
+Disabling the saved setting and starting a new complete 2.528.3 process yields
+DISABLED and no legacy class exposure, even though the managed jar is retained
+on disk. The monitor is inactive and persisted state is DISABLED; no Jobs/builds
+are present in this cold-disable fixture.
+On a copied synthetic home, stopping Jenkins and disabling the Foundry plugin
+before a fresh 2.528.3 process prevents both the reader component and historical
+type from loading, even with opt-in true and the retained jar present. This is
+plugin-disable isolation, not historical restoration without a reader.
+Actual Jenkins 2.580.1, outside the reviewed Core allowlist, reports ERROR and a
+visible monitor with no legacy class exposure and no compatibility acceptance.
+It uses an otherwise loadable actual HPI and zero Jobs/builds.
+On 2.568.3, a cold downgrade to Foundry 0.19.340 with the native Git plugin restored
+retains the current Foundry definition and reads the neutral Job's historical
+native value, description and completed result. Three existing builds remain;
+no new build is scheduled, and the newer reader component is absent.
+On both Core versions, one neutral Pipeline preserves its historical ParametersAction and
+paused CPS local through full-process native-to-reader activation and reader-to-native
+rollback, then completes SUCCESS with the same environment and resolver value.
+
+With the source plugin absent and the reader ACTIVE, Chromium 153.0.8010.12 passes
+historical rendering and actual neutral Rebuild submissions at 1440×1000 and
+390×844. Padded edited input remains literal; empty input uses the current configured
+default. Both viewports expose the configuration field and its help. Saving the
+disabled setting reports RESTART_REQUIRED and invalidates acceptance while the
+existing JVM retains its loaded class. Help and status screenshots were visually
+inspected. An initial checkbox-overlay locator timeout is retained; the successful
+run clicks the visible label with normal scrolling.
+
+The first complete verify passes 444 tests but fails SpotBugs because resource
+origin checks use URL.equals, which can perform DNS resolution. The fix compares
+exact external-form text for the fixed local origin and resource. The corrected
+complete verify passes 444 tests, zero SpotBugs bugs/errors and Spotless. The frozen
+676226-byte candidate (SHA256 `6d3ab5fb6c5f9f01c052f21d395b54bc1711c3a26fbde0b1434e9a88a0f0b0ea`)
+passes actual startup, Foundry ownership and JEP200 XML roundtrip on both reviewed
+Core versions. Its nested payload is byte-identical to earlier runtime evidence;
+the digest is bound to its repackaged jar. Library differences are the corrected
+Archive class, nested jar/digest and relocated generated file-name validator
+metadata (the same `name` argument). Independent code review finds no new
+High/Medium findings. Production release/version/operational review, source
+retirement and whole-Job gates remain. These are isolated synthetic cases, not
+production Job acceptance. No release
+or source-plugin uninstall approved by these checks alone.
+
+[Isolated runtime evidence and remaining gates](./results/history-reader-runtime-isolated.json).

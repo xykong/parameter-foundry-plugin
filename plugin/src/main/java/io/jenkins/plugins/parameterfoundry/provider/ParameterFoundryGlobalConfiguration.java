@@ -23,6 +23,7 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
     private boolean scriptProviderEnabled = true;
     private boolean gitRefsProviderEnabled = true;
     private boolean accessibleChoiceGridEnabled = true;
+    private boolean legacyGitHistoryEnabled;
 
     public ParameterFoundryGlobalConfiguration() {
         load();
@@ -30,6 +31,16 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
 
     public static ParameterFoundryGlobalConfiguration get() {
         return GlobalConfiguration.all().get(ParameterFoundryGlobalConfiguration.class);
+    }
+
+    public boolean isLegacyGitHistoryEnabled() {
+        return legacyGitHistoryEnabled;
+    }
+
+    @DataBoundSetter
+    public void setLegacyGitHistoryEnabled(boolean enabled) {
+        legacyGitHistoryEnabled = enabled;
+        save();
     }
 
     public List<SharedProviderDefinition> getProviders() {

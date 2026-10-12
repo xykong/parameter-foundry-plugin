@@ -1,0 +1,11 @@
+<div>
+  Read characterized historical List Git Branches string values after the source
+  plugin has been fully retired. Disabled by default. Enable this setting and
+  restart Jenkins completely; changing it never switches classloaders live.
+  Current definitions, Jenkinsfiles, queued/running builds and historical Replay
+  require independent migration checks. While the reader is active, stage any
+  source-plugin rollback for the next complete restart: do not hot-install it with
+  <code>install-plugin -deploy</code>. Conflict detection reports an unsupported
+  state; it does not make hot installation safe. Extended Choice and file history
+  are outside this reader's scope.
+</div>

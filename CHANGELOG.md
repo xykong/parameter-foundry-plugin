@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- Add an opt-in historical Git string value reader with full-restart activation, source ownership checks and administrative status reporting.
+
 ### Fixed
 
 - Preserve pre-migration Git string values when copying historical defaults for Rebuild, without changing the configured Job default.
