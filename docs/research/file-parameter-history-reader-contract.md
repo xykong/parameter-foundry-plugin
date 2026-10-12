@@ -67,9 +67,10 @@ Base64 restores exact bytes. In the preserved copy both Stashed names, including
 the short-name fallback, and Base64 restore identical bytes. Historical filename
 and reader class ownership verify, with no new builds or historical file rewrites.
 The prototype uses build-bound StashManager operations and its own temporary
-directory; it never opens the stored controller tmpFile path. Non-null source
-references explicitly remain outside this prototype's contract and must be
-investigated without silently dropping them. No upload factories, download API,
+directory; it never opens the stored controller tmpFile path. A valid build-owned stash is authoritative even when a stale non-null source
+reference is present; the prototype neither opens nor deletes that reference.
+If no authoritative stash exists and a source reference remains, it reports an
+ownership-verification failure rather than silently discarding the reference. No upload factories, download API,
 wrapper, product opt-in/lifecycle or universal CPS guarantee is provided by this
 research result. Remaining states and product integration still need proof.
 
@@ -110,3 +111,32 @@ ordinary Stashed and the short-name fallback through its path environment. Each
 temporary path exists inside its wrapper body and disappears immediately after
 body completion. The build ends SUCCESS. This establishes byte/path/cleanup
 behavior to reproduce; it does not validate the prototype's wrapper compatibility.
+
+
+The private Base64 prototype now validates Basic Base64 grammar before streaming
+decoded content through an explicit read budget. An isolated Java 21 probe passes
+10,041 assertions covering deterministic grammar parity with the native decoder,
+valid binary inputs, exact and exceeded quotas, skip accounting, sticky failure,
+array bounds, reset rejection and close propagation. A fresh source-absent
+Jenkins 2.568.3 process still restores the preserved native fixture's three
+thirteen-byte payloads. The prototype's research quota is not a final historical
+size policy; it must not silently become the limit for all existing uploads.
+
+A separate, unintegrated single-file TAR/GZIP parser exercises compressed,
+expanded and payload budgets, expected leaf names, special/unknown entry types,
+extra entries, truncation, cooperative deadlines, interruption and constructor
+failure cleanup. Native preserved archives retain byte identity. Tests exposed
+the archive library's broad `isFile()` predicate accepting FIFO and unknown type
+flags; an explicit regular-type check is required. Passing these component tests
+does not make the existing generic `StashManager.unstash` call bounded. Hidden
+archive metadata, complete end-of-stream verification, source-path ownership,
+remote storage adapters and blocking-read deadlines remain integration concerns.
+
+Existing storage must be retrieved without selecting or persisting a new backend.
+Jenkins Core's `Run.getArtifactManager()` returns the existing manager (or its
+standard default); `pickArtifactManager()` may invoke factories and save the Run.
+A local archive adapter must verify its supported manager and a fixed build-owned
+path; a remote manager must have a reviewed bounded adapter rather than a silent
+local fallback. Installed plugin names alone do not prove historical manager
+ownership. Raw XML and directory-metadata inventories must remain scope-qualified
+and must not load production Run or CPS objects merely to inspect historical state.
