@@ -158,3 +158,28 @@ the native plugin through two full restarts. These remain unshipped research
 results; public downloads, pending-source handling and active wrapper/Disposer
 restoration are still separate requirements. Close failures retain the original
 exception and suppress cleanup failures while preserving interruption.
+
+
+The unshipped download endpoint requires a build context, Job.READ and identity
+membership in Core's filtered ParametersAction.getParameters() list before
+opening content. Raw getParameter(name) lookup is insufficient: it may retain
+values omitted by Core's visibility filter. Actual filtered-value tests return
+404 and omit the link in desktop and mobile historical parameter pages. The
+reader uses Foundry's attachment/octet-stream/nosniff response policy; inspected
+native downloads set octet-stream without forcing an attachment header.
+
+Uploaded-input downloads retain the documented Job.READ policy. An isolated
+paired test with Core's optional Run.ARTIFACTS permission enabled confirms that
+both the inspected native plugin and the reader allow Job readers without that
+separate artifact permission to download the three available input files. This
+is not a claim that input downloads enforce archived-output artifact ACLs.
+The policy must remain explicit when integrating this research into the product.
+
+The source-absent historical page prototype passes six real Chromium downloads
+at desktop/mobile widths, including Unicode and markup-looking filenames
+escaped as text with no injected elements or script. Separate response-failure
+tests exercise resource acquisition and write errors; an actual sixteen-MiB
+synthetic download sends a client TCP reset after a response prefix and verifies
+owned temporary cleanup. The reset observation proves the cleanup end state,
+not a specific server exception. No production data or builds are used. These
+results do not yet prove active native wrapper/Disposer or pending-upload support.
