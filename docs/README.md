@@ -59,6 +59,7 @@ help.
 - [0019: Release publication mechanism](./decisions/0019-release-publication-mechanism.md)
 
 - [0020: Built-in file parameters](./decisions/0020-built-in-file-parameters.md)
+- [0021: Source-specific history readers](./decisions/0021-source-specific-history-readers.md)
 
 - [File upload user guide](./guide/file-parameters.md)
 
