@@ -85,6 +85,16 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     private String legacyDefaultLiteral;
     private boolean legacyEmptyChoiceAllowed;
+    private boolean legacyEmptyOptionsOmitCli;
+
+    public boolean isLegacyEmptyOptionsOmitCli() {
+        return legacyEmptyOptionsOmitCli;
+    }
+
+    @DataBoundSetter
+    public void setLegacyEmptyOptionsOmitCli(boolean omit) {
+        legacyEmptyOptionsOmitCli = omit;
+    }
 
     public boolean isLegacyEmptyChoiceAllowed() {
         return legacyEmptyChoiceAllowed;
@@ -308,6 +318,12 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             DecodedInput input = InputDecoders.fromCli(this, value);
             if (!input.present() && ExtendedChoiceDefaultCompatibility.enabled(this)) {
                 return ExtendedChoiceDefaultCompatibility.evaluate(this);
+            }
+            if (ExtendedChoiceDefaultCompatibility.enabled(this)
+                    && getChoices().isEmpty()
+                    && isLegacyEmptyOptionsOmitCli()) {
+                ExtendedChoiceDefaultCompatibility.evaluateSubmission(this, input, getSelectableOptions(), getTable());
+                return null;
             }
             ResolvedProviderOptions resolved = !needsOptions(input)
                     ? new ResolvedProviderOptions(List.of(), null, null, null, false)
@@ -548,6 +564,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setActiveChoicesFilterLength(getActiveChoicesFilterLength());
         copy.setLegacyDefaultLiteral(getLegacyDefaultLiteral());
         copy.setLegacyEmptyChoiceAllowed(isLegacyEmptyChoiceAllowed());
+        copy.setLegacyEmptyOptionsOmitCli(isLegacyEmptyOptionsOmitCli());
         copy.setEnvironmentExportOrder(getEnvironmentExportOrder());
         copy.setGitSelectionMode(getGitSelectionMode());
         copy.setDefaultValues(getDefaultValues());

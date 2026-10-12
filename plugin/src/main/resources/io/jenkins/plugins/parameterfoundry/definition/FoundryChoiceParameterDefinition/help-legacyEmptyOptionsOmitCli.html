@@ -1,0 +1,9 @@
+<div>
+  <p>For static Extended Choice multiple-selection compatibility with no configured
+    choices, return no parameter for explicit CLI input instead of an existing
+    empty-string parameter. Migration enables this for a missing or blank source
+    option configuration. Leave it disabled for a nonblank comma-only configuration.</p>
+  <p>Omitted and comma-only CLI input still use the legacy default. Required and
+    minimum-selection constraints remain enforced. This does not change form JSON
+    or repeated HTTP field semantics and is unavailable for nonempty option lists.</p>
+</div>

@@ -82,6 +82,8 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             FoundryChoiceParameterDefinition target = new FoundryChoiceParameterDefinition(definition.getName());
             target.setSelectionMode("multiple");
             copyCommon(definition, target, options);
+            target.setLegacyEmptyOptionsOmitCli(
+                    options.isEmpty() && Util.fixEmptyAndTrim(readString(definition, "getValue")) == null);
             target.setRenderer(CHECK_BOX.equals(type) ? "checkbox" : "list");
             target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
             target.setDefaultValues(supportedDefaults);

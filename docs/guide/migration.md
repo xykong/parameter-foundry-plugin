@@ -64,6 +64,19 @@ Extended Choice multiple-choice browser controls preserve declared option order 
 submitted environment export. Explicit API values keep caller order; canonical values
 remain the sorted set.
 
+The next snapshot permits an empty Inline option list in static multiple-choice
+Extended Choice compatibility mode. The UI has no selectable options. Omitted CLI
+input and comma-only input use the literal default. Set `legacyEmptyOptionsOmitCli: true`
+for missing or blank source option configuration: explicit input, including an
+empty string, returns no parameter. For a nonblank comma-only source configuration,
+leave the flag off so explicit input returns an existing empty-string parameter.
+The migration adapter and generated snippet retain this distinction. The flag
+requires empty static multiple choices in Extended Choice compatibility.
+Form JSON continues to retain its submitted
+literal. Other selection modes still require at least one selectable option.
+Duplicate configured options still require additional compatibility work; do not
+deduplicate the source list and assume its display and submission behavior is unchanged.
+
 ## Boundaries
 
 Literal-only Active Choices single selections without selection markers,

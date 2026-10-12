@@ -96,6 +96,9 @@ public final class MigrationSnippets {
                     + (multiple instanceof FoundryChoiceParameterDefinition choice
                             ? ",\n  environmentExportOrder: " + quote(choice.getEnvironmentExportOrder())
                                     + (choice.isLegacyEmptyChoiceAllowed() ? ",\n  legacyEmptyChoiceAllowed: true" : "")
+                                    + (choice.isLegacyEmptyOptionsOmitCli()
+                                            ? ",\n  legacyEmptyOptionsOmitCli: true"
+                                            : "")
                                     + (choice.getLegacyDefaultLiteral() != null
                                             ? ",\n  legacyDefaultLiteral: " + quote(choice.getLegacyDefaultLiteral())
                                             : "")

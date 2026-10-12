@@ -27,6 +27,61 @@ import org.kohsuke.stapler.StaplerRequest2;
 
 @WithJenkins
 class ExtendedChoiceEmptyTransportTest {
+    @Test
+    void emptyLegacyOptionSetPreservesDefaultsAndFiltersCliInputs(JenkinsRule j) throws Exception {
+        var d = definition(true);
+        d.setChoices(List.of());
+        d.setDefaultMode("none");
+        d.setLegacyEmptyChoiceAllowed(false);
+        d.setLegacyEmptyOptionsOmitCli(true);
+        assertTrue(DefinitionValidationService.validateStoredDefinition(d).isValid());
+        assertEquals("placeholder", export(d.getDefaultParameterValue()));
+        assertEquals(List.of(), ((FoundryChoiceParameterValue) d.getDefaultParameterValue()).getValues());
+        assertNull(d.createValue((CLICommand) null, "unknown"));
+        assertNull(d.createValue((CLICommand) null, ""));
+        assertEquals("placeholder", export(d.createValue((CLICommand) null, ",,")));
+        d.setLegacyDefaultLiteral(null);
+        assertNull(d.getDefaultParameterValue());
+        assertNull(d.createValue((CLICommand) null, "unknown"));
+        var job = j.createFreeStyleProject("empty-legacy-options");
+        var omittedRequest = (StaplerRequest2) Proxy.newProxyInstance(
+                StaplerRequest2.class.getClassLoader(),
+                new Class<?>[] {StaplerRequest2.class},
+                (proxy, method, arguments) -> null);
+        d.setRequired(true);
+        assertThrows(hudson.AbortException.class, () -> d.createValue((CLICommand) null, "unknown"));
+        assertThrows(hudson.AbortException.class, () -> d.createValue((CLICommand) null, null));
+        assertThrows(hudson.AbortException.class, () -> d.createValue((CLICommand) null, ",,"));
+        assertThrows(RuntimeException.class, () -> d.createValue(omittedRequest));
+        assertThrows(
+                EvaluationException.class,
+                () -> TypedParameterAdapterRegistry.decode(
+                        job, d, false, null, Map.of(), null, ProviderOperation.VALIDATE));
+        d.setRequired(false);
+        d.setMinSelections(1);
+        assertThrows(hudson.AbortException.class, () -> d.createValue((CLICommand) null, ""));
+        assertThrows(hudson.AbortException.class, () -> d.createValue((CLICommand) null, null));
+        d.setMinSelections(0);
+        d.setLegacyEmptyOptionsOmitCli(false);
+        assertEquals("", export(d.createValue((CLICommand) null, "unknown")));
+        assertEquals("", export(d.createValue((CLICommand) null, "")));
+        d.setLegacyEmptyOptionsOmitCli(true);
+        job.addProperty(new ParametersDefinitionProperty(d));
+        j.configRoundtrip(job);
+        var restored = (FoundryChoiceParameterDefinition)
+                job.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("SAMPLE");
+        assertTrue(restored.getChoices().isEmpty());
+        assertTrue(restored.isLegacyEmptyOptionsOmitCli());
+        assertTrue(
+                DefinitionValidationService.validateStoredDefinition(restored).isValid());
+        d.setChoices(List.of(new Option("a")));
+        assertFalse(DefinitionValidationService.validateStoredDefinition(d).isValid());
+        d.setChoices(List.of());
+        d.setStandardApiInputMode("repeated");
+        d.setLegacyEmptyChoiceAllowed(false);
+        assertFalse(DefinitionValidationService.validateStoredDefinition(d).isValid());
+    }
+
     private FoundryChoiceParameterDefinition definition(boolean multiple) {
         var d = new FoundryChoiceParameterDefinition("SAMPLE");
         d.setSelectionMode(multiple ? "multiple" : "single");

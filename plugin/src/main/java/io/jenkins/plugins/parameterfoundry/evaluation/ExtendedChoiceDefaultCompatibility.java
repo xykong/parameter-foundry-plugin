@@ -51,6 +51,10 @@ public final class ExtendedChoiceDefaultCompatibility {
         }
         // The source default factory returns no ParameterValue for a blank effective default.
         if (literal == null || literal.isBlank()) {
+            if (definition.getChoices().isEmpty()) {
+                ParameterEvaluationService.evaluateMultiple(
+                        definition, DecodedInput.present(List.of()), definition.getSelectableOptions());
+            }
             return null;
         }
         var offered = new HashSet<String>();

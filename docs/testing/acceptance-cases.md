@@ -21,6 +21,7 @@ the case, but production configuration is never committed here.
 | Extended Choice literal forms (UP-AC-040) | Required | Required | Existing renderer coverage | Existing renderer coverage | Existing repeated field coverage | Required | Raw equality, persistence and editable Rebuild |
 | Extended Choice single transport (UP-AC-041) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Scalar defaults, UI selection and Rebuild |
 | Extended Choice empty transport (UP-AC-042) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Separator positions, omitted defaults and persisted flag |
+| Extended Choice empty option lists (UP-AC-053) | Passed | Passed | Existing renderer coverage | Existing renderer coverage | Passed | Harness and exact legacy factory | Empty-list defaults, CLI input and configuration roundtrip |
 | Active Choices single transport (UP-AC-043) | Required | Required | Existing renderer coverage | Existing renderer coverage | Required | Required | Literal strings, distinct UI/API defaults and configured-node order |
 | Configured-node whitespace parity (UP-AC-044) | Required | Required | Existing renderer coverage | Existing renderer coverage | N/A | Required | Original values, source trim filtering and shared Provider resolution |
 | Literal Active Choices preview fidelity (UP-AC-045) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Existing compatibility coverage | Required | Preview-generated Core string defaults and literal inputs |
@@ -546,3 +547,11 @@ after a real browser, CLI/API, or build-log check has passed.
   Exact 0.14.320 HPI checks passed on Jenkins 2.568.3: five neutral Pipeline builds,
   including expected rejection builds, plus Chromium snippet registration and help-page checks.
   Shared backend/Pipeline case; no build-form renderer changes.
+
+## UP-AC-053: Extended Choice empty option lists
+
+- Reproduction: configure a static multiple choice with no choices, Extended Choice transport compatibility, submitted export order and a literal API default. Try omitted CLI input, explicit empty or unknown text, and comma-only text with legacyEmptyOptionsOmitCli on and off; save and reload its Job configuration.
+- Expected: the definition remains valid, omitted/comma-only CLI input preserves the literal default, explicit input returns no parameter with the flag enabled and an existing empty-string parameter otherwise, and no selectable choices appear. Normal Foundry modes continue to reject empty lists.
+- Previous behavior: stored-definition validation rejected every empty static multiple-choice list.
+- Fix: allow an empty configured list only in multiple-choice Extended Choice compatibility; preserve the source CLI null-parameter behavior separately from form literal input.
+- Verification: the final candidate passed complete `mvn -B -ntp verify` (412 tests), 24 CLI factory comparisons against the exact legacy plugin, 48 real-plugin desktop/mobile pages with JavaScript on and off, and two real omitted HTTP requests returning 400 with no queueing. Harness also verifies flag persistence and rejects its use with nonempty choices or ordinary transport modes. The explicit flag removes the initially observed missing-versus-comma-only CLI presence mismatch. This proves the listed empty-option cases, not complete Job migration, historical Replay or every transport; duplicate configured options remain a separate open compatibility gap.

@@ -46,6 +46,11 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   order and duplicate deduplication; repeated supported values remain in the exported string.
   Extended Choice list/checkbox browser forms submit in declared option order; explicit API
   inputs retain their caller order, and canonical values remain sorted.
+  The next snapshot permits empty static multiple-choice option lists in this mode:
+  omitted CLI input preserves the literal default. Set legacyEmptyOptionsOmitCli for
+  missing/blank source options so explicit input returns no parameter; comma-only configured
+  options leave this flag off and explicit input returns an existing empty-string parameter.
+  Comma-only CLI input follows the omitted-input default path.
   Version 0.7.288 has known gaps for literal/blank defaults, unlisted form values,
   single selection and custom delimiters. Do not infer full parity from adapter
   classification; see [source contract](docs/research/extended-choice-static-transport-contract.md).

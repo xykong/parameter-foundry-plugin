@@ -17,6 +17,22 @@ class ExtendedChoiceMigrationAdapterTest {
     private final ExtendedChoiceMigrationAdapter adapter = new ExtendedChoiceMigrationAdapter();
 
     @Test
+    void emptyConfigurationRetainsCliParameterPresenceDistinction() {
+        for (String raw : new String[] {null, "", " ", ",,"}) {
+            var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, raw, null, null);
+            var target = assertInstanceOf(
+                    FoundryChoiceParameterDefinition.class,
+                    adapter.inspect(source).getTarget());
+            assertTrue(target.getChoices().isEmpty());
+            assertEquals(raw == null || raw.isBlank(), target.isLegacyEmptyOptionsOmitCli());
+            assertEquals(
+                    target.isLegacyEmptyOptionsOmitCli(),
+                    io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target)
+                            .contains("legacyEmptyOptionsOmitCli: true"));
+        }
+    }
+
+    @Test
     void staticSingleChoiceHasDirectMapping() {
         ExtendedChoiceParameterDefinition source =
                 source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_RADIO, "staging,production", "staging", null);

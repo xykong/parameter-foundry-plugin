@@ -105,6 +105,9 @@
       <f:entry title="Legacy default literal" field="legacyDefaultLiteral">
         <f:textbox name="parameter.legacyDefaultLiteral" value="${instance.legacyDefaultLiteral}" />
       </f:entry>
+      <f:entry title="Omit CLI parameter for missing legacy options" field="legacyEmptyOptionsOmitCli">
+        <f:checkbox name="parameter.legacyEmptyOptionsOmitCli" checked="${instance.legacyEmptyOptionsOmitCli}" />
+      </f:entry>
       <f:entry title="Environment export order" field="environmentExportOrder">
         <select class="jenkins-select__input" name="parameter.environmentExportOrder">
           <option value="canonical" selected="${instance.environmentExportOrder == 'canonical' ? 'selected' : null}">Canonical (sorted) order</option>

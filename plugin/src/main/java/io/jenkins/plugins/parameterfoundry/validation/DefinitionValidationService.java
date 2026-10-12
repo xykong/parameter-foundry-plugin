@@ -7,6 +7,7 @@ import io.jenkins.plugins.parameterfoundry.evaluation.CustomValuePolicy;
 import io.jenkins.plugins.parameterfoundry.evaluation.DependencyGraph;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
+import io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility;
 import io.jenkins.plugins.parameterfoundry.form.FormEvaluationService;
 import io.jenkins.plugins.parameterfoundry.form.FoundryFormParameterDefinition;
 import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
@@ -86,6 +87,11 @@ public final class DefinitionValidationService {
                 errors.add("Active Choices compatibility is single only.");
             if (choice.isLegacyEmptyChoiceAllowed() && !"extended-choice".equals(choice.getStandardApiInputMode())) {
                 errors.add("Legacy empty choice transport requires Extended Choice compatibility.");
+            }
+            if (choice.isLegacyEmptyOptionsOmitCli()
+                    && (!ExtendedChoiceDefaultCompatibility.enabled(choice)
+                            || !choice.getChoices().isEmpty())) {
+                errors.add("Legacy empty-option CLI omission requires empty Extended Choice multiple choices.");
             }
             if (choice.getLegacyDefaultLiteral() != null
                     && !"extended-choice".equals(choice.getStandardApiInputMode())) {
@@ -167,7 +173,8 @@ public final class DefinitionValidationService {
         }
         if (definition.getSelectableOptions().isEmpty()
                 && !(definition instanceof FoundryChoiceParameterDefinition choice
-                        && choice.isActiveChoicesSingleInput())) {
+                        && choice.isActiveChoicesSingleInput())
+                && !(definition.getChoices().isEmpty() && ExtendedChoiceDefaultCompatibility.enabled(definition))) {
             errors.add("At least one option is required");
             return;
         }

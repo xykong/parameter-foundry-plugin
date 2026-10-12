@@ -17,6 +17,9 @@ Static Extended Choice migrations include an explicit transport compatibility
 mode for legacy CLI, repeated REST fields and form JSON submissions.
 Multiple-choice browser forms preserve declared option order for legacy environment export;
 explicit API inputs retain the caller’s order.
+The next snapshot also accepts empty static option lists in this multiple-choice
+compatibility mode, preserving literal defaults and the source configuration's
+empty-list CLI behavior through `legacyEmptyOptionsOmitCli`.
 Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with
