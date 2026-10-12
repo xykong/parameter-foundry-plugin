@@ -163,3 +163,5 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - Reviewed single REST source filters preserve per-parameter activeChoicesFilterLength (default 1); copy source filterLength when migrating. Short nonempty filters retain the previous list; clearing rebuilds it.
 
 - Reviewed Active Choices single Mapping Providers reset UI selection on dependency changes; renderer select has no source regex filter. Literal API defaults are independent; option resolution requires declared dependencies. Ordinary mapping Providers retain valid selections.
+
+Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves this setting.

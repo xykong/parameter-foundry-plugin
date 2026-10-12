@@ -12,6 +12,12 @@
     return;
   }
 
+  function listRows(field, automaticRows) {
+    var configured = Number(field.dataset.visibleItemCount);
+    return Number.isInteger(configured) && configured > 0 && configured <= 1000
+      ? configured : automaticRows;
+  }
+
   function uniqueId(prefix) {
     nextId += 1;
     return prefix + "-" + nextId;
@@ -1065,7 +1071,7 @@
         select.size = Math.min(8, Math.max(2, select.options.length));
       } else if (field.dataset.renderer === "list") {
         // A list box keeps the options visible, which is what the migrated node parameter wants.
-        select.size = Math.min(12, Math.max(4, select.options.length));
+        select.size = listRows(field, Math.min(12, Math.max(4, select.options.length)));
       } else {
         // A plain select renderer stays a dropdown; only the searchable renderer lists matches.
         select.removeAttribute("size");
@@ -1226,7 +1232,7 @@
         item.title = option.disabledReason || option.description || "";
         select.appendChild(item);
       });
-      select.size = Math.min(10, Math.max(1, select.options.length));
+      select.size = listRows(field, Math.min(10, Math.max(1, select.options.length)));
       status.textContent = selectedSummary(field, selected.size, options.length);
     }
 
@@ -1323,7 +1329,7 @@
             control.appendChild(row);
           }
         });
-      if (listMode) control.size = Math.min(10, Math.max(1, control.options.length));
+      if (listMode) control.size = listRows(field, Math.min(10, Math.max(1, control.options.length)));
     }
     if (listMode) {
       control.addEventListener("change", function () {

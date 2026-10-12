@@ -79,6 +79,9 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (choice.getVisibleItemCount() < 0 || choice.getVisibleItemCount() > 1000) {
+                errors.add("Visible item count must be between 0 and 1000.");
+            }
             if (!Set.of("first", "literal").contains(choice.getActiveChoicesApiDefaultMode()))
                 errors.add("Active Choices API default mode must be first or literal.");
             if (!choice.isActiveChoicesSingleInput()

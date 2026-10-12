@@ -83,6 +83,22 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         activeChoicesFilterLength = length;
     }
 
+    private int visibleItemCount;
+
+    public int getVisibleItemCount() {
+        return visibleItemCount;
+    }
+
+    @DataBoundSetter
+    public void setVisibleItemCount(int count) {
+        visibleItemCount = count;
+    }
+
+    @Override
+    public int getListVisibleRows() {
+        return visibleItemCount > 0 ? visibleItemCount : super.getListVisibleRows();
+    }
+
     private String legacyDefaultLiteral;
     private boolean legacyEmptyChoiceAllowed;
     private boolean legacyEmptyOptionsOmitCli;
@@ -557,6 +573,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setProviderId(getProviderId());
         copy.setDependsOn(getDependsOn());
         copy.setRenderer(getRenderer());
+        copy.setVisibleItemCount(getVisibleItemCount());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
         copy.setActiveChoicesApiDefaultMode(getActiveChoicesApiDefaultMode());

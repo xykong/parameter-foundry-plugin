@@ -220,3 +220,5 @@ REST response interpretation and browser parity need separate migration verifica
 
 See the [characterized REST response contract](../research/active-choices-reactive-rest-contract.md)
 before replacing a source cascade. Transport support alone does not establish response, filter or UI parity.
+
+Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves this setting.

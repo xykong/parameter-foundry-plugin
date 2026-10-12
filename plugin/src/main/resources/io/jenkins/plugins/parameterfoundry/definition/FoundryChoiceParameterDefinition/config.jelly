@@ -51,6 +51,9 @@
       </div>
     </div>
   </f:entry>
+  <f:entry title="Visible list rows" field="visibleItemCount">
+    <f:number name="parameter.visibleItemCount" value="${instance.visibleItemCount}" min="0" max="1000" />
+  </f:entry>
   <j:choose>
     <j:when test="${instance.multiple}">
       <f:entry title="Renderer" field="renderer">

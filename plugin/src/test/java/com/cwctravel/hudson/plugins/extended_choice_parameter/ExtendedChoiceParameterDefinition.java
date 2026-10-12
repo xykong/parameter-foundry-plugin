@@ -15,6 +15,16 @@ public final class ExtendedChoiceParameterDefinition extends ParameterDefinition
     public static final String PARAMETER_TYPE_MULTI_LEVEL_MULTI_SELECT = "PT_MULTI_LEVEL_MULTI_SELECT";
     public static final String PARAMETER_TYPE_MULTI_LEVEL_SINGLE_SELECT = "PT_MULTI_LEVEL_SINGLE_SELECT";
 
+    private int visibleItemCount;
+
+    public int getVisibleItemCount() {
+        return visibleItemCount;
+    }
+
+    public void setVisibleItemCount(int count) {
+        visibleItemCount = count;
+    }
+
     private final String type;
     private final String value;
     private final String defaultValue;

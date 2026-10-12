@@ -39,6 +39,7 @@ public final class MigrationSnippets {
                     + choices(choice.getChoices())
                     + ",\n  renderer: "
                     + quote(choice.getRenderer())
+                    + (choice.getVisibleItemCount() > 0 ? ",\n  visibleItemCount: " + choice.getVisibleItemCount() : "")
                     + ",\n  standardApiInputMode: " + quote(choice.getStandardApiInputMode())
                     + (choice.isProviderBacked() ? ",\n  providerId: " + quote(choice.getProviderId()) : "")
                     + (choice.isActiveChoicesSingleInput()
@@ -95,6 +96,9 @@ public final class MigrationSnippets {
                     + quote(multiple.getDelimiter())
                     + (multiple instanceof FoundryChoiceParameterDefinition choice
                             ? ",\n  environmentExportOrder: " + quote(choice.getEnvironmentExportOrder())
+                                    + (choice.getVisibleItemCount() > 0
+                                            ? ",\n  visibleItemCount: " + choice.getVisibleItemCount()
+                                            : "")
                                     + (choice.isLegacyEmptyChoiceAllowed() ? ",\n  legacyEmptyChoiceAllowed: true" : "")
                                     + (choice.isLegacyEmptyOptionsOmitCli()
                                             ? ",\n  legacyEmptyOptionsOmitCli: true"

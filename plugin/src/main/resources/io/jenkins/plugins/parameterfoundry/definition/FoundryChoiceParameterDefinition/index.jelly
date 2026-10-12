@@ -18,6 +18,7 @@
   <f:entry class="parameter-foundry-entry" title="${h.escape(it.name)}" description="${it.formattedDescription}">
     <div name="parameter" class="parameter-foundry-field" data-parameter-foundry="true"
          data-parameter-name="${it.name}" data-renderer="${it.renderer}"
+         data-visible-item-count="${it.visibleItemCount}"
          data-selected-display="${it.selectedDisplay}"
          data-table="${it.tableJson}"
          data-multiple="${it.multiple}" data-required="${it.required}" data-option-count="${it.optionCount}"
@@ -108,7 +109,8 @@
               <j:when test="${it.renderer == 'list'}">
                 <div class="jenkins-select">
                   <select class="jenkins-select__input" name="${it.name}"
-                          data-up-native-value="true" multiple="multiple">
+                          data-up-native-value="true" multiple="multiple"
+                          size="${it.renderer == 'list' and it.visibleItemCount > 0 ? it.visibleItemCount : null}">
                     <j:forEach var="option" items="${it.fallbackChoices}">
                       <option value="${option.value}"
                               selected="${it.isDefault(option.value) ? 'selected' : null}"

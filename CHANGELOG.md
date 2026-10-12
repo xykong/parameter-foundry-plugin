@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- Choice lists support explicit visible row counts, including empty lists and pages without JavaScript; Extended Choice multiple-list migration retains the original count.
+
 ### Fixed
 
 - Extended Choice multiple-choice compatibility accepts empty option lists and preserves the CLI difference between missing options and a comma-only option configuration.

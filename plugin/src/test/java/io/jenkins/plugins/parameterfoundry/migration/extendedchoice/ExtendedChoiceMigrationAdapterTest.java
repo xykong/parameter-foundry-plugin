@@ -17,6 +17,26 @@ class ExtendedChoiceMigrationAdapterTest {
     private final ExtendedChoiceMigrationAdapter adapter = new ExtendedChoiceMigrationAdapter();
 
     @Test
+    void multipleListPreservesConfiguredRowsEvenWithoutOptions() {
+        for (String raw : new String[] {"he,mi", "he,he,mi", ""}) {
+            var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, raw, "he", null);
+            source.setVisibleItemCount(16);
+            var target = assertInstanceOf(
+                    FoundryChoiceParameterDefinition.class,
+                    adapter.inspect(source).getTarget());
+            assertEquals(16, target.getVisibleItemCount());
+            assertEquals(16, target.getListVisibleRows());
+            assertTrue(io.jenkins.plugins.parameterfoundry.migration.MigrationSnippets.forTarget(target)
+                    .contains("visibleItemCount: 16"));
+        }
+        var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_CHECK_BOX, "he,mi", "he", null);
+        source.setVisibleItemCount(16);
+        var target = assertInstanceOf(
+                FoundryChoiceParameterDefinition.class, adapter.inspect(source).getTarget());
+        assertEquals(0, target.getVisibleItemCount());
+    }
+
+    @Test
     void emptyConfigurationRetainsCliParameterPresenceDistinction() {
         for (String raw : new String[] {null, "", " ", ",,"}) {
             var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, raw, null, null);

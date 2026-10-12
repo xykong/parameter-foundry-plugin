@@ -85,6 +85,12 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
             target.setLegacyEmptyOptionsOmitCli(
                     options.isEmpty() && Util.fixEmptyAndTrim(readString(definition, "getValue")) == null);
             target.setRenderer(CHECK_BOX.equals(type) ? "checkbox" : "list");
+            if (!CHECK_BOX.equals(type)) {
+                String rows = readString(definition, "getVisibleItemCount");
+                if (!rows.isEmpty()) {
+                    target.setVisibleItemCount(Integer.parseInt(rows));
+                }
+            }
             target.setDefaultMode(supportedDefaults.isEmpty() ? "none" : "explicit");
             target.setDefaultValues(supportedDefaults);
             target.setLegacyDefaultLiteral(readString(definition, "getDefaultValue"));
