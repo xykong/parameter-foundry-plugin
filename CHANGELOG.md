@@ -13,6 +13,9 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.18.335 - 2026-10-12
 
+The HPI is `dist/parameter-foundry-0.18.335.hpi` (SHA-256
+`729b575e632838370ed36e79e0bb54a2c29a63697a964e7a798cac95e726ce06`, 652,340 bytes).
+
 ### Added
 
 - Git refs Providers support `sortOrder: none` for the unsorted Java HashSet order used by a List Git Branches ref category.
