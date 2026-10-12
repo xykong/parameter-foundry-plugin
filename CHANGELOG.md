@@ -11,10 +11,12 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+## 0.19.340 - 2026-10-13
+
+### Added
+
 - Add sanitized literal HTML references with independent native string transports.
-
 - Add explicit Active Choices source-regex, no-filter and retain-valid dependency refresh policies while preserving existing defaults.
-
 - Add multiple Active Choices string transports with independent API defaults and exact saved string history. Explicit typed arrays remain validated; ordinary multiple parameters keep their existing export rules.
 
 ## 0.18.335 - 2026-10-12
