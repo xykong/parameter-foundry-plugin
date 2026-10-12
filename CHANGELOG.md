@@ -13,6 +13,9 @@ suffix marks a build that is deployed but not tagged.
 
 ## 0.19.340 - 2026-10-13
 
+The HPI is `dist/parameter-foundry-0.19.340.hpi` (SHA-256
+`501dbaa2d1c77a08ef7136279879bdf821eb0c72bcef9e48ffa97531065a69ee`, 661,022 bytes).
+
 ### Added
 
 - Add sanitized literal HTML references with independent native string transports.
