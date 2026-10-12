@@ -15,10 +15,12 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /** Reads saved parameter text without reconstructing it from canonical selections or environment variables. */
 public final class FoundryParameterTextStep extends Step {
     private final String name;
+    private String fallbackIfMissing;
 
     @DataBoundConstructor
     public FoundryParameterTextStep(String name) {
@@ -32,9 +34,18 @@ public final class FoundryParameterTextStep extends Step {
         return name;
     }
 
+    public String getFallbackIfMissing() {
+        return fallbackIfMissing;
+    }
+
+    @DataBoundSetter
+    public void setFallbackIfMissing(String fallbackIfMissing) {
+        this.fallbackIfMissing = fallbackIfMissing;
+    }
+
     @Override
     public StepExecution start(StepContext context) {
-        return new Execution(context, name);
+        return new Execution(context, name, fallbackIfMissing);
     }
 
     static String savedText(ParameterValue value) throws AbortException {
@@ -68,23 +79,26 @@ public final class FoundryParameterTextStep extends Step {
         private static final long serialVersionUID = 1L;
 
         private final String name;
+        private final String fallbackIfMissing;
 
-        Execution(StepContext context, String name) {
+        Execution(StepContext context, String name, String fallbackIfMissing) {
             super(context);
             this.name = name;
+            this.fallbackIfMissing = fallbackIfMissing;
         }
 
         @Override
         protected String run() throws Exception {
             Run<?, ?> run = getContext().get(Run.class);
             ParametersAction action = run.getAction(ParametersAction.class);
-            return savedText(
-                    action == null
-                            ? null
-                            : action.getParameters().stream()
-                                    .filter(value -> value.getName().equals(name))
-                                    .findFirst()
-                                    .orElse(null));
+            ParameterValue value = action == null
+                    ? null
+                    : action.getParameters().stream()
+                            .filter(parameter -> parameter.getName().equals(name))
+                            .findFirst()
+                            .orElse(null);
+            if (value == null && fallbackIfMissing != null) return fallbackIfMissing;
+            return savedText(value);
         }
     }
 

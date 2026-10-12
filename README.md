@@ -29,6 +29,8 @@ independent dropdown selection and API/CLI defaults.
 Version `0.14.320` adds [`foundryParameterText`](./docs/guide/pipeline-parameter-text.md)
 for Pipeline consumers that need saved legacy parameter strings without environment
 overrides or reconstruction from canonical lists.
+The step also accepts an explicit `fallbackIfMissing` literal for builds without
+an accessible saved value; it does not evaluate parameter defaults or Providers.
 Version `0.8.296` retains exact static multiple-choice defaults
 through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
 values and static single transport compatibility. Source/browser verification

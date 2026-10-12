@@ -29,6 +29,21 @@ text cannot be reconstructed. A missing or security-filtered parameter is an
 error. The step respects Jenkins `ParametersAction` filtering and never reads
 another build or Job.
 
+Jenkins `params` may include a definition default even when the build has no
+saved value. Therefore, `params.containsKey('CHOICES')` does not prove that this
+step can read saved text. When migrating a consumer with a verified literal
+default, supply it explicitly:
+
+```groovy
+def original = foundryParameterText(name: 'CHOICES', fallbackIfMissing: 'red,blue')
+```
+
+`fallbackIfMissing` is used only when no accessible saved value exists. Omitting
+it retains the missing-value error. An explicit empty string is allowed. Saved
+null and empty strings remain unchanged; sensitive, unsupported and historical
+values without original text still fail. Security-filtered values remain
+inaccessible. The fallback never evaluates a definition default or Provider.
+
 For Declarative Pipeline, call it inside an expression or a `script` block:
 
 ```groovy

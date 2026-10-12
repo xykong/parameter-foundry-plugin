@@ -146,14 +146,76 @@ class FoundryParameterTextStepTest {
     }
 
     @Test
+    void explicitFallbackHandlesParamsDefaultMergeWithoutReplacingSavedValues(JenkinsRule j) throws Exception {
+        j.jenkins.setNumExecutors(0);
+        var definition = legacyChoice();
+        definition.setLegacyDefaultLiteral("red,blue");
+        WorkflowJob job = j.createProject(WorkflowJob.class, "missing-default-text");
+        job.addProperty(new ParametersDefinitionProperty(definition, new StringParameterDefinition("NULL", "")));
+        job.setDefinition(new CpsFlowDefinition("""
+                assert params.containsKey('CHOICES')
+                assert foundryParameterText(name: 'CHOICES', fallbackIfMissing: 'red,blue') == 'red,blue'
+                assert foundryParameterText(name: 'ABSENT', fallbackIfMissing: '') == ''
+                echo 'explicit-default-preserved'
+                """, true));
+        var missing = job.scheduleBuild2(0, new ParametersAction(List.of())).get();
+        j.assertBuildStatusSuccess(missing);
+        assertTrue(missing.getAction(ParametersAction.class).getParameters().isEmpty());
+        j.assertLogContains("explicit-default-preserved", missing);
+
+        job.setDefinition(new CpsFlowDefinition("""
+                assert foundryParameterText(name: 'CHOICES', fallbackIfMissing: 'red,blue') == ''
+                def nullable = foundryParameterText(name: 'NULL', fallbackIfMissing: 'fallback')
+                assert nullable == null
+                """, true));
+        var saved = job.scheduleBuild2(
+                        0,
+                        new ParametersAction(
+                                new StringParameterValue("CHOICES", ""),
+                                FoundryChoiceParameterValue.single("NULL", null, null, null, null)))
+                .get();
+        j.assertBuildStatusSuccess(saved);
+        assertTrue(org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval.get()
+                .getPendingSignatures()
+                .isEmpty());
+    }
+
+    @Test
+    void fallbackDoesNotSuppressSensitiveOrUnsupportedSavedValueErrors(JenkinsRule j) throws Exception {
+        j.jenkins.setNumExecutors(0);
+        WorkflowJob job = j.createProject(WorkflowJob.class, "fallback-rejections");
+        job.addProperty(new ParametersDefinitionProperty(new StringParameterDefinition("TEXT", "")));
+        job.setDefinition(
+                new CpsFlowDefinition("foundryParameterText(name: 'TEXT', fallbackIfMissing: 'safe-literal')", true));
+        var sensitive = job.scheduleBuild2(0, new ParametersAction(new PasswordParameterValue("TEXT", "do-not-expose")))
+                .get();
+        j.assertBuildStatus(Result.FAILURE, sensitive);
+        j.assertLogContains("Sensitive parameter text", sensitive);
+        assertFalse(JenkinsRule.getLog(sensitive).contains("do-not-expose"));
+        var unsupported = job.scheduleBuild2(
+                        0,
+                        new ParametersAction(FoundryChoiceParameterValue.multiple(
+                                "TEXT", List.of("red"), null, "delimited", ",", null)))
+                .get();
+        j.assertBuildStatus(Result.FAILURE, unsupported);
+        j.assertLogContains("no original text", unsupported);
+    }
+
+    @Test
     void descriptorBindsExactNameAndServesHelp(JenkinsRule j) throws Exception {
         var original = new FoundryParameterTextStep(" exact name ");
         var rebound = org.jenkinsci.plugins.structs.describable.DescribableModel.of(FoundryParameterTextStep.class)
-                .instantiate(java.util.Map.of("name", original.getName()));
+                .instantiate(java.util.Map.of("name", original.getName(), "fallbackIfMissing", ""));
         assertEquals(original.getName(), rebound.getName());
+        assertEquals("", rebound.getFallbackIfMissing());
         var help = j.createWebClient()
                 .goTo("descriptor/io.jenkins.plugins.parameterfoundry.pipeline.FoundryParameterTextStep/help/name");
         assertTrue(help.asNormalizedText().contains("current build"));
+        assertTrue(j.createWebClient()
+                .goTo(
+                        "descriptor/io.jenkins.plugins.parameterfoundry.pipeline.FoundryParameterTextStep/help/fallbackIfMissing")
+                .asNormalizedText()
+                .contains("Sensitive"));
     }
 
     private static FoundryChoiceParameterDefinition legacyChoice() {

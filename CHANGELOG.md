@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- `foundryParameterText` accepts an explicit literal fallback for builds without an accessible saved value, preserving consumer defaults without evaluating parameter definitions.
+
 ## 0.16.327 - 2026-10-12
 
 The HPI is `dist/parameter-foundry-0.16.327.hpi` (SHA-256
