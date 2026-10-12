@@ -475,6 +475,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
+        if (defaultValue != null && defaultValue.isSensitive()) return this;
         if (isActiveChoicesInput()
                 && defaultValue instanceof FoundryChoiceParameterValue multiple
                 && multiple.isMultiple()) return this;
@@ -489,6 +490,13 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
             copy.extendedChoiceRebuildLiteral = literal == null ? "" : literal;
             copy.setActiveChoicesApiDefaultMode("literal");
             copy.setActiveChoicesApiDefaultLiteral(literal);
+            return copy;
+        }
+        if (GitBranchInputCompatibility.enabled(this) && defaultValue instanceof StringParameterValue string) {
+            FoundryChoiceParameterDefinition copy = copyDefinition();
+            copy.gitRebuildInput = true;
+            copy.setDefaultMode("explicit");
+            copy.setDefaultValue(string.getValue());
             return copy;
         }
         if (!(defaultValue instanceof FoundryChoiceParameterValue choiceValue)) {

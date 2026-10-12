@@ -1,0 +1,219 @@
+{
+  "core": "2.568.3",
+  "browser": "153.0.8010.12",
+  "checks": [
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "job": "legacy-git-history-0",
+      "literal": "old-unlisted-ref",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": "old-unlisted-ref"
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    },
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "job": "legacy-git-history-1",
+      "literal": " padded,ref ",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": " padded,ref "
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    },
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "job": "legacy-git-history-2",
+      "literal": "",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": "release/default"
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "job": "legacy-git-history-3",
+      "literal": "old-unlisted-ref",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": "old-unlisted-ref"
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "job": "legacy-git-history-4",
+      "literal": " padded,ref ",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": " padded,ref "
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "job": "legacy-git-history-5",
+      "literal": "",
+      "original": 1,
+      "rebuilt": {
+        "_class": "hudson.model.FreeStyleBuild",
+        "actions": [
+          {
+            "_class": "hudson.model.CauseAction"
+          },
+          {
+            "_class": "hudson.model.ParametersAction",
+            "parameters": [
+              {
+                "_class": "io.jenkins.plugins.parameterfoundry.definition.FoundryChoiceParameterValue",
+                "name": "REF",
+                "value": "release/default"
+              }
+            ]
+          },
+          {},
+          {},
+          {
+            "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+          }
+        ],
+        "building": false,
+        "result": "SUCCESS"
+      },
+      "providerResolveRequests": 0
+    }
+  ],
+  "candidateSha256": "a9edb4f0cc6cdd7aaafa407832fed0fef11fb9f4e4c527ec3d33696a115d2f1a",
+  "legacySha256": "0a3ae05d376e50cb2e96bc69ad20f25679fdd1222702e0c22ccd69e4b1675dbb",
+  "scope": "6 synthetic source histories and 6 actual Rebuilds; source plugin remains installed"
+}

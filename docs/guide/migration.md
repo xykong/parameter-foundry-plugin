@@ -107,6 +107,12 @@ Review generating source and fallback behavior before applying.
   [observed source contract](../research/extended-choice-static-transport-contract.md).
 - Source scripts, markup, repository URLs, and credentials are never copied into
   the generated target.
+- In the unreleased update, List Git Branches transport mode also copies readable
+  historical Core string subclasses into editable Rebuild defaults. Nonempty text
+  remains literal; empty form input keeps the source fallback to the current Job
+  default. Sensitive historical values are excluded from these choice copies.
+  This requires the historical value class to remain readable and does
+  not make source-plugin uninstall safe by itself.
 - SCM Jenkinsfiles receive a patch or snippet; the plugin never pushes to the
   repository.
 - Multibranch child Jobs are report-only: the generating Jenkinsfile or

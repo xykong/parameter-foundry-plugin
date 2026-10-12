@@ -72,6 +72,7 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
   no empty option is added to the UI/canonical list. Ordinary and typed input stay
   strict. Candidate verification passes 365 tests, 9,792 source factory cases and
   22 browser checks; exact release and per-Job source/consumer/history gates remain.
+- Unreleased Git history fix: `standardApiInputMode: list-git-branches` copies readable historical StringParameterValue subclasses into transient editable Rebuild defaults, preserving literal text and current Job defaults. Empty form submission retains the source fallback; sensitive values are excluded. This adds no source-class deserializer or uninstall approval.
 - Provider-backed single choices without dependencies can use `standardApiInputMode: list-git-branches`: literal unlisted revisions remain accepted, explicit inputs/defaults do not fetch Git, and supplied snapshots retain binding/expiry validation. `gitSelectionMode` preserves dropdown selection independently of API/CLI defaults.
 - Typed API: `…/parameter-foundry/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
 - Errors carry stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.

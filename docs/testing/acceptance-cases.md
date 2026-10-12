@@ -37,6 +37,7 @@ the case, but production configuration is never committed here.
 | Active Choices JSON response interpretation (UP-AC-049) | Source renderer coverage | Source renderer coverage | N/A | N/A | N/A | Parser/source oracle | Response order, null labels, fallback and resource boundaries |
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage; NONE browser gate pending | Existing Provider coverage; NONE browser gate pending | N/A | N/A | N/A | Required | Controller normalization, unsorted category order |
+| Git source string history (UP-AC-059) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Existing textbox semantics | Passed actual Rebuild | Text input | Literal/default copy and Rebuild submission | Legacy string subclasses and unchanged current defaults |
 | Git transport compatibility (UP-AC-038) | Passed NONE/list20, list1 and searchable20 | Passed same cases at 390×844 | Existing renderer coverage | Existing renderer coverage | Repeated fields | Empty-list HTTP/default coverage | Build environment and snapshot binding |
 | Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder, saved-value, explicit fallback and rejection coverage | Sandbox/CPS, definition-default merge, Declarative when, current-run filtering and persistence |
 
@@ -48,6 +49,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-059 | Git source string history | Rebuild with a pre-migration Core String subclass after replacing its definition; preserve literal input without fetching the Provider. | Passed 436 full tests and six desktop/mobile actual Rebuild submissions |
 | UP-AC-058 | Literal HTML reference | Preserve native literal string values separately from sanitized HTML presentation. | Passed Harness, paired browser and complete verify |
 | UP-AC-057 | Active Choices UI policies | Compare source regex filtering, selection clearing and constant-cascade retention with explicit policies. | Passed paired desktop/mobile browser and complete verify |
 | UP-AC-056 | Active Choices multiple transport | Preserve literal Core strings, independent defaults, validated typed arrays and string history. | Passed 426 full tests, 2 paired viewports, 9 HTTP pairs and 5 CLI/env pairs; filtered/cascade/HTML gates remain |
@@ -665,3 +667,32 @@ Shared case, all supported platforms. Reproduce: configure a single or multiple 
 - **Fix:** Add a literal reference definition using the managed Safe HTML sanitizer and the shared native string codec; typed callers use a strict string input.
 - **Verification:** Private draft probe passes eighteen transport cases and sanitizer/default/copy checks. Six targeted Harness cases pass, including real configuration save/render, eighteen pinned native CLI/JSON samples, Typed API strict strings and snapshot rejection, and migration snippet rebinding. Existing baseline Jenkins serves the parameter form body with HTTP405; the Harness inspects that body using the established non-throwing page client. The corrected exact HPI passes desktop1440/mobile390 native/target display, constant-parent-change and hidden-field checks, four real browser forms, nine HTTP source/target pairs, three typed HTTP submissions and four invalid typed inputs. All25 neutral queue items were cancelled with no builds and an empty final queue. Normal wheel scrolling exposed the text without CSS overrides; full mobile pages and desktop target control were visually inspected. The first occluded-control browser attempt is retained as failed evidence. XML-overlimit content is rejected before sanitizer invocation, confirmed by XStream Harness regression and independent review closure. Complete verify passes 433 tests with no failures/errors/skips. All570 implementation/resource entries match the browser-tested HPI; production acceptance remains pending. [Run record](./results/active-choices-reference-ui-lab.json).
 - **Tests:** `FoundryReferenceParameterTest`, `ReferenceTypedApiTest`, `ConfigurationHelpCoverageTest`; UI Lab `active-choices-reference-init.groovy` and `check-active-choices-reference.py`; fixture `active-choices-reference-2.8.10.json`. Desktop/mobile and actual form submissions are separate required gates; no business stages may execute.
+
+### UP-AC-059: Pre-migration Git string history in Rebuild
+
+Shared case, all supported platforms. Configure a synthetic Job with an old
+Git string parameter value, including an unlisted revision, padded comma text
+or an empty string. Replace the current definition with a Provider-backed
+Foundry Choice using `standardApiInputMode: list-git-branches` and a different
+literal default. Open Rebuild, verify editable historical text, and submit.
+
+Expected: preserve the historical literal in the copied definition and Rebuild
+input without querying the Provider or mutating the configured default. Nonempty
+submitted text remains literal. An empty form submission follows the source
+transport fallback to the current configured default. Ordinary choice definitions
+keep their existing behavior.
+
+Actual before fix: `copyWithDefaultValue` accepted Foundry values but returned the
+unchanged definition for source StringParameterValue subclasses, dropping history
+in clients that use the definition copy. The new copy regression fails on the
+unchanged instance. Initial form submissions without JavaScript also lacked the
+serialized form JSON; the corrected actual Rebuild test enables JavaScript and
+removes the previous parameter property before adding the migrated definition.
+
+Fix: Git compatibility mode accepts the Core string inheritance contract when
+copying a default, creates a transient editable Rebuild copy and preserves the
+literal. It does not deserialize missing source classes or approve uninstall.
+
+Targeted Harness passes five literal copy cases and three real Rebuild submissions
+with a synthetic source-class fixture in `GitBranchTransportCompatibilityTest`;
+ordinary-choice copy regression included (two test methods pass). Independent review also requires sensitive string subclasses to retain the original definition without reading or rendering their plaintext; a regression covers Git, Active Choices and ordinary modes. Complete `mvn -B -ntp verify` passes 436 tests, SpotBugs and Spotless. Jenkins 2.568.3 with the exact candidate HPI and installed source plugin passes Chromium 153.0.8010.12 at 1440×1000 and 390×844: six history pages, six editable Rebuild forms and six actual neutral submissions, all SUCCESS, zero Provider resolve requests. History uses readonly text and empty values display N/A. Normal scrolling and clicks are used; desktop padded history and mobile padded/empty forms were visually inspected. Earlier locator, readiness and empty-display failures are retained. The fixture is test-only; no legacy value class is shipped. Source-plugin uninstall, bridge loading and whole-Job acceptance remain separate gates. [Run record](./results/git-string-history-ui-lab.json).

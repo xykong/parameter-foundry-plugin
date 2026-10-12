@@ -11,6 +11,11 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Fixed
+
+- Preserve pre-migration Git string values when copying historical defaults for Rebuild, without changing the configured Job default.
+- Exclude sensitive historical values from ordinary choice default copies.
+
 ## 0.19.340 - 2026-10-13
 
 The HPI is `dist/parameter-foundry-0.19.340.hpi` (SHA-256

@@ -269,6 +269,82 @@ class GitBranchTransportCompatibilityTest {
                 .isEmpty());
     }
 
+    @Test
+    void sourceStringHistoryCopyPreservesLiteralWithoutChangingCurrentDefaults(JenkinsRule j) {
+        var configured = definition();
+        for (String literal : List.of("", " old-unlisted-ref ", "a,b,a", "quote\"&<ref>", "中文")) {
+            var historical = new StringParameterValue("REF", literal, "Old description");
+            var copy = (FoundryChoiceParameterDefinition) configured.copyWithDefaultValue(historical);
+            assertNotSame(configured, copy);
+            assertTrue(copy.isGitRebuildInput());
+            assertEquals(literal, copy.getLegacyRebuildValue());
+            assertEquals("release/default", configured.getDefaultValue());
+            assertFalse(configured.isGitRebuildInput());
+        }
+        var normal = new FoundryChoiceParameterDefinition("REF");
+        assertSame(normal, normal.copyWithDefaultValue(new StringParameterValue("REF", "old")));
+    }
+
+    @Test
+    void actualRebuildOfPreMigrationStringHistoryKeepsEditableInputAndSubmission(JenkinsRule j) throws Exception {
+        j.jenkins.setCrumbIssuer(null);
+        for (String literal : List.of("old-unlisted-ref", " padded,ref ", "")) {
+            var job = j.createFreeStyleProject();
+            job.addProperty(new ParametersDefinitionProperty(new hudson.model.StringParameterDefinition("REF", "")));
+            var original = j.assertBuildStatusSuccess(job.scheduleBuild2(
+                    0,
+                    new ParametersAction(
+                            new com.syhuang.hudson.plugins.listgitbranchesparameter.ListGitBranchesParameterValue(
+                                    "REF", literal))));
+            job.removeProperty(ParametersDefinitionProperty.class);
+            job.addProperty(new ParametersDefinitionProperty(definition()));
+            assertInstanceOf(
+                    FoundryChoiceParameterDefinition.class,
+                    job.getProperty(ParametersDefinitionProperty.class).getParameterDefinition("REF"));
+            var client = j.createWebClient();
+            var page = (org.htmlunit.html.HtmlPage) client.getPage(original, "rebuild/parameterized");
+            var inputs = page.getByXPath("//input[@name='value']");
+            assertEquals(1, inputs.size());
+            assertEquals(literal, ((org.htmlunit.html.HtmlInput) inputs.get(0)).getValue());
+            assertTrue(page.getByXPath("//*[@data-provider-backed='true']").isEmpty());
+            j.submit(page.getFormByName("config"));
+            j.waitUntilNoActivity();
+            var rebuilt = j.assertBuildStatusSuccess(job.getLastBuild());
+            assertEquals(original.getNumber() + 1, rebuilt.getNumber());
+            // Empty source form input falls back to the current configured default.
+            assertEquals(
+                    literal.isEmpty() ? "release/default" : literal,
+                    scalar(rebuilt.getAction(ParametersAction.class).getParameter("REF")));
+            assertEquals(
+                    "release/default",
+                    ((FoundryChoiceParameterDefinition) job.getProperty(ParametersDefinitionProperty.class)
+                                    .getParameterDefinition("REF"))
+                            .getDefaultValue());
+        }
+    }
+
+    @Test
+    void sensitiveStringHistoryNeverCopiesPlaintextIntoChoiceInput(JenkinsRule j) {
+        var sensitive = new StringParameterValue("REF", "private-history") {
+            @Override
+            public boolean isSensitive() {
+                return true;
+            }
+
+            @Override
+            public String getValue() {
+                throw new AssertionError("Sensitive history must not be read for a choice default");
+            }
+        };
+        for (String mode : List.of("list-git-branches", "active-choices", "strict")) {
+            var configured = definition();
+            configured.setStandardApiInputMode(mode);
+            assertSame(configured, configured.copyWithDefaultValue(sensitive));
+            assertFalse(configured.isLegacyRebuildInput());
+            assertEquals("release/default", configured.getDefaultValue());
+        }
+    }
+
     private static void assertSnapshotInvalid(org.junit.jupiter.api.function.Executable action) {
         assertEquals(
                 ErrorCode.SNAPSHOT_INVALID,
