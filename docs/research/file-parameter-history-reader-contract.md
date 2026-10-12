@@ -92,3 +92,21 @@ The same Pipeline resumes under the native plugin and completes SUCCESS. No
 business logic or production build/history is used. This does not cover a paused
 native wrapper execution, pending source temp reference, download/permission UI,
 or product packaging/default-off/activation controls.
+
+The inspected native `FileParameterWrapper` is a SimpleBuildWrapper with name and
+allowNoFile configuration. It requires the native abstract value type, materializes
+a file in the workspace temp directory, exports that path as the parameter's
+environment and registers a separate serialized Delete disposer. Consequently,
+value-only class restoration does not demonstrate restoration of an already
+active wrapper body/disposer, nor continued use of an old Pipeline wrapper symbol.
+The native disposer retains a file path and deletes through a supplied workspace;
+any equivalent must validate workspace ownership before cleanup. Do not add an
+arbitrary stored-path read/delete workaround. Pending wrappers must drain or have
+their own reviewed cold-restoration/rollback proof before source retirement.
+
+The native wrapper baseline now passes on 2.568.3 in a neutral node-backed
+Pipeline. `withFileParameter` reads the expected thirteen bytes for Base64,
+ordinary Stashed and the short-name fallback through its path environment. Each
+temporary path exists inside its wrapper body and disappears immediately after
+body completion. The build ends SUCCESS. This establishes byte/path/cleanup
+behavior to reproduce; it does not validate the prototype's wrapper compatibility.

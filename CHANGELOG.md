@@ -11,10 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
-## 0.21.348 - 2026-10-13
+## 0.21.349 - 2026-10-13
 
-The HPI is `dist/parameter-foundry-0.21.348.hpi` (SHA-256
-`de1a0102aa36b84b159a9b82650a79f28fe8e3f014d7a978483a28fe4b01df57`, 685,808 bytes).
+The HPI is `dist/parameter-foundry-0.21.349.hpi` (SHA-256
+`9f7c8c6036f258f36ee4cc39695adff571a03ea99d55fd95b355664fbc44154d`, 685,532 bytes).
 
 ### Added
 

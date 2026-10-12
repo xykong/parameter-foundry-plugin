@@ -1,6 +1,6 @@
 # Historical parameter values
 
-The history reader introduced in 0.21.348 is an optional retirement companion for the
+The history reader introduced in 0.21.349 is an optional retirement companion for the
 characterized List Git Branches string value. It is disabled by default and does
 not migrate parameter definitions or Jenkinsfiles. Extended Choice and file
 history require separate compatibility work.
