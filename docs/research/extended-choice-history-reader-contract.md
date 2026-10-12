@@ -56,3 +56,19 @@ without aliases or the plugin's same-name test fixtures. This proves the bounded
 passive value storage contract only. Actual HPI activation, cold paused CPS,
 UI/Rebuild, captured resolver class and source-definition/Replay checks remain
 required before shipping or retiring the source plugin.
+
+An isolated neutral prototype plugin now passes a real Jenkins 2.568.3 cold
+native-to-reader-to-native paused Pipeline sequence. The same ParametersAction
+and saved CPS value preserve literal, description, resolver and environment;
+the final native process completes SUCCESS. Current definitions are Core strings
+in this fixture, so it exercises the characterized non-native-definition boundary.
+No business logic, production history or production builds are involved. This
+prototype is not integrated into Parameter Foundry or a release artifact.
+
+Two earlier runs retained a source class-filter rejection and failed to restore
+the parameter. The internal jar lacked a complete plugin manifest: Short-Name
+alone was insufficient. The successful jar supplies Short-Name and Plugin-Version,
+matching the inspected Core plugin-manifest predicate. JEP-200 remains enabled;
+no whitelist, alias or Core modification is used. Formal product packaging and
+activation must retain these checks, in addition to source-state, UI/Rebuild and
+per-Job retirement gates.
