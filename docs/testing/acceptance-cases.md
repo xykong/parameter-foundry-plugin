@@ -45,7 +45,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
-| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload, missing-action default merge and sandbox/Declarative consumers. | Eight Harness cases and field-help coverage passed; complete candidate verify passed 420 tests; exact fallback-HPI validation pending |
+| UP-AC-052 | Pipeline saved text | Real decoder literal, env override, sensitive/file/unknown/filtered rejection, saved-value reload, missing-action default merge and sandbox/Declarative consumers. | Eight Harness cases and field-help coverage passed; complete candidate verify passed 420 tests; exact candidate-HPI minimal CPS and desktop/mobile help checks passed |
 | UP-AC-001 | FoundryChoice | Open a build form with single choice; select each renderer. The value remains a scalar and the control is usable. | Local E2E and Test Harness |
 | UP-AC-002 | FoundryChoice multi | Open a multi-choice form with checkbox and `selectedDisplay=chips`; select and remove values. Values and chips remain synchronized. | Passed 2026-09-11: production browser select/remove/clear kept chips and status synchronized; Linux-agent build |
 | UP-AC-003 | Matrix | Open the matrix case with Android/iOS/Web rows and A/B/C columns. Verify semantic headers, stable cell values, selection mode, disabled cells, responsive overflow, and the selected-value summary. | Passed 2026-09-12: semantic `th` headers, stable cell values with row/column accessible names, disabled cell reports its reason and stays unselectable, missing cell is not synthesized, a build submitted `[ios-a, web-b]`, the chips summary follows selection and chip removal (UP-ISSUE-009), and the table scrolls inside its container at a 390x844 viewport without page overflow |
@@ -562,8 +562,12 @@ after a real browser, CLI/API, or build-log check has passed.
   empty fallback, saved null/empty precedence, sensitive/unsupported rejection
   and Structs binding/help. All eight step Harness cases passed; targeted verify
   passed ten tests including help coverage, and complete `mvn -B -ntp verify`
-  passed 420 tests with no failures, errors or skips. Exact candidate-HPI runtime
-  and real-browser field-help validation remain pending; no production migration approval.
+  passed 420 tests with no failures, errors or skips. The exact candidate HPI on
+  isolated Jenkins 2.568.3 passed four minimal source/target parameter-only CPS
+  builds with empty actions and non-null defaults, plus 44 native CLI text/export
+  comparisons. Chromium desktop 1440×1000 and mobile 390×844 field-help pages
+  were readable with no horizontal overflow; no business stages were executed.
+  These checks do not approve production deployment or whole-Job migration.
 
 ## UP-AC-053: Extended Choice empty option lists
 
