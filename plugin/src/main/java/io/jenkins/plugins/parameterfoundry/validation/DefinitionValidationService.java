@@ -14,8 +14,10 @@ import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
 import io.jenkins.plugins.parameterfoundry.model.Option;
 import io.jenkins.plugins.parameterfoundry.renderer.TrustedRendererRegistry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class DefinitionValidationService {
@@ -179,6 +181,14 @@ public final class DefinitionValidationService {
             return;
         }
         Set<String> flatValues = new HashSet<>();
+        Map<String, Option> firstOptions = new HashMap<>();
+        boolean legacyDuplicateEntries = definition instanceof FoundryChoiceParameterDefinition duplicateChoice
+                && ExtendedChoiceDefaultCompatibility.enabled(definition)
+                && Set.of("list", "checkbox").contains(definition.getRenderer())
+                && definition.getTable() == null
+                && "none".equals(definition.getSelectedDisplay())
+                && "deduplicate".equals(definition.getDuplicatePolicy())
+                && !duplicateChoice.isAllowCustomValue();
         for (Option option : definition.getChoices()) {
             if (option == null) {
                 errors.add("Null option");
@@ -194,7 +204,8 @@ public final class DefinitionValidationService {
             if (containsProhibitedControl(value)) {
                 errors.add("Option contains a prohibited control character: " + value);
             }
-            if (!flatValues.add(value)) {
+            Option first = firstOptions.putIfAbsent(value, option);
+            if (!flatValues.add(value) && !(legacyDuplicateEntries && !option.isDisabled() && option.equals(first))) {
                 errors.add("Duplicate option value: " + value);
             }
         }

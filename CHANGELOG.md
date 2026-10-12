@@ -14,6 +14,7 @@ suffix marks a build that is deployed but not tagged.
 ### Fixed
 
 - Extended Choice multiple-choice compatibility accepts empty option lists and preserves the CLI difference between missing options and a comma-only option configuration.
+- Identical repeated options in Extended Choice lists and checkboxes retain independent selection and submit their repeated values in declared order.
 
 ## 0.14.320 - 2026-10-11
 

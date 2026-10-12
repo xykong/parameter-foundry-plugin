@@ -74,8 +74,12 @@ The migration adapter and generated snippet retain this distinction. The flag
 requires empty static multiple choices in Extended Choice compatibility.
 Form JSON continues to retain its submitted
 literal. Other selection modes still require at least one selectable option.
-Duplicate configured options still require additional compatibility work; do not
-deduplicate the source list and assume its display and submission behavior is unchanged.
+Identical duplicate Inline options are retained in legacy multiple-selection lists
+and checkboxes when selectedDisplay is none, duplicatePolicy is deduplicate
+and custom values are disabled. Each entry can be selected independently, including
+when filtering the list; forms export repeated values in declared order while
+canonical values remain a set. Duplicate options with different metadata, disabled
+duplicate entries and duplicates in ordinary modes remain configuration errors.
 
 ## Boundaries
 

@@ -44,7 +44,11 @@
     with <code>legacyEmptyOptionsOmitCli</code> enabled, explicit CLI text (including an empty string)
     returns no parameter after canonical constraints are checked. Without that flag it returns an
     existing empty-string parameter, matching a nonblank comma-only source configuration.
-    Form JSON continues to preserve its literal independently of membership.</li>
+    Form JSON continues to preserve its literal independently of membership.
+    Identical duplicate inline options are supported for lists and checkboxes with
+    selected display none, canonical duplicate deduplication and custom values disabled.
+    Entries retain independent selection and repeated submitted values. Conflicting metadata
+    and disabled duplicate entries remain invalid.</li>
 </ul>
 <p>The Jenkins CLI accepts a JSON array in the other multiple-selection modes. Compatibility mode
 matches the source CLI's comma-separated input. The typed API always sends a JSON array.</p>

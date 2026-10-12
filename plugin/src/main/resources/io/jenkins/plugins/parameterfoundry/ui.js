@@ -175,12 +175,6 @@
   }
 
   function setSubmittedValues(field, values, notify, options) {
-    Array.prototype.forEach.call(
-      field.querySelectorAll("[data-up-generated-value]"),
-      function (node) {
-        node.remove();
-      },
-    );
     var submitted = sortedSetValues(values);
     if (field.dataset.standardApiInputMode === "extended-choice" && field.dataset.multiple === "true" && options) {
       // Legacy multi-select and checkbox controls submit selected entries in option order.
@@ -193,6 +187,16 @@
       });
       remaining.forEach(function (value) { submitted.push(value); });
     }
+    writeSubmittedValues(field, submitted, notify);
+  }
+
+  function writeSubmittedValues(field, submitted, notify) {
+    Array.prototype.forEach.call(
+      field.querySelectorAll("[data-up-generated-value]"),
+      function (node) {
+        node.remove();
+      },
+    );
     submitted.forEach(function (value) {
       var input = document.createElement("input");
       input.type = "hidden";
@@ -1254,7 +1258,114 @@
     render();
   }
 
+  function enhanceLegacyDuplicateEntries(field, options, initialValues) {
+    var entries = options.map(function (option, index) { return {option: option, index: index}; });
+    var selected = new Set();
+    entries.forEach(function (entry) {
+      if (initialValues.indexOf(entry.option.value) !== -1) selected.add(entry.index);
+    });
+    var enhanced = document.createElement("div");
+    enhanced.className = "parameter-foundry-enhanced";
+    enhanced.dataset.upEnhanced = "true";
+    var status = createStatus();
+    var search = createSearch(field, status.id);
+    var listMode = field.dataset.renderer === "list";
+    var control = document.createElement(listMode ? "select" : "div");
+    control.setAttribute("aria-label", field.dataset.parameterName || "Select options");
+    control.setAttribute("aria-describedby", status.id);
+    if (listMode) {
+      control.multiple = true;
+      control.className = "jenkins-select__input parameter-foundry-native-list";
+    } else {
+      control.className = "parameter-foundry-options";
+      control.setAttribute("role", "group");
+    }
+    function sync(notify) {
+      var submitted = entries.filter(function (entry) { return selected.has(entry.index); })
+        .map(function (entry) { return entry.option.value; });
+      writeSubmittedValues(field, submitted, notify);
+      status.textContent = selectedSummary(field, selected.size, entries.length);
+    }
+    function render() {
+      removeChildren(control);
+      var query = search.value.toLocaleLowerCase();
+      entries.filter(function (entry) { return entry.option.search.indexOf(query) !== -1; })
+        .forEach(function (entry) {
+          var option = entry.option;
+          if (listMode) {
+            var item = document.createElement("option");
+            item.value = option.value;
+            item.textContent = option.label == null ? option.value : option.label;
+            item.selected = selected.has(entry.index);
+            item.disabled = option.disabled;
+            item.dataset.upOptionIndex = String(entry.index);
+            item.title = option.disabledReason || option.description || "";
+            control.appendChild(item);
+          } else {
+            var row = document.createElement("div");
+            row.className = "parameter-foundry-option";
+            row.setAttribute("aria-disabled", option.disabled ? "true" : "false");
+            row.title = option.disabledReason || option.description || "";
+            var label = document.createElement("label");
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = option.value;
+            checkbox.checked = selected.has(entry.index);
+            checkbox.disabled = option.disabled;
+            checkbox.addEventListener("change", function () {
+              if (checkbox.checked) selected.add(entry.index);
+              else selected.delete(entry.index);
+              sync(true);
+            });
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(option.label == null ? option.value : option.label));
+            row.appendChild(label);
+            control.appendChild(row);
+          }
+        });
+      if (listMode) control.size = Math.min(10, Math.max(1, control.options.length));
+    }
+    if (listMode) {
+      control.addEventListener("change", function () {
+        Array.prototype.forEach.call(control.options, function (option) {
+          var index = Number(option.dataset.upOptionIndex);
+          if (option.selected) selected.add(index);
+          else selected.delete(index);
+        });
+        sync(true);
+      });
+    }
+    search.addEventListener("input", render);
+    search.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && search.value) {
+        search.value = "";
+        render();
+        event.preventDefault();
+      }
+    });
+    enhanced.appendChild(search);
+    enhanced.appendChild(control);
+    enhanced.appendChild(status);
+    disableFallback(field);
+    field.appendChild(enhanced);
+    sync(false);
+    render();
+  }
+
   function enhanceMultiple(field, options, initialValues) {
+    var legacyDuplicates = false;
+    if (field.dataset.standardApiInputMode === "extended-choice") {
+      var seen = new Set();
+      legacyDuplicates = options.some(function (option) {
+        if (seen.has(option.value)) return true;
+        seen.add(option.value);
+        return false;
+      });
+    }
+    if (legacyDuplicates) {
+      enhanceLegacyDuplicateEntries(field, options, initialValues);
+      return;
+    }
     if (field.dataset.renderer === "table" && enhanceTable(field, options, initialValues)) {
       return;
     }

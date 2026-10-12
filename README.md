@@ -20,6 +20,8 @@ explicit API inputs retain the caller’s order.
 The next snapshot also accepts empty static option lists in this multiple-choice
 compatibility mode, preserving literal defaults and the source configuration's
 empty-list CLI behavior through `legacyEmptyOptionsOmitCli`.
+Identical duplicate options in legacy lists and checkboxes keep separate selection
+states and repeated submitted values; canonical values remain a set.
 Literal defaults, single selection and custom-delimiter behavior still require
 the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
 Git branch migrations have a separate literal-input compatibility mode with
