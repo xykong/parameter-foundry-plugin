@@ -138,4 +138,42 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>isolate-legacy-git-history-reader</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <target>
+                <delete dir="${project.build.directory}/history-classes" />
+                <mkdir dir="${project.build.directory}/history-classes" />
+                <javac destdir="${project.build.directory}/history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/src/history/java" target="17">
+                  <classpath refid="maven.compile.classpath" />
+                  <compilerarg value="-proc:none" />
+                </javac>
+                <copy todir="${project.build.directory}/history-classes">
+                  <fileset dir="${project.basedir}/src/history/resources" />
+                </copy>
+                <mkdir dir="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history" />
+                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" fileext=".sha256" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

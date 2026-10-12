@@ -1,0 +1,28 @@
+{
+  "hpiSha256": "6872336505f917e702afccb90b120308d6836aef88c2d100f570ffe7f94c431c",
+  "nestedJarSha256": "e19ee72eccfe4f67473b5905b544fbbc7e074f38b59933340c6b5f46c7d90805",
+  "cases": [
+    {
+      "core": "2.568.3",
+      "version": "0.20.344-SNAPSHOT",
+      "mode": "absent",
+      "normalOwner": "none",
+      "foundryExportsLegacy": false,
+      "nestedJarSha256": "e19ee72eccfe4f67473b5905b544fbbc7e074f38b59933340c6b5f46c7d90805",
+      "jobs": 0,
+      "buildsScheduled": 0,
+      "productionWrites": 0
+    },
+    {
+      "core": "2.568.3",
+      "version": "0.20.344-SNAPSHOT",
+      "mode": "present",
+      "normalOwner": "list-git-branches-parameter",
+      "foundryExportsLegacy": false,
+      "nestedJarSha256": "e19ee72eccfe4f67473b5905b544fbbc7e074f38b59933340c6b5f46c7d90805",
+      "jobs": 0,
+      "buildsScheduled": 0,
+      "productionWrites": 0
+    }
+  ]
+}

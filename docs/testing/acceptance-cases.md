@@ -37,6 +37,7 @@ the case, but production configuration is never committed here.
 | Active Choices JSON response interpretation (UP-AC-049) | Source renderer coverage | Source renderer coverage | N/A | N/A | N/A | Parser/source oracle | Response order, null labels, fallback and resource boundaries |
 | Reactive Active Choices REST fidelity (UP-AC-048) | Required | Required | Required | Existing renderer coverage | Required | Required | Independent defaults, literal transports and governed dependency queries |
 | Git ref sorting parity (UP-AC-037) | Existing Provider coverage; NONE browser gate pending | Existing Provider coverage; NONE browser gate pending | N/A | N/A | N/A | Required | Controller normalization, unsorted category order |
+| History reader packaging (UP-AC-060) | N/A inactive resource | N/A inactive resource | N/A | N/A | N/A | Digest, exact entries, UID and literal behavior | Activation/lifecycle/UI remain separate gates |
 | Git source string history (UP-AC-059) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Existing textbox semantics | Passed actual Rebuild | Text input | Literal/default copy and Rebuild submission | Legacy string subclasses and unchanged current defaults |
 | Git transport compatibility (UP-AC-038) | Passed NONE/list20, list1 and searchable20 | Passed same cases at 390×844 | Existing renderer coverage | Existing renderer coverage | Repeated fields | Empty-list HTTP/default coverage | Build environment and snapshot binding |
 | Saved Pipeline parameter text (UP-AC-052) | Snippet/help coverage | N/A | N/A | N/A | N/A | Decoder, saved-value, explicit fallback and rejection coverage | Sandbox/CPS, definition-default merge, Declarative when, current-run filtering and persistence |
@@ -49,6 +50,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-060 | Isolated history bundle | Keep legacy-named classes outside the initial plugin classpath; inspect the digest-bound nested jar independently. | Passed 438 full tests and two actual-HPI independent-process isolation cases; no reader activation |
 | UP-AC-059 | Git source string history | Rebuild with a pre-migration Core String subclass after replacing its definition; preserve literal input without fetching the Provider. | Passed 436 full tests and six desktop/mobile actual Rebuild submissions |
 | UP-AC-058 | Literal HTML reference | Preserve native literal string values separately from sanitized HTML presentation. | Passed Harness, paired browser and complete verify |
 | UP-AC-057 | Active Choices UI policies | Compare source regex filtering, selection clearing and constant-cascade retention with explicit policies. | Passed paired desktop/mobile browser and complete verify |
@@ -696,3 +698,23 @@ literal. It does not deserialize missing source classes or approve uninstall.
 Targeted Harness passes five literal copy cases and three real Rebuild submissions
 with a synthetic source-class fixture in `GitBranchTransportCompatibilityTest`;
 ordinary-choice copy regression included (two test methods pass). Independent review also requires sensitive string subclasses to retain the original definition without reading or rendering their plaintext; a regression covers Git, Active Choices and ordinary modes. Complete `mvn -B -ntp verify` passes 436 tests, SpotBugs and Spotless. Jenkins 2.568.3 with the exact candidate HPI and installed source plugin passes Chromium 153.0.8010.12 at 1440×1000 and 390×844: six history pages, six editable Rebuild forms and six actual neutral submissions, all SUCCESS, zero Provider resolve requests. History uses readonly text and empty values display N/A. Normal scrolling and clicks are used; desktop padded history and mobile padded/empty forms were visually inspected. Earlier locator, readiness and empty-display failures are retained. The fixture is test-only; no legacy value class is shipped. Source-plugin uninstall, bridge loading and whole-Job acceptance remain separate gates. [Run record](./results/git-string-history-ui-lab.json).
+
+### UP-AC-060: Isolated source history bundle
+
+Shared backend case, independent of platform input/rendering. Build the history
+source set and inspect its nested jar without activating it. Expected: only the
+reviewed legacy Git string class, its passive view and manifest; an accompanying
+SHA256 must match. The main output directory must not export the legacy class.
+The isolated class keeps native UID, Core String inheritance, name/value constructor,
+description, environment and variable resolver for empty, padded, quoted/XML and
+Unicode literals.
+
+Actual first build: inherited ExportedBean annotation processing created an extra
+index entry. Exact-entry coverage rejected it. Fix: disable annotation processing
+for this isolated source set and clean its generated classes on each build.
+
+Verification: HistoryReaderPackagingTest passes two cases, including independent
+child-loader ownership (rather than accidentally inspecting the same-name test
+fixture). Complete `mvn -B -ntp verify` passes 438 tests, SpotBugs and Spotless. Two independent Jenkins 2.568.3 processes use the actual HPI without a same-name test fixture: native absent yields no legacy class; native present retains native ownership; Foundry exports neither class nor same-path view. HPI/main-library inspection finds no legacy FQN outside the fixed nested resource, and both processes match its sealed digest. Zero Jobs/builds. [Isolation record](./results/history-reader-packaging-isolation.json). This only packages an inactive
+resource: no startup loader, opt-in setting or retirement capability is advertised.
+Cold-switching, conflicts, JEP200 and reader UI require later acceptance cases.
