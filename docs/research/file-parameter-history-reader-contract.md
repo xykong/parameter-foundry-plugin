@@ -127,10 +127,13 @@ expanded and payload budgets, expected leaf names, special/unknown entry types,
 extra entries, truncation, cooperative deadlines, interruption and constructor
 failure cleanup. Native preserved archives retain byte identity. Tests exposed
 the archive library's broad `isFile()` predicate accepting FIFO and unknown type
-flags; an explicit regular-type check is required. Passing these component tests
-does not make the existing generic `StashManager.unstash` call bounded. Hidden
-archive metadata, complete end-of-stream verification, source-path ownership,
-remote storage adapters and blocking-read deadlines remain integration concerns.
+flags; an explicit regular-type check is required. An independent review identified that a library parser can consume hidden
+metadata and stop at TAR EOF without verifying gzip or physical EOF. The revised
+private primitive instead validates fixed native raw ustar headers, exact bounded
+payload and complete zero tail, plus a single fixed-header gzip member with
+CRC/ISIZE and physical EOF. Its expanded native/hostile archive probe passes
+38 assertions. This format contract is for the inspected native writer; it does
+not imply support for arbitrary archives or remote backends.
 
 Existing storage must be retrieved without selecting or persisting a new backend.
 Jenkins Core's `Run.getArtifactManager()` returns the existing manager (or its
@@ -140,3 +143,18 @@ path; a remote manager must have a reviewed bounded adapter rather than a silent
 local fallback. Installed plugin names alone do not prove historical manager
 ownership. Raw XML and directory-metadata inventories must remain scope-qualified
 and must not load production Run or CPS objects merely to inspect historical state.
+
+
+The private local adapter now replaces its generic `unstash` path with that
+bounded primitive. It requires the exact StandardArtifactManager type, derives
+only the fixed build-owned stash path, traverses every component using
+SecureDirectoryStream with NOFOLLOW and opens only a regular leaf without
+following links. Unsupported backends or secure-filesystem facilities fail
+explicitly. Actual cold-controller probes reproduce available and expired
+native behavior, reject a custom manager and leaf/directory symlinks, and
+verify temporary cleanup. A separate neutral paused Pipeline restores typed
+values and binary content under the reader and completes after rollback to
+the native plugin through two full restarts. These remain unshipped research
+results; public downloads, pending-source handling and active wrapper/Disposer
+restoration are still separate requirements. Close failures retain the original
+exception and suppress cleanup failures while preserving interruption.
