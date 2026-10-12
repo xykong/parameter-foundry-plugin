@@ -1,0 +1,131 @@
+{
+  "sourceVersion": "2.8.10",
+  "sourceArchiveSha256": "3875250959e41c849894eb719b06b8e4a5fee4c6dae15d92a34b8415d9e0d35f",
+  "sourceContract": "Direct native literal construction; diagnostic fallback source; no Jobs or scripts included.",
+  "apiDefault": "fallback",
+  "cases": [
+    {
+      "channel": "CLI",
+      "input": null,
+      "expected": ""
+    },
+    {
+      "channel": "CLI",
+      "input": "",
+      "expected": ""
+    },
+    {
+      "channel": "CLI",
+      "input": " ",
+      "expected": " "
+    },
+    {
+      "channel": "CLI",
+      "input": "outside",
+      "expected": "outside"
+    },
+    {
+      "channel": "CLI",
+      "input": "small,large",
+      "expected": "small,large"
+    },
+    {
+      "channel": "CLI",
+      "input": "large,small",
+      "expected": "large,small"
+    },
+    {
+      "channel": "FORM",
+      "input": {},
+      "expected": ""
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": ""
+      },
+      "expected": ""
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": " "
+      },
+      "expected": " "
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": "raw,comma"
+      },
+      "expected": "raw,comma"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": []
+      },
+      "expected": ""
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": [
+          "small",
+          "large"
+        ]
+      },
+      "expected": "small,large"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": [
+          "large",
+          "small"
+        ]
+      },
+      "expected": "large,small"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": [
+          "a,b",
+          "quote\""
+        ]
+      },
+      "expected": "a,b,quote\\\""
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": null
+      },
+      "expected": "null"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": true
+      },
+      "expected": "true"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": 7
+      },
+      "expected": "7"
+    },
+    {
+      "channel": "FORM",
+      "input": {
+        "value": {
+          "nested": "object"
+        }
+      },
+      "expected": "{\"nested\":\"object\"}"
+    }
+  ]
+}

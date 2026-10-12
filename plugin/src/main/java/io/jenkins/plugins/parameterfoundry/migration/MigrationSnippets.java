@@ -42,7 +42,7 @@ public final class MigrationSnippets {
                     + (choice.getVisibleItemCount() > 0 ? ",\n  visibleItemCount: " + choice.getVisibleItemCount() : "")
                     + ",\n  standardApiInputMode: " + quote(choice.getStandardApiInputMode())
                     + (choice.isProviderBacked() ? ",\n  providerId: " + quote(choice.getProviderId()) : "")
-                    + (choice.isActiveChoicesSingleInput()
+                    + (choice.isActiveChoicesInput()
                             ? ",\n  activeChoicesApiDefaultMode: " + quote(choice.getActiveChoicesApiDefaultMode())
                                     + ",\n  activeChoicesApiDefaultLiteral: "
                                     + quote(choice.getActiveChoicesApiDefaultLiteral())
@@ -75,6 +75,7 @@ public final class MigrationSnippets {
             return "foundryChoice(\n"
                     + "  name: "
                     + quote(multiple.getName())
+                    + (multiple.getDescription() == null ? "" : ",\n  description: " + quote(multiple.getDescription()))
                     + ",\n  selectionMode: 'multiple',\n  choices: "
                     + choices(multiple.getChoices())
                     + ",\n  renderer: "
@@ -90,6 +91,22 @@ public final class MigrationSnippets {
                             : "")
                     + ",\n  standardApiInputMode: "
                     + quote(multiple.getStandardApiInputMode())
+                    + (multiple instanceof FoundryChoiceParameterDefinition active && active.isActiveChoicesInput()
+                            ? ",\n  environmentExport: " + quote(active.getEnvironmentExport())
+                                    + (active.isProviderBacked()
+                                            ? ",\n  providerId: " + quote(active.getProviderId())
+                                            : "")
+                                    + ",\n  activeChoicesApiDefaultMode: "
+                                    + quote(active.getActiveChoicesApiDefaultMode())
+                                    + ",\n  activeChoicesApiDefaultLiteral: "
+                                    + quote(active.getActiveChoicesApiDefaultLiteral())
+                                    + ",\n  activeChoicesFilterLength: " + active.getActiveChoicesFilterLength()
+                                    + ",\n  dependsOn: ["
+                                    + active.getDependsOn().stream()
+                                            .map(MigrationSnippets::quote)
+                                            .collect(Collectors.joining(", "))
+                                    + "]"
+                            : "")
                     + ",\n  duplicatePolicy: "
                     + quote(multiple.getDuplicatePolicy())
                     + ",\n  delimiter: "

@@ -38,7 +38,7 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `defaultValue` | value | — | Single selection, `explicit` only |
 | `defaultValues` | value list | empty | Multiple selection, `explicit` only |
 | `legacyDefaultLiteral` | exact string | unset | Static Extended Choice compatibility: preserve omitted-input environment default separately from selectable UI defaults |
-| `activeChoicesApiDefaultMode` | `first`, `literal` | `first` | Unreleased Active Choices single compatibility: omitted API input uses first ordered option or exact literal, independently of UI defaults |
+| `activeChoicesApiDefaultMode` | `first`, `literal` | `first` | Active Choices string compatibility: omitted API input uses first ordered option or exact literal, independently of UI defaults |
 | `activeChoicesApiDefaultLiteral` | exact string | empty | Literal API default; retains empty and whitespace strings without changing visible choices |
 | `legacyEmptyChoiceAllowed` | boolean | `false` | Extended Choice compatibility only: accept empty CLI/standard tokens from leading/internal source entries without displaying empty choices |
 | `required` | boolean | `false` | Reject an empty value |
@@ -198,6 +198,16 @@ string: it remains visible and submits an empty string, including through explic
 typed input. Typed null still clears a selection; ordinary modes reject empty options.
 Ordinary and typed explicit input
 stay strict; typed omission shares the API default. Per-Job source/consumer, exact-release and retirement gates still apply.
+
+The unreleased multiple transport also supports `selectionMode: multiple` with
+`standardApiInputMode: active-choices` and `environmentExport: string`. Standard
+CLI/form input and saved values remain Core strings; they are not converted into
+ordinary Foundry lists. For an unselected source multi-select, use UI
+`defaultMode: none` while keeping the independently reviewed API default. Explicit
+typed API input must be an array of known strings, is canonicalized, and exports
+its JSON comma-joined string. Multiple option values must be non-empty. This does
+not automatically migrate scripts, preserve every source filter/refresh policy,
+or implement formatted HTML references; each requires source/browser verification.
 
 Reactive single Active Choices compatibility requires a shared Provider and an explicit
 `activeChoicesApiDefaultMode: literal` with the reviewed missing-dependency API default.

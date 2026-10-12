@@ -160,7 +160,7 @@ public final class ProviderSnapshotStore {
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
-            if (choice.isActiveChoicesSingleInput())
+            if (choice.isActiveChoicesInput())
                 value.append('\u0000')
                         .append(choice.getActiveChoicesApiDefaultMode())
                         .append('\u0000')
@@ -189,7 +189,7 @@ public final class ProviderSnapshotStore {
         }
         String baseDigest = Digests.sha256(value.toString());
         if (definition instanceof FoundryChoiceParameterDefinition choice
-                && choice.isActiveChoicesSingleInput()
+                && choice.isActiveChoicesInput()
                 && choice.getActiveChoicesFilterLength() != 1) {
             return Digests.sha256(net.sf.json.JSONArray.fromObject(java.util.List.of(
                             "active-choices-filter-length-v1", baseDigest, choice.getActiveChoicesFilterLength()))

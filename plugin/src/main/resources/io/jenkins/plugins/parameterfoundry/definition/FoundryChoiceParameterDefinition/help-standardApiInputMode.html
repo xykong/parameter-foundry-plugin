@@ -1,13 +1,13 @@
 <div>
   <p>How <code>buildWithParameters</code> decodes this parameter:</p>
 <ul>
-  <li><code>active-choices</code> is unflagged single string compatibility. CLI strings remain
+  <li><code>active-choices</code> is unflagged single or multiple string compatibility. CLI strings remain
     literal (null becomes empty); standard missing fields use the independent API default,
     exactly one field stays literal, and zero/multiple fields reject. Form missing value
     becomes empty, JSON null becomes the string null, arrays comma-join and other values
     stringify. File payloads require Foundry File. UI and API defaults are independent;
     Core string values retain history, queue equality and uppercase environment aliases.
-    Required/custom/disabled controls, dependencies and tables are unavailable. Supplied
+    Required/custom/disabled controls and tables are unavailable. Reactive definitions require a shared Provider and a reviewed literal API default. Multiple compatibility requires string environment export and non-empty option values. Supplied
     snapshots remain validated. One empty inline option may remain selectable and submits
     an empty string; typed empty selects that option while typed null clears selection.
     Ordinary modes reject empty options; typed explicit inputs retain membership validation.</li>

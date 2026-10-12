@@ -46,7 +46,7 @@ public final class ParameterEvaluationService {
         }
         if (input.values().size() == 1
                 && input.values().get(0).isEmpty()
-                && definition.isActiveChoicesSingleInput()
+                && definition.isActiveChoicesInput()
                 && definition.findOption(options, "") != null) {
             validateKnownEnabled(definition, options, "");
             return "";
@@ -192,7 +192,7 @@ public final class ParameterEvaluationService {
             return evaluateMultiple(definition, DecodedInput.absent(), options, matrix, false);
         }
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
-            if (choice.isActiveChoicesSingleInput()
+            if (choice.isActiveChoicesInput()
                     && "first".equals(choice.getDefaultMode())
                     && options.stream().anyMatch(option -> option.getSourceChoiceMetadata() != null)) {
                 DefinitionValidationService.requireValid(choice);

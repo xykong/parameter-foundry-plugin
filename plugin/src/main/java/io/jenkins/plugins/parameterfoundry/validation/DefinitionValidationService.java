@@ -79,17 +79,16 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            validateActiveChoicesInput(choice, errors);
             if (choice.getVisibleItemCount() < 0 || choice.getVisibleItemCount() > 1000) {
                 errors.add("Visible item count must be between 0 and 1000.");
             }
             if (!Set.of("first", "literal").contains(choice.getActiveChoicesApiDefaultMode()))
                 errors.add("Active Choices API default mode must be first or literal.");
-            if (!choice.isActiveChoicesSingleInput()
+            if (!choice.isActiveChoicesInput()
                     && (!"first".equals(choice.getActiveChoicesApiDefaultMode())
                             || !choice.getActiveChoicesApiDefaultLiteral().isEmpty()))
-                errors.add("Active Choices API defaults require single compatibility mode.");
-            if ("active-choices".equals(choice.getStandardApiInputMode()) && choice.isMultiple())
-                errors.add("Active Choices compatibility is single only.");
+                errors.add("Active Choices API defaults require compatibility mode.");
             if (choice.isLegacyEmptyChoiceAllowed() && !"extended-choice".equals(choice.getStandardApiInputMode())) {
                 errors.add("Legacy empty choice transport requires Extended Choice compatibility.");
             }
@@ -177,8 +176,7 @@ public final class DefinitionValidationService {
             return;
         }
         if (definition.getSelectableOptions().isEmpty()
-                && !(definition instanceof FoundryChoiceParameterDefinition choice
-                        && choice.isActiveChoicesSingleInput())
+                && !(definition instanceof FoundryChoiceParameterDefinition choice && choice.isActiveChoicesInput())
                 && !(definition.getChoices().isEmpty() && ExtendedChoiceDefaultCompatibility.enabled(definition))) {
             errors.add("At least one option is required");
             return;
@@ -239,23 +237,7 @@ public final class DefinitionValidationService {
                         "List Git Branches compatibility does not support custom-value controls or required validation.");
             }
         }
-        if (definition.isActiveChoicesSingleInput()) {
-            if (definition.getActiveChoicesFilterLength() < 0) {
-                errors.add("Active Choices filter length must be nonnegative.");
-            }
-            if (!"string".equals(definition.getEnvironmentExport())
-                    || definition.getTable() != null
-                    || definition.isRequired()
-                    || definition.isAllowCustomValue()
-                    || "explicit".equals(definition.getDefaultMode())
-                    || definition.getChoices().stream().anyMatch(option -> option != null && option.isDisabled()))
-                errors.add(
-                        "Active Choices single compatibility requires unflagged choices without required or custom-value controls.");
-            if (!definition.getDependsOn().isEmpty()
-                    && !"literal".equals(definition.getActiveChoicesApiDefaultMode())) {
-                errors.add("Reactive Active Choices single compatibility requires an explicit literal API default.");
-            }
-        }
+
         if ("extended-choice".equals(definition.getStandardApiInputMode())) {
             if (definition.getChoices().stream().anyMatch(Option::isDisabled)) {
                 errors.add("Extended Choice single compatibility does not support disabled choices.");
@@ -316,7 +298,8 @@ public final class DefinitionValidationService {
                 errors.add("A Provider-backed table uses the matrix the Provider returns; remove the inline table");
             }
         }
-        if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())) {
+        if (!MULTI_API_MODES.contains(definition.getStandardApiInputMode())
+                && !(definition instanceof FoundryChoiceParameterDefinition choice && choice.isActiveChoicesInput())) {
             errors.add("Unsupported standard API input mode: " + definition.getStandardApiInputMode());
         }
         if ("extended-choice".equals(definition.getStandardApiInputMode())
@@ -334,7 +317,10 @@ public final class DefinitionValidationService {
                 errors.add("Extended Choice compatibility requires submitted environment export order.");
             }
         }
-        if (!MULTI_EXPORT_MODES.contains(definition.getEnvironmentExport())) {
+        if (!MULTI_EXPORT_MODES.contains(definition.getEnvironmentExport())
+                && !(definition instanceof FoundryChoiceParameterDefinition choice
+                        && choice.isActiveChoicesInput()
+                        && "string".equals(definition.getEnvironmentExport()))) {
             errors.add("Unsupported multi-choice export mode: " + definition.getEnvironmentExport());
         }
         if (definition.getMinSelections() < 0) {
@@ -441,5 +427,25 @@ public final class DefinitionValidationService {
             }
         }
         return false;
+    }
+
+    private static void validateActiveChoicesInput(FoundryChoiceParameterDefinition definition, List<String> errors) {
+        if (definition.isActiveChoicesInput()) {
+            if (definition.getActiveChoicesFilterLength() < 0) {
+                errors.add("Active Choices filter length must be nonnegative.");
+            }
+            if (!"string".equals(definition.getEnvironmentExport())
+                    || definition.getTable() != null
+                    || definition.isRequired()
+                    || definition.isAllowCustomValue()
+                    || "explicit".equals(definition.getDefaultMode())
+                    || definition.getChoices().stream().anyMatch(option -> option != null && option.isDisabled()))
+                errors.add(
+                        "Active Choices compatibility requires unflagged choices without required or custom-value controls.");
+            if (!definition.getDependsOn().isEmpty()
+                    && !"literal".equals(definition.getActiveChoicesApiDefaultMode())) {
+                errors.add("Reactive Active Choices compatibility requires an explicit literal API default.");
+            }
+        }
     }
 }

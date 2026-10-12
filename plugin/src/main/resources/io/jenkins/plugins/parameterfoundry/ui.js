@@ -1788,7 +1788,8 @@
           initialValues = gitSelected ? [gitSelected.value] : [];
         }
         if (field.dataset.standardApiInputMode === "active-choices" && resolved.filterMode === "active-choices-regex") {
-          initialValues = field.dataset.defaultMode === "none" || resolved.defaultValue == null ? [] : [resolved.defaultValue];
+          initialValues = field.dataset.defaultMode === "none" || resolved.defaultValue == null ? [] :
+            Array.isArray(resolved.defaultValue) ? resolved.defaultValue.slice() : [resolved.defaultValue];
         } else if (field.dataset.standardApiInputMode === "active-choices") {
           // A source cascade rebuilds its selection when dependencies change,
           // even when the previous value remains in the new option list.

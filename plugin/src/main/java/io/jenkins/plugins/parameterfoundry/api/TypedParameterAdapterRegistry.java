@@ -110,10 +110,7 @@ final class TypedParameterAdapterRegistry {
             return form.createTypedValue(typedValue, present);
         }
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
-            if (choice.isMultiple()) {
-                return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
-            }
-            if (!present && choice.isActiveChoicesSingleInput()) {
+            if (!present && choice.isActiveChoicesInput()) {
                 var resolved = ProviderSnapshotStore.get()
                         .resolveForBuild(
                                 job,
@@ -122,8 +119,11 @@ final class TypedParameterAdapterRegistry {
                                 snapshotId,
                                 operation,
                                 "first".equals(choice.getActiveChoicesApiDefaultMode()));
-                return io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesSingleCompatibility.defaultValue(
+                return io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesCompatibility.defaultValue(
                         choice, resolved.options(), resolved.metadata());
+            }
+            if (choice.isMultiple()) {
+                return decodeMultiple(job, choice, present, typedValue, dependencies, snapshotId, operation);
             }
             if (!present && choice.isExtendedChoiceSingleInput()) {
                 ProviderSnapshotStore.get().resolveForBuild(job, choice, dependencies, snapshotId, operation);
@@ -142,7 +142,7 @@ final class TypedParameterAdapterRegistry {
                             dependencies,
                             snapshotId,
                             operation,
-                            choice.isActiveChoicesSingleInput() || choice.needsOptions(input));
+                            choice.isActiveChoicesInput() || choice.needsOptions(input));
             String canonical = ParameterEvaluationService.evaluateSingle(choice, input, resolved.options());
             return FoundryChoiceParameterValue.single(
                     choice.getName(),
@@ -205,6 +205,10 @@ final class TypedParameterAdapterRegistry {
                 present ? DecodedInput.present(values) : DecodedInput.absent(),
                 resolved.options(),
                 resolved.matrix());
+        if (definition.isActiveChoicesInput()) {
+            return io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesCompatibility.value(
+                    definition, JSONArray.fromObject(canonical).join(",", true), resolved.metadata());
+        }
         return definition.createEvaluatedMultipleValue(canonical, values, resolved.metadata());
     }
 

@@ -58,7 +58,7 @@ public final class DependencyValues {
     private static boolean isSourceCascade(Job<?, ?> job, AbstractFoundryParameterDefinition definition) {
         return job != null
                 && definition instanceof FoundryChoiceParameterDefinition choice
-                && choice.isActiveChoicesSingleInput()
+                && choice.isActiveChoicesInput()
                 && definition.isProviderBacked()
                 && ProviderRegistry.findProvider(job, definition.getProviderId())
                         .map(located -> located.provider() instanceof RestProviderDefinition rest

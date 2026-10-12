@@ -8,7 +8,7 @@ import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
-import io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesSingleCompatibility;
+import io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesCompatibility;
 import io.jenkins.plugins.parameterfoundry.evaluation.DecodedInput;
 import io.jenkins.plugins.parameterfoundry.evaluation.DependencyValues;
 import io.jenkins.plugins.parameterfoundry.evaluation.EvaluationException;
@@ -70,8 +70,13 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         activeChoicesApiDefaultLiteral = literal;
     }
 
+    public boolean isActiveChoicesInput() {
+        return ActiveChoicesCompatibility.enabled(this);
+    }
+
+    /** Retained single-only predicate for existing callers. */
     public boolean isActiveChoicesSingleInput() {
-        return ActiveChoicesSingleCompatibility.enabled(this);
+        return !isMultiple() && isActiveChoicesInput();
     }
 
     public int getActiveChoicesFilterLength() {
@@ -200,7 +205,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     public boolean isLegacyRebuildInput() {
-        return activeChoicesRebuildInput && isActiveChoicesSingleInput()
+        return activeChoicesRebuildInput && isActiveChoicesInput()
                 || isGitRebuildInput()
                 || extendedChoiceRebuildInput
                         && (ExtendedChoiceDefaultCompatibility.enabled(this) || isExtendedChoiceSingleInput());
@@ -240,7 +245,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     @Override
     public List<Option> getFallbackChoices() {
-        if (isExtendedChoiceSingleInput() || isActiveChoicesSingleInput()) return getSelectableOptions();
+        if (isExtendedChoiceSingleInput() || isActiveChoicesInput()) return getSelectableOptions();
         List<Option> fallback = new ArrayList<>(super.getFallbackChoices());
         if (!"explicit".equals(getDefaultMode())
                 || !allowCustomValue
@@ -261,18 +266,18 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     @Override
     public boolean isFallbackTruncated() {
-        return !isExtendedChoiceSingleInput() && !isActiveChoicesSingleInput() && super.isFallbackTruncated();
+        return !isExtendedChoiceSingleInput() && !isActiveChoicesInput() && super.isFallbackTruncated();
     }
 
     @Override
     public ParameterValue createValue(StaplerRequest2 request) {
         try {
-            if (isActiveChoicesSingleInput()) {
-                ActiveChoicesSingleCompatibility.requireCompatible(this);
-                String raw = ActiveChoicesSingleCompatibility.standard(request.getParameterValues(getName()));
+            if (isActiveChoicesInput()) {
+                ActiveChoicesCompatibility.requireCompatible(this);
+                String raw = ActiveChoicesCompatibility.standard(request.getParameterValues(getName()));
                 validateActiveChoicesSnapshot(request, null);
                 if (raw == null) return getDefaultParameterValue();
-                return ActiveChoicesSingleCompatibility.value(this, raw, null);
+                return ActiveChoicesCompatibility.value(this, raw, null);
             }
             if (isExtendedChoiceSingleInput()) {
                 return ExtendedChoiceSingleCompatibility.fields(this, request.getParameterValues(getName()));
@@ -297,11 +302,10 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request, JSONObject submitted) {
         try {
-            if (isActiveChoicesSingleInput()) {
-                ActiveChoicesSingleCompatibility.requireCompatible(this);
+            if (isActiveChoicesInput()) {
+                ActiveChoicesCompatibility.requireCompatible(this);
                 validateActiveChoicesSnapshot(request, submitted);
-                return ActiveChoicesSingleCompatibility.value(
-                        this, ActiveChoicesSingleCompatibility.form(submitted), null);
+                return ActiveChoicesCompatibility.value(this, ActiveChoicesCompatibility.form(submitted), null);
             }
             if (isExtendedChoiceSingleInput()) {
                 return ExtendedChoiceSingleCompatibility.form(this, submitted);
@@ -326,8 +330,8 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(CLICommand command, String value) throws IOException, InterruptedException {
         try {
-            if (isActiveChoicesSingleInput())
-                return ActiveChoicesSingleCompatibility.value(this, ActiveChoicesSingleCompatibility.cli(value), null);
+            if (isActiveChoicesInput())
+                return ActiveChoicesCompatibility.value(this, ActiveChoicesCompatibility.cli(value), null);
             if (isExtendedChoiceSingleInput()) {
                 return ExtendedChoiceSingleCompatibility.cli(this, value);
             }
@@ -362,12 +366,12 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue getDefaultParameterValue() {
         try {
-            if (isActiveChoicesSingleInput()) {
-                ActiveChoicesSingleCompatibility.requireCompatible(this);
+            if (isActiveChoicesInput()) {
+                ActiveChoicesCompatibility.requireCompatible(this);
                 ResolvedProviderOptions resolved = "literal".equals(getActiveChoicesApiDefaultMode())
                         ? new ResolvedProviderOptions(List.of(), null, null, null, false)
                         : ProviderSubmission.resolveForDefault(this);
-                return ActiveChoicesSingleCompatibility.defaultValue(this, resolved.options(), resolved.metadata());
+                return ActiveChoicesCompatibility.defaultValue(this, resolved.options(), resolved.metadata());
             }
             if (isExtendedChoiceSingleInput()) {
                 return ExtendedChoiceSingleCompatibility.defaultValue(this);
@@ -402,9 +406,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                     && !ExtendedChoiceDefaultCompatibility.enabled(this)) {
                 return false;
             }
-            if (GitBranchInputCompatibility.enabled(this)
-                    || isExtendedChoiceSingleInput()
-                    || isActiveChoicesSingleInput()) {
+            if (GitBranchInputCompatibility.enabled(this) || isExtendedChoiceSingleInput() || isActiveChoicesInput()) {
                 DefinitionValidationService.requireValid(this);
                 if (value instanceof FoundryChoiceParameterValue choiceValue) {
                     return !choiceValue.isMultiple();
@@ -452,10 +454,10 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     @Override
     public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-        if (isActiveChoicesSingleInput()
+        if (isActiveChoicesInput()
                 && defaultValue instanceof FoundryChoiceParameterValue multiple
                 && multiple.isMultiple()) return this;
-        if (isActiveChoicesSingleInput()
+        if (isActiveChoicesInput()
                 && (defaultValue instanceof StringParameterValue
                         || defaultValue instanceof FoundryChoiceParameterValue)) {
             String literal = defaultValue instanceof StringParameterValue string
@@ -496,7 +498,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     public String getUiDefaultValue() {
         if (isMultiple()) return null;
-        if (isActiveChoicesSingleInput())
+        if (isActiveChoicesInput())
             return isProviderBacked()
                     ? null
                     : ParameterEvaluationService.evaluateSingle(this, DecodedInput.absent(), getSelectableOptions());
@@ -505,7 +507,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     public boolean isDefault(String value) {
-        if (isExtendedChoiceSingleInput() || isActiveChoicesSingleInput() && !isProviderBacked())
+        if (isExtendedChoiceSingleInput() || isActiveChoicesInput() && !isMultiple() && !isProviderBacked())
             return java.util.Objects.equals(
                     value,
                     ParameterEvaluationService.evaluateSingle(this, DecodedInput.absent(), getSelectableOptions()));
@@ -552,7 +554,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
                 return List.of();
             }
         }
-        if (isActiveChoicesSingleInput()) {
+        if (isActiveChoicesInput()) {
             String value = getUiDefaultValue();
             return value == null ? List.of() : List.of(value);
         }
@@ -646,7 +648,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     public boolean needsOptions(DecodedInput input) {
-        if (isActiveChoicesSingleInput()) return !input.present() && "first".equals(getActiveChoicesApiDefaultMode());
+        if (isActiveChoicesInput()) return !input.present() && "first".equals(getActiveChoicesApiDefaultMode());
         return !GitBranchInputCompatibility.enabled(this) || GitBranchInputCompatibility.requiresOptions(this, input);
     }
 

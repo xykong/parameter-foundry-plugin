@@ -167,3 +167,5 @@ Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64Fi
 - Reviewed Active Choices single Mapping Providers reset UI selection on dependency changes; renderer select has no source regex filter. Literal API defaults are independent; option resolution requires declared dependencies. Ordinary mapping Providers retain valid selections.
 
 Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves positive configured row counts. Legacy zero-row sizing needs separate UI verification.
+
+- Unreleased Active Choices multiple transport uses `standardApiInputMode: active-choices`, `selectionMode: multiple`, and `environmentExport: string`. Standard callers preserve Core strings; typed explicit arrays retain membership validation. UI empty selection and API first/literal defaults are independent. Non-empty option values are required; filtering, refresh and formatted HTML need separate source/browser verification.

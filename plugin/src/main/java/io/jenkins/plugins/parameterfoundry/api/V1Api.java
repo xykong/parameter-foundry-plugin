@@ -119,7 +119,7 @@ public final class V1Api {
             result.put("version", body.containsKey("version") ? body.get("version") : null);
             result.put("options", options);
             boolean sourceChoice = foundry instanceof FoundryChoiceParameterDefinition choice
-                    && choice.isActiveChoicesSingleInput()
+                    && choice.isActiveChoicesInput()
                     && foundry.isProviderBacked()
                     && ProviderRegistry.findProvider(job, foundry.getProviderId())
                             .map(located -> located.provider() instanceof RestProviderDefinition rest

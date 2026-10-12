@@ -40,6 +40,10 @@ through `legacyDefaultLiteral`, literal form input and editable historical Rebui
 values and static single transport compatibility. Source/browser verification
 is recorded in the testing guide. Empty-token transport preserves the characterized
 source contract; per-Job and exact-release gates still apply.
+Unreleased multiple Active Choices string transport preserves raw CLI/form values,
+independent API defaults and Core string history. Filtering, reactive presentation
+and HTML reference migration retain separate verification gates; see the
+[parameter reference](./docs/guide/parameters.md).
 Version `0.9.299` adds an explicit unflagged Active Choices
 single transport path and configured-node order. Use
 [the observed source contract](./docs/research/active-choices-single-transport-contract.md)

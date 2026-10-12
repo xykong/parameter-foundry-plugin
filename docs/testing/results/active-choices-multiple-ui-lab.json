@@ -1,0 +1,133 @@
+{
+  "case": "UP-AC-056",
+  "candidate": {
+    "version": "0.19.337-SNAPSHOT (private-e6476359-xykong)",
+    "sha256": "23bdcab53256258bfbb496b0723e5dc4acc571f7bbcd443f7a9c55a064c01751",
+    "state": "UNPUBLISHED_CANDIDATE_NOT_PRODUCTION"
+  },
+  "jenkins": "2.568.3",
+  "browser": "153.0.8010.12",
+  "viewports": [
+    {
+      "viewport": 1440,
+      "sourceTargetEqual": true,
+      "control": {
+        "values": [
+          "fallback",
+          "other"
+        ],
+        "labels": [
+          "fallback",
+          "other"
+        ],
+        "selected": [],
+        "size": 2,
+        "multiple": true
+      }
+    },
+    {
+      "viewport": 390,
+      "sourceTargetEqual": true,
+      "control": {
+        "values": [
+          "fallback",
+          "other"
+        ],
+        "labels": [
+          "fallback",
+          "other"
+        ],
+        "selected": [],
+        "size": 2,
+        "multiple": true
+      }
+    }
+  ],
+  "httpPairs": [
+    {
+      "index": 0,
+      "value": ""
+    },
+    {
+      "index": 1,
+      "value": ""
+    },
+    {
+      "index": 2,
+      "value": ""
+    },
+    {
+      "index": 3,
+      "value": "other,fallback"
+    },
+    {
+      "index": 4,
+      "value": "a,b,quote\\\""
+    },
+    {
+      "index": 5,
+      "value": "null"
+    },
+    {
+      "index": 6,
+      "value": "true"
+    },
+    {
+      "index": 7,
+      "value": "7"
+    },
+    {
+      "index": 8,
+      "value": "{\"nested\":\"object\"}"
+    }
+  ],
+  "cliEnvPairs": [
+    {
+      "index": 0,
+      "result": {
+        "type": "hudson.model.StringParameterValue",
+        "value": "fallback",
+        "env": "fallback"
+      }
+    },
+    {
+      "index": 1,
+      "result": {
+        "type": "hudson.model.StringParameterValue",
+        "value": "",
+        "env": ""
+      }
+    },
+    {
+      "index": 2,
+      "result": {
+        "type": "hudson.model.StringParameterValue",
+        "value": " outside ",
+        "env": " outside "
+      }
+    },
+    {
+      "index": 3,
+      "result": {
+        "type": "hudson.model.StringParameterValue",
+        "value": "other,fallback",
+        "env": "other,fallback"
+      }
+    },
+    {
+      "index": 4,
+      "result": {
+        "type": "hudson.model.StringParameterValue",
+        "value": "quote\"",
+        "env": "quote\""
+      }
+    }
+  ],
+  "neutralQueueItemsCancelled": 28,
+  "businessBuildsScheduled": 0,
+  "finalQueueEmpty": true,
+  "controlsUnobscuredAfterScroll": true,
+  "implementationEntries": 488,
+  "fullVerifyTests": 426,
+  "scope": "Literal unfiltered multiple controls only; filtered/cascade/HTML sources require separate gates."
+}
