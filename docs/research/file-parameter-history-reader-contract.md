@@ -183,3 +183,35 @@ synthetic download sends a client TCP reset after a response prefix and verifies
 owned temporary cleanup. The reset observation proves the cleanup end state,
 not a specific server exception. No production data or builds are used. These
 results do not yet prove active native wrapper/Disposer or pending-upload support.
+
+
+New native-only nested Stashed/Base64 wrapper fixtures survive two cold restarts
+and complete normal cleanup after both in-place writes and regular-file atomic
+replacement in the body. In-place changes alter content; atomic replacement also
+alters file identity. A content hash or original fileKey alone would reject valid
+native behavior. Stashed wrapper materialization uses a fixed safe-name leaf in
+workspace's sibling temporary directory; Base64 uses a random leaf. Nested,
+parallel and fallback-name collisions need an invocation-specific contract.
+A serialized path, body environment or log message cannot establish ownership.
+
+Completed source-absent history initially retains file bytes and graph node IDs
+but loses four wrapper display/function labels. Scope-qualified metadata research
+restores these labels without rewriting the graph. The exact workflow display
+path instantiates a data model, so a constructor that always rejects also prevents
+stock label restoration. The private opt-in experiment permits only passive
+literal metadata construction, rejects configuration and both execution entry
+points, and verifies actual old-symbol/explicit-wrapper bodies do not execute.
+All twenty-six node labels/functions and historical file rows match the native
+fixture, with unchanged graph storage. Default-off/source-active descriptor
+checks pass on one Core. This is not yet accepted product compatibility: other
+Core versions, cache/source-reinstall behavior and binding/snippet surfaces remain
+required, and data-model construction must not be described as fully rejected.
+
+For active native disposers, any proposed ownership ledger needs a trustworthy
+wrapper invocation, Run, authenticated agent, actual workspace lease, verified
+sibling-temp parent and exclusive direct-leaf slot. It must accommodate approved
+regular-file replacement rather than rely on original bytes/inode. No supported
+ledger issuer or universal active handoff is implemented. The retirement route
+therefore still requires natural completion of native wrappers/pending uploads,
+replacement of future producers, and independent history/Replay acceptance.
+Draining is an operational gate, not proof of active-wrapper reader compatibility.
