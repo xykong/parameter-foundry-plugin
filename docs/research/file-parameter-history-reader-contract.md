@@ -244,3 +244,15 @@ clearing or Core replacement. Resource integrity/source-state checks in this
 research host are not a substitute for the full reviewed product archive and
 reader lifecycle contracts. No release or source-retirement acceptance follows
 from these isolated discovery results.
+
+
+The isolated prototype now checks full activation at both concrete binary open
+entry points. A warm-symbol-miss ERROR still leaves legacy classes exposed, but
+the same two historical byte reads reject before decoding or temporary extraction.
+An observed native archive staged after successful activation produces
+RESTART_REQUIRED and rejects those reads as well. Actual owned controller probes
+verify zero restored bytes and no leftover/new temporary directory on these
+rejections, while ACTIVE restores both thirteen-byte files. This does not claim
+that every metadata getter is gated or that the prototype has the full product
+source-state, observer, persistence and archive-ownership contracts. Those remain
+required before shipping the companion.
