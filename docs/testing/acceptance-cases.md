@@ -14,6 +14,7 @@ the case, but production configuration is never committed here.
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
@@ -900,3 +901,24 @@ matcher and container-variable cleanup issue are retained and corrected in the
 test runner. The known owned zero-job controller was explicitly inspected/removed;
 successful fresh run exits zero and removes its own controller. No product change
 was needed for the generated metadata relocation.
+
+
+## UP-AC-063: Stored file stream budgets
+
+- Scope: shared controller-side primitives for the pending File history reader;
+  no upload surface, descriptor, activation switch or legacy class is exposed.
+- Reproduction: run `HistoricalFileStreamsTest` through Maven. Read seeded binary
+  values with padded/unpadded Base64, malformed encodings, exact byte limits,
+  overflow through bulk reads or skips, and source closure after rejection.
+- Expected: native JDK decoding semantics, no second encoded/decoded whole-file
+  copy, exact-limit EOF accepted, first excess byte rejected, subsequent reads
+  and positive skips rejected, reset unavailable, and close reaches the source.
+- Previous behavior: these safeguards existed only in the isolated prototype;
+  the formal plugin had no bounded historical streaming primitive.
+- Fix: restricted internal `HistoricalFileStreams` in the history companion.
+  The caller must supply authorization, live reader state and a reviewed limit;
+  this utility grants none of those and never opens controller paths.
+- Verification: `mvn -B -ntp verify` passes 457 tests with zero failures/errors,
+  zero SpotBugs findings and a clean Spotless check. This includes all three new
+  stream tests. Browser and agent checks are not applicable to this primitive;
+  endpoint/lifecycle integration remains open.
