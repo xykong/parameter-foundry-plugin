@@ -1017,6 +1017,12 @@ was needed for the generated metadata relocation.
   produces sticky CONFLICT, and both states reject new byte opens without temporary
   leftovers. Periodic observation detects a staged native archive in 23.1 seconds
   without getter/API polling (an observation, not a hard deadline guarantee).
-  Warm symbol failures, combined-family lifecycle, filtered-identity HTTP and
-  final release-artifact checks remain pending. Passive wrapper
+  The completed full-verify HPI (812f30c6) also passes off/cold/native checks
+  on 2.568.3. A neutral early initializer caches a missing wrapper symbol before
+  the real reader starts: both 2.528.3 and 2.568.3 persist ERROR and reject
+  acceptance; 2.528.3 also rejects the byte-policy accessor and remains ERROR
+  after opt-in restoration. Initial probe newline quoting and wrong-baseline
+  dependency fixtures failed; corrected isolated reruns pass without product changes.
+  Combined-family lifecycle, filtered-identity HTTP and final release-artifact
+  checks remain pending. Passive wrapper
   metadata is not active wrapper/Replay compatibility or retirement acceptance.
