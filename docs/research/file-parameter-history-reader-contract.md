@@ -215,3 +215,32 @@ ledger issuer or universal active handoff is implemented. The retirement route
 therefore still requires natural completion of native wrappers/pending uploads,
 replacement of future producers, and independent history/Replay acceptance.
 Draining is an operational gate, not proof of active-wrapper reader compatibility.
+
+
+Further cold lifecycle probes preserve native descriptor ownership after source
+reinstall/restart and remove the metadata descriptor with opt-in disabled. The
+Pipeline snippet menu still lists the historical symbol; generation rejects the
+metadata configuration with HTTP 400 and emits no executable snippet. Applicability
+to Freestyle alone does not imply invisibility in Pipeline snippet tools.
+Staging a source archive without loading it leaves both SymbolLookup and direct
+descriptor lookups cached even when a freshly evaluated filter rejects the entry.
+A live filter is not a descriptor-revocation or class-unloading mechanism.
+
+A separate unshipped bootstrap experiment keeps legacy classes in a fixed nested
+archive rather than the ordinary classpath, and uses a main ExtensionFinder with
+no symbolic legacy type references. Default-off startup leaves old types and
+symbol unavailable. Normal cold activation exposes the archive, registers the
+component held by the actual finder in the ExtensionFinder list, refreshes public
+extension discovery and verifies class, descriptor and symbol ownership before
+reporting ACTIVE. Concrete finder lookup was not the same instance as the base
+list in the observed environment, so registering a different instance failed.
+
+A real symbol-miss-before-registration probe confirms that public extension
+refresh does not clear structs' negative symbol cache for a late archive in the
+same plugin. That experiment reports ERROR and rejects compatibility acceptance;
+it cannot undo already-exposed classes. Startup sequencing or explicit rejection
+on unresolved symbols therefore remains required, without reflective cache
+clearing or Core replacement. Resource integrity/source-state checks in this
+research host are not a substitute for the full reviewed product archive and
+reader lifecycle contracts. No release or source-retirement acceptance follows
+from these isolated discovery results.
