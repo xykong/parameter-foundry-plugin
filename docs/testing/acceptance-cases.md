@@ -14,6 +14,7 @@ the case, but production configuration is never committed here.
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
 | Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
@@ -922,3 +923,38 @@ was needed for the generated metadata relocation.
   zero SpotBugs findings and a clean Spotless check. This includes all three new
   stream tests. Browser and agent checks are not applicable to this primitive;
   endpoint/lifecycle integration remains open.
+
+
+## UP-AC-064: Run-bound historical stash extraction
+
+- Shared scope: exact local artifact-manager ownership, fixed Run stash key,
+  native single-file USTAR/GZIP format, file/expanded/compressed quotas,
+  cooperative time/interrupt checks, and owned extraction lifetime.
+- Reproduction: run `HistoricalStashSourceTest`, `HistoricalStashArchiveTest`,
+  `HistoricalStashFileTest`, and `HistoryStreamCleanupTest`. Use Core
+  `ArchiverFactory.TARGZ` fixtures with both ordinary and native fallback names.
+  Mutate entry names/types, duplicate entries, CRC/trailer/tail, truncation and
+  quotas; simulate checked/unchecked cleanup failures.
+- Expected: no serialized temporary path or remote fallback, no symlink traversal,
+  only the expected regular entry, full archive validation before returning
+  content, preserved source bytes, no failed extraction leftovers, and owned
+  file/directory removal on close with primary/suppressed failures preserved.
+- Previous behavior: these safeguards existed only in isolated research code.
+- Fix: restricted Run-bound source, archive parser and extraction facade in the
+  formal history companion; shared cleanup also handles runtime/errors.
+- Platform-specific coverage: Linux/Java 21 executes all 18 related stream/source/
+  archive/cleanup cases without skips. macOS lacks SecureDirectoryStream in the
+  observed provider, so six source/extraction cases were skipped there; this is
+  not restore acceptance. Unsupported providers must reject; no fallback is
+  added. Windows-controller restoration remains unsupported pending a reviewed adapter.
+- Actual results: first test compile lacked an optional TAR dependency; fixtures
+  now use Core directly. First Linux extraction assertion observed the wrong
+  temporary root; the corrected test discovers the actual JDK temporary parent.
+- Verification: corrected Linux targeted suite passes. First full Linux run
+  executes 472 tests without failures/errors/skips, then fails SpotBugs on a
+  possible null filesystem root. Explicit root/attribute-view rejection is added;
+  corrected full `mvn -B -ntp verify` passes on Linux/Java 21 with 472 tests,
+  zero failures/errors/skips, zero SpotBugs findings and clean Spotless. Runtime
+  endpoint permissions/ACTIVE gates, metadata discovery, remote
+  backend adapters and active native wrapper/pending upload retirement remain
+  separate work. Cooperative timing does not interrupt a blocked I/O operation.
