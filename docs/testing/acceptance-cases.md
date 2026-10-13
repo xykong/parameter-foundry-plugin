@@ -14,6 +14,7 @@ the case, but production configuration is never committed here.
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Historical download policy (UP-AC-065) | Endpoint integration pending | N/A at utility level | N/A | N/A | N/A | Harness Run/ACL/filter/cleanup | Neutral local build only |
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
 | Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
@@ -958,3 +959,27 @@ was needed for the generated metadata relocation.
   endpoint permissions/ACTIVE gates, metadata discovery, remote
   backend adapters and active native wrapper/pending upload retirement remain
   separate work. Cooperative timing does not interrupt a blocked I/O operation.
+
+
+## UP-AC-065: Historical file download ownership and authorization
+
+- Scope: restricted shared download utility; no legacy route or activation
+  switch is added at this milestone.
+- Reproduction: run `HistoricalFileDownloadTest` in the Jenkins Test Harness with
+  neutral empty-builder builds and a declared parameter. Download as a read-only
+  user, request a distinct but equal value, attach an undefined Core-filtered
+  parameter, deny anonymous READ, and fail response-stream acquisition.
+- Expected: Job.READ before source access; exact value identity in Core's filtered
+  ParametersAction collection; hidden/detached values return404 without opening
+  a source; successful bytes use attachment/octet-stream/nosniff; failed output
+  acquisition still closes the source. File budgets and live ACTIVE checks remain
+  obligations of the source callback, not authorization granted by this utility.
+- Previous behavior: the contract was verified only in the isolated reader.
+- Fix: `HistoricalFileDownload` shared policy in the formal history companion.
+- Actual results: initial test compile used the anonymous constant on ACL rather
+  than Jenkins; corrected baseline API compiles and all three Harness cases pass
+  on Linux/Java21, without skipped tests.
+- Verification: targeted PASS and complete Linux/Java 21 `mvn -B -ntp verify`
+  PASS with 475 tests, no failures/errors/skips, zero SpotBugs findings and clean
+  Spotless. Actual HTTP routing/browser coverage must accompany legacy value/
+  endpoint integration before release.
