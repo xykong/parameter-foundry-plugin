@@ -187,6 +187,24 @@
                   </manifest>
                 </jar>
                 <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" fileext=".sha256" />
+                <delete dir="${project.build.directory}/file-history-classes" />
+                <mkdir dir="${project.build.directory}/file-history-classes" />
+                <javac destdir="${project.build.directory}/file-history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/src/file-history/java" target="17">
+                  <classpath refid="maven.compile.classpath" />
+                  <compilerarg value="-parameters" />
+                  <compilerarg value="-proc:full" />
+                </javac>
+                <copy todir="${project.build.directory}/file-history-classes">
+                  <fileset dir="${project.basedir}/src/file-history/resources" />
+                </copy>
+                <jar basedir="${project.build.directory}/file-history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                    <attribute name="Created-By" value="Parameter Foundry" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar" fileext=".sha256" />
               </target>
             </configuration>
           </execution>

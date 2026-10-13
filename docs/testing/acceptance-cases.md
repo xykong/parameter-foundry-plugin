@@ -14,6 +14,7 @@ the case, but production configuration is never committed here.
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| File history bundle/startup (UP-AC-066) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Configuration and help inspected | Historical downloads passed | N/A | UID/archive/default-off/error Harness; 482 full tests | Two Core cold/source matrices; sticky live conflicts and periodic detection passed; remaining retirement gates pending |
 | Historical download policy (UP-AC-065) | Endpoint integration pending | N/A at utility level | N/A | N/A | N/A | Harness Run/ACL/filter/cleanup | Neutral local build only |
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
 | Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
@@ -983,3 +984,39 @@ was needed for the generated metadata relocation.
   PASS with 475 tests, no failures/errors/skips, zero SpotBugs findings and clean
   Spotless. Actual HTTP routing/browser coverage must accompany legacy value/
   endpoint integration before release.
+
+
+## UP-AC-066: Isolated File history bundle and restart-bound startup
+
+- Scope: native serialization shape, fixed artifact, source/class/metadata owners,
+  default-off persistent configuration, frozen history budget and sticky errors.
+- Reproduction: run FileHistoryPackagingTest, LegacyFileHistoryReaderTest,
+  HistoryReaderArchiveTest and ConfigurationHelpCoverageTest. Verify three native
+  UIDs/fields and literal environments, family substitution rejection, main-class
+  invisibility, live opt-in/limit restart rejection, and injected configuration/
+  getter/status-root faults in our own reader component.
+- Expected: no eager old types, upload definitions or Delete; no byte acceptance
+  without ACTIVE; all startup/status faults become sticky ERROR without escaping
+  initialization; manifest and annotation indices stay fixed and source-owned.
+- Previous behavior: formal plugin had no File family or startup policy. Initial
+  implementation left configuration and status-root lookup outside the catch.
+- Fix: separate Maven source/resource archive, actual ExtensionFinder registration,
+  four-owner/discovery checks, NOFOLLOW staged markers, periodic observation,
+  restart-bound config/help and complete failure boundary.
+- Verification: corrected Linux targeted cohort passes14 tests with no skips.
+  Formal snapshot 010f7214 passes actual off/cold/native startup on both
+  reviewed Cores, restores two 13-byte samples and original graph labels, and
+  actual 2.568.3 HTTP downloads match the native SHA256/header contract. Seven
+  disabled/failed/staged/dangling/partial-exporter cases on each Core also reject
+  acceptance. First cold assertion used Groovy Map.empty (a key lookup), corrected
+  to isEmpty without product changes. Complete Linux `mvn -B -ntp verify` passes
+  482 tests without failures/errors/skips, SpotBugs and Spotless. Chromium
+  153.0.8010.12 at 1440×1000 and 390×844 verifies persisted configuration,
+  two history links and four actual downloads with matching bytes/hashes. Live
+  limit changes remain RESTART_REQUIRED after restoration; a hot foreign exporter
+  produces sticky CONFLICT, and both states reject new byte opens without temporary
+  leftovers. Periodic observation detects a staged native archive in 23.1 seconds
+  without getter/API polling (an observation, not a hard deadline guarantee).
+  Warm symbol failures, combined-family lifecycle, filtered-identity HTTP and
+  final release-artifact checks remain pending. Passive wrapper
+  metadata is not active wrapper/Replay compatibility or retirement acceptance.

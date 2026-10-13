@@ -20,7 +20,7 @@ and [`../decisions/`](../decisions/).
 | Preserve legacy string predicates in Pipeline | [Saved parameter text](./pipeline-parameter-text.md) |
 | Connect a backend (REST, source JSON modes, Git, script, managed config) | [Providers](./providers.md) |
 | Move off Active Choices, Extended Choice, Git branches | [Migration](./migration.md) |
-| Understand optional retired Git/Extended Choice value history support | [Historical parameter values](./history-compatibility.md) |
+| Understand retired Git/Extended Choice history and File history development controls | [Historical parameter values](./history-compatibility.md) |
 | Decide how to model a real Job | [Best practices](./best-practices.md) |
 | Understand what the plugin is and is not | [Design goals](./design-goals.md) |
 | Fix an error you just hit | [Troubleshooting](./troubleshooting.md) |

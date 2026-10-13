@@ -25,6 +25,8 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
     private boolean accessibleChoiceGridEnabled = true;
     private boolean legacyGitHistoryEnabled;
     private boolean legacyExtendedChoiceHistoryEnabled;
+    private boolean legacyFileHistoryEnabled;
+    private long legacyFileHistoryMaxBytes;
 
     public ParameterFoundryGlobalConfiguration() {
         load();
@@ -32,6 +34,27 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
 
     public static ParameterFoundryGlobalConfiguration get() {
         return GlobalConfiguration.all().get(ParameterFoundryGlobalConfiguration.class);
+    }
+
+    public boolean isLegacyFileHistoryEnabled() {
+        return legacyFileHistoryEnabled;
+    }
+
+    @DataBoundSetter
+    public void setLegacyFileHistoryEnabled(boolean enabled) {
+        legacyFileHistoryEnabled = enabled;
+        save();
+    }
+
+    public long getLegacyFileHistoryMaxBytes() {
+        return legacyFileHistoryMaxBytes == 0 ? 100L * 1024 * 1024 : legacyFileHistoryMaxBytes;
+    }
+
+    @DataBoundSetter
+    public void setLegacyFileHistoryMaxBytes(long maximum) {
+        if (maximum < 1) throw new IllegalArgumentException("Historical file byte limit must be positive");
+        legacyFileHistoryMaxBytes = maximum;
+        save();
     }
 
     public boolean isLegacyExtendedChoiceHistoryEnabled() {

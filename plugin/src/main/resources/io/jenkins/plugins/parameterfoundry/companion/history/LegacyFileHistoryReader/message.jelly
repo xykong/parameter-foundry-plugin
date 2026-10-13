@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <div class="jenkins-alert jenkins-alert-warning">
+    Parameter Foundry File history reader: ${it.state}. Historical binary reading
+    is accepted only while ACTIVE. Resolve source ownership, archive, discovery or
+    restart requirements before considering retirement. Already exposed classes
+    cannot be unloaded live. Active wrappers, pending uploads and Replay remain
+    separate gates; no serialized temporary path is used.
+  </div>
+</j:jelly>

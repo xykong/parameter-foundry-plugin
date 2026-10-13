@@ -29,19 +29,40 @@ final class HistoryReaderArchive {
         GIT(RESOURCE, LEGACY),
         EXTENDED_CHOICE(
                 "io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar",
-                "com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterValue");
+                "com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterValue"),
+        FILE(
+                "io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar",
+                "io.jenkins.plugins.file_parameters.AbstractFileParameterValue",
+                Set.of(
+                        "META-INF/MANIFEST.MF",
+                        "META-INF/services/annotations/org.kohsuke.stapler.export.ExportedBean",
+                        "META-INF/services/annotations/org.jenkinsci.Symbol",
+                        "io/jenkins/plugins/file_parameters/AbstractFileParameterValue.class",
+                        "io/jenkins/plugins/file_parameters/Base64FileParameterValue.class",
+                        "io/jenkins/plugins/file_parameters/StashedFileParameterValue.class",
+                        "io/jenkins/plugins/file_parameters/FileParameterWrapper.class",
+                        "io/jenkins/plugins/file_parameters/FileParameterWrapper$DescriptorImpl.class",
+                        "io/jenkins/plugins/file_parameters/FileParameterWrapper.stapler",
+                        "io/jenkins/plugins/file_parameters/AbstractFileParameterValue/value.jelly"));
 
         final String resource;
         final String legacy;
         final Set<String> entries;
 
         Family(String resource, String legacy) {
+            this(
+                    resource,
+                    legacy,
+                    Set.of(
+                            "META-INF/MANIFEST.MF",
+                            legacy.replace('.', '/') + ".class",
+                            legacy.replace('.', '/') + "/value.jelly"));
+        }
+
+        Family(String resource, String legacy, Set<String> entries) {
             this.resource = resource;
             this.legacy = legacy;
-            this.entries = Set.of(
-                    "META-INF/MANIFEST.MF",
-                    legacy.replace('.', '/') + ".class",
-                    legacy.replace('.', '/') + "/value.jelly");
+            this.entries = entries;
         }
     }
 
@@ -109,10 +130,39 @@ final class HistoryReaderArchive {
                     throw new IOException("History reader contains an unexpected entry");
                 }
                 if ("META-INF/MANIFEST.MF".equals(entry.getName())) {
-                    var attributes = new Manifest(new ByteArrayInputStream(content)).getMainAttributes();
+                    var manifest = new Manifest(new ByteArrayInputStream(content));
+                    var attributes = manifest.getMainAttributes();
                     if (!"parameter-foundry".equals(attributes.getValue("Short-Name"))
                             || attributes.getValue("Plugin-Version") == null) {
                         throw new IOException("History reader manifest ownership is invalid");
+                    }
+                    if (family == Family.FILE
+                            && (!manifest.getEntries().isEmpty()
+                                    || !attributes.keySet().stream()
+                                            .map(Object::toString)
+                                            .collect(java.util.stream.Collectors.toSet())
+                                            .equals(Set.of(
+                                                    "Manifest-Version",
+                                                    "Short-Name",
+                                                    "Plugin-Version",
+                                                    "Ant-Version",
+                                                    "Created-By"))
+                                    || !"1.0".equals(attributes.getValue("Manifest-Version"))
+                                    || !"Parameter Foundry".equals(attributes.getValue("Created-By")))) {
+                        throw new IOException("File history manifest contains unsupported loading declarations");
+                    }
+                }
+                if (family == Family.FILE && entry.getName().startsWith("META-INF/services/annotations/")) {
+                    var lines =
+                            new String(content, StandardCharsets.UTF_8).lines().toList();
+                    Set<String> expectedIndex = entry.getName().endsWith("org.jenkinsci.Symbol")
+                            ? Set.of("io.jenkins.plugins.file_parameters.FileParameterWrapper$DescriptorImpl")
+                            : Set.of(
+                                    "io.jenkins.plugins.file_parameters.AbstractFileParameterValue",
+                                    "io.jenkins.plugins.file_parameters.Base64FileParameterValue",
+                                    "io.jenkins.plugins.file_parameters.StashedFileParameterValue");
+                    if (lines.size() != expectedIndex.size() || !new HashSet<>(lines).equals(expectedIndex)) {
+                        throw new IOException("File history annotation index is invalid");
                     }
                 }
             }

@@ -11,7 +11,7 @@ Start here if you are configuring or using the plugin:
 - [Cookbook](./guide/examples.md)
 - [Providers](./guide/providers.md)
 - [Migration](./guide/migration.md)
-- [Historical parameter values](./guide/history-compatibility.md)
+- [Historical parameter values and development File reader](./guide/history-compatibility.md)
 - [Best practices](./guide/best-practices.md)
 - [Design goals](./guide/design-goals.md)
 - [Troubleshooting](./guide/troubleshooting.md)

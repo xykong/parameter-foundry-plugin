@@ -176,3 +176,14 @@ Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–100
 Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
 
 - Source-specific history readers introduced in 0.21.349: `legacyGitHistoryEnabled` and `legacyExtendedChoiceHistoryEnabled` independently default false and take effect only after full restart. Each requires source absence, its own immutable resource integrity and class ownership. Initial Core targets 2.528.3/2.568.3; Beta/internal API exception is method-local and checker remains enabled. Status conflicts invalidate acceptance; hot native reinstall unsupported. Extended Choice covers historical strings after current native definitions/generators are migrated; preserve JSON-file consumers separately. Source definitions/Replay and file history are independent gates. See [history guide](docs/guide/history-compatibility.md). Isolated product tests do not approve production activation or source removal.
+
+- Unreleased File history development: `legacyFileHistoryEnabled` defaults false,
+  `legacyFileHistoryMaxBytes` defaults 100 MiB; both require full restart. A fixed
+  isolated bundle supplies completed Base64/local stash shapes and passive graph
+  metadata only. Four class owners and descriptor/Symbol discovery precede ACTIVE;
+  every binary open checks live acceptance. Job.READ plus Core-filtered Run value
+  identity precedes download. No upload definitions, native Delete, pending tmpFile
+  reader or remote fallback. Active wrappers, pending uploads, Rebuild/Replay,
+  producer migration and exact-HPI both-Core/HTTP/browser validation remain gates.
+  Keep native source installed until full workflow fidelity is proved. See
+  [history guide](docs/guide/history-compatibility.md).

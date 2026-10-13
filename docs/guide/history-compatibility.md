@@ -3,7 +3,7 @@
 The history reader introduced in 0.21.349 is an optional retirement companion for the
 characterized List Git Branches string value. It is disabled by default and does
 not migrate parameter definitions or Jenkinsfiles. Extended Choice and file
-history require separate compatibility work.
+history require separate compatibility work; the development File reader below is not part of 0.21.349.
 
 ## Controlled activation
 
@@ -68,7 +68,7 @@ native PT_JSON with saving enabled. Under a migrated definition it returns the
 stored string. Validate and preserve any JSON-file consumer workflow before
 retirement; this reader supplies neither the native definition nor its editor,
 scripts or file-writing behavior. Old definitions/source/Replay and captured
-resolver types remain separate gates. File Parameters history is not included.
+resolver types remain separate gates. File Parameters history was not included in 0.21.349.
 Isolated product HPI and storage/CPS results do not approve production activation
 or source-plugin removal.
 
@@ -78,3 +78,41 @@ definition preserves historical text without changing the Job's current defaults
 Blank historical defaults retain the source's absent-default semantics; an
 explicit form submission preserves the entered literal. Typed inputs and ordinary
 choice definitions keep their existing validation.
+
+
+## File history reader in development
+
+Unreleased development builds add `legacyFileHistoryEnabled` (default false) and
+`legacyFileHistoryMaxBytes` (default 104857600, or 100 MiB). Both are restart-bound.
+This is an internal completed-value compatibility milestone, not approval to
+remove File Parameters or proof that all historical workflows are covered.
+
+The isolated bundle preserves native Abstract/Base64/Stashed value serialization
+shapes and a passive wrapper descriptor for completed graph labels. It contains
+no upload definitions, pending-path reader or native Delete implementation.
+The descriptor rejects new execution/binding. Active wrappers, pending uploads,
+old definition sources, Rebuild and Replay must be resolved before retirement;
+keep the source plugin while those gates remain open.
+
+Cold activation requires source absence, fixed archive integrity/indices, four
+class owners and actual descriptor/Symbol discovery. A present healthy source
+keeps native ownership. Disabled/failed/staged sources and other exporters reject
+activation. ERROR/CONFLICT are sticky; configuration changes or staged native
+archives invalidate acceptance until restart. Already exposed classes, cached
+metadata and existing streams cannot be revoked live. Use live monitor state;
+a persisted status file alone is not authorization.
+
+Every new binary read checks ACTIVE before decoding/extraction. Downloads require
+Job.READ and exact identity in Core's filtered Run parameter collection. Base64
+uses streaming basic-decoder semantics under the independent history limit.
+Stashed values use only the Run-owned local StandardArtifactManager source and
+secure NOFOLLOW directory lookup, strict single-file USTAR/GZIP validation,
+separate compressed/expanded limits and owned temporary cleanup. Unsupported
+controller filesystems and artifact backends reject; no serialized tmpFile path
+or remote fallback is used. Stash retention and native missing-content behavior
+still apply. Cooperative time checks do not interrupt blocked I/O.
+
+Pick a history budget that covers retained files before retirement. This limit
+is independent of the 1 MiB/100 MiB defaults for newly ingested uploads. Actual
+cold-source, both-Core, HTTP/browser and full workflow acceptance remain required
+for the exact release HPI; packaging/unit tests cannot establish those gates.
