@@ -256,3 +256,21 @@ rejections, while ACTIVE restores both thirteen-byte files. This does not claim
 that every metadata getter is gated or that the prototype has the full product
 source-state, observer, persistence and archive-ownership contracts. Those remain
 required before shipping the companion.
+
+
+The isolated archive guard now applies owned CodeSource resource checks, a fixed
+twenty-entry set, duplicate/unexpected entry rejection, compressed/expanded
+budgets and bounded NOFOLLOW verification of retained bytes. Manifest attributes
+and named sections are restricted to the fixed owner/version contract, excluding
+Class-Path loading declarations; exported-bean and symbol indices are fixed.
+Twenty-one hostile/retention assertions pass. These research constants must still
+be integrated into the product's reviewed archive packaging and Maven checks.
+
+State-detection runtime/linkage failures become sticky ERROR, and startup/state
+transitions attempt atomic persistence to the fixed managed status file. An owned
+symlink-target failure leaves the canary untouched, keeps memory ERROR after the
+configuration is restored, and blocks new byte opens. Persistence failure cannot
+guarantee the status file says ERROR; a previously written value may remain or
+the target may be unavailable. Authorization must use live state rather than
+the file alone. Full source classification, runtime observation and product-level
+acceptance remain separate work.
