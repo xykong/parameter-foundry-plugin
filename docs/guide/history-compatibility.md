@@ -90,7 +90,8 @@ remove File Parameters or proof that all historical workflows are covered.
 The isolated bundle preserves native Abstract/Base64/Stashed value serialization
 shapes and a passive wrapper descriptor for completed graph labels. It contains
 no upload definitions, pending-path reader or native Delete implementation.
-The descriptor rejects new execution/binding. Active wrappers, pending uploads,
+Passive model construction is allowed; new execution and descriptor configuration
+binding are rejected. Active wrappers, pending uploads,
 old definition sources, Rebuild and Replay must be resolved before retirement;
 keep the source plugin while those gates remain open.
 

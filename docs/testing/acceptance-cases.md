@@ -1023,6 +1023,50 @@ was needed for the generated metadata relocation.
   acceptance; 2.528.3 also rejects the byte-policy accessor and remains ERROR
   after opt-in restoration. Initial probe newline quoting and wrong-baseline
   dependency fixtures failed; corrected isolated reruns pass without product changes.
-  Combined-family lifecycle, filtered-identity HTTP and final release-artifact
-  checks remain pending. Passive wrapper
+  Combined-family lifecycle and final release-artifact checks remain pending. Passive wrapper
   metadata is not active wrapper/Replay compatibility or retirement acceptance.
+
+
+### UP-AC-066 additional HTTP and Rebuild acceptance
+
+The full-verify HPI 812f30c6 passes real HTTP authorization on Core 2.568.3:
+a user granted Item.READ without Item.BUILD downloads the visible stash (200,
+13 bytes); a Core-filtered Base64 value returns 404 even for the administrator;
+an anonymous request returns 404 without file bytes. The neutral authorization
+fixture follows implied permissions (including Item.DISCOVER). Initial manual
+ParametersAction replacement did not bind to the Run, and the first custom ACL
+omitted implied permissions; those fixture failures are retained, not counted
+as product failures or passes.
+
+Chromium 153.0.8010.12 at 1440×1000 and 390×844 opens an old Base64/Stashed
+history Rebuild after replacing both current definitions and the neutral
+Pipeline with Foundry equivalents. Submitting without uploads returns 400 and
+creates no build. Uploading both replacements through the actual Rebuild form
+creates one SUCCESS neutral build per viewport; both wrapper paths yield exact
+replacement bytes. No production Jobs or business logic are run. Desktop
+inspection reveals the old unconditional reuse hint was misleading for old
+values; the hint now limits reuse to retained Foundry uploads and describes the
+replacement requirement. The corrected HPI dc2112f7 passes the complete 482-test verify (zero
+failures/errors/skips, SpotBugs and Spotless) and both actual browser runs again:
+all four updated hints are visible, empty submissions return 400, and replacement
+submissions complete SUCCESS. Both final screenshots are visually inspected.
+No Java class content changes relative to candidate 812f30c6; changes are the
+Jelly hint, manifests and regenerated nested-reader digests.
+
+
+The same HPI also enables all three history readers together on Cores 2.528.3
+and 2.568.3 after all three native archives are absent. All readers report ACTIVE;
+Git/ECP values retain padded literals through XStream roundtrips with Foundry
+class ownership, and both original completed File values still open with exact
+13-byte lengths and wrapper graph labels. Three distinct retained reader jars
+are present. This verifies simultaneous startup/read ownership, not arbitrary
+combined old Pipeline execution. Initial r23 retained the native Git/ECP archives
+and correctly reported NATIVE; absent-source r24/r25 fixtures pass.
+
+
+A real HTTP client disconnect check on Core 2.568.3 replaces the neutral Run's
+stash with a canonical 24 MiB single-file archive, requests its historical
+download, reads one byte, then closes the connection. The owned extraction is
+removed after disconnect and the original history still has one build; no new
+build or production write occurs. This supplements Harness close-failure tests
+with a real socket/route lifecycle check on HPI 812f30c6.

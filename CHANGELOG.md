@@ -11,6 +11,14 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Added
+
+- Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
+
+### Fixed
+
+- Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
+
 ## 0.21.349 - 2026-10-13
 
 The HPI is `dist/parameter-foundry-0.21.349.hpi` (SHA-256
