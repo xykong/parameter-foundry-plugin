@@ -274,3 +274,29 @@ guarantee the status file says ERROR; a previously written value may remain or
 the target may be unavailable. Authorization must use live state rather than
 the file alone. Full source classification, runtime observation and product-level
 acceptance remain separate work.
+
+The source-state prototype now checks all four native class owners before NATIVE
+and all four injected reader owners before ACTIVE. A partial old-type exporter
+blocks startup even if the wrapper class is absent. Source archives and disabled
+markers use NOFOLLOW existence checks, so dangling paths remain blocking markers.
+After exposure, each active plugin's own class definitions are inspected for
+conflicts; dependency delegation alone is not a competing exporter. Detection
+also remains active after RESTART_REQUIRED. CONFLICT and ERROR remain sticky.
+
+A real periodic-work probe observes a staged native archive and persists
+RESTART_REQUIRED without an API/getter poll during the observation interval.
+That proves the observer ran, not a hard detection deadline or preemptive plugin
+installation interlock. Actual neutral dynamic-exporter probes reject new byte
+reads after CONFLICT. These guards do not revoke already-loaded classes, cached
+descriptors, metadata access or already-open streams. The two characterized Core
+versions pass default-off/cold-read/cached-symbol-failure probes; the formal HPI
+must still repeat the complete lifecycle and combined-family matrices.
+
+The next implementation milestone is formal integration, not additional claims
+of production migration: fixed File family packaging and licensing, the reviewed
+classpath helper, restart-bound persistent opt-in and metadata discovery, live
+state monitoring, Run-bound file reads under product budgets, and matching
+Harness/browser/dual-Core acceptance. File retirement must additionally prevent
+future native producers and establish natural completion of native active
+wrappers and pending uploads. Completed-history evidence does not satisfy those
+active-instance gates.
