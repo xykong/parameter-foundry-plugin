@@ -30,6 +30,33 @@ public final class ExtendedChoiceParameterDefinition extends ParameterDefinition
     private final String defaultValue;
     private String multiSelectDelimiter;
     private final String groovyScript;
+    private String descriptionPropertyValue;
+    private String descriptionPropertyFile;
+    private String descriptionGroovyScript;
+
+    public String getDescriptionPropertyValue() {
+        return descriptionPropertyValue;
+    }
+
+    public void setDescriptionPropertyValue(String value) {
+        descriptionPropertyValue = value;
+    }
+
+    public String getDescriptionPropertyFile() {
+        return descriptionPropertyFile;
+    }
+
+    public void setDescriptionPropertyFile(String value) {
+        descriptionPropertyFile = value;
+    }
+
+    public String getDescriptionGroovyScript() {
+        return descriptionGroovyScript;
+    }
+
+    public void setDescriptionGroovyScript(String value) {
+        descriptionGroovyScript = value;
+    }
 
     public ExtendedChoiceParameterDefinition(
             String name, String type, String value, String defaultValue, String groovyScript) {

@@ -13,7 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Extension
@@ -71,6 +73,7 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         // Source option configuration and UI default selection use commas independently of
         // the delimiter used to export a submitted multiple value.
         List<Option> options = parseOptions(readString(definition, "getValue"));
+        applyLiteralLabels(definition, options);
         List<String> defaults = parseValues(readString(definition, "getDefaultValue"), ",");
         List<String> optionValues = options.stream().map(Option::getValue).toList();
         List<String> supportedDefaults =
@@ -189,6 +192,25 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
         return List.copyOf(options);
     }
 
+    private static void applyLiteralLabels(ParameterDefinition source, List<Option> options) {
+        String descriptions = readString(source, "getDescriptionPropertyValue");
+        String values = readString(source, "getValue");
+        if (descriptions == null || descriptions.isBlank() || values == null) return;
+        // Native labels use comma positions, skip empty description tokens, and keep the last duplicate key.
+        String[] keys = values.split(",");
+        List<String> labels = Arrays.stream(descriptions.split(",", -1))
+                .filter(label -> !label.isEmpty())
+                .toList();
+        Map<String, String> mapped = new HashMap<>();
+        for (int i = 0; i < Math.min(keys.length, labels.size()); i++) {
+            mapped.put(keys[i].trim(), labels.get(i).trim());
+        }
+        for (Option option : options) {
+            String label = mapped.get(option.getValue());
+            if (label != null && !label.isEmpty()) option.setLabel(label);
+        }
+    }
+
     private static List<String> parseValues(String raw, String delimiter) {
         String value = Util.fixEmpty(raw);
         if (value == null) {
@@ -219,6 +241,10 @@ public final class ExtendedChoiceMigrationAdapter extends SourceMigrationAdapter
                 || hasValue(source, "getDefaultPropertyKey")
                 || hasValue(source, "getDefaultGroovyScript")
                 || hasValue(source, "getDefaultGroovyScriptFile")
+                || hasValue(source, "getDescriptionPropertyFile")
+                || hasValue(source, "getDescriptionPropertyKey")
+                || hasValue(source, "getDescriptionGroovyScript")
+                || hasValue(source, "getDescriptionGroovyScriptFile")
                 || hasValue(source, "getJavascript")
                 || hasValue(source, "getJavascriptFile")
                 || JSON.equals(type)

@@ -17,6 +17,42 @@ class ExtendedChoiceMigrationAdapterTest {
     private final ExtendedChoiceMigrationAdapter adapter = new ExtendedChoiceMigrationAdapter();
 
     @Test
+    void literalDescriptionsMatchNativeLabelsAcrossStaticControls() {
+        for (String type : List.of("PT_SINGLE_SELECT", "PT_MULTI_SELECT", "PT_RADIO", "PT_CHECKBOX")) {
+            for (String[] fixture : List.of(
+                    new String[] {"APP,MINI", " app-label,mini-label ", "app-label", "mini-label"},
+                    new String[] {"a,,b", "one,,two,three", "one", "three"},
+                    new String[] {"a,a,b", "first,last,third", "last", "last", "third"},
+                    new String[] {"a,b,c", "one, ,", "one", "b", "c"},
+                    new String[] {"a,b,", "<literal>,second,extra", "<literal>", "second"},
+                    new String[] {"a,b", " \t\u2003", "a", "b"})) {
+                var source = source(type, fixture[0], "a", null);
+                source.setDescriptionPropertyValue(fixture[1]);
+                var target = assertInstanceOf(
+                        FoundryChoiceParameterDefinition.class,
+                        adapter.inspect(source).getTarget());
+                assertEquals(
+                        List.of(fixture).subList(2, fixture.length),
+                        target.getChoices().stream()
+                                .map(option -> option.getLabel())
+                                .toList());
+            }
+        }
+    }
+
+    @Test
+    void dynamicDescriptionSourcesAreGovernedWithoutEvaluation() {
+        var source = source("PT_RADIO", "APP,MINI", "APP", null);
+        source.setDescriptionGroovyScript("throw new AssertionError('Must not execute')");
+        assertEquals(MigrationClassification.C, adapter.inspect(source).getClassification());
+        assertNull(adapter.inspect(source).getTarget());
+        source.setDescriptionGroovyScript(null);
+        source.setDescriptionPropertyFile("/must-not-read/descriptions.properties");
+        assertEquals(MigrationClassification.C, adapter.inspect(source).getClassification());
+        assertNull(adapter.inspect(source).getTarget());
+    }
+
+    @Test
     void multipleListPreservesConfiguredRowsEvenWithoutOptions() {
         for (String raw : new String[] {"he,mi", "he,he,mi", ""}) {
             var source = source(ExtendedChoiceParameterDefinition.PARAMETER_TYPE_MULTI_SELECT, raw, "he", null);

@@ -17,6 +17,7 @@ suffix marks a build that is deployed but not tagged.
 
 ### Fixed
 
+- Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
 
 ## 0.21.349 - 2026-10-13

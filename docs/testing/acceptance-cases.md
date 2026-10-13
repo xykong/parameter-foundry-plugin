@@ -14,6 +14,7 @@ the case, but production configuration is never committed here.
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
+| Extended Choice display descriptions (UP-AC-067) | Pending | Pending | Existing label renderer | Pending | Existing literal values | Four native control goldens and dynamic rejection | Browser/native-source parity pending |
 | File history bundle/startup (UP-AC-066) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Configuration and help inspected | Historical downloads passed | N/A | UID/archive/default-off/error Harness; 482 full tests | Two Core cold/source matrices; sticky live conflicts and periodic detection passed; remaining retirement gates pending |
 | Historical download policy (UP-AC-065) | Endpoint integration pending | N/A at utility level | N/A | N/A | N/A | Harness Run/ACL/filter/cleanup | Neutral local build only |
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
@@ -56,6 +57,7 @@ until every applicable column passes.
 
 | ID | Area | Reproduction and expected result | Verification |
 | --- | --- | --- | --- |
+| UP-AC-067 | Extended Choice display descriptions | Preserve native literal label maps across four static controls; govern dynamic description sources without evaluation. | Full verify (484 tests), whitespace regression and desktop/mobile label checks pass; production release pending |
 | UP-AC-062 | Extended Choice string history | Separate opt-in/bundle, current-definition boundary, default-off/restart lifecycle and family substitution rejection. | 43 combined focused tests, two Core source-state/cold CPS matrices and 12 real browser submits passed; full verify/final artifact pending |
 | UP-AC-061 | Opt-in Git history reader | Default-off, restart-bound activation, integrity/storage checks, source-state and conflict handling. | Nine focused cases, two Core startup/cold CPS matrices and bridge UI passed; final verify/artifact and remaining lifecycle gates pending |
 | UP-AC-060 | Isolated history bundle | Keep legacy-named classes outside the initial plugin classpath; inspect the digest-bound nested jar independently. | Passed 438 full tests and two actual-HPI independent-process isolation cases; no reader activation |
@@ -1070,3 +1072,31 @@ download, reads one byte, then closes the connection. The owned extraction is
 removed after disconnect and the original history still has one build; no new
 build or production write occurs. This supplements Harness close-failure tests
 with a real socket/route lifecycle check on HPI 812f30c6.
+
+
+## UP-AC-067: Extended Choice literal display descriptions
+
+- Reproduction: migrate static select, multiple list, radio and checkbox definitions
+  with CSV descriptions, duplicate values, empty value/description slots, whitespace,
+  short/long description lists and literal markup. Compare labels with the native
+  source map and inspect desktop/mobile controls without running business logic.
+- Expected: preserve values, labels and defaults. Native labels match comma positions,
+  skip empty description tokens, trim text, use the last duplicate key and fall back
+  to the original value for empty/missing labels. Dynamic file/Groovy description
+  sources require governed conversion and are never read or evaluated by the adapter.
+- Actual: adapter ignored literal descriptions, so planned target labels were APP/MINI
+  while the native radio displayed its descriptions. Job cutover was stopped.
+- Fix: apply literal labels to static options and classify dynamic descriptions as C.
+- Verification: adapter golden tests cover all four static controls and native edge
+  rules; dynamic description script/file rejection is covered. Native production
+  definition is proven literal-only before reading its map, which matches the staged
+  source. Initial test attempted native API on a minimal fixture class and failed
+  compilation; fixtures now expose only getter data and tests use independent native
+  golden expectations. Full `mvn -B -ntp verify` passes 484 tests with zero failures,
+  errors or skips, with SpotBugs and Spotless passing. An additional whitespace
+  fixture passes targeted adapter verification. Chromium 153 on an isolated Jenkins
+  2.568.3 passes 16 label checks: native and migrated controls at 1440 and 390 pixels.
+  Screenshots were inspected. The GET build endpoint returns Core's parameter form
+  with status 405; its action and eight parameter entries are verified. No form is
+  submitted and no build is scheduled. This verifies label semantics, not complete
+  layout or business execution parity. Production deployment remains pending.

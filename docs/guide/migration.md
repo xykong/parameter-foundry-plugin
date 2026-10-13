@@ -40,7 +40,7 @@ has to be stated before an equivalent can be generated.
 | Source | Target |
 |---|---|
 | Extended Choice single/multi select, radio, checkbox | `foundryChoice` with the matching renderer and `selectionMode` |
-| Extended Choice static values | Inline `choices` |
+| Extended Choice static values | Inline `choices`; literal option descriptions become labels with the source comma/duplicate rules |
 | Extended Choice property file | Managed config Provider |
 | Extended Choice Groovy script | Provider refactor (the script is not copied) |
 | Extended Choice JSON editor | `foundryForm` |
