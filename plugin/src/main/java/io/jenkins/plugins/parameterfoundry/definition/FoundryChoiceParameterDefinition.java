@@ -110,6 +110,47 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     private int visibleItemCount;
+    private String valueTransport = "typed";
+
+    public String getValueTransport() {
+        return valueTransport == null ? "typed" : valueTransport;
+    }
+
+    @DataBoundSetter
+    public void setValueTransport(String valueTransport) {
+        if (!Set.of("typed", "core-string").contains(valueTransport)) {
+            throw new IllegalArgumentException("Value transport must be typed or core-string.");
+        }
+        this.valueTransport = valueTransport;
+    }
+
+    /** Rejects unsupported transport configurations before any Provider evaluation. */
+    public void requireConfiguredValueTransport() {
+        if ("typed".equals(getValueTransport())) return;
+        if (!"core-string".equals(getValueTransport())
+                || !ExtendedChoiceDefaultCompatibility.enabled(this)
+                || isProviderBacked()
+                || !"delimited".equals(getEnvironmentExport())) {
+            throw new EvaluationException(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.CONFIGURATION_INVALID,
+                    getName(),
+                    "Core string transport requires a static Extended Choice multiple parameter with delimited environment export.");
+        }
+    }
+
+    /** Applies an explicitly configured output transport after shared input evaluation. */
+    public ParameterValue asConfiguredParameterValue(ParameterValue value) {
+        requireConfiguredValueTransport();
+        if ("typed".equals(getValueTransport())) return value;
+        if (value == null || value instanceof StringParameterValue) return value;
+        if (!(value instanceof FoundryChoiceParameterValue choice) || choice.getLegacyExportLiteral() == null) {
+            throw new EvaluationException(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.CONFIGURATION_INVALID,
+                    getName(),
+                    "Core string transport requires an exact legacy submission literal.");
+        }
+        return new StringParameterValue(getName(), choice.getLegacyExportLiteral(), getDescription());
+    }
 
     public int getVisibleItemCount() {
         return visibleItemCount;
@@ -298,6 +339,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request) {
         try {
+            requireConfiguredValueTransport();
+            return asConfiguredParameterValue(createTypedValue(request));
+        } catch (EvaluationException exception) {
+            throw HttpResponses.errorWithoutStack(400, exception.getSafeMessage());
+        }
+    }
+
+    private ParameterValue createTypedValue(StaplerRequest2 request) {
+        try {
             if (isActiveChoicesInput()) {
                 ActiveChoicesCompatibility.requireCompatible(this);
                 String raw = ActiveChoicesCompatibility.standard(request.getParameterValues(getName()));
@@ -328,6 +378,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue createValue(StaplerRequest2 request, JSONObject submitted) {
         try {
+            requireConfiguredValueTransport();
+            return asConfiguredParameterValue(createTypedValue(request, submitted));
+        } catch (EvaluationException exception) {
+            throw HttpResponses.errorWithoutStack(400, exception.getSafeMessage());
+        }
+    }
+
+    private ParameterValue createTypedValue(StaplerRequest2 request, JSONObject submitted) {
+        try {
             if (isActiveChoicesInput()) {
                 ActiveChoicesCompatibility.requireCompatible(this);
                 validateActiveChoicesSnapshot(request, submitted);
@@ -355,6 +414,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
 
     @Override
     public ParameterValue createValue(CLICommand command, String value) throws IOException, InterruptedException {
+        try {
+            requireConfiguredValueTransport();
+            return asConfiguredParameterValue(createTypedValue(command, value));
+        } catch (EvaluationException exception) {
+            throw new AbortException(exception.getSafeMessage());
+        }
+    }
+
+    private ParameterValue createTypedValue(CLICommand command, String value) throws IOException, InterruptedException {
         try {
             if (isActiveChoicesInput())
                 return ActiveChoicesCompatibility.value(this, ActiveChoicesCompatibility.cli(value), null);
@@ -392,6 +460,15 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public ParameterValue getDefaultParameterValue() {
         try {
+            requireConfiguredValueTransport();
+            return asConfiguredParameterValue(evaluateDefaultParameterValue());
+        } catch (EvaluationException exception) {
+            return null;
+        }
+    }
+
+    private ParameterValue evaluateDefaultParameterValue() {
+        try {
             if (isActiveChoicesInput()) {
                 ActiveChoicesCompatibility.requireCompatible(this);
                 ResolvedProviderOptions resolved = "literal".equals(getActiveChoicesApiDefaultMode())
@@ -427,6 +504,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     @Override
     public boolean isValid(ParameterValue value) {
         try {
+            requireConfiguredValueTransport();
             if (value instanceof FoundryChoiceParameterValue choice
                     && choice.getLegacyExportLiteral() != null
                     && !ExtendedChoiceDefaultCompatibility.enabled(this)) {
@@ -627,6 +705,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
         copy.setDependsOn(getDependsOn());
         copy.setRenderer(getRenderer());
         copy.setVisibleItemCount(getVisibleItemCount());
+        copy.setValueTransport(getValueTransport());
         copy.setDefaultMode(getDefaultMode());
         copy.setDefaultValue(getDefaultValue());
         copy.setActiveChoicesApiDefaultMode(getActiveChoicesApiDefaultMode());
@@ -706,6 +785,7 @@ public final class FoundryChoiceParameterDefinition extends AbstractFoundryParam
     }
 
     private ResolvedProviderOptions optionsForOwner(ProviderOperation operation) {
+        requireConfiguredValueTransport();
         if (!isProviderBacked()) {
             return new ResolvedProviderOptions(getSelectableOptions(), getTable(), null, null, false);
         }

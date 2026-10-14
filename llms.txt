@@ -187,3 +187,5 @@ Literal presentation references use `foundryReference`; see [parameter types](do
   producer migration and exact-HPI both-Core/HTTP/browser validation remain gates.
   Keep native source installed until full workflow fidelity is proved. See
   [history guide](docs/guide/history-compatibility.md).
+
+Static Extended Choice multiple migrations may set `valueTransport: 'core-string'` to save an actual Jenkins `StringParameterValue`. Pipeline `params`, build API values and environment exports retain the source-compatible string. Form strings preserve order, spaces and empty tokens; CLI and repeated fields retain the original trimming and unavailable-value filtering rules. This avoids rewriting scripts that consume the old string directly. The default `typed` transport keeps multiple values as a list. Core string transport requires static `extended-choice` multiple compatibility with `delimited` environment export; Provider-backed choices keep typed transport.

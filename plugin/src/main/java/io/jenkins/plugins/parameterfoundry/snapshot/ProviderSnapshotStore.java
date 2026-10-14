@@ -160,6 +160,12 @@ public final class ProviderSnapshotStore {
                 .append('\u0000')
                 .append(definition.getEnvironmentExport());
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
+            if (!"typed".equals(choice.getValueTransport())) {
+                value.append('\u0000')
+                        .append("value-transport")
+                        .append('\u0000')
+                        .append(choice.getValueTransport());
+            }
             if (choice.isActiveChoicesInput())
                 value.append('\u0000')
                         .append(choice.getActiveChoicesApiDefaultMode())

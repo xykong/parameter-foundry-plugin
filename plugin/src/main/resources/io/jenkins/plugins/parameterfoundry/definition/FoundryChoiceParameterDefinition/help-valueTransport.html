@@ -1,0 +1,6 @@
+<div>
+  <p><code>typed</code> keeps Parameter Foundry values: a string for single selection and a list for multiple selection.</p>
+  <p><code>core-string</code> is available for static multiple parameters using <code>extended-choice</code> compatibility with <code>delimited</code> environment export.
+  It saves a Jenkins <code>StringParameterValue</code> with the exact legacy submission or default literal.
+  Pipeline <code>params</code>, build API values and the environment therefore keep the original string, after source-compatible input evaluation. Form literals retain whitespace and empty tokens; CLI/repeated fields retain source trimming and filtering. Use it when legacy scripts consume the original string directly.</p>
+</div>

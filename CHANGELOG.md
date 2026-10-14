@@ -13,6 +13,8 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Allow static Extended Choice multiple migrations to preserve native string build values with opt-in `valueTransport: core-string`.
+
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed

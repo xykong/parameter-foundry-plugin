@@ -51,6 +51,12 @@
       </div>
     </div>
   </f:entry>
+  <f:entry title="Build value transport" field="valueTransport">
+    <select class="jenkins-select__input" name="parameter.valueTransport">
+      <option value="typed" selected="${instance.valueTransport != 'core-string' ? 'selected' : null}">Typed values</option>
+      <option value="core-string" selected="${instance.valueTransport == 'core-string' ? 'selected' : null}">Legacy string (Extended Choice multiple)</option>
+    </select>
+  </f:entry>
   <f:entry title="Visible list rows" field="visibleItemCount">
     <f:number name="parameter.visibleItemCount" value="${instance.visibleItemCount}" min="0" max="1000" />
   </f:entry>

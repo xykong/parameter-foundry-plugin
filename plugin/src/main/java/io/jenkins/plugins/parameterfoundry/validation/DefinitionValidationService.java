@@ -79,6 +79,17 @@ public final class DefinitionValidationService {
         validateChoices(foundry, errors);
 
         if (foundry instanceof FoundryChoiceParameterDefinition choice) {
+            if (!Set.of("typed", "core-string").contains(choice.getValueTransport())) {
+                errors.add("Value transport must be typed or core-string.");
+            } else if ("core-string".equals(choice.getValueTransport())
+                    && (!io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.enabled(
+                                    choice)
+                            || choice.isProviderBacked()
+                            || !"delimited".equals(choice.getEnvironmentExport()))) {
+                errors.add(
+                        "Core string transport requires static Extended Choice multiple choices with delimited environment export.");
+            }
+
             if (!Set.of("auto", "none", "regex").contains(choice.getActiveChoicesFilterMode()))
                 errors.add("Active Choices filter mode must be auto, none or regex.");
             if (!Set.of("default", "retain-valid").contains(choice.getActiveChoicesRefreshMode()))

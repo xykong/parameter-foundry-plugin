@@ -53,6 +53,14 @@ final class TypedParameterAdapterRegistry {
                                 || definition instanceof FoundryFormParameterDefinition
                         ? "parameter-foundry"
                         : "jenkins-core");
+        if (definition instanceof FoundryChoiceParameterDefinition choice) {
+            schema.put("valueTransport", choice.getValueTransport());
+            schema.put(
+                    "buildValueType",
+                    "core-string".equals(choice.getValueTransport())
+                            ? "string"
+                            : choice.isMultiple() ? "array" : "string");
+        }
         if (definition instanceof FoundryFormParameterDefinition) {
             schema.put("type", "object");
         } else if (definition instanceof FoundryChoiceParameterDefinition choice && choice.isMultiple()) {
@@ -123,6 +131,7 @@ final class TypedParameterAdapterRegistry {
                     : reference.getDefaultParameterValue();
         }
         if (definition instanceof FoundryChoiceParameterDefinition choice) {
+            choice.requireConfiguredValueTransport();
             if (!present && choice.isActiveChoicesInput()) {
                 var resolved = ProviderSnapshotStore.get()
                         .resolveForBuild(
@@ -210,8 +219,9 @@ final class TypedParameterAdapterRegistry {
         if (!present
                 && io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.enabled(
                         definition)) {
-            return io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.evaluate(
-                    (FoundryChoiceParameterDefinition) definition);
+            return definition.asConfiguredParameterValue(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ExtendedChoiceDefaultCompatibility.evaluate(
+                            (FoundryChoiceParameterDefinition) definition));
         }
         List<String> canonical = ParameterEvaluationService.evaluateMultiple(
                 definition,
@@ -222,7 +232,8 @@ final class TypedParameterAdapterRegistry {
             return io.jenkins.plugins.parameterfoundry.evaluation.ActiveChoicesCompatibility.value(
                     definition, JSONArray.fromObject(canonical).join(",", true), resolved.metadata());
         }
-        return definition.createEvaluatedMultipleValue(canonical, values, resolved.metadata());
+        return definition.asConfiguredParameterValue(
+                definition.createEvaluatedMultipleValue(canonical, values, resolved.metadata()));
     }
 
     private static String requireString(ParameterDefinition definition, Object value) {
