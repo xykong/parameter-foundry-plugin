@@ -25,7 +25,11 @@ final class ActiveChoicesChoiceResponse {
     }
 
     static List<Option> options(byte[] body, boolean cascade, String providerId) {
-        return interpret(ActiveChoicesJsonResponse.parseRaw(body, providerId), cascade).choices().stream()
+        return options(interpret(ActiveChoicesJsonResponse.parseRaw(body, providerId), cascade));
+    }
+
+    static List<Option> options(Response response) {
+        return response.choices().stream()
                 .map(choice -> Option.sourceChoice(
                         choice.value(),
                         choice.label(),

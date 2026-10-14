@@ -1,5 +1,6 @@
 package io.jenkins.plugins.parameterfoundry.provider;
 
+import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,6 +9,10 @@ import java.util.Objects;
 /** Whole-response data interpretation; transport failures are deliberately handled elsewhere. */
 final class RawScalarChoiceAdapter {
     private RawScalarChoiceAdapter() {}
+
+    static List<Option> options(byte[] body, List<String> ignoredResponses, List<String> trailingChoices) {
+        return ActiveChoicesChoiceResponse.options(interpret(body, ignoredResponses, trailingChoices));
+    }
 
     static ActiveChoicesChoiceResponse.Response interpret(
             byte[] body, List<String> ignoredResponses, List<String> trailingChoices) {

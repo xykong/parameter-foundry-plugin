@@ -8,6 +8,33 @@ import org.junit.jupiter.api.Test;
 
 class RawScalarChoiceAdapterTest {
     @Test
+    void providerOptionsPreserveSourceMetadataForEmptyAndWhitespaceResponses() {
+        for (String body : List.of("", "   ", "topic/test\n", "{\"data\":\"topic/test\"}")) {
+            var options = RawScalarChoiceAdapter.options(
+                    body.getBytes(StandardCharsets.UTF_8), List.of("null"), List.of("topic/stable"));
+            assertEquals(2, options.size());
+            assertEquals(body, options.get(0).getSourceChoiceMetadata().apiValue());
+            assertEquals(body.isBlank() ? "" : body, options.get(0).getValue());
+            assertEquals("topic/stable", options.get(1).getValue());
+        }
+    }
+
+    @Test
+    void providerOptionsRetainSelectedAndDisabledMarkersWithoutSplittingText() {
+        var selected = RawScalarChoiceAdapter.options(
+                "topic/test:selected".getBytes(StandardCharsets.UTF_8), List.of(), List.of());
+        assertEquals("topic/test", selected.get(0).getValue());
+        assertTrue(selected.get(0).getSourceChoiceMetadata().selected());
+        assertEquals(
+                "topic/test:selected", selected.get(0).getSourceChoiceMetadata().apiValue());
+        var disabled = RawScalarChoiceAdapter.options(
+                "topic/test:disabled".getBytes(StandardCharsets.UTF_8), List.of(), List.of("topic/stable"));
+        assertTrue(disabled.get(0).isDisabled());
+        assertEquals(
+                "topic/test:disabled", disabled.get(0).getSourceChoiceMetadata().apiValue());
+    }
+
+    @Test
     void preservesWholeResponseApiValuesAndDeclaredOrder() {
         for (String body : List.of(
                 "topic/test",

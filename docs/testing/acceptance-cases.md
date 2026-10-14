@@ -1112,6 +1112,8 @@ with a real socket/route lifecycle check on HPI 812f30c6.
 - Fix: internal data-only raw scalar adapter; no script execution or exception-message interpretation.
 - Verification: complete `mvn -B -ntp verify` passed (487 tests, zero failures/errors, six skips), including three adapter unit tests, SpotBugs and formatting checks. No REST configuration surface, real-browser coverage or production replacement is claimed by this internal adapter.
 
+- Provider model follow-up: raw response conversion now uses the shared source-choice Option mapper, retaining raw API metadata for empty/whitespace bodies and selection/disabled markers. Both new conversion tests and existing JSON/REST integration regressions passed (22 tests, zero failures/errors); full Maven verification passed with 498 tests, zero failures/errors, six skips; format and static checks passed; this does not enable a raw Provider configuration entry point.
+
 ## UP-AC-069 — Restricted raw scalar HTTP transport
 
 - Scope: internal HTTP transport, separate from existing structured REST client.
