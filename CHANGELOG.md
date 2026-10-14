@@ -13,14 +13,18 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
-- Allow static Extended Choice multiple migrations to preserve native string build values with opt-in `valueTransport: core-string`.
-
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed
 
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
+
+## 0.22.369 - Unreleased
+
+### Added
+
+- Preserve native string build values for static Extended Choice multiple migrations with opt-in `valueTransport: core-string`, including Pipeline params, build APIs, environment exports and Rebuild.
 
 ## 0.21.349 - 2026-10-13
 
