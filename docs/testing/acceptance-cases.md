@@ -15,6 +15,7 @@ the case, but production configuration is never committed here.
 | Matrix/table | Required | Required | Required | Required | Required | Required | Required |
 | Binary file parameters (UP-AC-025–034) | Required | Required | Required | Manual sign-off | Multipart fallback | Required | Required |
 | Extended Choice display descriptions (UP-AC-067) | Pending | Pending | Existing label renderer | Pending | Existing literal values | Four native control goldens and dynamic rejection | Browser/native-source parity pending |
+| Raw scalar source adapter (UP-AC-068) | Pending transport integration | Pending transport integration | Existing interpreter | Pending integration | Pending integration | Three unit tests and full verify passed | HTTP transport and migration pending |
 | File history bundle/startup (UP-AC-066) | Passed Chromium 1440×1000 | Passed Chromium 390×844 | Configuration and help inspected | Historical downloads passed | N/A | UID/archive/default-off/error Harness; 482 full tests | Two Core cold/source matrices; sticky live conflicts and periodic detection passed; remaining retirement gates pending |
 | Historical download policy (UP-AC-065) | Endpoint integration pending | N/A at utility level | N/A | N/A | N/A | Harness Run/ACL/filter/cleanup | Neutral local build only |
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
@@ -1100,3 +1101,12 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   with status 405; its action and eight parameter entries are verified. No form is
   submitted and no build is scheduled. This verifies label semantics, not complete
   layout or business execution parity. Production deployment remains pending.
+
+## UP-AC-068 — Whole-response raw scalar source interpretation
+
+- Scope: shared data interpretation, independent of platform and HTTP transport.
+- Reproduction: run `RawScalarChoiceAdapterTest` with full strings containing JSON, whitespace, newline, empty content, exact sentinels, duplicate trailing choices, malformed UTF-8 and source selection/disabled suffixes.
+- Expected: complete UTF-8 response strings remain literal API values; only configured exact sentinels are omitted; ordered trailing choices collapse duplicate map keys; defaults and markers use the existing source interpreter.
+- Actual issue: structured JSON/XML parsing cannot represent this whole-response source contract.
+- Fix: internal data-only raw scalar adapter; no script execution or exception-message interpretation.
+- Verification: complete `mvn -B -ntp verify` passed (487 tests, zero failures/errors, six skips), including three adapter unit tests, SpotBugs and formatting checks. No REST configuration surface, real-browser coverage or production replacement is claimed by this internal adapter.
