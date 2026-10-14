@@ -19,6 +19,10 @@
   <dependencies>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>apache-httpcomponents-client-5-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>snakeyaml-api</artifactId>
     </dependency>
     <dependency>
