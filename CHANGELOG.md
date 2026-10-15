@@ -13,16 +13,22 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
-- Add a whole-response REST mode with exact UTF-8 values, ordered trailing choices, explicit classified failure choices and uncached source recovery.
-
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed
 
-- Bind restricted whole-response HTTP connections to the checked DNS addresses while retaining the original Host and TLS name.
-
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
+
+## 0.23.372 - 2026-10-15
+
+### Added
+
+- Add a whole-response REST mode with exact UTF-8 values, ordered trailing choices, explicit classified failure choices and uncached source recovery.
+
+### Fixed
+
+- Bind restricted whole-response HTTP connections to the checked DNS addresses while retaining the original Host and TLS name.
 
 ## 0.22.370 - 2026-10-15
 
