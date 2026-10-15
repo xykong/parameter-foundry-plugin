@@ -27,6 +27,11 @@ assert hash(j.pluginManager.getPlugin('parameter-foundry').archive.bytes)==Syste
 def state=new AtomicReference<String>('topic/initial\n')
 def status=new AtomicInteger(200)
 def requests=new AtomicInteger()
+def redirectRequests=new AtomicInteger()
+def redirectTargets=new AtomicInteger()
+def deniedRedirectRequests=new AtomicInteger()
+def redirectCode=new AtomicInteger(302)
+def redirectLocation=new AtomicReference<String>('/api/final')
 def mock=HttpServer.create(new InetSocketAddress('0.0.0.0',18182),0)
 mock.executor=Executors.newCachedThreadPool({Runnable r->def t=new Thread(r,'raw-rest-synthetic-peer');t.daemon=true;t} as java.util.concurrent.ThreadFactory)
 def query={exchange->(exchange.requestURI.rawQuery?:'').split('&').findAll{it}.collectEntries{pair->def p=pair.split('=',2);[(URLDecoder.decode(p[0],'UTF-8')):URLDecoder.decode(p.length==2?p[1]:'','UTF-8')]}}
@@ -37,11 +42,37 @@ mock.createContext('/api/value',{exchange->
  if(bytes.length>0 && code!=304)exchange.responseBody.write(bytes)
  exchange.close()
 } as com.sun.net.httpserver.HttpHandler)
+mock.createContext('/api/start',{exchange->
+ requests.incrementAndGet();redirectRequests.incrementAndGet()
+ exchange.responseHeaders.set('Location',redirectLocation.get());exchange.sendResponseHeaders(redirectCode.get(),-1);exchange.close()
+} as com.sun.net.httpserver.HttpHandler)
+mock.createContext('/api/final',{exchange->
+ requests.incrementAndGet();redirectTargets.incrementAndGet();int code=status.get()
+ byte[] bytes=(code<400?state.get():'not-selectable-error-body').getBytes('UTF-8')
+ exchange.sendResponseHeaders(code,bytes.length==0?-1:bytes.length);if(bytes.length>0)exchange.responseBody.write(bytes);exchange.close()
+} as com.sun.net.httpserver.HttpHandler)
+mock.createContext('/api/not-declared',{exchange->
+ requests.incrementAndGet();deniedRedirectRequests.incrementAndGet()
+ exchange.sendResponseHeaders(500,-1);exchange.close()
+} as com.sun.net.httpserver.HttpHandler)
 mock.createContext('/control',{exchange->
- assert exchange.requestMethod=='POST';def q=query(exchange);if(q.containsKey('body'))state.set(q.body);if(q.containsKey('status')){int code=q.status as int;assert code in [200,302,304,306,308,503];status.set(code)};respond(exchange,[status:status.get(),body:state.get()])
+ assert exchange.requestMethod=='POST';def q=query(exchange)
+ if(q.containsKey('redirectCode')){int code=q.redirectCode as int;assert code in [300,301,302,303,307];redirectCode.set(code)}
+ if(q.containsKey('redirectLocation')){assert q.redirectLocation in ['/api/final','/api/not-declared','/api/start'];redirectLocation.set(q.redirectLocation)}
+ if(q.containsKey('body'))state.set(q.body);if(q.containsKey('status')){int code=q.status as int;assert code in [200,302,304,306,308,503];status.set(code)};respond(exchange,[status:status.get(),body:state.get()])
+} as com.sun.net.httpserver.HttpHandler)
+mock.createContext('/native-source',{exchange->
+ // Execute the reviewed scalar-read algorithm only against this owned synthetic peer.
+ def connection=new URL('http://'+InetAddress.localHost.hostAddress+':18182/api/start').openConnection(Proxy.NO_PROXY)
+ connection.connectTimeout=2000;connection.readTimeout=2000
+ String value
+ try{value=connection.inputStream.withCloseable{new String(it.bytes,'UTF-8')}}
+ catch(Exception failure){value=failure.message}
+ finally{connection.disconnect()}
+ respond(exchange,[value:value])
 } as com.sun.net.httpserver.HttpHandler)
 mock.createContext('/native-default',{exchange->
- def name=query(exchange).job;assert name in ['raw-rest-values','raw-rest-fallback','raw-rest-dns','raw-rest-tls','raw-tls-denied','status-old','status-body'];def job=j.getItemByFullName(name);def definition=job.getProperty(ParametersDefinitionProperty).getParameterDefinition('REF');def value=definition.defaultParameterValue
+ def name=query(exchange).job;assert name in ['raw-rest-values','raw-rest-fallback','raw-rest-dns','raw-rest-tls','raw-tls-denied','status-old','status-body','raw-redirect'];def job=j.getItemByFullName(name);def definition=job.getProperty(ParametersDefinitionProperty).getParameterDefinition('REF');def value=definition.defaultParameterValue
  def diagnostic=null
  if(value==null && name!='raw-tls-denied'){
   def health=ProviderRuntime.get().health('jenkins',name).orElse(null)
@@ -59,7 +90,7 @@ mock.createContext('/rate-budget',{exchange->
  windows.each{key,window->if(key.startsWith('principal:')){synchronized(window){if(field(window,'minute')==minute)counts.add(field(window,'count'))}}}
  respond(exchange,[principalLimit:field(limiter,'principalRate'),maximumPrincipalCount:counts?counts.max():0,waitMillis:60000-now%60000+250])
 } as com.sun.net.httpserver.HttpHandler)
-mock.createContext('/stats',{exchange->assert j.queue.items.length==0;assert j.getAllItems(Job).every{it.nextBuildNumber==1};respond(exchange,[requests:requests.get(),jobs:j.getAllItems(Job).size(),queue:0,builds:0])} as com.sun.net.httpserver.HttpHandler)
+mock.createContext('/stats',{exchange->assert j.queue.items.length==0;assert j.getAllItems(Job).every{it.nextBuildNumber==1};respond(exchange,[requests:requests.get(),redirectRequests:redirectRequests.get(),redirectTargets:redirectTargets.get(),deniedRedirectRequests:deniedRedirectRequests.get(),jobs:j.getAllItems(Job).size(),queue:0,builds:0])} as com.sun.net.httpserver.HttpHandler)
 mock.start()
 def address=InetAddress.localHost.hostAddress
 assert !InetAddress.getByName(address).isLoopbackAddress()
@@ -80,7 +111,10 @@ def tlsMock=com.sun.net.httpserver.HttpsServer.create(new InetSocketAddress('0.0
 tlsMock.createContext('/api/value',{exchange->requests.incrementAndGet();byte[] bytes=state.get().getBytes('UTF-8');exchange.sendResponseHeaders(200,bytes.length);exchange.responseBody.write(bytes);exchange.close()} as com.sun.net.httpserver.HttpHandler);tlsMock.start()
 def tlsMessage='(certificate_unknown) No subject alternative DNS name matching raw-rest-tls.invalid found.'
 def tlsFingerprint=hash(('tls-rejected-v1\0javax.net.ssl.SSLHandshakeException\0'+tlsMessage).getBytes('UTF-8'))
-ParameterFoundryGlobalConfiguration.get().connectionProfiles=[profile,dnsProfile,tlsProfile]
+def redirectProfile=new ConnectionProfile('synthetic-raw-redirect',peer)
+redirectProfile.allowedPathPrefixes=['/api/'];redirectProfile.allowPrivateAddresses=true;redirectProfile.useJenkinsProxy=false;redirectProfile.followRedirects=true
+redirectProfile.connectTimeoutSeconds=2;redirectProfile.readTimeoutSeconds=2;redirectProfile.totalTimeoutSeconds=5
+ParameterFoundryGlobalConfiguration.get().connectionProfiles=[profile,dnsProfile,tlsProfile,redirectProfile]
 def providers=[]
 ['raw-rest-values','raw-rest-fallback','raw-rest-dns','raw-rest-tls','raw-tls-denied','status-old','status-body'].eachWithIndex{name,index->
  def provider=new RestProviderDefinition(name,index in [3,4]?'synthetic-raw-tls':index==2?'synthetic-raw-dns':'synthetic-raw-peer','value')
@@ -96,6 +130,17 @@ def providers=[]
  def choice=new FoundryChoiceParameterDefinition('REF');choice.providerId=name;choice.renderer='select';choice.defaultMode='first';choice.standardApiInputMode='active-choices';choice.activeChoicesFilterMode='none'
  job.addProperty(new ParametersDefinitionProperty(choice));job.save()
 }
+def redirectProvider=new RestProviderDefinition('raw-redirect','synthetic-raw-redirect','start')
+redirectProvider.responseMode='active-choices-raw-scalar';redirectProvider.cacheTtlSeconds=0;redirectProvider.timeoutSeconds=10
+redirectProvider.rawRedirectTargets=[new RestRawLiteral(peer+'staged')]
+redirectProvider.rawTrailingChoices=[new RestRawLiteral('topic/stable')]
+def initialRow=new RestRawFailureChoice('HTTP_STATUS','initial-http-error');initialRow.status=503;initialRow.matchUri=peer+'start'
+def finalRow=new RestRawFailureChoice('HTTP_STATUS','Server returned HTTP response code: 503 for URL: '+peer+'final');finalRow.status=503;finalRow.matchUri=peer+'final'
+redirectProvider.rawFailureChoices=[initialRow,finalRow,new RestRawFailureChoice('REDIRECT_LIMIT','redirect-limit')]
+providers.add(redirectProvider)
+def redirectJob=j.createProject(FreeStyleProject,'raw-redirect')
+def redirectChoice=new FoundryChoiceParameterDefinition('REF');redirectChoice.providerId='raw-redirect';redirectChoice.renderer='select';redirectChoice.defaultMode='first';redirectChoice.standardApiInputMode='active-choices';redirectChoice.activeChoicesFilterMode='none'
+redirectJob.addProperty(new ParametersDefinitionProperty(redirectChoice));redirectJob.save()
 j.createProject(FreeStyleProject,'plain-core-breadcrumb-control')
 ParameterFoundryGlobalConfiguration.get().providers=providers
 ParameterFoundryGlobalConfiguration.get().save();j.save()

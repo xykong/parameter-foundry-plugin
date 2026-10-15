@@ -116,16 +116,16 @@ async def main():
                 await page.get_by_role('button',name='Save',exact=True).click()
                 await page.wait_for_url(lambda url: urllib.parse.urlsplit(str(url)).path.rstrip('/')!='/configure',wait_until='networkidle')
             await page.goto(base+'/configure',wait_until='networkidle')
-            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==7
-            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*7
+            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==8
+            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*8
             policies=page.locator('select[name="_.rawStatusPolicy"]:visible')
-            assert await policies.evaluate_all('(xs)=>xs.map(x=>x.value)')==['http-status']*7
-            await policies.last.select_option('native-nonredirect-body')
-            await policies.last.scroll_into_view_if_needed()
+            assert await policies.evaluate_all('(xs)=>xs.map(x=>x.value)')==['http-status']*8
+            await policies.nth(6).select_option('native-nonredirect-body')
+            await policies.nth(6).scroll_into_view_if_needed()
             await page.screenshot(path=str(unit/'raw-status-policy-configuration-desktop.png'))
             values=await page.locator('textarea[name="_.value"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             assert 'null' in values and 'topic/stable' in values and 'HTTP {status}: {uri}' in values and 'DNS unavailable' in values
-            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED','TLS_REJECTED','TLS_REJECTED','HTTP_STATUS','HTTP_STATUS']
+            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED','TLS_REJECTED','TLS_REJECTED','HTTP_STATUS','HTTP_STATUS','HTTP_STATUS','HTTP_STATUS','REDIRECT_LIMIT']
             fingerprints=await page.locator('input[name="_.fingerprint"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             assert metadata['tlsFingerprint'] in fingerprints and '0'*64 in fingerprints
             # Oversized full-page captures temporarily switch Chromium to a 1x1 viewport,
@@ -133,7 +133,19 @@ async def main():
             await page.screenshot(path=str(unit/'configuration-desktop.png'))
             await page.locator('input[name="_.fingerprint"]:visible').nth(2).scroll_into_view_if_needed()
             await page.screenshot(path=str(unit/'tls-fingerprint-configuration-desktop.png'))
+            redirect_field=None
+            for field in await page.locator('textarea[name="_.value"]:visible').all():
+                if await field.input_value()==metadata['peer']+'staged':
+                    assert redirect_field is None
+                    redirect_field=field
+            assert redirect_field is not None
+            await redirect_field.fill(metadata['peer']+'final')
+            await redirect_field.scroll_into_view_if_needed()
+            await page.screenshot(path=str(unit/'raw-redirect-permission-configuration-desktop.png'))
             await save_configuration()
+            await page.goto(base+'/configure',wait_until='networkidle')
+            assert metadata['peer']+'final' in await page.locator('textarea[name="_.value"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
+            assert metadata['peer']+'final' in await page.locator('input[name="_.matchUri"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             rate_waits=[]
             async def respect_rate_budget():
                 budget=peer('rate-budget')
@@ -177,6 +189,41 @@ async def main():
                     assert native['value']==expected and native['type']=='hudson.model.StringParameterValue' and native['rawStatusPolicy']=='native-nonredirect-body'
                     results.append({'width':width,'case':'status-'+str(code),'matched':True})
                     await page.screenshot(path=str(unit/('raw-status-'+str(code)+'-'+str(width)+'.png')),full_page=True)
+            for width in [1440,390]:
+                await set_viewport({'width':width,'height':1000 if width==1440 else 844})
+                for code in [300,301,302,303,307]:
+                    peer('control',status=200,body='topic/redirected',redirectCode=code,redirectLocation='/api/final')
+                    before=peer('stats')
+                    assert peer('native-source')['value']=='topic/redirected'
+                    await read_form('raw-redirect',['topic/redirected','topic/stable'],'topic/redirected')
+                    native=peer('native-default',job='raw-redirect')
+                    assert native['value']=='topic/redirected' and native['type']=='hudson.model.StringParameterValue'
+                    after=peer('stats')
+                    assert after['redirectTargets']>before['redirectTargets']
+                    assert after['redirectRequests']-before['redirectRequests']==after['redirectTargets']-before['redirectTargets']
+                    results.append({'width':width,'case':'redirect-'+str(code),'matched':True})
+                peer('control',status=503,redirectCode=302)
+                final_error='Server returned HTTP response code: 503 for URL: '+metadata['peer']+'final'
+                assert peer('native-source')['value']==final_error
+                await read_form('raw-redirect',[final_error,'topic/stable'],final_error)
+                assert peer('native-default',job='raw-redirect')['value']==final_error
+                results.append({'width':width,'case':'redirect-final-http-failure','matched':True})
+                await page.screenshot(path=str(unit/('raw-redirect-final-failure-'+str(width)+'.png')),full_page=True)
+                peer('control',status=200,redirectLocation='/api/not-declared')
+                before=peer('stats')
+                await respect_rate_budget()
+                await page.goto(base+'/job/raw-redirect/build?delay=0sec',wait_until='networkidle')
+                await page.wait_for_function('document.querySelector("[data-parameter-name=REF]").dataset.upState==="error"')
+                assert peer('native-default',job='raw-redirect')['value'] is None
+                after=peer('stats')
+                assert after['redirectTargets']==before['redirectTargets']
+                assert before['deniedRedirectRequests']==after['deniedRedirectRequests']==0
+                results.append({'width':width,'case':'redirect-undeclared-denied','matched':True})
+                await page.screenshot(path=str(unit/('raw-redirect-denied-'+str(width)+'.png')),full_page=True)
+                peer('control',status=200,body='topic/redirect-recovered',redirectLocation='/api/final')
+                await read_form('raw-redirect',['topic/redirect-recovered','topic/stable'],'topic/redirect-recovered')
+                assert peer('native-default',job='raw-redirect')['value']=='topic/redirect-recovered'
+                results.append({'width':width,'case':'redirect-recovery','matched':True})
             await set_viewport({'width':1440,'height':1000})
             peer('control',status=503)
             error='HTTP 503: '+metadata['peer']+'value'
@@ -250,8 +297,11 @@ async def main():
             (unit/'core-breadcrumb-control.json').write_text(json.dumps({'state':'CORE_ONLY_BREADCRUMB_OVERFLOW_REPRODUCED','foundryFields':0,'errors':core_errors},indent=2))
             (unit/'page-errors.json').write_text(json.dumps({'blocked':blocked,'errors':errors},indent=2))
             assert not blocked and not errors,(blocked,errors)
-            stats=peer('stats'); assert stats['jobs']==8 and stats['builds']==0 and stats['queue']==0
+            stats=peer('stats'); assert stats['jobs']==9 and stats['builds']==0 and stats['queue']==0
             result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'nonredirectStatusPolicyConfigurationSaved':True,'nonredirectStatusPolicyCases':8,'defaultHttpStatusMappingsPreserved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredTlsAndUnknownRejectionPassed':True,'tlsValidOriginReconfigurationPassed':True,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','coreBreadcrumbOverflowControl':'Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
+            result['finiteRedirectConfigurationSaved']=True
+            result['finiteRedirectCases']=16
+            result['ownedNativeRedirectSourcePairs']=12
             result['rateBudgetWaits']=rate_waits
             result['rateBudgetPolicy']='Read-only owned runtime budget observation and natural window waits; no limit changes or resets'
             result['configurationScreenshotScope']='Actual1440x1000 field viewport; oversized full-page capture is excluded after independently recording its1x1 Core header trigger'

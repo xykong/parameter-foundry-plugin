@@ -1,0 +1,262 @@
+{
+  "state": "RAW_REST_BROWSER_GATE_PASS",
+  "browser": "153.0.8010.12",
+  "cases": [
+    {
+      "width": 1440,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-302",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-304",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-306",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-308",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-302",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-304",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-306",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-308",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-300",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-301",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-302",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-303",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-307",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-final-http-failure",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-undeclared-denied",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "redirect-recovery",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-300",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-301",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-302",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-303",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-307",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-final-http-failure",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-undeclared-denied",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "redirect-recovery",
+      "matched": true
+    }
+  ],
+  "configurationSaved": true,
+  "nonredirectStatusPolicyConfigurationSaved": true,
+  "nonredirectStatusPolicyCases": 8,
+  "defaultHttpStatusMappingsPreserved": true,
+  "mappedErrorAndFallbackRecoveryPassed": true,
+  "keyboardSelectionPassed": true,
+  "buildFormsSubmitted": 0,
+  "declaredTlsAndUnknownRejectionPassed": true,
+  "tlsValidOriginReconfigurationPassed": true,
+  "declaredDnsAndSameProfileRecoveryPassed": true,
+  "dnsFixtureCachePolicy": "Owned JVM positive/negative DNS TTL0; production unchanged",
+  "coreBreadcrumbOverflowControl": "Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks",
+  "businessBuildsScheduled": 0,
+  "stats": {
+    "requests": 151,
+    "redirectRequests": 46,
+    "redirectTargets": 40,
+    "deniedRedirectRequests": 0,
+    "jobs": 9,
+    "queue": 0,
+    "builds": 0
+  },
+  "finiteRedirectConfigurationSaved": true,
+  "finiteRedirectCases": 16,
+  "ownedNativeRedirectSourcePairs": 12,
+  "rateBudgetWaits": [
+    {
+      "principalLimit": 60,
+      "maximumPrincipalCount": 54,
+      "waitMillis": 11703
+    },
+    {
+      "principalLimit": 60,
+      "maximumPrincipalCount": 53,
+      "waitMillis": 28136
+    }
+  ],
+  "rateBudgetPolicy": "Read-only owned runtime budget observation and natural window waits; no limit changes or resets",
+  "configurationScreenshotScope": "Actual1440x1000 field viewport; oversized full-page capture is excluded after independently recording its1x1 Core header trigger",
+  "artifact": {
+    "core": "2.568.3",
+    "version": "0.25.377-SNAPSHOT (private-2552a244-xykong)",
+    "sha256": "331459352eecdff8b68d8d2ac6caba04444a0873f308c343c4ef5ca05fbcd3f1"
+  },
+  "fullVerify": {
+    "tests": 552,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "spotBugs": 0,
+    "spotless": "PASS"
+  },
+  "cleanupErrors": [],
+  "normalPageErrors": [],
+  "classResourceEntries": 653,
+  "classResourceBinding": "Bidirectional exact file set and byte equality; generated Maven metadata checked separately",
+  "dependencyReceiptSha256": "6be18ea718f6b31beff2fda130239d592cd4500a74f798b2d062b3868da4c541",
+  "nativePairScope": {
+    "cases": 21,
+    "matched": 21,
+    "knownDifferences": [],
+    "requests": 96,
+    "productionCalls": 0,
+    "businessBuilds": 0,
+    "sourceAlgorithm": "Reviewed exact-source/fallback hashes retained privately; unique source URI replaced with owned HTTPS peer",
+    "limits": "Finite same-origin reviewed destinations only; no cross-origin/proxy/universal native exception claim"
+  },
+  "browserPlatform": "macOS Chromium headless; owned Linux Jenkins/Java21 runtime",
+  "harnessScriptSha256": "9acdce46bddd7bc31b5f0ff51b476f8ef50a3b4369b1a6b71b9ce210a52bec1a",
+  "fixtureScriptSha256": "ea79774fcef0092b92e6df98e3df67deefcc374349b017f71b438053d3912bb5",
+  "limits": [
+    "Fixed1440/390 viewport navigation; dynamic resize, touch, assistive technology and native popup arrows not certified",
+    "Eight platform/prerequisite skips retained in full verify; no broad cross-platform claim",
+    "Per-hop forced resource-close failure injection not performed; cleanup helper propagation and static finally-before-follow reviewed",
+    "No production migration, release, history-reader activation, business build or plugin removal"
+  ]
+}

@@ -1,4 +1,8 @@
 <div>
-  <p>Follow up to three redirects. Every hop is re-checked against the Connection Profile and the
-network policy.</p>
+  <p>Structured REST follows up to three redirects, re-checking each hop against
+  the Connection Profile and network policy. Whole-response REST additionally
+  requires explicit finite rawRedirectTargets. It allows at most 19 followed
+  responses before a terminal response, under one shared deadline. Every raw hop
+  must remain on the permitted origin and pass fresh checked DNS; HTTP 305 proxy
+  responses and protocol changes are refused.</p>
 </div>

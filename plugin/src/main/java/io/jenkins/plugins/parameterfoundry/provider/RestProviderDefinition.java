@@ -39,6 +39,8 @@ public final class RestProviderDefinition extends SharedProviderDefinition
     private List<RestRawLiteral> rawIgnoredResponses;
     private List<RestRawLiteral> rawTrailingChoices;
     private List<RestRawFailureChoice> rawFailureChoices;
+    private List<RestRawLiteral> rawRedirectTargets;
+    private transient RawRedirectTargets frozenRedirects;
     private transient List<RestRawFailureChoice.Declaration> frozenFailures;
     private transient List<Query> frozenQueries;
 
@@ -62,6 +64,8 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         try {
             RestProviderDefinition copy = (RestProviderDefinition) super.clone();
             copy.setRawStatusPolicy(getRawStatusPolicy());
+            copy.rawRedirectTargets = List.copyOf(getRawRedirectTargets());
+            copy.frozenRedirects = RawRedirectTargets.freeze(copy.rawRedirectTargets);
             copy.frozenFailures = List.copyOf(getRawFailureChoices()).stream()
                     .map(RestRawFailureChoice::snapshot)
                     .toList();
@@ -208,6 +212,15 @@ public final class RestProviderDefinition extends SharedProviderDefinition
 
     public List<RestRawFailureChoice> getRawFailureChoices() {
         return rawFailureChoices == null ? List.of() : rawFailureChoices;
+    }
+
+    public List<RestRawLiteral> getRawRedirectTargets() {
+        return rawRedirectTargets == null ? List.of() : rawRedirectTargets;
+    }
+
+    @DataBoundSetter
+    public void setRawRedirectTargets(List<RestRawLiteral> values) {
+        rawRedirectTargets = values == null ? List.of() : List.copyOf(values);
     }
 
     @DataBoundSetter
@@ -374,7 +387,9 @@ public final class RestProviderDefinition extends SharedProviderDefinition
             throw rawUnavailable("Whole-response mode requires automatic format selection.");
         }
         for (var choice : frozenFailures) {
-            if (choice.includesUri() && uri.getRawQuery() != null) {
+            if (choice.includesUri()
+                    && (uri.getRawQuery() != null
+                            || frozenRedirects.uris().stream().anyMatch(target -> target.getRawQuery() != null))) {
                 throw rawUnavailable("URI-bearing failure choices require a query-free target.");
             }
         }
@@ -383,7 +398,12 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         RawScalarRestTransport.Result result = (rawClient == null
                         ? new RawScalarRestTransport(new NetworkPolicy())
                         : rawClient)
-                .get(profile, context.request(), uri, "native-nonredirect-body".equals(getRawStatusPolicy()));
+                .get(
+                        profile,
+                        context.request(),
+                        uri,
+                        "native-nonredirect-body".equals(getRawStatusPolicy()),
+                        frozenRedirects);
         if (result instanceof RawScalarRestTransport.Body body) {
             return RawScalarChoiceAdapter.options(body.bytes(), ignored, trailing);
         }
@@ -391,17 +411,18 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         var failure = (RawScalarRestTransport.Failure) result;
         // Exact HTTP status overrides a category-wide mapping, regardless of form row order.
         RestRawFailureChoice.Declaration match = frozenFailures.stream()
-                .filter(choice -> choice.matches(failure) && choice.status() != 0)
-                .findFirst()
-                .orElseGet(() -> frozenFailures.stream()
-                        .filter(choice -> choice.matches(failure))
-                        .findFirst()
-                        .orElse(null));
+                .filter(choice -> choice.matches(failure))
+                .max(java.util.Comparator.comparingInt(
+                        choice -> (choice.status() != 0 ? 2 : 0) + (choice.matchUri() != null ? 1 : 0)))
+                .orElse(null);
         if (match == null) {
             throw rawUnavailable("Whole-response transport returned an unmapped failure.");
         }
         return RawScalarChoiceAdapter.options(
-                match.render(uri, failure.status()).getBytes(StandardCharsets.UTF_8), List.of(), trailing);
+                match.render(failure.targetUri() == null ? uri : failure.targetUri(), failure.status())
+                        .getBytes(StandardCharsets.UTF_8),
+                List.of(),
+                trailing);
     }
 
     private ProviderException rawUnavailable(String message) {
@@ -460,6 +481,8 @@ public final class RestProviderDefinition extends SharedProviderDefinition
                 + "\u0000raw-scalar-v1\u0000"
                 + getRawStatusPolicy()
                 + '\u0000'
+                + JSONArray.fromObject(rawLiteralValues(getRawRedirectTargets()))
+                + '\u0000'
                 + JSONArray.fromObject(rawLiteralValues(getRawIgnoredResponses()))
                 + '\u0000'
                 + JSONArray.fromObject(rawLiteralValues(getRawTrailingChoices()))
@@ -471,7 +494,11 @@ public final class RestProviderDefinition extends SharedProviderDefinition
                                         .toList())
                         .stream()
                                 .map(choice -> java.util.Arrays.asList(
-                                        choice.kind(), choice.status(), choice.value(), choice.fingerprint()))
+                                        choice.kind(),
+                                        choice.status(),
+                                        choice.value(),
+                                        choice.fingerprint(),
+                                        choice.matchUri()))
                                 .toList());
     }
 

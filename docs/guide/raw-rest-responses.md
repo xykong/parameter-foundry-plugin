@@ -18,7 +18,8 @@ after a fallback, rather than reusing a previous failure for five seconds.
 ## Connection and interpretation
 
 The Connection Profile must use direct, credential-free requests: no credential
-ID, custom headers, Jenkins proxy or redirects. Normal network, TLS, path/query,
+ID, custom headers or Jenkins proxy. Redirects require the separate finite
+destination permissions described below. Normal network, TLS, path/query,
 connect/read/total deadline and response-byte policies still apply. Loopback,
 link-local and metadata targets remain blocked. There is no script execution.
 Raw connections use the same immutable DNS address set that passed network policy;
@@ -28,9 +29,10 @@ Set `format: 'auto'` and leave transforms empty. JSONPath/XPath fields are unuse
 | Field | Configuration |
 | --- | --- |
 | `rawStatusPolicy` | Defaults to `http-status`, preserving failure mapping for every non-2xx response. Explicit `native-nonredirect-body` reads 304, 306, 308 and 302 without a Location header as bodies instead. |
+| `rawRedirectTargets` | Optional complete static `foundryRawLiteral` URI rows. Following also requires the Profile redirect setting; every destination must pass Profile and network policy. |
 | `rawIgnoredResponses` | `foundryRawLiteral(value: 'null')` ignores exactly `null`, but not `null` followed by a newline. An empty list ignores nothing. |
 | `rawTrailingChoices` | Ordered `foundryRawLiteral` rows appended to a body or a mapped failure value. |
-| `rawFailureChoices` | Optional `foundryRawFailureChoice(kind: ..., value: ..., status: ..., fingerprint: ...)` rows for classified transport failures. |
+| `rawFailureChoices` | Optional `foundryRawFailureChoice(kind: ..., value: ..., status: ..., fingerprint: ..., matchUri: ...)` rows for classified transport failures. |
 
 Literal rows preserve whitespace, empty strings and line breaks. Duplicate raw
 values retain their first map position. For example, ignoring `null` and adding
@@ -41,8 +43,8 @@ the tail `topic/stable` yields only `topic/stable` for the exact sentinel, but
 
 Failure choices are explicitly configured data. They never use an exception's
 message or an HTTP error body. Supported kinds are `HTTP_STATUS`, `DNS_UNRESOLVED`,
-`TLS_REJECTED`, `CONNECT_TIMEOUT`, `READ_TIMEOUT`, `CONNECTION_REFUSED`, `EARLY_CLOSE`, and
-`PREMATURE_EOF`. For `HTTP_STATUS`, `status: 0` matches any non-success status;
+`TLS_REJECTED`, `CONNECT_TIMEOUT`, `READ_TIMEOUT`, `CONNECTION_REFUSED`, `EARLY_CLOSE`,
+`PREMATURE_EOF`, and `REDIRECT_LIMIT`. For `HTTP_STATUS`, `status: 0` matches any non-success status;
 an exact 100–599 status overrides that generic row regardless of row order.
 With `rawStatusPolicy: 'native-nonredirect-body'`, the four body-bearing cases
 listed above bypass HTTP failure rows. Their body is subject to the same byte
@@ -50,10 +52,10 @@ limits, literal interpretation and trailing choices as a 2xx response. An empty
 304 body can therefore become an empty first/default choice. Enable this only
 after reviewing the source's status semantics.
 
-This policy does not follow redirects or enable Connection Profile redirects.
-Responses with Location that require following 300/301/302/303/307, HTTP305
-proxy behavior, cross-origin redirects and other unlisted status/body cases
-remain outside this compatibility policy. Other non-2xx responses retain their
+This status policy alone does not follow redirects or enable Connection Profile
+redirects. Following 300/301/302/303/307 requires the separate permissions below.
+HTTP 305 proxy behavior and cross-origin redirects remain unsupported. Other
+non-2xx responses retain their
 existing classified failure choices. This is not complete URLConnection
 compatibility. For example, a Provider snippet may include
 `responseMode: 'active-choices-raw-scalar', rawStatusPolicy: 'native-nonredirect-body'`;
@@ -63,12 +65,17 @@ Introducing this policy conservatively changes raw Provider digests, including
 the default policy: cached raw resolutions and old submission snapshots must
 be refreshed. Mapped Provider digests are unaffected by this raw-only field.
 
-Other kinds require status zero. Duplicate kind/status pairs are rejected, except distinct explicit TLS fingerprints may have separate fixed values.
+Other kinds require status zero. An optional `matchUri` selects the complete URI
+of the actual failed request. A blank selector matches any attempted URI. Exact
+HTTP status takes priority over generic status, then exact URI takes priority over
+a blank selector. Duplicate kind/status/fingerprint/URI declarations are rejected.
+A selector grants no network permission.
 
-Except for TLS rows, the value supports only the fixed tokens `{status}` and `{uri}`. For example,
+TLS and REDIRECT_LIMIT rows require nonempty fixed text without braces.
+For other rows, the value supports only the fixed tokens `{status}` and `{uri}`. For example,
 an explicitly reviewed HTTP row could use `HTTP {status}: {uri}`. Rows using
 `{uri}` interpolation expose the configured URL to parameter users,
-require a query-free target, and should only be used for public, non-secret URLs.
+require the original target and every declared redirect destination to be query-free, and should only be used for public, non-secret URLs.
 This restriction is specific to `{uri}` interpolation. Administrator-declared
 literal text is displayed as written: review its disclosure to parameter users
 and never include credentials, sensitive query values or other secrets. A fixed
@@ -95,6 +102,46 @@ short-body framing case retains received bytes; malformed chunked framing is a
 typed failure. This mode does not make every native runtime/network exception
 equivalent. Verify the original source's choices, defaults, errors, recovery,
 browser behavior and consumers before replacing a production definition.
+
+## Finite redirect destinations
+
+Redirects are disabled by default. To opt in, enable `followRedirects` on the
+Connection Profile and declare every possible destination in `rawRedirectTargets`.
+These are exact, complete static HTTP(S) ASCII URIs, including the query. Up to
+64 declarations of at most 8192 characters each are accepted. Wildcards, templates,
+userinfo, fragments, non-normalized paths and encoded path separators/traversal
+are rejected. Every declaration is checked against the Profile before initial DNS.
+Changed or dropped queries require explicit reviewed destination declarations;
+an allowed query key alone is insufficient permission.
+
+For example, a Provider can declare
+`rawRedirectTargets: [foundryRawLiteral(value: 'https://example.invalid/api/final?method=read')]`.
+The Profile must independently permit that origin, path and query keys. Review
+query values and disclosure before using this pattern with real services.
+
+For HTTP 300/301/302/303/307, the last Location header is resolved using native
+URL relative-reference semantics. Each next URI must match a declaration exactly
+and pass the same-origin Profile checks and a fresh checked DNS resolution. Only
+the validated addresses are used for that hop. No credentials, cookies or headers
+are forwarded. Cross-origin or protocol changes, proxy responses (305), and
+unsupported destination forms fail the Provider; this is not unrestricted native
+URLConnection equivalence.
+
+A chain has one total time budget, including DNS and cleanup; timeout cancellation
+targets the currently active request. Resources close before the next hop. Up to
+19 followed responses may precede a terminal response. A twentieth redirect yields
+`REDIRECT_LIMIT` without sending a twenty-first request; only an explicit fixed
+failure declaration can turn that outcome into a choice. An empty Location may
+loop only if the resolved URI is explicitly permitted, and uses the same limit.
+Structured REST retains its existing three-redirect limit.
+
+Failures are matched and rendered against the actual final attempted URI.
+Use `matchUri` with separate reviewed literals when initial and redirected errors
+have different business meaning. Permission declarations never relax the
+query-free `{uri}` rule. Redirect permissions and URI selectors participate in the
+frozen raw configuration and digest, so changing them requires fresh resolution.
+Browser forms, native source behavior and Job consumers need independent
+migration acceptance; transport checks alone do not establish Job equivalence.
 
 ## Finite TLS rejection declarations
 
@@ -148,3 +195,8 @@ The [real-plugin UI gallery](../ui-gallery/README.md#explicit-nonredirect-respon
 shows the opt-in policy and empty/body defaults. Its browser report records the
 exact artifact and separate desktop/mobile coverage; no production migration is
 implied by component acceptance.
+
+The [finite-redirect UI gallery](../ui-gallery/README.md#finite-whole-response-redirects)
+records real destination-permission saving and final-failure/refusal screens.
+The linked report separates fixed desktop/mobile viewport acceptance from
+unverified touch/assistive behavior and from production migration.

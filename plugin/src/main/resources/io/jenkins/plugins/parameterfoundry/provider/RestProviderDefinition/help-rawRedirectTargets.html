@@ -1,0 +1,11 @@
+<div>
+  A finite list of complete static HTTP(S) URIs allowed as whole-response redirect
+  destinations. Following requires both a nonempty list and the Connection Profile's
+  Follow redirects setting. Every destination still needs the same origin, allowed
+  path/query and checked DNS addresses. Exact query values are part of this permission:
+  review changed or dropped queries as carefully as a new endpoint. Do not include
+  credentials, user information, fragments or encoded path traversal. Up to 64 URIs
+  of at most 8192 characters each are accepted. No wildcard or template is expanded.
+  This list grants request access only; it does not permit query-bearing URI output
+  in failure choices. An empty list retains the direct-only default behavior.
+</div>

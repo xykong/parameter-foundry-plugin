@@ -20,6 +20,7 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
     private final String value;
     private int status;
     private String fingerprint;
+    private String matchUri;
 
     @DataBoundConstructor
     public RestRawFailureChoice(String kind, String value) {
@@ -64,15 +65,26 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
         this.fingerprint = fingerprint == null || fingerprint.isEmpty() ? null : fingerprint;
     }
 
+    public String getMatchUri() {
+        return matchUri;
+    }
+
+    @DataBoundSetter
+    public void setMatchUri(String matchUri) {
+        if (matchUri != null && !matchUri.isEmpty()) RawRedirectTargets.checkedUri(matchUri);
+        this.matchUri = matchUri == null || matchUri.isEmpty() ? null : matchUri;
+    }
+
     Declaration snapshot() {
-        return new Declaration(kind, status, value, fingerprint);
+        return new Declaration(kind, status, value, fingerprint, matchUri);
     }
 
     /** Frozen before digest computation; no mutable configuration row is read during a request. */
-    record Declaration(String kind, int status, String value, String fingerprint) {
+    record Declaration(String kind, int status, String value, String fingerprint, String matchUri) {
         void validate() {
             RawScalarRestTransport.FailureKind.valueOf(kind);
             Objects.requireNonNull(value);
+            if (matchUri != null) RawRedirectTargets.checkedUri(matchUri);
             if (status != 0 && (!"HTTP_STATUS".equals(kind) || status < 100 || status > 599)) {
                 throw new IllegalArgumentException();
             }
@@ -85,17 +97,23 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
                         || value.contains("}")) {
                     throw new IllegalArgumentException();
                 }
+            } else if ("REDIRECT_LIMIT".equals(kind)
+                    && (value.isEmpty() || value.contains("{") || value.contains("}"))) {
+                throw new IllegalArgumentException();
             } else if (fingerprint != null) {
                 throw new IllegalArgumentException();
             }
         }
 
         String key() {
-            return kind + ":" + status + ":" + fingerprint;
+            return kind + ":" + status + ":" + fingerprint + ":" + matchUri;
         }
 
         boolean matches(RawScalarRestTransport.Failure failure) {
             return kind.equals(failure.kind().name())
+                    && (matchUri == null
+                            || failure.targetUri() != null
+                                    && matchUri.equals(failure.targetUri().toASCIIString()))
                     && (status == 0 || status == failure.status())
                     && (!"TLS_REJECTED".equals(kind) || fingerprint.equals(failure.fingerprint()));
         }

@@ -1,0 +1,8 @@
+<div>
+  Optional complete URI of the actual failed request. A blank selector matches
+  failures at any attempted URI. An exact HTTP status takes priority over a generic
+  status, then an exact URI takes priority over a blank selector. The selector is
+  data only: it grants no request access and does not permit query-bearing
+  <code>{uri}</code> interpolation. Use separate fixed, reviewed failure literals
+  for original and redirected targets when their messages differ.
+</div>

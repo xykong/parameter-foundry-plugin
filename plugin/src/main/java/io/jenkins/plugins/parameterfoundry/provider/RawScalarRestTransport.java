@@ -34,7 +34,9 @@ import org.apache.hc.core5.util.Timeout;
 
 /** Explicitly unauthenticated whole-body transport, separate from structured REST interpretation. */
 final class RawScalarRestTransport {
-    sealed interface Result permits Body, Failure {}
+    sealed interface Result permits Body, Failure, NextHop {}
+
+    private record NextHop(URI uri) implements Result {}
 
     record Body(byte[] bytes) implements Result {
         Body {
@@ -55,12 +57,17 @@ final class RawScalarRestTransport {
         READ_TIMEOUT,
         CONNECTION_REFUSED,
         EARLY_CLOSE,
-        PREMATURE_EOF
+        PREMATURE_EOF,
+        REDIRECT_LIMIT
     }
 
-    record Failure(FailureKind kind, int status, String fingerprint) implements Result {
+    record Failure(FailureKind kind, int status, String fingerprint, URI targetUri) implements Result {
         Failure(FailureKind kind, int status) {
-            this(kind, status, null);
+            this(kind, status, null, null);
+        }
+
+        Failure(FailureKind kind, int status, String fingerprint) {
+            this(kind, status, fingerprint, null);
         }
     }
 
@@ -101,6 +108,7 @@ final class RawScalarRestTransport {
         private final long deadline;
         private boolean completed;
         private boolean expired;
+        private HttpGet active;
 
         Budget(long deadline) {
             this.deadline = deadline;
@@ -109,8 +117,19 @@ final class RawScalarRestTransport {
         synchronized void expire(HttpGet request) {
             if (!completed) {
                 expired = true;
-                request.cancel();
+                HttpGet current = active == null ? request : active;
+                if (current != null) current.cancel();
             }
+        }
+
+        synchronized void activate(HttpGet next, ProviderRequest request) {
+            check(request);
+            if (completed) throw unavailable(request, "Raw scalar request has completed.");
+            active = next;
+        }
+
+        synchronized void deactivate(HttpGet previous) {
+            if (active == previous) active = null;
         }
 
         synchronized void check(ProviderRequest request) {
@@ -165,37 +184,92 @@ final class RawScalarRestTransport {
     }
 
     Result get(ConnectionProfile profile, ProviderRequest request, URI uri, boolean nativeNonredirectBody) {
+        return get(profile, request, uri, nativeNonredirectBody, RawRedirectTargets.freeze(java.util.List.of()));
+    }
+
+    Result get(
+            ConnectionProfile profile,
+            ProviderRequest request,
+            URI uri,
+            boolean nativeNonredirectBody,
+            RawRedirectTargets targets) {
         if (uri == null || uri.getRawUserInfo() != null || uri.getRawFragment() != null) {
             throw unavailable(request, "Raw scalar target must not contain user information or a fragment.");
         }
         profile.validateResolvedUri(uri);
+        try {
+            if (profile.isFollowRedirects()) RawRedirectTargets.checkedUri(uri.toASCIIString());
+            targets.validate(profile);
+        } catch (IllegalArgumentException invalid) {
+            throw unavailable(request, "Raw scalar target violates its Connection Profile.");
+        }
+        boolean following = profile.isFollowRedirects();
         if (profile.isUseJenkinsProxy()
-                || profile.isFollowRedirects()
+                || following && targets.isEmpty()
                 || profile.getCredentialId() != null
                         && !profile.getCredentialId().isBlank()
                 || !profile.getHeaders().isEmpty()) {
-            throw unavailable(request, "Raw scalar transport requires a direct credential-free Connection Profile.");
+            throw unavailable(request, "Raw scalar transport requires a reviewed direct credential-free profile.");
         }
         long remaining = Math.min(
                 TimeUnit.SECONDS.toNanos(profile.getTotalTimeoutSeconds()),
                 Duration.between(Instant.now(), request.deadline()).toNanos());
-        long started = System.nanoTime();
-        Budget budget = new Budget(started + remaining);
+        Budget budget = new Budget(System.nanoTime() + remaining);
+        budget.check(request);
+        ScheduledFuture<?> cancellation =
+                Timer.get().schedule(() -> budget.expire(null), Math.max(0L, remaining), TimeUnit.NANOSECONDS);
+        Throwable primary = null;
+        try {
+            URI current = uri;
+            for (int redirects = 0; ; redirects++) {
+                Result result = getOnce(profile, request, current, nativeNonredirectBody, following, budget);
+                if (result instanceof NextHop next) {
+                    if (!targets.permits(next.uri())) {
+                        throw unavailable(request, "Raw scalar redirect destination was not declared.");
+                    }
+                    if (redirects == 19) {
+                        return budget.complete(new Failure(FailureKind.REDIRECT_LIMIT, 0, null, current), request);
+                    }
+                    current = next.uri();
+                } else {
+                    if (result instanceof Failure failure) {
+                        result = new Failure(failure.kind(), failure.status(), failure.fingerprint(), current);
+                    }
+                    return budget.complete(result, request);
+                }
+            }
+        } catch (RuntimeException | Error failure) {
+            primary = failure;
+            throw failure;
+        } finally {
+            budget.finish();
+            cleanup(request, primary, () -> cancellation.cancel(false));
+        }
+    }
+
+    private Result getOnce(
+            ConnectionProfile profile,
+            ProviderRequest request,
+            URI uri,
+            boolean nativeNonredirectBody,
+            boolean following,
+            Budget budget) {
+        try {
+            profile.validateResolvedUri(uri);
+        } catch (IllegalArgumentException invalid) {
+            throw unavailable(request, "Raw scalar target violates its Connection Profile.");
+        }
         budget.check(request);
         java.util.List<java.net.InetAddress> addresses;
         try {
             addresses = networkPolicy.resolveCheckedAddresses(uri, profile.isAllowPrivateAddresses());
         } catch (UnknownHostException unresolved) {
             // No resolver diagnostic or exception text becomes a selectable value.
-            return budget.complete(new Failure(FailureKind.DNS_UNRESOLVED, 0), request);
+            return new Failure(FailureKind.DNS_UNRESOLVED, 0);
         }
         budget.check(request);
         HttpGet get = new HttpGet(uri);
-        ScheduledFuture<?> cancellation = Timer.get()
-                .schedule(
-                        () -> budget.expire(get),
-                        Math.max(0L, remaining - (System.nanoTime() - started)),
-                        TimeUnit.NANOSECONDS);
+        budget.activate(get, request);
         org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager manager = null;
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
@@ -239,6 +313,29 @@ final class RawScalarRestTransport {
                 response = CloseableHttpResponse.adapt(client.executeOpen(null, get, null));
                 budget.check(request);
                 int status = response.getCode();
+                if (following && status == 305) {
+                    throw unavailable(request, "Raw scalar proxy redirects are not permitted.");
+                }
+                var location = response.getLastHeader("Location");
+                if (following && java.util.Set.of(300, 301, 302, 303, 307).contains(status) && location != null) {
+                    URI next;
+                    try {
+                        String value = location.getValue();
+                        if (value == null || value.length() > 8192) throw new IllegalArgumentException();
+                        URI reference = URI.create(value);
+                        if (reference.getScheme() != null && !uri.getScheme().equalsIgnoreCase(reference.getScheme())) {
+                            throw new IllegalArgumentException();
+                        }
+                        next = new java.net.URL(uri.toURL(), value).toURI();
+                        RawRedirectTargets.checkedUri(next.toASCIIString());
+                    } catch (IllegalArgumentException
+                            | java.net.URISyntaxException
+                            | java.net.MalformedURLException invalid) {
+                        throw unavailable(request, "Raw scalar redirect target is not permitted.");
+                    }
+                    get.cancel();
+                    return new NextHop(next);
+                }
                 boolean nonredirectBody = nativeNonredirectBody
                         && (status == 304
                                 || status == 306
@@ -246,11 +343,11 @@ final class RawScalarRestTransport {
                                 || status == 302 && !response.containsHeader("Location"));
                 if ((status < 200 || status >= 300) && !nonredirectBody) {
                     get.cancel();
-                    return budget.complete(new Failure(FailureKind.HTTP_STATUS, status), request);
+                    return new Failure(FailureKind.HTTP_STATUS, status);
                 }
                 var entity = response.getEntity();
                 if (entity == null) {
-                    return budget.complete(new Body(new byte[0]), request);
+                    return new Body(new byte[0]);
                 }
                 long expected = entity.getContentLength();
                 boolean fixedLength = expected >= 0 && !entity.isChunked();
@@ -264,7 +361,7 @@ final class RawScalarRestTransport {
                         int count = input.read(buffer, 0, Math.min(buffer.length, maximum + 1 - output.size()));
                         budget.check(request);
                         if (count < 0) {
-                            return budget.complete(new Body(output.toByteArray()), request);
+                            return new Body(output.toByteArray());
                         }
                         output.write(buffer, 0, count);
                         if (output.size() > maximum) {
@@ -275,37 +372,37 @@ final class RawScalarRestTransport {
                     budget.check(request);
                     if (isNativeFixedShortBody(failure, fixedLength, expected, output.size())) {
                         get.cancel();
-                        return budget.complete(new Body(output.toByteArray()), request);
+                        return new Body(output.toByteArray());
                     }
                     if (entity.isChunked()
                             && failure.getClass() == ConnectionClosedException.class
                             && "Premature end of chunk coded message body: closing chunk expected"
                                     .equals(failure.getMessage())) {
-                        return budget.complete(new Failure(FailureKind.PREMATURE_EOF, 0), request);
+                        return new Failure(FailureKind.PREMATURE_EOF, 0);
                     }
                     throw failure;
                 }
             } catch (TlsRejectedException failure) {
-                return budget.complete(new Failure(FailureKind.TLS_REJECTED, 0, failure.fingerprint), request);
+                return new Failure(FailureKind.TLS_REJECTED, 0, failure.fingerprint);
             } catch (HandshakeReadTimeoutException failure) {
                 budget.check(request);
-                return budget.complete(new Failure(FailureKind.READ_TIMEOUT, 0), request);
+                return new Failure(FailureKind.READ_TIMEOUT, 0);
             } catch (org.apache.hc.client5.http.ConnectTimeoutException failure) {
                 budget.check(request);
-                return budget.complete(new Failure(FailureKind.CONNECT_TIMEOUT, 0), request);
+                return new Failure(FailureKind.CONNECT_TIMEOUT, 0);
             } catch (SocketTimeoutException failure) {
                 budget.check(request);
-                return budget.complete(new Failure(FailureKind.READ_TIMEOUT, 0), request);
+                return new Failure(FailureKind.READ_TIMEOUT, 0);
             } catch (ConnectException failure) {
                 budget.check(request);
                 if (failure.getMessage() != null && failure.getMessage().contains("Connection refused")) {
-                    return budget.complete(new Failure(FailureKind.CONNECTION_REFUSED, 0), request);
+                    return new Failure(FailureKind.CONNECTION_REFUSED, 0);
                 }
                 primary = unavailable(request, "Raw scalar connection failed.");
                 throw (ProviderException) primary;
             } catch (NoHttpResponseException failure) {
                 budget.check(request);
-                return budget.complete(new Failure(FailureKind.EARLY_CLOSE, 0), request);
+                return new Failure(FailureKind.EARLY_CLOSE, 0);
             } catch (ProviderException failure) {
                 primary = failure;
                 throw failure;
@@ -318,14 +415,12 @@ final class RawScalarRestTransport {
             primary = failure;
             throw failure;
         } finally {
-            budget.finish();
             final CloseableHttpResponse ownedResponse = response;
             final CloseableHttpClient ownedClient = client;
             final org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager ownedManager = manager;
             cleanup(
                     request,
                     primary,
-                    () -> cancellation.cancel(false),
                     get::cancel,
                     () -> {
                         if (ownedResponse != null) ownedResponse.close(CloseMode.IMMEDIATE);
@@ -335,7 +430,8 @@ final class RawScalarRestTransport {
                     },
                     () -> {
                         if (ownedManager != null) ownedManager.close(CloseMode.IMMEDIATE);
-                    });
+                    },
+                    () -> budget.deactivate(get));
         }
     }
 

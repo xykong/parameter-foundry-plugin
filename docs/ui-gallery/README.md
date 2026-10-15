@@ -5,6 +5,25 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Finite whole-response redirects
+
+Snapshot `0.25.377-SNAPSHOT`, Jenkins 2.568.3, Chromium 153:
+[exact-artifact browser report](../testing/results/raw-rest-redirect-ui-lab.json).
+The real global form saves an exact owned destination permission and retains
+its final-URI failure selector. Five followed statuses, final HTTP failure,
+undeclared-target refusal and recovery pass at 1440 and 390 pixels. The dedicated
+undeclared-target trap records zero requests. All 36 browser cases pass, including
+16 redirect cases; same-HPI native source values/order/defaults match in 21 cases.
+Complete Maven verify: 552 tests, zero failures/errors, eight conditional skips.
+No builds are submitted. The addresses shown are isolated synthetic peers.
+Touch, assistive technology, dynamic resize and unrestricted native redirect
+compatibility are not certified. This is component acceptance, not production migration.
+
+
+[![Final HTTP failure default on mobile](images/parameter-foundry/raw-rest-redirect-final-failure-mobile.png)](images/parameter-foundry/raw-rest-redirect-final-failure-mobile.png)
+
+[![Undeclared destination refusal](images/parameter-foundry/raw-rest-redirect-denied-desktop.png)](images/parameter-foundry/raw-rest-redirect-denied-desktop.png)
+
 ## Explicit nonredirect response bodies
 
 Snapshot `0.25.376-SNAPSHOT`, Jenkins 2.568.3, Chromium 153:

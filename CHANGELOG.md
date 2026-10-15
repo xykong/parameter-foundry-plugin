@@ -13,6 +13,8 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Add opt-in finite same-origin whole-response redirect destinations, a shared chain deadline, explicit redirect-limit choices and final-request URI failure selectors.
+
 - Add an explicit whole-response status policy for reviewed 304/306/308 and 302-without-Location bodies, preserving existing HTTP failure mappings by default and never following redirects.
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 

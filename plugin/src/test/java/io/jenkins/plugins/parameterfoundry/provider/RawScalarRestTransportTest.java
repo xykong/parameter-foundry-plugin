@@ -59,9 +59,19 @@ class RawScalarRestTransportTest {
         var get = new org.apache.hc.client5.http.classic.methods.HttpGet("http://example.invalid/");
         var budget =
                 new RawScalarRestTransport.Budget(System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5));
+        budget.activate(get, request);
+        budget.deactivate(get);
         budget.complete(new RawScalarRestTransport.Body(new byte[0]), request);
-        budget.expire(get);
+        var subsequentGet = new org.apache.hc.client5.http.classic.methods.HttpGet("http://example.invalid/next");
+        var subsequentBudget =
+                new RawScalarRestTransport.Budget(System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5));
+        subsequentBudget.activate(subsequentGet, request);
+        budget.expire(subsequentGet);
         assertFalse(get.isCancelled());
+        assertFalse(subsequentGet.isCancelled());
+        assertInstanceOf(
+                RawScalarRestTransport.Body.class,
+                subsequentBudget.complete(new RawScalarRestTransport.Body(new byte[0]), request));
         var expired =
                 new RawScalarRestTransport.Budget(System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5));
         expired.expire(get);

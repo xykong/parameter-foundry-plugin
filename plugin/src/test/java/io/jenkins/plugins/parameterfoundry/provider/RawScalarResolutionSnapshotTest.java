@@ -91,11 +91,19 @@ class RawScalarResolutionSnapshotTest {
     }
 
     @Test
-    void runtimeUsesSamePolicyAndQuerySnapshotAfterDigestBeforeAsync(JenkinsRule j) throws Exception {
+    void runtimeUsesSameRedirectPolicyAndQuerySnapshotAfterDigestBeforeAsync(JenkinsRule j) throws Exception {
         var calls = new AtomicInteger();
         var server = HttpServer.create(new InetSocketAddress(OwnedHttpPeer.address(), 0), 0);
         server.createContext("/value", exchange -> {
             calls.incrementAndGet();
+            assertEquals("method=before", exchange.getRequestURI().getRawQuery());
+            exchange.getResponseHeaders().add("Location", "/final?method=before");
+            exchange.sendResponseHeaders(302, -1);
+            exchange.close();
+        });
+        var finalCalls = new AtomicInteger();
+        server.createContext("/final", exchange -> {
+            finalCalls.incrementAndGet();
             assertEquals("method=before", exchange.getRequestURI().getRawQuery());
             exchange.sendResponseHeaders(503, -1);
             exchange.close();
@@ -125,6 +133,8 @@ class RawScalarResolutionSnapshotTest {
             profile.setUseJenkinsProxy(false);
             profile.setAllowPrivateAddresses(true);
             profile.setAllowedQueryParameters(List.of("method"));
+            profile.setFollowRedirects(true);
+            String destination = profile.getBaseUrl() + "final?method=before";
             var provider = new RestProviderDefinition(
                     "raw",
                     "profile",
@@ -132,6 +142,7 @@ class RawScalarResolutionSnapshotTest {
                     null,
                     new RawScalarRestTransport(new NetworkPolicy(host -> List.of(OwnedHttpPeer.address()))));
             provider.setResponseMode("active-choices-raw-scalar");
+            provider.setRawRedirectTargets(List.of(new RestRawLiteral(destination)));
             provider.setCacheTtlSeconds(0);
             provider.setTimeoutSeconds(20);
             var query = new RestQueryParameter("method", "unused");
@@ -139,6 +150,7 @@ class RawScalarResolutionSnapshotTest {
             provider.setQueryParameters(List.of(query));
             var row = new RestRawFailureChoice("HTTP_STATUS", "reviewed-before");
             row.setStatus(503);
+            row.setMatchUri(destination);
             var tls = tls("a".repeat(64));
             provider.setRawFailureChoices(List.of(row, tls));
             var configuration = ParameterFoundryGlobalConfiguration.get();
@@ -151,6 +163,9 @@ class RawScalarResolutionSnapshotTest {
                     job, located, ProviderOperation.RESOLVE, Map.of("old", "before", "new", "after"), "builder"));
             assertTrue(enqueued.await(5, TimeUnit.SECONDS));
             row.setStatus(404);
+            row.setMatchUri(profile.getBaseUrl() + "changed?method=after");
+            provider.setRawRedirectTargets(List.of(new RestRawLiteral(profile.getBaseUrl() + "changed?method=after")));
+            profile.setFollowRedirects(false);
             tls.setFingerprint("b".repeat(64));
             query.setDependencyParameter("new");
             profile.setAllowPrivateAddresses(false);
@@ -162,6 +177,7 @@ class RawScalarResolutionSnapshotTest {
             var resolution = first.get(10, TimeUnit.SECONDS);
             assertEquals("reviewed-before", resolution.options().get(0).getValue());
             assertEquals(1, calls.get());
+            assertEquals(1, finalCalls.get());
             assertThrows(
                     ProviderException.class,
                     () -> runtime.resolve(
@@ -171,6 +187,7 @@ class RawScalarResolutionSnapshotTest {
                             Map.of("old", "before", "new", "after"),
                             "builder"));
             assertEquals(1, calls.get());
+            assertEquals(1, finalCalls.get());
             assertFalse(runtime.health("jenkins", "raw").orElseThrow().message().contains("bbbb"));
         } finally {
             release.countDown();

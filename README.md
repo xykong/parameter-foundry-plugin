@@ -132,7 +132,9 @@ Version `0.12.314` adds reactive Active Choices single transports using a govern
 API default and dependency-bound snapshots. Whole-response REST choices support finite
 administrator-declared TLS rejection keys while retaining default certificate validation;
 an explicit `rawStatusPolicy` can also preserve reviewed nonredirect response bodies
-without changing the default HTTP failure mappings or following redirects;
+without changing the default HTTP failure mappings. Separately reviewed finite
+redirect destinations can opt in to same-origin following with a shared deadline
+and final-request failure selectors;
 see [whole-response REST choices](docs/guide/raw-rest-responses.md).
 REST Providers offer data-only ordinary/cascade
 JSON response modes with source-derived UI/API metadata and per-parameter minimum filter

@@ -335,6 +335,115 @@ class RawScalarTlsFailureTest {
     }
 
     @Test
+    void redirectedTlsRejectionAndHandshakeTimeoutUseFinalUriSelector(JenkinsRule j) throws Exception {
+        for (boolean stall : List.of(false, true)) {
+            var executor = java.util.concurrent.Executors.newSingleThreadExecutor();
+            var release = new java.util.concurrent.CountDownLatch(1);
+            var requests = new AtomicInteger();
+            var connections = new AtomicInteger();
+            try (var listener = new ServerSocket(0, 4, OwnedHttpPeer.address())) {
+                listener.setSoTimeout(5000);
+                var server = executor.submit(() -> {
+                    try {
+                        for (int hop = 0; hop < 2; hop++) {
+                            try (var tcp = listener.accept()) {
+                                connections.incrementAndGet();
+                                if (hop == 1 && stall) {
+                                    assertTrue(release.await(5, java.util.concurrent.TimeUnit.SECONDS));
+                                    continue;
+                                }
+                                // Same origin, fresh connection: the second peer presents a wrong certificate.
+                                SSLContext tls = hop == 0 ? secondServer : firstServer;
+                                try (var socket = (SSLSocket) tls.getSocketFactory()
+                                        .createSocket(tcp, "wrong-peer.invalid", listener.getLocalPort(), true)) {
+                                    socket.setUseClientMode(false);
+                                    socket.setSoTimeout(2000);
+                                    try {
+                                        socket.startHandshake();
+                                        var input = new java.io.BufferedReader(new java.io.InputStreamReader(
+                                                socket.getInputStream(), StandardCharsets.US_ASCII));
+                                        String line = input.readLine();
+                                        if (hop == 1) {
+                                            assertNull(line, "Rejected TLS must never send a final HTTP request");
+                                            continue;
+                                        }
+                                        assertEquals("GET /start HTTP/1.1", line);
+                                        int size = 0;
+                                        while ((line = input.readLine()) != null && !line.isEmpty()) {
+                                            size += line.length();
+                                            assertTrue(size <= 8192);
+                                        }
+                                        requests.incrementAndGet();
+                                        socket.getOutputStream()
+                                                .write(("HTTP/1.1 302 Found\r\n"
+                                                                + "Location: /value\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                                                        .getBytes(StandardCharsets.US_ASCII));
+                                        socket.getOutputStream().flush();
+                                    } catch (SSLHandshakeException rejected) {
+                                        if (hop == 0) throw rejected;
+                                    } catch (java.net.SocketException rejected) {
+                                        if (hop == 0
+                                                || !("Broken pipe".equals(rejected.getMessage())
+                                                        || "Connection reset".equals(rejected.getMessage())
+                                                        || "Connection reset by peer".equals(rejected.getMessage())))
+                                            throw rejected;
+                                    }
+                                }
+                            }
+                        }
+                        return null;
+                    } catch (Exception failure) {
+                        throw new java.util.concurrent.CompletionException(failure);
+                    }
+                });
+                try {
+                    var profile = profile(listener.getLocalPort());
+                    profile.setFollowRedirects(true);
+                    profile.setReadTimeoutSeconds(1);
+                    String initial = profile.getBaseUrl() + "start";
+                    String destination = profile.getBaseUrl() + "value";
+                    var dns = new AtomicInteger();
+                    var provider = new RestProviderDefinition(
+                            "tls",
+                            "tls",
+                            "start",
+                            null,
+                            new RawScalarRestTransport(
+                                    new NetworkPolicy(host -> {
+                                        dns.incrementAndGet();
+                                        return List.of(OwnedHttpPeer.address());
+                                    }),
+                                    clientContext));
+                    provider.setResponseMode("active-choices-raw-scalar");
+                    provider.setRawRedirectTargets(List.of(new RestRawLiteral(destination)));
+                    var initialRow =
+                            stall ? new RestRawFailureChoice("READ_TIMEOUT", "initial-timeout") : declaration();
+                    initialRow.setMatchUri(initial);
+                    var finalRow = stall
+                            ? new RestRawFailureChoice("READ_TIMEOUT", "final-timeout")
+                            : new RestRawFailureChoice("TLS_REJECTED", "final-tls-rejection");
+                    if (!stall) finalRow.setFingerprint(declaration().getFingerprint());
+                    finalRow.setMatchUri(destination);
+                    provider.setRawFailureChoices(List.of(initialRow, finalRow));
+                    assertEquals(
+                            stall ? "final-timeout" : "final-tls-rejection",
+                            provider.load(context(j, profile)).get(0).getValue());
+                    assertEquals(2, dns.get());
+                    assertEquals(2, connections.get());
+                    assertEquals(1, requests.get());
+                } finally {
+                    release.countDown();
+                }
+                server.get(5, java.util.concurrent.TimeUnit.SECONDS);
+            } finally {
+                release.countDown();
+                executor.shutdownNow();
+                assertTrue(executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS));
+            }
+        }
+    }
+
+    @Test
     void addressFallbackUsesFinalSuccessOrRefusalWithoutPreviousFingerprint(JenkinsRule j) throws Exception {
         var addresses = OwnedHttpPeer.addresses();
         Assumptions.assumeTrue(addresses.size() >= 2, "Requires two owned private interface addresses.");

@@ -1,5 +1,6 @@
 <div>Only a classified result from the restricted raw HTTP transport can match.
-<code>DNS_UNRESOLVED</code> matches actual host lookup failure; empty/prohibited address sets
+<code>REDIRECT_LIMIT</code> requires an explicit fixed choice after the twentieth
+redirect response; no twenty-first request is sent. <code>DNS_UNRESOLVED</code> matches actual host lookup failure; empty/prohibited address sets
 remain refusals. <code>TLS_REJECTED</code> requires an explicit finite fingerprint and fixed
 administrator-declared text; the TLS verifier still rejects the connection. It is not a
 hostname-error classification. The final address attempt controls the outcome; previous

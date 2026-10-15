@@ -38,6 +38,9 @@
       <option value="native-nonredirect-body" selected="${instance.rawStatusPolicy == 'native-nonredirect-body' ? 'selected' : null}">Native body for reviewed nonredirect responses</option>
     </select>
   </f:entry>
+  <f:entry title="Reviewed raw redirect targets" field="rawRedirectTargets">
+    <f:repeatableProperty field="rawRedirectTargets" add="Add exact destination" header="Complete reviewed URI" />
+  </f:entry>
   <f:entry title="Ignored whole responses" field="rawIgnoredResponses">
     <f:repeatableProperty field="rawIgnoredResponses" add="Add ignored response" header="Exact literal" />
   </f:entry>
