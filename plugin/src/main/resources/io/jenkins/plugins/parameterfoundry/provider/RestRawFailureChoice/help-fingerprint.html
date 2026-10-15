@@ -1,0 +1,12 @@
+<div>Required only for <code>TLS_REJECTED</code>: exactly 64 lowercase hexadecimal characters.
+The key is SHA-256 of strict UTF-8 bytes for <code>tls-rejected-v1</code>, a NUL,
+the exact exception class name, a NUL, and its message. Only exact
+<code>javax.net.ssl.SSLHandshakeException</code> and
+<code>javax.net.ssl.SSLPeerUnverifiedException</code> classes qualify at the default
+TLS upgrade boundary. Null messages, malformed Unicode and messages longer than
+2048 UTF-16 code units do not qualify. Default certificate/hostname validation stays enabled.
+Obtain the key only from reviewed administrator-owned evidence; normal resolution and health
+interfaces do not reveal it. It is a compatibility key, not anonymization or proof of a TLS
+failure reason. Certificate/JDK/library changes may invalidate it. A TLS row requires status
+zero and a fixed nonempty choice value without interpolation braces. Other kinds require an
+empty fingerprint; no wildcard TLS row exists.</div>

@@ -15,7 +15,8 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionProfile> implements Serializable {
+public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionProfile>
+        implements Serializable, Cloneable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -43,6 +44,20 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
         }
         this.id = id;
         this.baseUrl = normalizeBaseUrl(baseUrl).toString();
+    }
+
+    /** Private per-resolution carrier: scalar policy and immutable list snapshots travel together. */
+    ConnectionProfile snapshotForResolution() {
+        try {
+            ConnectionProfile copy = (ConnectionProfile) super.clone();
+            // ProfileHeader contains only final Strings; policy lists contain immutable Strings.
+            copy.headers = List.copyOf(getHeaders());
+            copy.allowedPathPrefixes = List.copyOf(getAllowedPathPrefixes());
+            copy.allowedQueryParameters = List.copyOf(getAllowedQueryParameters());
+            return copy;
+        } catch (CloneNotSupportedException impossible) {
+            throw new AssertionError(impossible);
+        }
     }
 
     public String getId() {
@@ -288,6 +303,16 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
                 + allowPrivateAddresses
                 + '\u0000'
                 + followRedirects
+                + '\u0000'
+                + useJenkinsProxy
+                + '\u0000'
+                + connectTimeoutSeconds
+                + '\u0000'
+                + readTimeoutSeconds
+                + '\u0000'
+                + totalTimeoutSeconds
+                + '\u0000'
+                + maximumResponseBytes
                 + '\u0000'
                 + getHeaders().stream()
                         .map(header -> header.getName() + ":" + header.getValue())

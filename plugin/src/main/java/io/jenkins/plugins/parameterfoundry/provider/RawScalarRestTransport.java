@@ -50,6 +50,7 @@ final class RawScalarRestTransport {
     enum FailureKind {
         HTTP_STATUS,
         DNS_UNRESOLVED,
+        TLS_REJECTED,
         CONNECT_TIMEOUT,
         READ_TIMEOUT,
         CONNECTION_REFUSED,
@@ -57,7 +58,35 @@ final class RawScalarRestTransport {
         PREMATURE_EOF
     }
 
-    record Failure(FailureKind kind, int status) implements Result {}
+    record Failure(FailureKind kind, int status, String fingerprint) implements Result {
+        Failure(FailureKind kind, int status) {
+            this(kind, status, null);
+        }
+    }
+
+    private static final class TlsRejectedException extends IOException {
+        private static final long serialVersionUID = 1L;
+        private final String fingerprint;
+
+        TlsRejectedException(String fingerprint) {
+            super("TLS connection was rejected.");
+            this.fingerprint = fingerprint;
+        }
+    }
+
+    static org.apache.hc.client5.http.ssl.TlsSocketStrategy restrictedTlsStrategy(
+            org.apache.hc.client5.http.ssl.TlsSocketStrategy delegate) {
+        return (socket, hostname, port, attachment, context) -> {
+            try {
+                return delegate.upgrade(socket, hostname, port, attachment, context);
+            } catch (SocketTimeoutException failure) {
+                throw new HandshakeReadTimeoutException();
+            } catch (javax.net.ssl.SSLException failure) {
+                // A typed result per attempt, not a sticky flag: later addresses may succeed or fail differently.
+                throw new TlsRejectedException(TlsRejectionFingerprint.fingerprint(failure));
+            }
+        };
+    }
 
     static final class HandshakeReadTimeoutException extends IOException {
         private static final long serialVersionUID = 1L;
@@ -119,9 +148,16 @@ final class RawScalarRestTransport {
     }
 
     private final NetworkPolicy networkPolicy;
+    private final SSLContext fixtureTlsContext;
 
     RawScalarRestTransport(NetworkPolicy networkPolicy) {
+        this(networkPolicy, null);
+    }
+
+    /** Owned test contexts retain the default hostname verifier; no configurable trust override exists. */
+    RawScalarRestTransport(NetworkPolicy networkPolicy, SSLContext fixtureTlsContext) {
         this.networkPolicy = java.util.Objects.requireNonNull(networkPolicy);
+        this.fixtureTlsContext = fixtureTlsContext;
     }
 
     Result get(ConnectionProfile profile, ProviderRequest request, URI uri) {
@@ -162,20 +198,16 @@ final class RawScalarRestTransport {
         Throwable primary = null;
         try {
             try {
-                SSLContext tls = SSLContext.getInstance("TLS");
-                tls.init(new KeyManager[0], null, null);
+                SSLContext tls = fixtureTlsContext;
+                if (tls == null) {
+                    tls = SSLContext.getInstance("TLS");
+                    tls.init(new KeyManager[0], null, null);
+                }
                 var tlsStrategy =
                         ClientTlsStrategyBuilder.create().setSslContext(tls).buildClassic();
                 manager = PoolingHttpClientConnectionManagerBuilder.create()
                         .setDnsResolver(new ValidatedDnsResolver(uri, addresses))
-                        .setTlsSocketStrategy((socket, hostname, port, attachment, context) -> {
-                            try {
-                                return tlsStrategy.upgrade(socket, hostname, port, attachment, context);
-                            } catch (SocketTimeoutException failure) {
-                                // Preserve the phase without retaining state across address fallback attempts.
-                                throw new HandshakeReadTimeoutException();
-                            }
-                        })
+                        .setTlsSocketStrategy(restrictedTlsStrategy(tlsStrategy))
                         .setDefaultConnectionConfig(ConnectionConfig.custom()
                                 .setConnectTimeout(Timeout.ofSeconds(profile.getConnectTimeoutSeconds()))
                                 .setSocketTimeout(Timeout.ofSeconds(profile.getReadTimeoutSeconds()))
@@ -244,6 +276,8 @@ final class RawScalarRestTransport {
                     }
                     throw failure;
                 }
+            } catch (TlsRejectedException failure) {
+                return budget.complete(new Failure(FailureKind.TLS_REJECTED, 0, failure.fingerprint), request);
             } catch (HandshakeReadTimeoutException failure) {
                 budget.check(request);
                 return budget.complete(new Failure(FailureKind.READ_TIMEOUT, 0), request);

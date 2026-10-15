@@ -401,3 +401,20 @@ current HPI on Jenkins `2.568.2-lts-jdk21`.
 ### Rebuild
 
 [![Parameter Foundry Rebuild](images/parameter-foundry/rebuild.png)](images/parameter-foundry/rebuild.png)
+
+## Finite raw TLS declaration component (0.24.374-SNAPSHOT)
+
+Exact complete-build HPI browser checks on Jenkins2.568.3/Java21, Chromium153,
+macOS host, English UI; 1440×1000 and390×844 viewports. No builds submitted.
+
+- [TLS declaration fields](./images/parameter-foundry/raw-rest-tls-fingerprint-configuration-desktop.png)
+- [Declared TLS choice, desktop](./images/parameter-foundry/raw-rest-tls-declared-desktop.png)
+- [Declared TLS choice, mobile](./images/parameter-foundry/raw-rest-tls-declared-mobile.png)
+- [Unknown TLS refusal after scrolling, mobile](./images/parameter-foundry/raw-rest-tls-unknown-mobile.png)
+- [Recovery after explicit valid-origin change](./images/parameter-foundry/raw-rest-tls-valid-origin-desktop.png)
+
+Mobile Core sticky controls can initially overlap the final status; the error was
+scrolled into view and hit-tested unobscured. A separate parameter-free Core Job
+reproduces Jenkins2.568.3's long-name breadcrumb overflow exception. Product
+fixtures use shorter names and retain strict pageerror checks. These checks do not
+certify screen-reader/native-popup-arrow behavior or production migration.

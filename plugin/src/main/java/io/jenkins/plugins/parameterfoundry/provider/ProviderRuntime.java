@@ -64,6 +64,13 @@ public final class ProviderRuntime {
             Map<String, String> dependencies,
             String principal) {
         evictExpiredIfNeeded();
+        boolean rawSnapshot = located.provider() instanceof RestProviderDefinition rest && rest.isRawScalarResponse();
+        if (rawSnapshot) {
+            located = new ProviderRegistry.LocatedProvider(
+                    ((RestProviderDefinition) located.provider()).snapshotForResolution(),
+                    located.scope(),
+                    located.ownerId());
+        }
         SharedProviderDefinition provider = located.provider();
         boolean liveSource = provider instanceof RestProviderDefinition rest
                 && rest.isActiveChoicesResponse()
@@ -71,7 +78,8 @@ public final class ProviderRuntime {
         Optional<ConnectionProfile> connectionProfile;
         if (provider instanceof ConnectionProfileConsumer consumer) {
             connectionProfile = ProviderRegistry.findConnectionProfile(job, consumer.getConnectionProfileId())
-                    .map(ProviderRegistry.LocatedProfile::profile);
+                    .map(ProviderRegistry.LocatedProfile::profile)
+                    .map(profile -> rawSnapshot ? profile.snapshotForResolution() : profile);
             if (connectionProfile.isEmpty()) {
                 throw new ProviderException(
                         ErrorCode.PROVIDER_UNAVAILABLE,

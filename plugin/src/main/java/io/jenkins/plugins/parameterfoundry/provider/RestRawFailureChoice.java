@@ -19,6 +19,7 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
     private final String kind;
     private final String value;
     private int status;
+    private String fingerprint;
 
     @DataBoundConstructor
     public RestRawFailureChoice(String kind, String value) {
@@ -47,8 +48,70 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
         this.status = status;
     }
 
+    /** An administrator-supplied compatibility key, never learned from a normal resolution. */
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
+    @DataBoundSetter
+    public void setFingerprint(String fingerprint) {
+        if (fingerprint != null
+                && !fingerprint.isEmpty()
+                && (!"TLS_REJECTED".equals(kind) || !fingerprint.matches("[0-9a-f]{64}"))) {
+            throw new IllegalArgumentException(
+                    "Only TLS_REJECTED accepts a 64-character lowercase hexadecimal fingerprint.");
+        }
+        this.fingerprint = fingerprint == null || fingerprint.isEmpty() ? null : fingerprint;
+    }
+
+    Declaration snapshot() {
+        return new Declaration(kind, status, value, fingerprint);
+    }
+
+    /** Frozen before digest computation; no mutable configuration row is read during a request. */
+    record Declaration(String kind, int status, String value, String fingerprint) {
+        void validate() {
+            RawScalarRestTransport.FailureKind.valueOf(kind);
+            Objects.requireNonNull(value);
+            if (status != 0 && (!"HTTP_STATUS".equals(kind) || status < 100 || status > 599)) {
+                throw new IllegalArgumentException();
+            }
+            if ("TLS_REJECTED".equals(kind)) {
+                if (status != 0
+                        || fingerprint == null
+                        || !fingerprint.matches("[0-9a-f]{64}")
+                        || value.isEmpty()
+                        || value.contains("{")
+                        || value.contains("}")) {
+                    throw new IllegalArgumentException();
+                }
+            } else if (fingerprint != null) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        String key() {
+            return kind + ":" + status + ":" + fingerprint;
+        }
+
+        boolean matches(RawScalarRestTransport.Failure failure) {
+            return kind.equals(failure.kind().name())
+                    && (status == 0 || status == failure.status())
+                    && (!"TLS_REJECTED".equals(kind) || fingerprint.equals(failure.fingerprint()));
+        }
+
+        boolean includesUri() {
+            return value.contains("{uri}");
+        }
+
+        String render(URI uri, int responseStatus) {
+            if ("TLS_REJECTED".equals(kind)) return value;
+            return value.replace("{status}", String.valueOf(responseStatus)).replace("{uri}", uri.toString());
+        }
+    }
+
     boolean matches(RawScalarRestTransport.Failure failure) {
-        return kind.equals(failure.kind().name()) && (status == 0 || status == failure.status());
+        return snapshot().matches(failure);
     }
 
     boolean includesUri() {
@@ -56,8 +119,7 @@ public final class RestRawFailureChoice extends AbstractDescribableImpl<RestRawF
     }
 
     String render(URI uri, int responseStatus) {
-        // Replace fixed tokens only. A token in the URI is never expanded a second time.
-        return value.replace("{status}", String.valueOf(responseStatus)).replace("{uri}", uri.toString());
+        return snapshot().render(uri, responseStatus);
     }
 
     @Extension

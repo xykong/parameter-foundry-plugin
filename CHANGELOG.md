@@ -13,11 +13,15 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Support explicit finite TLS rejection fingerprints with fixed whole-response REST choices while preserving default TLS verification.
+
 - Add an optional, explicitly declared choice for unresolved DNS in whole-response REST mode; resolver diagnostics and policy refusals remain private.
 
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed
+
+- Freeze raw REST request configuration before asynchronous evaluation and include proxy, timeout and response limits in Connection Profile digests; existing caches and submission snapshots may require fresh resolution.
 
 - Include DNS evaluation time in whole-response HTTP outcome budgets without promising hard DNS cancellation.
 

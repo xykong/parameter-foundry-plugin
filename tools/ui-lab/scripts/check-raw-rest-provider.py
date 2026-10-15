@@ -64,11 +64,20 @@ async def main():
             dependency_receipt.append({'id':plugin_id,'sha256':hashlib.sha256(source.read_bytes()).hexdigest()})
         (unit/'dependency-receipt.json').write_text(json.dumps(dependency_receipt,indent=2))
         shutil.copy2(artifact, plugins/'parameter-foundry.jpi')
+        keytool = shutil.which('keytool')
+        assert keytool, 'A JDK keytool is required for owned TLS fixtures.'
+        run([keytool,'-genkeypair','-alias','peer','-keyalg','RSA','-keysize','2048','-dname','CN=owned-tls-peer.invalid','-ext','SAN=dns:owned-tls-peer.invalid','-validity','2','-keystore',str(unit/'peer.p12'),'-storetype','PKCS12','-storepass','owned-fixture-pass','-keypass','owned-fixture-pass','-noprompt'], 'owned-keypair')
+        run([keytool,'-exportcert','-alias','peer','-keystore',str(unit/'peer.p12'),'-storepass','owned-fixture-pass','-file',str(unit/'peer.cer')], 'owned-certificate')
+        run([keytool,'-importcert','-alias','peer','-file',str(unit/'peer.cer'),'-keystore',str(unit/'trust.p12'),'-storetype','PKCS12','-storepass','owned-fixture-pass','-noprompt'], 'owned-truststore')
         with socket.socket() as sock:
             sock.bind(('127.0.0.1', 0)); port = sock.getsockname()[1]
         base = 'http://127.0.0.1:' + str(port)
         owned_ids[network] = run(['docker','network','create','--internal','--label','task=pf-raw-rest-ui',network], 'create-network'); created_network = True
-        owned_ids[name] = run(['docker','run','-d','--name',name,'--network',network,'--user','root','--cpus','2','--memory','4g','-e','JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Djava.security.properties=/opt/pf-lab/dns.security','-e','PF_LAB_URL='+base+'/','-e','PF_LAB_HPI_SHA='+digest,'-v',str(home)+':/var/jenkins_home','-v',str(plugins)+':/usr/share/jenkins/ref/plugins:ro','-v',str(Path(__file__).with_name('raw-rest-dns.security'))+':/opt/pf-lab/dns.security:ro','-v',str(Path(__file__).with_name('raw-rest-provider-init.groovy'))+':/usr/share/jenkins/ref/init.groovy.d/01-raw.groovy:ro',image], 'start-controller'); created_container = True
+        import ipaddress
+        network_info=json.loads(run(['docker','network','inspect',owned_ids[network]],'inspect-owned-network'))[0]
+        subnet=next(v['Subnet'] for v in network_info['IPAM']['Config'] if ':' not in v['Subnet'])
+        peer_ip=str(ipaddress.IPv4Network(subnet).network_address+2)
+        owned_ids[name] = run(['docker','run','-d','--name',name,'--network',network,'--ip',peer_ip,'--add-host','raw-rest-tls.invalid:'+peer_ip,'--add-host','owned-tls-peer.invalid:'+peer_ip,'--user','root','--cpus','2','--memory','4g','-e','JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Djava.security.properties=/opt/pf-lab/dns.security -Djavax.net.ssl.trustStore=/opt/pf-lab/trust.p12 -Djavax.net.ssl.trustStorePassword=owned-fixture-pass','-e','PF_LAB_URL='+base+'/','-e','PF_LAB_HPI_SHA='+digest,'-v',str(unit/'peer.p12')+':/opt/pf-lab/peer.p12:ro','-v',str(unit/'trust.p12')+':/opt/pf-lab/trust.p12:ro','-v',str(home)+':/var/jenkins_home','-v',str(plugins)+':/usr/share/jenkins/ref/plugins:ro','-v',str(Path(__file__).with_name('raw-rest-dns.security'))+':/opt/pf-lab/dns.security:ro','-v',str(Path(__file__).with_name('raw-rest-provider-init.groovy'))+':/usr/share/jenkins/ref/init.groovy.d/01-raw.groovy:ro',image], 'start-controller'); created_container = True
         # Internal Docker networks do not publish host ports on every engine.
         # Only the fixed reverse proxy has a bridge route; Jenkins stays internal.
         relay_config = unit/'relay.conf'
@@ -88,7 +97,7 @@ async def main():
             await asyncio.sleep(1)
         else: raise RuntimeError('Owned raw REST controller startup failed')
         metadata = json.loads((home/'raw-rest-ready.json').read_text()); assert metadata['sha256']==digest
-        blocked=[]; errors=[]; results=[]
+        blocked=[]; errors=[]; results=[]; core_errors=[]; core_probe=False
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
             context = await browser.new_context(viewport={'width':1440,'height':1000})
@@ -97,14 +106,18 @@ async def main():
                     blocked.append(route.request.url); await route.abort()
                 else: await route.continue_()
             await context.route('**/*', protect)
-            page = await context.new_page(); page.on('pageerror', lambda error: errors.append(str(error)))
+            page = await context.new_page(); page.on('pageerror', lambda error: (core_errors if core_probe else errors).append({'url':page.url,'message':str(error),'stack':error.stack}))
             await page.goto(base+'/configure',wait_until='networkidle')
-            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==3
-            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*3
+            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==5
+            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*5
             values=await page.locator('textarea[name="_.value"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             assert 'null' in values and 'topic/stable' in values and 'HTTP {status}: {uri}' in values and 'DNS unavailable' in values
-            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED']
+            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED','TLS_REJECTED','TLS_REJECTED']
+            fingerprints=await page.locator('input[name="_.fingerprint"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
+            assert metadata['tlsFingerprint'] in fingerprints and '0'*64 in fingerprints
             await page.screenshot(path=str(unit/'configuration-desktop.png'),full_page=True)
+            await page.locator('input[name="_.fingerprint"]:visible').nth(2).scroll_into_view_if_needed()
+            await page.screenshot(path=str(unit/'tls-fingerprint-configuration-desktop.png'))
             await page.get_by_role('button',name='Save',exact=True).click(); await page.wait_for_load_state('networkidle')
             async def read_form(job, expected, selected, state="ready"):
                 await page.goto(base+'/job/'+job+'/build?delay=0sec',wait_until='networkidle')
@@ -156,9 +169,56 @@ async def main():
             await read_form('raw-rest-dns',['topic/recovered\n','topic/stable'],'topic/recovered\n')
             recovered=peer('native-default',job='raw-rest-dns');assert recovered['value']=='topic/recovered\n' and recovered['type']=='hudson.model.StringParameterValue'
             await page.screenshot(path=str(unit/'dns-recovered-desktop.png'),full_page=True)
+            for width in [1440,390]:
+                await page.set_viewport_size({'width':width,'height':1000 if width==1440 else 844})
+                await read_form('raw-rest-tls',['TLS unavailable','topic/stable'],'TLS unavailable')
+                assert peer('native-default',job='raw-rest-tls')['value']=='TLS unavailable'
+                await page.screenshot(path=str(unit/('tls-declared-'+str(width)+'.png')),full_page=True)
+                await page.goto(base+'/job/raw-tls-denied/build?delay=0sec',wait_until='networkidle')
+                await page.wait_for_function('document.querySelector("[data-parameter-name=REF]").dataset.upState==="error"')
+                field=page.locator('[data-parameter-name="REF"]')
+                text=await field.inner_text()
+                status=field.locator('[data-up-refresh-status]')
+                diagnostic=await field.evaluate('(node)=>({html:node.outerHTML,statuses:Array.from(node.querySelectorAll("[data-up-refresh-status]")).map(s=>({text:s.textContent,display:getComputedStyle(s).display,visibility:getComputedStyle(s).visibility,rect:s.getBoundingClientRect().toJSON()}))})')
+                (unit/('tls-unknown-dom-'+str(width)+'.json')).write_text(json.dumps(diagnostic,indent=2))
+                assert await status.count()==1 and await status.is_visible()
+                assert 'Options could not be enhanced:' in await status.inner_text()
+                await status.evaluate('(node)=>node.scrollIntoView({block:"center"})')
+                assert await status.evaluate('(node)=>{const r=node.getBoundingClientRect();return node.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))}')
+
+                assert metadata['tlsFingerprint'] not in text and 'certificate_unknown' not in text and 'raw-rest-tls.invalid' not in text
+                assert peer('native-default',job='raw-tls-denied')['value'] is None
+                await page.screenshot(path=str(unit/('tls-unknown-'+str(width)+'.png')),full_page=True)
+            await page.set_viewport_size({'width':1440,'height':1000})
+            await page.goto(base+'/configure',wait_until='networkidle')
+            tls_base=page.locator('input[name="_.baseUrl"]:visible')
+            selected=None
+            for field in await tls_base.all():
+                if await field.input_value()==metadata['tlsPeer']:
+                    assert selected is None
+                    selected=field
+            assert selected is not None
+            await selected.fill(metadata['validTlsPeer'])
+            await page.get_by_role('button',name='Save',exact=True).click(); await page.wait_for_load_state('networkidle')
+            for job in ['raw-rest-tls','raw-tls-denied']:
+                await read_form(job,['topic/recovered\n','topic/stable'],'topic/recovered\n')
+                native=peer('native-default',job=job);assert native['value']=='topic/recovered\n' and native['type']=='hudson.model.StringParameterValue'
+            await page.screenshot(path=str(unit/'tls-valid-reconfigured-desktop.png'),full_page=True)
+            # Jenkins 2.568.3 breadcrumbs pass `label` to a Core template expecting `displayName`.
+            # Reproduce separately on a parameter-free Core Job; never suppress product-page errors.
+            core_probe=True
+            await page.set_viewport_size({'width':390,'height':844})
+            await page.goto(base+'/job/plain-core-breadcrumb-control/',wait_until='networkidle')
+            assert await page.locator('[data-parameter-foundry]').count()==0
+            await page.wait_for_timeout(300)
+            await page.screenshot(path=str(unit/'core-breadcrumb-control-mobile.png'),full_page=True)
+            core_probe=False
+            assert core_errors and all(e['message']=="Cannot read properties of undefined (reading 'replace')" and '/jsbundles/header.js:' in e['stack'] and 'generateDropdownItems' in e['stack'] for e in core_errors),core_errors
+            (unit/'core-breadcrumb-control.json').write_text(json.dumps({'state':'CORE_ONLY_BREADCRUMB_OVERFLOW_REPRODUCED','foundryFields':0,'errors':core_errors},indent=2))
+            (unit/'page-errors.json').write_text(json.dumps({'blocked':blocked,'errors':errors},indent=2))
             assert not blocked and not errors,(blocked,errors)
-            stats=peer('stats'); assert stats['jobs']==3 and stats['builds']==0 and stats['queue']==0
-            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
+            stats=peer('stats'); assert stats['jobs']==6 and stats['builds']==0 and stats['queue']==0
+            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredTlsAndUnknownRejectionPassed':True,'tlsValidOriginReconfigurationPassed':True,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','coreBreadcrumbOverflowControl':'Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
             (unit/'result.json').write_text(json.dumps(result,indent=2)); print(json.dumps({'state':result['state'],'result':str(unit/'result.json'),'cases':len(results),'sha256':digest}))
             await browser.close()
     finally:

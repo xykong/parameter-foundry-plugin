@@ -1,4 +1,9 @@
-<div>Only a classified result from the restricted raw HTTP transport can match. <code>DNS_UNRESOLVED</code> matches only an actual host lookup failure; empty or prohibited address
-sets remain refusals. Internal exceptions,
-policy refusals, TLS verification failures and deadline/size rejections are never converted from
-their exception messages. Unmatched failures use the Provider's normal fallback/failure policy.</div>
+<div>Only a classified result from the restricted raw HTTP transport can match.
+<code>DNS_UNRESOLVED</code> matches actual host lookup failure; empty/prohibited address sets
+remain refusals. <code>TLS_REJECTED</code> requires an explicit finite fingerprint and fixed
+administrator-declared text; the TLS verifier still rejects the connection. It is not a
+hostname-error classification. The final address attempt controls the outcome; previous
+TLS errors cannot override later success or refusal. Internal exceptions, policy refusals,
+and deadline/size rejections are never dumped as selectable values. Unmatched failures use
+the Provider's normal fallback/failure policy; select fail-closed with no fallback options
+when an unknown TLS error must stop evaluation rather than select a production branch.</div>

@@ -14,7 +14,8 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-public final class RestProviderDefinition extends SharedProviderDefinition implements ConnectionProfileConsumer {
+public final class RestProviderDefinition extends SharedProviderDefinition
+        implements ConnectionProfileConsumer, Cloneable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -37,6 +38,68 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     private List<RestRawLiteral> rawIgnoredResponses;
     private List<RestRawLiteral> rawTrailingChoices;
     private List<RestRawFailureChoice> rawFailureChoices;
+    private transient List<RestRawFailureChoice.Declaration> frozenFailures;
+    private transient List<Query> frozenQueries;
+
+    private record Query(String name, String value, String dependency) {
+        String resolveValue(ProviderRequest request) {
+            if (dependency == null) return value;
+            String resolved = request.dependencyValues().get(dependency);
+            if (resolved == null) {
+                throw new ProviderException(
+                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.DEPENDENCY_INVALID,
+                        request.providerId(),
+                        "REST query dependency is unavailable.");
+            }
+            return resolved;
+        }
+    }
+
+    /** Narrow raw-mode runtime copy, never persisted or exposed as a public clone API. */
+    RestProviderDefinition snapshotForResolution() {
+        if (frozenFailures != null) return this;
+        try {
+            RestProviderDefinition copy = (RestProviderDefinition) super.clone();
+            copy.frozenFailures = List.copyOf(getRawFailureChoices()).stream()
+                    .map(RestRawFailureChoice::snapshot)
+                    .toList();
+            var keys = new java.util.HashSet<String>();
+            for (var declaration : copy.frozenFailures) {
+                declaration.validate();
+                if (!keys.add(declaration.key())) throw new IllegalArgumentException();
+            }
+            copy.frozenQueries = List.copyOf(getQueryParameters()).stream()
+                    .map(row -> new Query(row.getName(), row.getValue(), row.getDependencyParameter()))
+                    .toList();
+            // Raw sources never execute transforms. Empty transforms and immutable literal rows can be shared.
+            if (!getTransforms().isEmpty()) throw new IllegalArgumentException();
+            copy.setTransforms(List.of());
+            copy.rawIgnoredResponses = List.copyOf(getRawIgnoredResponses());
+            copy.rawTrailingChoices = List.copyOf(getRawTrailingChoices());
+            copy.setFallbackOptions(getFallbackOptions().stream()
+                    .map(RestProviderDefinition::copyOption)
+                    .toList());
+            return copy;
+        } catch (CloneNotSupportedException impossible) {
+            throw new AssertionError(impossible);
+        } catch (RuntimeException invalid) {
+            throw rawUnavailable("Whole-response configuration is invalid or duplicated.");
+        }
+    }
+
+    private static Option copyOption(Option source) {
+        Option copy = source.getSourceChoiceMetadata() == null
+                ? new Option(source.getValue())
+                : Option.sourceChoice(
+                        source.getValue(), source.getLabel(), source.isDisabled(), source.getSourceChoiceMetadata());
+        copy.setLabel(source.getLabel());
+        copy.setDescription(source.getDescription());
+        copy.setGroup(source.getGroup());
+        copy.setDisabled(source.isDisabled());
+        copy.setDisabledReason(source.getDisabledReason());
+        copy.setTags(source.getTags());
+        return copy;
+    }
 
     @DataBoundConstructor
     public RestProviderDefinition(String id, String connectionProfileId, String relativePath) {
@@ -220,6 +283,12 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
 
     @Override
     public List<Option> load(ProviderLoadContext context) {
+        if (isRawScalarResponse() && frozenFailures == null) {
+            return snapshotForResolution()
+                    .load(new ProviderLoadContext(
+                            context.request(),
+                            context.connectionProfile().map(ConnectionProfile::snapshotForResolution)));
+        }
         if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade", "active-choices-raw-scalar")
                 .contains(getResponseMode())) {
             throw new ProviderException(
@@ -239,12 +308,14 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                         getId(),
                         "Connection Profile is unavailable."));
         Map<String, String> query = new LinkedHashMap<>();
-        for (RestQueryParameter parameter : getQueryParameters()) {
-            if (query.put(parameter.getName(), parameter.resolveValue(context.request())) != null) {
-                throw new ProviderException(
-                        io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
-                        getId(),
-                        "REST Provider has a duplicate query parameter.");
+        List<Query> queries = frozenQueries != null
+                ? frozenQueries
+                : getQueryParameters().stream()
+                        .map(row -> new Query(row.getName(), row.getValue(), row.getDependencyParameter()))
+                        .toList();
+        for (Query parameter : queries) {
+            if (query.put(parameter.name(), parameter.resolveValue(context.request())) != null) {
+                throw rawUnavailable("REST Provider has a duplicate query parameter.");
             }
         }
         java.net.URI uri = profile.buildUri(relativePath, query);
@@ -288,21 +359,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         if (!"auto".equals(getFormat())) {
             throw rawUnavailable("Whole-response mode requires automatic format selection.");
         }
-        var keys = new java.util.HashSet<String>();
-        for (RestRawFailureChoice choice : getRawFailureChoices()) {
-            try {
-                RawScalarRestTransport.FailureKind.valueOf(choice.getKind());
-                if (choice.getValue() == null
-                        || choice.getStatus() != 0
-                                && (!"HTTP_STATUS".equals(choice.getKind())
-                                        || choice.getStatus() < 100
-                                        || choice.getStatus() > 599)
-                        || !keys.add(choice.getKind() + ":" + choice.getStatus())) {
-                    throw new IllegalArgumentException();
-                }
-            } catch (RuntimeException invalid) {
-                throw rawUnavailable("Whole-response failure choices are invalid or duplicated.");
-            }
+        for (var choice : frozenFailures) {
             if (choice.includesUri() && uri.getRawQuery() != null) {
                 throw rawUnavailable("URI-bearing failure choices require a query-free target.");
             }
@@ -316,12 +373,13 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
         if (result instanceof RawScalarRestTransport.Body body) {
             return RawScalarChoiceAdapter.options(body.bytes(), ignored, trailing);
         }
+        context.checkCancelled();
         var failure = (RawScalarRestTransport.Failure) result;
         // Exact HTTP status overrides a category-wide mapping, regardless of form row order.
-        RestRawFailureChoice match = getRawFailureChoices().stream()
-                .filter(choice -> choice.matches(failure) && choice.getStatus() != 0)
+        RestRawFailureChoice.Declaration match = frozenFailures.stream()
+                .filter(choice -> choice.matches(failure) && choice.status() != 0)
                 .findFirst()
-                .orElseGet(() -> getRawFailureChoices().stream()
+                .orElseGet(() -> frozenFailures.stream()
                         .filter(choice -> choice.matches(failure))
                         .findFirst()
                         .orElse(null));
@@ -354,13 +412,15 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                 + '\u0000'
                 + relativePath
                 + '\u0000'
-                + getQueryParameters().stream()
-                        .map(parameter -> parameter.getName()
-                                + "="
-                                + parameter.getValue()
-                                + "@"
-                                + parameter.getDependencyParameter())
-                        .toList()
+                + (frozenQueries != null
+                                ? frozenQueries
+                                : getQueryParameters().stream()
+                                        .map(row ->
+                                                new Query(row.getName(), row.getValue(), row.getDependencyParameter()))
+                                        .toList())
+                        .stream()
+                                .map(row -> row.name() + "=" + row.value() + "@" + row.dependency())
+                                .toList()
                 + '\u0000'
                 + getFormat()
                 + '\u0000'
@@ -388,9 +448,15 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                 + '\u0000'
                 + JSONArray.fromObject(rawLiteralValues(getRawTrailingChoices()))
                 + '\u0000'
-                + JSONArray.fromObject(getRawFailureChoices().stream()
-                        .map(choice -> java.util.Arrays.asList(choice.getKind(), choice.getStatus(), choice.getValue()))
-                        .toList());
+                + JSONArray.fromObject((frozenFailures != null
+                                ? frozenFailures
+                                : getRawFailureChoices().stream()
+                                        .map(RestRawFailureChoice::snapshot)
+                                        .toList())
+                        .stream()
+                                .map(choice -> java.util.Arrays.asList(
+                                        choice.kind(), choice.status(), choice.value(), choice.fingerprint()))
+                                .toList());
     }
 
     @Extension

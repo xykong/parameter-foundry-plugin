@@ -129,7 +129,10 @@ Refer to the Jenkins project
 Licensed under MIT, see [LICENSE](LICENSE.md)
 
 Version `0.12.314` adds reactive Active Choices single transports using a governed Provider with an explicit literal
-API default and dependency-bound snapshots. REST Providers offer data-only ordinary/cascade
+API default and dependency-bound snapshots. Whole-response REST choices support finite
+administrator-declared TLS rejection keys while retaining default certificate validation;
+see [whole-response REST choices](docs/guide/raw-rest-responses.md).
+REST Providers offer data-only ordinary/cascade
 JSON response modes with source-derived UI/API metadata and per-parameter minimum filter
 length (`activeChoicesFilterLength`, default 1); see the [Provider guide](./docs/guide/providers.md#rest-source-response-modes). Real-browser and input parity remain separate
 [per-Job gates](./docs/research/active-choices-reactive-rest-contract.md).

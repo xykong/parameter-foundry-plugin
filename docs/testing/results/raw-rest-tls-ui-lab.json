@@ -1,0 +1,111 @@
+{
+  "state": "RAW_REST_BROWSER_GATE_PASS",
+  "browser": "153.0.8010.12",
+  "cases": [
+    {
+      "width": 1440,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 5,
+      "matched": true
+    }
+  ],
+  "configurationSaved": true,
+  "mappedErrorAndFallbackRecoveryPassed": true,
+  "keyboardSelectionPassed": true,
+  "buildFormsSubmitted": 0,
+  "declaredTlsAndUnknownRejectionPassed": true,
+  "tlsValidOriginReconfigurationPassed": true,
+  "declaredDnsAndSameProfileRecoveryPassed": true,
+  "dnsFixtureCachePolicy": "Owned JVM positive/negative DNS TTL0; production unchanged",
+  "coreBreadcrumbOverflowControl": "Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks",
+  "businessBuildsScheduled": 0,
+  "stats": {
+    "requests": 33,
+    "jobs": 6,
+    "queue": 0,
+    "builds": 0
+  },
+  "artifact": {
+    "core": "2.568.3",
+    "version": "0.24.374-SNAPSHOT (private-03651619-xykong)",
+    "sha256": "b81aff15931ce626c98ef6a6cd6e0e7e4dfe1bafa13489532cf4ba3135853e7f"
+  },
+  "fullVerify": {
+    "tests": 534,
+    "failures": 0,
+    "errors": 0,
+    "skips": 6,
+    "spotbugsIssues": 0,
+    "spotless": "PASS"
+  },
+  "cleanupErrors": [],
+  "normalPageErrors": [],
+  "unknownTlsErrorVisibleAfterScroll": true,
+  "browserPlatform": "macOS host, Chromium headless, owned Linux Jenkins21 runtime",
+  "nativePairScope": {
+    "cases": 12,
+    "matched": 12,
+    "productionCalls": 0,
+    "note": "Same code/resource payload as the complete HPI; no cross-runtime or universal TLS equivalence claim."
+  },
+  "limits": [
+    "Native popup arrow and screen-reader acceptance not certified",
+    "Core2.568.3 breadcrumb overflow issue reproduced on separate parameter-free Job; no Core patch",
+    "Mobile initial sticky-footer overlap requires scrolling; error is hit-tested unobscured after scroll",
+    "No business builds, production changes, history activation, source publication or release"
+  ]
+}
