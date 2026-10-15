@@ -126,9 +126,15 @@ the lab overlay records which one the controller runs.
 | 5 | First CD release, update-center verification, and plugin-site categorization | Open: depends on phase 4 |
 | 6 | Stop `dist/` publication and let the lab overlay carry the deployment record | Open: depends on phase 5 |
 
-Interim releases keep the current flow: a release commit sets `<revision>` to
-the commit count, and a publish commit pins the HPI in `dist/` and fills the
-CHANGELOG section.
+Interim releases prepare `<revision>` using the next `master` commit count and
+record the release scope in `CHANGELOG.md`. Build and verify the exact HPI from
+the pinned parent commit plus the explicitly reviewed release metadata changes,
+then include that HPI in `dist/` in the same release commit as the metadata.
+Record the actual build inputs and SCM markers; do not describe this artifact as
+built from the later commit that retains it. After committing, verify the commit
+count, version and artifact digest before creating the local release tag. A
+public push remains a separate authorized action. This interim procedure ends
+when the first Jenkins CD release replaces local HPI distribution.
 
 ## Consequences
 
