@@ -3,4 +3,7 @@
 <code>0</code> disables caching, <code>86400</code> is the maximum.</p>
 <p>The cache key includes the provider digest and the canonical dependency values, so a changed
 configuration or dependency resolves again.</p>
+<p>With <code>0</code>, the next request also retries immediately after a failed Git lookup.
+Request budgets and concurrent lookup sharing still apply. Positive values retain the generic
+failure cooldown. Declared failure policies and fallback options are unchanged.</p>
 </div>

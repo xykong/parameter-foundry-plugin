@@ -3,6 +3,7 @@ package io.jenkins.plugins.parameterfoundry.provider;
 import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.model.Job;
+import io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.model.ChoiceMatrix;
 import io.jenkins.plugins.parameterfoundry.model.Option;
@@ -72,9 +73,9 @@ public final class ProviderRuntime {
                     located.ownerId());
         }
         SharedProviderDefinition provider = located.provider();
-        boolean liveSource = provider instanceof RestProviderDefinition rest
-                && rest.isActiveChoicesResponse()
-                && rest.getCacheTtlSeconds() == 0;
+        boolean liveSource = provider.getCacheTtlSeconds() == 0
+                && (provider instanceof GitRefProviderDefinition
+                        || (provider instanceof RestProviderDefinition rest && rest.isActiveChoicesResponse()));
         Optional<ConnectionProfile> connectionProfile;
         if (provider instanceof ConnectionProfileConsumer consumer) {
             connectionProfile = ProviderRegistry.findConnectionProfile(job, consumer.getConnectionProfileId())

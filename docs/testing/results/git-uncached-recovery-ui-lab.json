@@ -1,0 +1,90 @@
+{
+  "case": "UP-AC-078",
+  "state": "UNCACHED_GIT_RECOVERY_VERIFIED",
+  "declaredSnapshotRevision": "0.27.381-SNAPSHOT",
+  "artifactSha256": "a8fce52c71b8e1d63a3ea4f167c95d44c16fda08d936642b9c0fd0e8981d6fc9",
+  "formalRelease": false,
+  "core": "2.568.3",
+  "java": "21",
+  "browser": "153.0.8010.12",
+  "viewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "focusedTests": {
+    "tests": 21,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "fullVerify": {
+    "tests": 557,
+    "failures": 0,
+    "errors": 0,
+    "skips": 2,
+    "spotBugsIssues": 0,
+    "spotless": "PASS",
+    "skipScope": "Existing checked private-interface DNS/TLS fallback prerequisites"
+  },
+  "harnessCoverage": [
+    "uncached failure retry and health recovery",
+    "positive-TTL negative-cache retention",
+    "declared fallback then recovery",
+    "two callers share one in-flight load",
+    "feature-disabled Git failures consume fixed-clock rate budget"
+  ],
+  "ownedHttpRecovery": {
+    "scenarios": [
+      "401",
+      "404",
+      "500",
+      "malformed advertisement"
+    ],
+    "contracts": [
+      "all branches with absent literal default",
+      "exclude release branches with master default"
+    ],
+    "cycles": 16,
+    "observedErrorAndRecoveredPairs": 32,
+    "recoveredUiPairsMatched": 16,
+    "serverFailureToFoundryRecoveryMs": {
+      "minimum": 1865,
+      "maximum": 2216
+    },
+    "freshAdvertisementsPerRecoveryCycle": 2,
+    "runtimeClearWithinCycle": false,
+    "providerConfigurationChangedWithinCycle": false,
+    "source": "Synthetic refs only; no Git objects or business source"
+  },
+  "forms": {
+    "capturedOmittedEmptyPairs": 96,
+    "allValuesAndEnvironmentsMatched": true,
+    "additionalGitAdvertisementsDuringBinding": 0,
+    "manualExceptionOptionParity": "UNRESOLVED; deliberately outside this recovery gate"
+  },
+  "actualBuildControls": {
+    "snapshots": 64,
+    "matchedRoleAndNameCountPerSnapshot": 1,
+    "disabled": false,
+    "clicked": false
+  },
+  "pageErrors": [],
+  "blockedRequests": [],
+  "formSubmissions": 0,
+  "businessBuilds": 0,
+  "productionCalls": 0,
+  "productionWrites": 0,
+  "cleanupErrors": [],
+  "limitations": [
+    "Failure-option selection and submitted exception strings are not equivalent and remain a migration gate.",
+    "Rate-budget Harness case is not a real-network pressure test.",
+    "Normal page reload recovery was tested; no physical-device or accessibility certification.",
+    "Observed timing is fixture evidence, not a general latency guarantee."
+  ]
+}

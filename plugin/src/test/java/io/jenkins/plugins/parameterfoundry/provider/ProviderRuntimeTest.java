@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleProject;
+import io.jenkins.plugins.parameterfoundry.companion.git.GitRefProviderDefinition;
 import io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode;
 import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.time.Clock;
@@ -135,6 +136,32 @@ class ProviderRuntimeTest {
         assertEquals(ErrorCode.RATE_LIMITED, exception.getCode());
         assertEquals(60, exception.getRetryAfterSeconds());
         assertEquals(1, provider.loads.get());
+    }
+
+    @Test
+    void uncachedGitFailuresStillConsumeRequestBudgets(JenkinsRule jenkins) throws Exception {
+        FreeStyleProject job = jenkins.createFreeStyleProject("git-failure-budget");
+        GitRefProviderDefinition provider = new GitRefProviderDefinition("git-budget", "git-profile");
+        provider.setCacheTtlSeconds(0);
+        ParameterFoundryGlobalConfiguration configuration = ParameterFoundryGlobalConfiguration.get();
+        configuration.setConnectionProfiles(
+                List.of(new ConnectionProfile("git-profile", "https://example.invalid/repo.git")));
+        configuration.setGitRefsProviderEnabled(false);
+        ProviderRegistry.LocatedProvider located =
+                new ProviderRegistry.LocatedProvider(provider, ProviderScope.GLOBAL, "jenkins");
+        ProviderRuntime runtime =
+                runtime(new ProviderRateLimiter(1, 10, 10, 4, Clock.fixed(Instant.EPOCH, java.time.ZoneOffset.UTC)));
+
+        ProviderException first = assertThrows(
+                ProviderException.class,
+                () -> runtime.resolve(job, located, ProviderOperation.PREVIEW, Map.of(), "builder"));
+        assertEquals(ErrorCode.PROVIDER_UNAVAILABLE, first.getCode());
+        ProviderHealth health = runtime.health("jenkins", "git-budget").orElseThrow();
+        ProviderException second = assertThrows(
+                ProviderException.class,
+                () -> runtime.resolve(job, located, ProviderOperation.PREVIEW, Map.of(), "builder"));
+        assertEquals(ErrorCode.RATE_LIMITED, second.getCode());
+        assertEquals(health, runtime.health("jenkins", "git-budget").orElseThrow());
     }
 
     @Test

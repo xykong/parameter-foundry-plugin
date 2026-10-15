@@ -109,6 +109,13 @@ params.DOCKER_LOGINS.each { cell ->
 | Timeout | Budget for one call (1–30 seconds) |
 | Transforms | Ordered post-processing: `filter`, `sort`, `distinct`, `limit`, `map`, `group`, `mark-disabled` |
 
+Git ref Providers with `cacheTtlSeconds: 0` also bypass the generic five-second
+failure cooldown: the next request retries the source immediately. Request budgets
+and in-flight lookup sharing still apply, and declared fallbacks retain their
+normal behavior. Git Providers with a positive TTL retain the failure cooldown.
+This retry policy does not turn Git exceptions into selectable option values;
+verify native failure-option behavior separately before a legacy migration.
+
 Fallbacks are never silent: a response that used a fallback is marked as such and
 the reason is shown next to the parameter.
 
