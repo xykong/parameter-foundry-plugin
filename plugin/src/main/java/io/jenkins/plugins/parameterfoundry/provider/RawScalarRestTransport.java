@@ -161,6 +161,10 @@ final class RawScalarRestTransport {
     }
 
     Result get(ConnectionProfile profile, ProviderRequest request, URI uri) {
+        return get(profile, request, uri, false);
+    }
+
+    Result get(ConnectionProfile profile, ProviderRequest request, URI uri, boolean nativeNonredirectBody) {
         if (uri == null || uri.getRawUserInfo() != null || uri.getRawFragment() != null) {
             throw unavailable(request, "Raw scalar target must not contain user information or a fragment.");
         }
@@ -235,7 +239,12 @@ final class RawScalarRestTransport {
                 response = CloseableHttpResponse.adapt(client.executeOpen(null, get, null));
                 budget.check(request);
                 int status = response.getCode();
-                if (status < 200 || status >= 300) {
+                boolean nonredirectBody = nativeNonredirectBody
+                        && (status == 304
+                                || status == 306
+                                || status == 308
+                                || status == 302 && !response.containsHeader("Location"));
+                if ((status < 200 || status >= 300) && !nonredirectBody) {
                     get.cancel();
                     return budget.complete(new Failure(FailureKind.HTTP_STATUS, status), request);
                 }

@@ -27,6 +27,7 @@ Set `format: 'auto'` and leave transforms empty. JSONPath/XPath fields are unuse
 
 | Field | Configuration |
 | --- | --- |
+| `rawStatusPolicy` | Defaults to `http-status`, preserving failure mapping for every non-2xx response. Explicit `native-nonredirect-body` reads 304, 306, 308 and 302 without a Location header as bodies instead. |
 | `rawIgnoredResponses` | `foundryRawLiteral(value: 'null')` ignores exactly `null`, but not `null` followed by a newline. An empty list ignores nothing. |
 | `rawTrailingChoices` | Ordered `foundryRawLiteral` rows appended to a body or a mapped failure value. |
 | `rawFailureChoices` | Optional `foundryRawFailureChoice(kind: ..., value: ..., status: ..., fingerprint: ...)` rows for classified transport failures. |
@@ -43,6 +44,25 @@ message or an HTTP error body. Supported kinds are `HTTP_STATUS`, `DNS_UNRESOLVE
 `TLS_REJECTED`, `CONNECT_TIMEOUT`, `READ_TIMEOUT`, `CONNECTION_REFUSED`, `EARLY_CLOSE`, and
 `PREMATURE_EOF`. For `HTTP_STATUS`, `status: 0` matches any non-success status;
 an exact 100–599 status overrides that generic row regardless of row order.
+With `rawStatusPolicy: 'native-nonredirect-body'`, the four body-bearing cases
+listed above bypass HTTP failure rows. Their body is subject to the same byte
+limits, literal interpretation and trailing choices as a 2xx response. An empty
+304 body can therefore become an empty first/default choice. Enable this only
+after reviewing the source's status semantics.
+
+This policy does not follow redirects or enable Connection Profile redirects.
+Responses with Location that require following 300/301/302/303/307, HTTP305
+proxy behavior, cross-origin redirects and other unlisted status/body cases
+remain outside this compatibility policy. Other non-2xx responses retain their
+existing classified failure choices. This is not complete URLConnection
+compatibility. For example, a Provider snippet may include
+`responseMode: 'active-choices-raw-scalar', rawStatusPolicy: 'native-nonredirect-body'`;
+omit `rawStatusPolicy` to keep the existing behavior.
+
+Introducing this policy conservatively changes raw Provider digests, including
+the default policy: cached raw resolutions and old submission snapshots must
+be refreshed. Mapped Provider digests are unaffected by this raw-only field.
+
 Other kinds require status zero. Duplicate kind/status pairs are rejected, except distinct explicit TLS fingerprints may have separate fixed values.
 
 Except for TLS rows, the value supports only the fixed tokens `{status}` and `{uri}`. For example,
@@ -123,3 +143,8 @@ transport timeouts and the response-byte limit, for all Providers consuming that
 Profile. Raw failure digests also include fingerprints. Existing caches and
 submission snapshots may therefore be invalidated and require fresh resolution;
 existing mapped-response parsing is unchanged.
+
+The [real-plugin UI gallery](../ui-gallery/README.md#explicit-nonredirect-response-bodies)
+shows the opt-in policy and empty/body defaults. Its browser report records the
+exact artifact and separate desktop/mobile coverage; no production migration is
+implied by component acceptance.

@@ -32,6 +32,12 @@
       <option value="active-choices-raw-scalar" selected="${instance.responseMode == 'active-choices-raw-scalar' ? 'selected' : null}">Active Choices whole UTF-8 response</option>
     </select>
   </f:entry>
+  <f:entry title="Whole-response status policy" field="rawStatusPolicy">
+    <select name="_.rawStatusPolicy" class="jenkins-select__input select">
+      <option value="http-status" selected="${instance.rawStatusPolicy == 'http-status' ? 'selected' : null}">Classify all non-success statuses</option>
+      <option value="native-nonredirect-body" selected="${instance.rawStatusPolicy == 'native-nonredirect-body' ? 'selected' : null}">Native body for reviewed nonredirect responses</option>
+    </select>
+  </f:entry>
   <f:entry title="Ignored whole responses" field="rawIgnoredResponses">
     <f:repeatableProperty field="rawIgnoredResponses" add="Add ignored response" header="Exact literal" />
   </f:entry>

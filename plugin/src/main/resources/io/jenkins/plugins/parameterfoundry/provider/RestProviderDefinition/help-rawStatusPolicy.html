@@ -1,0 +1,11 @@
+<div>
+  Applies only to whole UTF-8 response mode. The default <code>http-status</code>
+  classifies every non-2xx response using the declared HTTP failure choices.
+  Opt into <code>native-nonredirect-body</code> only for a reviewed source that
+  reads HTTP 304, 306, 308, or 302 without a Location header as a response body.
+  These responses bypass HTTP failure choices; an empty body is an empty choice
+  and can become the first default. Other non-2xx responses retain failure
+  classification. This policy never follows a redirect, enables a proxy, or
+  widens the Connection Profile. It does not establish complete URLConnection
+  compatibility; HTTP 305 and responses requiring redirects need separate review.
+</div>

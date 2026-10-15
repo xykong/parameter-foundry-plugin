@@ -25,6 +25,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition
     private List<RestQueryParameter> queryParameters = List.of();
     private String format = "auto";
     private String responseMode = "mapped";
+    private String rawStatusPolicy = "http-status";
     private String rootPath = "$";
     private String valuePath = "value";
     private String labelPath = "label";
@@ -60,6 +61,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         if (frozenFailures != null) return this;
         try {
             RestProviderDefinition copy = (RestProviderDefinition) super.clone();
+            copy.setRawStatusPolicy(getRawStatusPolicy());
             copy.frozenFailures = List.copyOf(getRawFailureChoices()).stream()
                     .map(RestRawFailureChoice::snapshot)
                     .toList();
@@ -172,6 +174,18 @@ public final class RestProviderDefinition extends SharedProviderDefinition
 
     public boolean isRawScalarResponse() {
         return "active-choices-raw-scalar".equals(getResponseMode());
+    }
+
+    public String getRawStatusPolicy() {
+        return rawStatusPolicy == null ? "http-status" : rawStatusPolicy;
+    }
+
+    @DataBoundSetter
+    public void setRawStatusPolicy(String value) {
+        if (!java.util.Set.of("http-status", "native-nonredirect-body").contains(value)) {
+            throw new IllegalArgumentException("Unsupported whole-response status policy.");
+        }
+        rawStatusPolicy = value;
     }
 
     public List<RestRawLiteral> getRawIgnoredResponses() {
@@ -369,7 +383,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         RawScalarRestTransport.Result result = (rawClient == null
                         ? new RawScalarRestTransport(new NetworkPolicy())
                         : rawClient)
-                .get(profile, context.request(), uri);
+                .get(profile, context.request(), uri, "native-nonredirect-body".equals(getRawStatusPolicy()));
         if (result instanceof RawScalarRestTransport.Body body) {
             return RawScalarChoiceAdapter.options(body.bytes(), ignored, trailing);
         }
@@ -444,6 +458,8 @@ public final class RestProviderDefinition extends SharedProviderDefinition
         if (!isRawScalarResponse()) return structured;
         return structured
                 + "\u0000raw-scalar-v1\u0000"
+                + getRawStatusPolicy()
+                + '\u0000'
                 + JSONArray.fromObject(rawLiteralValues(getRawIgnoredResponses()))
                 + '\u0000'
                 + JSONArray.fromObject(rawLiteralValues(getRawTrailingChoices()))

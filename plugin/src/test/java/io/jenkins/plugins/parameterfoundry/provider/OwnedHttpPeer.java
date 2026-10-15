@@ -26,7 +26,8 @@ final class OwnedHttpPeer {
         var addresses = new ArrayList<InetAddress>();
         try {
             for (var network : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-                if (!network.isUp() || network.isLoopback()) continue;
+                // VPN point-to-point addresses need not route back to a server bound on this host.
+                if (!network.isUp() || network.isLoopback() || network.isPointToPoint()) continue;
                 for (var address : Collections.list(network.getInetAddresses())) {
                     if (address instanceof Inet4Address
                             && address.isSiteLocalAddress()

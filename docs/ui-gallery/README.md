@@ -5,6 +5,23 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Explicit nonredirect response bodies
+
+Snapshot `0.25.376-SNAPSHOT`, Jenkins 2.568.3, Chromium 153:
+[exact-artifact browser report](../testing/results/raw-rest-status-policy-ui-lab.json).
+The actual global form changes the policy from its HTTP-status default and saves it.
+Four status/default cases pass at 1440 and 390 pixels, with old mappings checked alongside.
+Full Maven verification reports 539 tests, zero failures/errors and eight prerequisite skips.
+No build is submitted. Configuration evidence uses the actual field viewport; oversized
+full-page capture independently triggers Core's breadcrumb defect at a temporary 1×1 layout.
+Dynamic resize, touch and assistive behavior are not certified by these captures.
+
+[![Explicit response status policy](images/parameter-foundry/raw-rest-status-policy-config-desktop.png)](images/parameter-foundry/raw-rest-status-policy-config-desktop.png)
+
+[![Empty native 304 default](images/parameter-foundry/raw-rest-status-empty-desktop.png)](images/parameter-foundry/raw-rest-status-empty-desktop.png)
+
+[![Native 308 body on mobile](images/parameter-foundry/raw-rest-status-body-mobile.png)](images/parameter-foundry/raw-rest-status-body-mobile.png)
+
 ## Declared DNS failures
 
 Draft `0.24.373-SNAPSHOT`: [browser evidence](../testing/results/raw-rest-dns-ui-lab.json).

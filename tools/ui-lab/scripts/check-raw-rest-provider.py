@@ -106,20 +106,42 @@ async def main():
                     blocked.append(route.request.url); await route.abort()
                 else: await route.continue_()
             await context.route('**/*', protect)
-            page = await context.new_page(); page.on('pageerror', lambda error: (core_errors if core_probe else errors).append({'url':page.url,'message':str(error),'stack':error.stack}))
+            page = await context.new_page(); page.on('pageerror', lambda error: (core_errors if core_probe else errors).append({'url':page.url,'viewport':page.viewport_size,'message':str(error),'stack':error.stack}))
+            async def set_viewport(size):
+                # Each platform case starts at its viewport; resizing a Core configuration page
+                # can hit the separately reproduced Core breadcrumb-overflow defect.
+                await page.goto('about:blank',wait_until='load')
+                await page.set_viewport_size(size)
+            async def save_configuration():
+                await page.get_by_role('button',name='Save',exact=True).click()
+                await page.wait_for_url(lambda url: urllib.parse.urlsplit(str(url)).path.rstrip('/')!='/configure',wait_until='networkidle')
             await page.goto(base+'/configure',wait_until='networkidle')
-            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==5
-            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*5
+            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==7
+            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*7
+            policies=page.locator('select[name="_.rawStatusPolicy"]:visible')
+            assert await policies.evaluate_all('(xs)=>xs.map(x=>x.value)')==['http-status']*7
+            await policies.last.select_option('native-nonredirect-body')
+            await policies.last.scroll_into_view_if_needed()
+            await page.screenshot(path=str(unit/'raw-status-policy-configuration-desktop.png'))
             values=await page.locator('textarea[name="_.value"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             assert 'null' in values and 'topic/stable' in values and 'HTTP {status}: {uri}' in values and 'DNS unavailable' in values
-            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED','TLS_REJECTED','TLS_REJECTED']
+            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED','TLS_REJECTED','TLS_REJECTED','HTTP_STATUS','HTTP_STATUS']
             fingerprints=await page.locator('input[name="_.fingerprint"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
             assert metadata['tlsFingerprint'] in fingerprints and '0'*64 in fingerprints
-            await page.screenshot(path=str(unit/'configuration-desktop.png'),full_page=True)
+            # Oversized full-page captures temporarily switch Chromium to a 1x1 viewport,
+            # triggering Core's independent breadcrumb defect. Capture the real field viewport.
+            await page.screenshot(path=str(unit/'configuration-desktop.png'))
             await page.locator('input[name="_.fingerprint"]:visible').nth(2).scroll_into_view_if_needed()
             await page.screenshot(path=str(unit/'tls-fingerprint-configuration-desktop.png'))
-            await page.get_by_role('button',name='Save',exact=True).click(); await page.wait_for_load_state('networkidle')
+            await save_configuration()
+            rate_waits=[]
+            async def respect_rate_budget():
+                budget=peer('rate-budget')
+                if budget['maximumPrincipalCount'] > budget['principalLimit']-8:
+                    rate_waits.append(budget)
+                    await asyncio.sleep(min(60,budget['waitMillis']/1000))
             async def read_form(job, expected, selected, state="ready"):
+                await respect_rate_budget()
                 await page.goto(base+'/job/'+job+'/build?delay=0sec',wait_until='networkidle')
                 field=page.locator('[data-parameter-name="REF"]')
                 await page.wait_for_function('(state)=>document.querySelector("[data-parameter-name=REF]").dataset.upState===state',arg=state)
@@ -131,7 +153,7 @@ async def main():
                 assert await select.input_value()==selected
                 return select
             for width in [1440,390]:
-                await page.set_viewport_size({'width':width,'height':1000 if width==1440 else 844})
+                await set_viewport({'width':width,'height':1000 if width==1440 else 844})
                 for index,(body,expected,selected,api) in enumerate([
                     ('topic/test\n',['topic/test\n','topic/stable'],'topic/test\n','topic/test\n'),
                     ('{"data":"literal"}',['{"data":"literal"}','topic/stable'],'{"data":"literal"}','{"data":"literal"}'),
@@ -144,7 +166,18 @@ async def main():
                     native=peer('native-default',job='raw-rest-values'); assert native['value']==api and native['type']=='hudson.model.StringParameterValue'
                     results.append({'width':width,'case':index,'matched':True})
                 await page.screenshot(path=str(unit/('choices-'+str(width)+'.png')),full_page=True)
-            await page.set_viewport_size({'width':1440,'height':1000})
+                for code in [302,304,306,308]:
+                    peer('control',status=code,body='topic/native-body\n')
+                    await read_form('status-old',['reviewed-http-error','topic/stable'],'reviewed-http-error')
+                    old=peer('native-default',job='status-old')
+                    assert old['value']=='reviewed-http-error' and old['rawStatusPolicy']=='http-status'
+                    expected='' if code==304 else 'topic/native-body\n'
+                    await read_form('status-body',[expected,'topic/stable'],expected)
+                    native=peer('native-default',job='status-body')
+                    assert native['value']==expected and native['type']=='hudson.model.StringParameterValue' and native['rawStatusPolicy']=='native-nonredirect-body'
+                    results.append({'width':width,'case':'status-'+str(code),'matched':True})
+                    await page.screenshot(path=str(unit/('raw-status-'+str(code)+'-'+str(width)+'.png')),full_page=True)
+            await set_viewport({'width':1440,'height':1000})
             peer('control',status=503)
             error='HTTP 503: '+metadata['peer']+'value'
             await read_form('raw-rest-values',[error,'topic/stable'],error)
@@ -170,7 +203,7 @@ async def main():
             recovered=peer('native-default',job='raw-rest-dns');assert recovered['value']=='topic/recovered\n' and recovered['type']=='hudson.model.StringParameterValue'
             await page.screenshot(path=str(unit/'dns-recovered-desktop.png'),full_page=True)
             for width in [1440,390]:
-                await page.set_viewport_size({'width':width,'height':1000 if width==1440 else 844})
+                await set_viewport({'width':width,'height':1000 if width==1440 else 844})
                 await read_form('raw-rest-tls',['TLS unavailable','topic/stable'],'TLS unavailable')
                 assert peer('native-default',job='raw-rest-tls')['value']=='TLS unavailable'
                 await page.screenshot(path=str(unit/('tls-declared-'+str(width)+'.png')),full_page=True)
@@ -189,7 +222,7 @@ async def main():
                 assert metadata['tlsFingerprint'] not in text and 'certificate_unknown' not in text and 'raw-rest-tls.invalid' not in text
                 assert peer('native-default',job='raw-tls-denied')['value'] is None
                 await page.screenshot(path=str(unit/('tls-unknown-'+str(width)+'.png')),full_page=True)
-            await page.set_viewport_size({'width':1440,'height':1000})
+            await set_viewport({'width':1440,'height':1000})
             await page.goto(base+'/configure',wait_until='networkidle')
             tls_base=page.locator('input[name="_.baseUrl"]:visible')
             selected=None
@@ -199,7 +232,7 @@ async def main():
                     selected=field
             assert selected is not None
             await selected.fill(metadata['validTlsPeer'])
-            await page.get_by_role('button',name='Save',exact=True).click(); await page.wait_for_load_state('networkidle')
+            await save_configuration()
             for job in ['raw-rest-tls','raw-tls-denied']:
                 await read_form(job,['topic/recovered\n','topic/stable'],'topic/recovered\n')
                 native=peer('native-default',job=job);assert native['value']=='topic/recovered\n' and native['type']=='hudson.model.StringParameterValue'
@@ -207,7 +240,7 @@ async def main():
             # Jenkins 2.568.3 breadcrumbs pass `label` to a Core template expecting `displayName`.
             # Reproduce separately on a parameter-free Core Job; never suppress product-page errors.
             core_probe=True
-            await page.set_viewport_size({'width':390,'height':844})
+            await set_viewport({'width':390,'height':844})
             await page.goto(base+'/job/plain-core-breadcrumb-control/',wait_until='networkidle')
             assert await page.locator('[data-parameter-foundry]').count()==0
             await page.wait_for_timeout(300)
@@ -217,8 +250,11 @@ async def main():
             (unit/'core-breadcrumb-control.json').write_text(json.dumps({'state':'CORE_ONLY_BREADCRUMB_OVERFLOW_REPRODUCED','foundryFields':0,'errors':core_errors},indent=2))
             (unit/'page-errors.json').write_text(json.dumps({'blocked':blocked,'errors':errors},indent=2))
             assert not blocked and not errors,(blocked,errors)
-            stats=peer('stats'); assert stats['jobs']==6 and stats['builds']==0 and stats['queue']==0
-            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredTlsAndUnknownRejectionPassed':True,'tlsValidOriginReconfigurationPassed':True,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','coreBreadcrumbOverflowControl':'Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
+            stats=peer('stats'); assert stats['jobs']==8 and stats['builds']==0 and stats['queue']==0
+            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'nonredirectStatusPolicyConfigurationSaved':True,'nonredirectStatusPolicyCases':8,'defaultHttpStatusMappingsPreserved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredTlsAndUnknownRejectionPassed':True,'tlsValidOriginReconfigurationPassed':True,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','coreBreadcrumbOverflowControl':'Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
+            result['rateBudgetWaits']=rate_waits
+            result['rateBudgetPolicy']='Read-only owned runtime budget observation and natural window waits; no limit changes or resets'
+            result['configurationScreenshotScope']='Actual1440x1000 field viewport; oversized full-page capture is excluded after independently recording its1x1 Core header trigger'
             (unit/'result.json').write_text(json.dumps(result,indent=2)); print(json.dumps({'state':result['state'],'result':str(unit/'result.json'),'cases':len(results),'sha256':digest}))
             await browser.close()
     finally:

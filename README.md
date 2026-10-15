@@ -131,6 +131,8 @@ Licensed under MIT, see [LICENSE](LICENSE.md)
 Version `0.12.314` adds reactive Active Choices single transports using a governed Provider with an explicit literal
 API default and dependency-bound snapshots. Whole-response REST choices support finite
 administrator-declared TLS rejection keys while retaining default certificate validation;
+an explicit `rawStatusPolicy` can also preserve reviewed nonredirect response bodies
+without changing the default HTTP failure mappings or following redirects;
 see [whole-response REST choices](docs/guide/raw-rest-responses.md).
 REST Providers offer data-only ordinary/cascade
 JSON response modes with source-derived UI/API metadata and per-parameter minimum filter

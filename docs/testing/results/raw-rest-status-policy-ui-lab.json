@@ -1,0 +1,180 @@
+{
+  "state": "RAW_REST_BROWSER_GATE_PASS",
+  "browser": "153.0.8010.12",
+  "cases": [
+    {
+      "width": 1440,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-302",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-304",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-306",
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": "status-308",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-302",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-304",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-306",
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": "status-308",
+      "matched": true
+    }
+  ],
+  "configurationSaved": true,
+  "nonredirectStatusPolicyConfigurationSaved": true,
+  "nonredirectStatusPolicyCases": 8,
+  "defaultHttpStatusMappingsPreserved": true,
+  "mappedErrorAndFallbackRecoveryPassed": true,
+  "keyboardSelectionPassed": true,
+  "buildFormsSubmitted": 0,
+  "declaredTlsAndUnknownRejectionPassed": true,
+  "tlsValidOriginReconfigurationPassed": true,
+  "declaredDnsAndSameProfileRecoveryPassed": true,
+  "dnsFixtureCachePolicy": "Owned JVM positive/negative DNS TTL0; production unchanged",
+  "coreBreadcrumbOverflowControl": "Separately reproduced on parameter-free Core Job; product fixtures use shorter names and retain strict pageerror checks",
+  "businessBuildsScheduled": 0,
+  "stats": {
+    "requests": 65,
+    "jobs": 8,
+    "queue": 0,
+    "builds": 0
+  },
+  "rateBudgetWaits": [
+    {
+      "principalLimit": 60,
+      "maximumPrincipalCount": 54,
+      "waitMillis": 697
+    }
+  ],
+  "rateBudgetPolicy": "Read-only owned runtime budget observation and natural window waits; no limit changes or resets",
+  "configurationScreenshotScope": "Actual1440x1000 field viewport; oversized full-page capture is excluded after independently recording its1x1 Core header trigger",
+  "artifact": {
+    "core": "2.568.3",
+    "version": "0.25.376-SNAPSHOT (private-ca992aaa-xykong)",
+    "sha256": "ea96fb2903b17e67b190cdb0d9e8179dc5a4b3f65bcedfbe01c4b7f9ac0ca3fa"
+  },
+  "fullVerify": {
+    "tests": 539,
+    "failures": 0,
+    "errors": 0,
+    "skips": 8,
+    "spotbugsIssues": 0,
+    "spotless": "PASS"
+  },
+  "cleanupErrors": [],
+  "normalPageErrors": [],
+  "nativePairScope": {
+    "cases": 21,
+    "matched": 16,
+    "knownDifferences": [
+      "redirect300",
+      "redirect301",
+      "redirect303",
+      "redirect302",
+      "redirect307"
+    ],
+    "productionCalls": 0,
+    "businessBuilds": 0,
+    "note": "Exact same HPI; four nonredirect body cases close. Followed redirects remain outside this component."
+  },
+  "browserPlatform": "macOS Chromium headless; owned Linux Jenkins21 runtime",
+  "headerCaptureControl": {
+    "beforeCaptureErrors": 0,
+    "afterOversizedCaptureErrors": 1,
+    "temporaryViewport": {
+      "width": 1,
+      "height": 1
+    },
+    "scope": "Instrument-only oversized configuration screenshot; no Core patch or error filtering"
+  },
+  "harnessScriptSha256": "a8e1374c4e8a4a439e364c997e8429501acfbc1c6b5f916495056fa8035b6142",
+  "fixtureScriptSha256": "f24e065715a75590419bdf3a2d686d55f6082a670c0a9d7d4f1909dfc9349cdb",
+  "limits": [
+    "Fixed1440/390 viewport navigation; dynamic resize, touch, assistive technology and native popup arrows not certified",
+    "Two-private-interface DNS/TLS cases explicitly skipped on single eligible host interface",
+    "No business builds, production changes, source publishing, history activation, plugin removal or release"
+  ]
+}

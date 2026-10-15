@@ -2,8 +2,6 @@ package io.jenkins.plugins.parameterfoundry.provider;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.sun.net.httpserver.HttpsConfigurator;
-import com.sun.net.httpserver.HttpsServer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -93,18 +91,159 @@ class RawScalarTlsFailureTest {
         clientContext.init(new KeyManager[0], managers.getTrustManagers(), null);
     }
 
-    private HttpsServer server(InetAddress address, int port, SSLContext tls, AtomicInteger calls) throws Exception {
-        var server = HttpsServer.create(new InetSocketAddress(address, port), 0);
-        server.setHttpsConfigurator(new HttpsConfigurator(tls));
-        server.createContext("/value", exchange -> {
-            calls.incrementAndGet();
-            byte[] body = "release/owned".getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, body.length);
-            exchange.getResponseBody().write(body);
-            exchange.close();
-        });
-        server.start();
-        return server;
+    private OwnedTlsPeer server(InetAddress address, int port, SSLContext tls, AtomicInteger calls) throws Exception {
+        return new OwnedTlsPeer(address, port, tls, calls);
+    }
+
+    /** JDK HttpsServer reverse-resolves accepted peers before TLS, outside the client's deadline. */
+    private static final class OwnedTlsPeer {
+        private final SSLServerSocket listener;
+        private final java.util.concurrent.ExecutorService acceptor;
+        private final java.util.concurrent.ExecutorService workers;
+        private final java.util.Set<SSLSocket> connections = java.util.concurrent.ConcurrentHashMap.newKeySet();
+        private final java.util.concurrent.atomic.AtomicReference<Throwable> backgroundFailure =
+                new java.util.concurrent.atomic.AtomicReference<>();
+        private volatile boolean closing;
+
+        OwnedTlsPeer(InetAddress address, int port, SSLContext tls, AtomicInteger calls) throws IOException {
+            listener = (SSLServerSocket) tls.getServerSocketFactory().createServerSocket(port, 4, address);
+            var threads = (java.util.concurrent.ThreadFactory) task -> {
+                var thread = new Thread(task, "owned-tls-peer");
+                thread.setDaemon(true);
+                return thread;
+            };
+            acceptor = java.util.concurrent.Executors.newSingleThreadExecutor(threads);
+            workers = java.util.concurrent.Executors.newFixedThreadPool(4, threads);
+            acceptor.execute(() -> {
+                while (!closing) {
+                    try {
+                        var socket = (SSLSocket) listener.accept();
+                        connections.add(socket);
+                        try {
+                            workers.execute(() -> serve(socket, calls));
+                        } catch (RuntimeException | Error rejected) {
+                            connections.remove(socket);
+                            try {
+                                socket.close();
+                            } catch (IOException closeFailure) {
+                                rejected.addSuppressed(closeFailure);
+                                if (closing) recordFailure(closeFailure);
+                            }
+                            if (!closing) recordFailure(rejected);
+                        }
+                    } catch (IOException closed) {
+                        if (!closing) {
+                            recordFailure(closed);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        private void serve(SSLSocket socket, AtomicInteger calls) {
+            boolean handshaken = false;
+            try (socket) {
+                socket.setSoTimeout(2000);
+                socket.startHandshake();
+                handshaken = true;
+                var input = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(socket.getInputStream(), StandardCharsets.US_ASCII));
+                String line = input.readLine();
+                if (line == null) return;
+                assertEquals("GET /value HTTP/1.1", line);
+                int headerBytes = 0;
+                while ((line = input.readLine()) != null && !line.isEmpty()) {
+                    headerBytes += line.length();
+                    assertTrue(headerBytes <= 8192);
+                }
+                calls.incrementAndGet();
+                byte[] body = "release/owned".getBytes(StandardCharsets.UTF_8);
+                var output = socket.getOutputStream();
+                output.write(("HTTP/1.1 200 OK\r\nContent-Length: " + body.length + "\r\nConnection: close\r\n\r\n")
+                        .getBytes(StandardCharsets.US_ASCII));
+                output.write(body);
+                output.flush();
+            } catch (SSLHandshakeException expectedRejection) {
+                // The client rejects the fixture's deliberately mismatching certificate.
+                if (handshaken && !closing) recordFailure(expectedRejection);
+            } catch (IOException transportFailure) {
+                // TLS 1.3 clients may close on certificate rejection before the server writes Finished.
+                boolean rejectedBeforeFinished = !handshaken
+                        && transportFailure.getClass() == java.net.SocketException.class
+                        && ("Broken pipe".equals(transportFailure.getMessage())
+                                || "Connection reset".equals(transportFailure.getMessage())
+                                || "Connection reset by peer".equals(transportFailure.getMessage()));
+                if (!closing && !rejectedBeforeFinished) recordFailure(transportFailure);
+            } catch (RuntimeException | Error assertionFailure) {
+                recordFailure(assertionFailure);
+            } finally {
+                connections.remove(socket);
+            }
+        }
+
+        InetSocketAddress getAddress() {
+            return new InetSocketAddress(listener.getInetAddress(), listener.getLocalPort());
+        }
+
+        private void recordFailure(Throwable failure) {
+            if (!backgroundFailure.compareAndSet(null, failure)) {
+                combine(backgroundFailure.get(), failure);
+            }
+        }
+
+        private static Throwable combine(Throwable primary, Throwable next) {
+            if (next == null) return primary;
+            if (primary == null) return next;
+            if (primary != next) primary.addSuppressed(next);
+            return primary;
+        }
+
+        private Throwable closeConnections(Throwable failure) {
+            for (var socket : connections.toArray(SSLSocket[]::new)) {
+                try {
+                    socket.close();
+                } catch (IOException closeFailure) {
+                    failure = combine(failure, closeFailure);
+                }
+            }
+            return failure;
+        }
+
+        private Throwable shutdown(java.util.concurrent.ExecutorService pool, Throwable failure) {
+            try {
+                pool.shutdownNow();
+            } catch (RuntimeException shutdownFailure) {
+                failure = combine(failure, shutdownFailure);
+            }
+            try {
+                if (!pool.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                    failure = combine(failure, new IOException("Owned TLS executor did not terminate."));
+                }
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                failure = combine(failure, interrupted);
+            }
+            return failure;
+        }
+
+        void stop(int ignoredDelay) {
+            closing = true;
+            Throwable failure = null;
+            try {
+                listener.close();
+            } catch (IOException closeFailure) {
+                failure = closeFailure;
+            }
+            failure = closeConnections(failure);
+            failure = shutdown(acceptor, failure);
+            // An accept racing the first snapshot must also be closed before worker shutdown.
+            failure = closeConnections(failure);
+            failure = shutdown(workers, failure);
+            var background = backgroundFailure.get();
+            if (background != null) failure = combine(background, failure);
+            if (failure != null) throw new AssertionError("Owned TLS peer failed.", failure);
+        }
     }
 
     private ConnectionProfile profile(int port) {
