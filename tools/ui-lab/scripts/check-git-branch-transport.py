@@ -123,6 +123,23 @@ async def main():
                         await page.get_by_role('button',name='Build',exact=True).click()
                         await result(base,number,'release/prod-v2')
                         checks.append('NONE manual selection retained on submit at '+str(width)+' '+name)
+            for width,height in [(1440,1000),(390,844)]:
+                await page.set_viewport_size({'width':width,'height':height})
+                for name,literal in [('default-missing-list','unlisted'),('default-filter-list','release/prod')]:
+                    base=lab.BASE_URL+'/job/git-transport-'+name
+                    await page.goto(base+'/build?delay=0sec')
+                    await page.wait_for_function("document.querySelector('[data-parameter-name=REF]').dataset.upInteractive === 'true'")
+                    select=page.locator('[data-up-enhanced] select')
+                    assert await select.evaluate('s=>s.size')==20
+                    if name=='default-filter-list':
+                        assert await select.input_value()=='release/prod'
+                        await page.locator('[data-up-enhanced] input[type=search]').fill('^main$')
+                        assert await select.locator('option').count()==1
+                    assert await select.evaluate('s=>Array.from(s.selectedOptions).map(o=>o.value)')==[]
+                    number=(await (await page.request.get(base+'/api/json?tree=nextBuildNumber')).json())['nextBuildNumber']
+                    await page.get_by_role('button',name='Build',exact=True).click()
+                    await result(base,number,literal)
+                    checks.append(name+' unselected list and literal form fallback at '+str(width))
             await page.set_viewport_size({'width':1440,'height':1000})
             base=lab.BASE_URL+'/job/git-transport-top'
             response=await page.request.post(base+'/buildWithParameters?delay=0sec')

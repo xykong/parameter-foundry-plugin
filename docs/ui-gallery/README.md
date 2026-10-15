@@ -454,3 +454,21 @@ scrolled into view and hit-tested unobscured. A separate parameter-free Core Job
 reproduces Jenkins2.568.3's long-name breadcrumb overflow exception. Product
 fixtures use shorter names and retain strict pageerror checks. These checks do not
 certify screen-reader/native-popup-arrow behavior or production migration.
+
+
+## Legacy Git DEFAULT list selection (0.26.380-SNAPSHOT)
+
+Real native List Git Branches76 and Foundry pages, Jenkins2.568.3/JDK21,
+Chromium153.0.8010.12, macOS host. The literal API default is absent from
+the offered options, so both lists remain unselected. Mobile captures are
+scrolled and top/bottom hit-tested clear of Core's sticky buttons.
+
+- [Native,1440x1000](./images/parameter-foundry/git-default-native-1440.png)
+- [Foundry,1440x1000](./images/parameter-foundry/git-default-foundry-1440.png)
+- [Native,390x844](./images/parameter-foundry/git-default-native-390.png)
+- [Foundry,390x844](./images/parameter-foundry/git-default-foundry-390.png)
+
+[UP-AC-077 evidence](../testing/results/git-default-list-native-ui-lab.json)
+records30paired UI cases and42captured/detached form pairs. No production
+repository or credentials are used. Physical-device and screen-reader testing
+remain separate. The long-name Core breadcrumb control is not a product pass.

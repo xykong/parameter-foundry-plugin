@@ -1,0 +1,1657 @@
+{
+  "case": "UP-AC-077",
+  "artifact": {
+    "version": "0.26.380-SNAPSHOT (private-02ca6bb3-xykong)",
+    "sha256": "cecc02534075fb77cd1bc5f56ea8360f50bc3a4516c696249f1950ea50447936",
+    "uiResourceEqualsWorkingTree": true,
+    "fullVerifyState": "PASS",
+    "tests": 552,
+    "failures": 0,
+    "errors": 0,
+    "skips": 2,
+    "declaredRevision": "0.26.380-SNAPSHOT"
+  },
+  "core": "2.568.3",
+  "controllerRuntime": "Linux amd64 / JDK21",
+  "host": "macOS arm64",
+  "browser": "153.0.8010.12",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "nativePlugin": {
+    "id": "list-git-branches-parameter",
+    "version": "76.v7a_a_7a_5065278",
+    "sha256": "0a3ae05d376e50cb2e96bc69ad20f25679fdd1222702e0c22ccd69e4b1675dbb"
+  },
+  "baseline": {
+    "version": "0.25.378",
+    "sha256": "3166a2951824bad098df18cca00dc99fb44fdef79dffd579962299701759d155",
+    "uiCases": 30,
+    "uiDifferences": 14,
+    "formPairs": 42,
+    "formDifferences": 14
+  },
+  "candidate": {
+    "uiCases": 30,
+    "uiDifferences": 0,
+    "formPairs": 42,
+    "formDifferences": 0,
+    "pageErrors": [],
+    "blockedRequests": [],
+    "formSubmissions": 0,
+    "initialListsHitTestedAfterScroll": 12,
+    "providerRequestsDuringBinding": 0,
+    "businessBuilds": 0
+  },
+  "cases": [
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "master"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "initial",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "filtered",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "keyboard",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "manual",
+      "matched": true,
+      "native": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [
+          "feature/2"
+        ],
+        "size": 10,
+        "multiple": false
+      }
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "cleared",
+      "matched": true,
+      "native": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      },
+      "foundry": {
+        "values": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "labels": [
+          "release/prod",
+          "master",
+          "feature/10",
+          "feature/2"
+        ],
+        "selected": [],
+        "size": 10,
+        "multiple": false
+      }
+    }
+  ],
+  "formPairs": [
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "source",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "child",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 1440,
+      "contract": "blank",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "source",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "origin/master",
+      "foundryValue": "origin/master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "child",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "master",
+      "foundryValue": "master",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "omitted",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "initial",
+      "kind": "empty",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "filtered",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "keyboard",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "manual",
+      "kind": "captured",
+      "nativeValue": "feature/2",
+      "foundryValue": "feature/2",
+      "matched": true,
+      "environmentEqual": true
+    },
+    {
+      "width": 390,
+      "contract": "blank",
+      "phase": "cleared",
+      "kind": "captured",
+      "nativeValue": "",
+      "foundryValue": "",
+      "matched": true,
+      "environmentEqual": true
+    }
+  ],
+  "realTransportPairs": [
+    {
+      "contract": "source",
+      "authenticated": false,
+      "values": [
+        "release/prod",
+        "master",
+        "feature/10",
+        "feature/2"
+      ],
+      "defaultValue": "origin/master",
+      "environmentEqual": true
+    },
+    {
+      "contract": "child",
+      "authenticated": false,
+      "values": [
+        "master",
+        "feature/10",
+        "feature/2"
+      ],
+      "defaultValue": "master",
+      "environmentEqual": true
+    },
+    {
+      "contract": "source",
+      "authenticated": true,
+      "values": [
+        "release/prod",
+        "master",
+        "feature/10",
+        "feature/2"
+      ],
+      "defaultValue": "origin/master",
+      "environmentEqual": true
+    },
+    {
+      "contract": "child",
+      "authenticated": true,
+      "values": [
+        "master",
+        "feature/10",
+        "feature/2"
+      ],
+      "defaultValue": "master",
+      "environmentEqual": true
+    }
+  ],
+  "transportFixture": "Owned HTTP upload-pack advertisements and synthetic credentials; no Git objects or production source",
+  "regressionSuite": {
+    "checks": 29,
+    "passed": true,
+    "neutralParameterOnlyBuilds": 28,
+    "businessBuilds": 0
+  },
+  "coreControl": {
+    "cases": [
+      {
+        "width": 1440,
+        "coreStringParameterOnly": true
+      },
+      {
+        "width": 390,
+        "coreStringParameterOnly": true
+      }
+    ],
+    "knownHeaderErrors": 1,
+    "source": "Core header.js xmlEscape(undefined); separate long-name Core String parameter control",
+    "productPagesUseShortNames": true
+  },
+  "limitations": [
+    "No physical-device or screen-reader certification",
+    "Mobile lists require scrolling; top and bottom hit-tested after centering without changing Core styles",
+    "No production Git access, source publication, Job cutover or legacy-plugin removal"
+  ],
+  "passed": true
+}

@@ -33,16 +33,16 @@ ParameterFoundryGlobalConfiguration.get().providers=[provider,large]
  job.save()
 }
 j.save()
-[['none-list', 'list', 20], ['none-one-row', 'list', 1], ['none-filter-list', 'searchable', 20]].each { row ->
+[['none-list', 'list', 20], ['none-one-row', 'list', 1], ['none-filter-list', 'searchable', 20], ['default-missing-list', 'list', 20], ['default-filter-list', 'searchable', 20]].each { row ->
  def job=j.createProject(FreeStyleProject,'git-transport-'+row[0])
  def parameter=new FoundryChoiceParameterDefinition('REF')
  parameter.providerId='git-fixture'
  parameter.renderer=row[1]
  parameter.visibleItemCount=row[2]
  parameter.standardApiInputMode='list-git-branches'
- parameter.gitSelectionMode='none'
+ parameter.gitSelectionMode=row[0].startsWith('default-')?'default':'none'
  parameter.defaultMode='explicit'
- parameter.defaultValue='release/prod'
+ parameter.defaultValue=row[0]=='default-missing-list'?'unlisted':'release/prod'
  job.addProperty(new ParametersDefinitionProperty(parameter))
  job.buildersList.add(new Shell('printf "%s" "$REF" > result.txt'))
  job.publishersList.add(new ArtifactArchiver('result.txt'))

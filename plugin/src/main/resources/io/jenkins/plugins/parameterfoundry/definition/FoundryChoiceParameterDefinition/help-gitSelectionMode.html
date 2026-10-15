@@ -2,7 +2,9 @@
   Applies only to <code>standardApiInputMode=list-git-branches</code>. This preserves the source
   dropdown selection separately from the default used by API and CLI callers.
   <code>default</code> selects an exact stored-default match, then the first option containing that
-  default, then the first option. <code>top</code> selects the first option. <code>none</code> leaves
+  default. If there is no match or the default is blank, a multi-row list renderer or an explicitly
+  sized multi-row searchable list stays unselected; a dropdown uses its first option.
+  This also applies after filtering. <code>top</code> selects the first option. <code>none</code> leaves
   native selection: a one-row dropdown uses its first option; a multi-row list renderer or a
   searchable list explicitly configured with more than one visible row stays unselected.
   Searchable controls without an explicit row count retain their existing first-option behavior.

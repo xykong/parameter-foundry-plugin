@@ -17,6 +17,7 @@ suffix marks a build that is deployed but not tagged.
 
 ### Fixed
 
+- Preserve an unselected legacy Git list when its default is blank or absent from the visible options, including after filtering, without changing API defaults or dropdown selection.
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
 

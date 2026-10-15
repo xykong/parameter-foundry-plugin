@@ -160,3 +160,15 @@ Screenshots, archive hashes and JSON results stay in the ignored timestamped
 original created resource IDs before attempting each removal, and records
 results in `cleanup.json`. Check that receipt for cleanup errors; unrelated
 containers are not touched.
+
+
+## Legacy Git DEFAULT list regression (UP-AC-077)
+
+`check-git-branch-transport.py --skip-build` includes explicit20-row list and
+searchable-list cases whose literal default is absent or filtered out. It
+verifies no selected option and the source form's literal fallback through
+neutral parameter-only builds. Existing dropdown, TOP, NONE and Rebuild cases
+remain part of that gate. The paired native-plugin migration fixture also
+checks real owned Git HTTP/credentials, captured Core forms and detached value
+binding; sanitized results and scope are indexed in
+[`git-default-list-native-ui-lab.json`](../../docs/testing/results/git-default-list-native-ui-lab.json).

@@ -239,8 +239,10 @@ match the source's fresh listing on each page. Explicitly supplied API snapshots
 require valid binding and expiry.
 
 `gitSelectionMode` controls the browser dropdown separately: `default` selects an exact
-stored-default match, then the first containing match, then the first option; `top`
-selects the first option; `none` retains the source native first-option behavior.
+stored-default match, then the first containing match. If neither matches (or the
+default is blank), a multi-row list renderer or an explicitly sized multi-row
+searchable list remains unselected; a dropdown retains its first-option fallback.
+`top` selects the first option; `none` retains the native selection rules described above.
 The searchable Git compatibility renderer filters option text with a trimmed,
 case-insensitive regular expression. Invalid expressions retain the previous list.
 Filtering applies the source dropdown selection again and synchronizes the submitted

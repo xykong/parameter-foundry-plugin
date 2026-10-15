@@ -934,16 +934,19 @@
   }
 
   function gitSelectedOption(field, options) {
-    if (field.dataset.gitSelectionMode === "none" &&
-        ((field.dataset.renderer === "list" &&
+    var list = (field.dataset.renderer === "list" &&
           listRows(field, Math.min(12, Math.max(4, options.length))) > 1) ||
-         (field.dataset.renderer === "searchable" && Number(field.dataset.visibleItemCount) > 1))) {
+        (field.dataset.renderer === "searchable" && Number(field.dataset.visibleItemCount) > 1);
+    if (field.dataset.gitSelectionMode === "none" && list) {
       return null;
     }
     var value = field.dataset.gitDefaultValue || "";
-    if (field.dataset.gitSelectionMode === "default" && value.trim().length > 0) {
-      return options.find(function (option) { return option.value === value; }) ||
-        options.find(function (option) { return option.value.indexOf(value) !== -1; }) || options[0];
+    if (field.dataset.gitSelectionMode === "default") {
+      var match = value.trim().length > 0
+        ? options.find(function (option) { return option.value === value; }) ||
+          options.find(function (option) { return option.value.indexOf(value) !== -1; })
+        : null;
+      return match || (list ? null : options[0]);
     }
     return options[0];
   }
@@ -1085,8 +1088,7 @@
         // A plain select renderer stays a dropdown; only the searchable renderer lists matches.
         select.removeAttribute("size");
       }
-      if (legacyGit && field.dataset.gitSelectionMode === "none" &&
-          selected.size === 0 && select.size > 1) {
+      if (legacyGit && selected.size === 0 && select.size > 1) {
         // Appending options before setting size can auto-select the first dropdown option.
         select.selectedIndex = -1;
       }

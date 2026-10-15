@@ -30,6 +30,8 @@ Git Providers also support `sortOrder: none` for unsorted legacy ref categories;
 verify full versus short ref values and actual dropdown order for each migration.
 Git `NONE` selection keeps multi-row lists unselected while preserving the separate
 API default; explicitly configured searchable Git lists also retain their row count.
+Git `DEFAULT` also leaves these lists unselected when no visible option matches its
+literal default, including after filtering.
 Version `0.14.320` adds [`foundryParameterText`](./docs/guide/pipeline-parameter-text.md)
 for Pipeline consumers that need saved legacy parameter strings without environment
 overrides or reconstruction from canonical lists.
