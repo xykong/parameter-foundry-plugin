@@ -5,6 +5,17 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Whole-response REST choices
+
+Snapshot `0.23.371-SNAPSHOT`, Jenkins 2.568.3, Chromium 153. The
+[browser report](../testing/results/raw-rest-provider-ui-lab.json) records exact
+artifact and coverage. Body/default checks cover 1440 and 390 pixels; fallback,
+recovery and native keyboard typeahead cover desktop only. No build submitted.
+
+[![Mobile raw response choice](images/parameter-foundry/raw-rest-mobile.png)](images/parameter-foundry/raw-rest-mobile.png)
+
+[![Recovered choice selected by keyboard typeahead](images/parameter-foundry/raw-rest-recovery-keyboard.png)](images/parameter-foundry/raw-rest-recovery-keyboard.png)
+
 ## Unified file delivery modes
 
 Snapshot `0.5.274-SNAPSHOT`: [verification](../testing/file-delivery-modes-verification-2026-10-09.md)

@@ -1,4 +1,10 @@
 <div>
+  <p><strong>Active Choices whole UTF-8 response</strong> treats the complete body as one
+  literal value, including whitespace and empty content. It uses exact ignored-response
+  and trailing-choice rows and optional classified failure choices. Set format to automatic
+  and leave transforms empty. The Connection Profile must be direct and credential-free,
+  without custom headers, proxy or redirects. Content-Type and its charset are ignored.
+  Use cache TTL zero when each source evaluation must fetch afresh.</p>
   <p><strong>Mapped JSON/XML</strong> uses the configured root and field paths.</p>
   <p>The two <strong>Active Choices single JSON</strong> modes interpret a reviewed
   JSON <code>data</code>-or-root response without executing Groovy. Use ordinary
@@ -11,7 +17,7 @@
   derived from the response separately from UI selection. Reactive definitions
   require an explicit literal API default; missing dependency requests can use
   reviewed fallback options. Disable caching when the source default is live.</p>
-  <p>Only JSON responses are accepted. The Connection Profile governs the endpoint,
+  <p>The two JSON modes accept only JSON responses. The Connection Profile governs the endpoint,
   query parameters, credentials, deadline and response byte limit. The interpreter
   also bounds JSON depth to 64 and output to 10,000 distinct choices. Configure
   fallback options for the source exception fallback; do not use stale data as a

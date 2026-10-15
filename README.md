@@ -74,6 +74,7 @@ New to the plugin? Start with the user guide:
 | Copy a working configuration | [docs/guide/examples.md](./docs/guide/examples.md) |
 | Upload and consume a file | [docs/guide/file-parameters.md](./docs/guide/file-parameters.md) |
 | Connect a backend | [docs/guide/providers.md](./docs/guide/providers.md) |
+| Use a whole HTTP response as one choice | [docs/guide/raw-rest-responses.md](./docs/guide/raw-rest-responses.md) |
 | Move off another parameter plugin | [docs/guide/migration.md](./docs/guide/migration.md) |
 | Fix an error | [docs/guide/troubleshooting.md](./docs/guide/troubleshooting.md) |
 

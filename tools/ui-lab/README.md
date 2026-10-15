@@ -116,3 +116,35 @@ cascades with Foundry mappings at desktop and mobile sizes, exercises manual
 choices, ordinary retention, empty defaults, dependency errors, rapid changes
 and failed-request recovery, and never submits a build. Artifacts are written
 to the ignored `.cache/active-choices-mapping` directory.
+
+## Whole-response REST browser gate
+
+After a complete `mvn -B -ntp verify`, run:
+
+```bash
+uv run tools/ui-lab/scripts/check-raw-rest-provider.py --hpi plugin/target/parameter-foundry.hpi
+```
+
+This gate pins Playwright 1.63.0. If its Chromium archive is absent, install it
+with `uv run --no-project --with playwright==1.63.0 playwright install chromium`
+before running the gate.
+
+The gate copies and hashes the exact local Maven test dependency archives, checks
+the loaded HPI hash and Jenkins 2.568.3 version, and uses a fresh internal Docker
+network. A fixed nginx reverse proxy exposes a random host port on localhost;
+the controller stays on the internal network, has zero executors, and creates
+two synthetic parameter-only Jobs. The cached `nginx:1.30.5-alpine` image must
+already exist (the runner refuses to pull it). The mock service runs
+inside that same owned container at its non-loopback private address; network
+policy is not replaced or relaxed for loopback. No production configuration,
+credentials or cookies are read.
+
+The browser checks configuration save/roundtrip, whole-body API values and
+source UI values at 1440 and 390 pixels, non-filterable dropdowns, explicit
+HTTP failure choices, configured fallback followed by recovery, and keyboard
+selection. It blocks build/rebuild POSTs and verifies no builds or queued tasks.
+Screenshots, archive hashes and JSON results stay in the ignored timestamped
+`tools/ui-lab/.cache/raw-rest-*` directory for inspection. Cleanup checks the
+original created resource IDs before attempting each removal, and records
+results in `cleanup.json`. Check that receipt for cleanup errors; unrelated
+containers are not touched.

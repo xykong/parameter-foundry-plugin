@@ -1,0 +1,90 @@
+{
+  "state": "RAW_REST_BROWSER_GATE_PASS",
+  "artifact": {
+    "core": "2.568.3",
+    "version": "0.23.371-SNAPSHOT",
+    "sha256": "f1b3bddb9d3f24ce8fe84e356ed2067ba5257ae87b75096de76eb4cff1cf0e5f"
+  },
+  "browser": "153.0.8010.12",
+  "cases": [
+    {
+      "width": 1440,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 5,
+      "matched": true
+    }
+  ],
+  "configurationSaved": true,
+  "mappedErrorAndFallbackRecoveryPassed": true,
+  "keyboardSelectionPassed": true,
+  "businessBuildsScheduled": 0,
+  "stats": {
+    "requests": 27,
+    "jobs": 2,
+    "queue": 0,
+    "builds": 0
+  },
+  "keyboardScope": "Native typeahead only, desktop macOS headless Chromium; popup arrow keys and broad accessibility are not certified.",
+  "viewportScope": "Six body/default cases at 1440 and 390; configuration, HTTP503/fallback/recovery and keyboard at 1440 only.",
+  "configurationScope": "Null sentinel, trailing value and failure template saved through actual global form. Leading-newline/empty configured literal roundtrip is Harness coverage.",
+  "cleanupErrors": [],
+  "screenshots": [
+    "../ui-gallery/images/parameter-foundry/raw-rest-mobile.png",
+    "../ui-gallery/images/parameter-foundry/raw-rest-recovery-keyboard.png"
+  ],
+  "buildFormsSubmitted": 0
+}

@@ -127,7 +127,7 @@ final class RawScalarRestTransport {
             throw unavailable(request, "Raw scalar target must not contain user information or a fragment.");
         }
         profile.validateResolvedUri(uri);
-        networkPolicy.requireAllowed(uri, profile.isAllowPrivateAddresses());
+        var addresses = networkPolicy.resolveAllowed(uri, profile.isAllowPrivateAddresses());
         if (profile.isUseJenkinsProxy()
                 || profile.isFollowRedirects()
                 || profile.getCredentialId() != null
@@ -154,6 +154,7 @@ final class RawScalarRestTransport {
                 var tlsStrategy =
                         ClientTlsStrategyBuilder.create().setSslContext(tls).buildClassic();
                 manager = PoolingHttpClientConnectionManagerBuilder.create()
+                        .setDnsResolver(new ValidatedDnsResolver(uri, addresses))
                         .setTlsSocketStrategy((socket, hostname, port, attachment, context) -> {
                             try {
                                 return tlsStrategy.upgrade(socket, hostname, port, attachment, context);

@@ -4,10 +4,12 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import io.jenkins.plugins.parameterfoundry.model.Option;
 import java.io.Serial;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONArray;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -31,6 +33,10 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     private String disabledReasonPath = "disabledReason";
     private String tagsPath = "tags";
     private transient RestProviderClient client;
+    private transient RawScalarRestTransport rawClient;
+    private List<RestRawLiteral> rawIgnoredResponses;
+    private List<RestRawLiteral> rawTrailingChoices;
+    private List<RestRawFailureChoice> rawFailureChoices;
 
     @DataBoundConstructor
     public RestProviderDefinition(String id, String connectionProfileId, String relativePath) {
@@ -48,6 +54,17 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     RestProviderDefinition(String id, String connectionProfileId, String relativePath, RestProviderClient client) {
         this(id, connectionProfileId, relativePath);
         this.client = java.util.Objects.requireNonNull(client);
+    }
+
+    RestProviderDefinition(
+            String id,
+            String connectionProfileId,
+            String relativePath,
+            RestProviderClient client,
+            RawScalarRestTransport rawClient) {
+        this(id, connectionProfileId, relativePath);
+        this.client = client;
+        this.rawClient = java.util.Objects.requireNonNull(rawClient);
     }
 
     @Override
@@ -78,7 +95,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
 
     @DataBoundSetter
     public void setResponseMode(String responseMode) {
-        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade")
+        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade", "active-choices-raw-scalar")
                 .contains(responseMode)) {
             throw new IllegalArgumentException("Unsupported REST response mode.");
         }
@@ -86,8 +103,39 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     }
 
     public boolean isActiveChoicesResponse() {
-        return java.util.Set.of("active-choices-choice", "active-choices-cascade")
+        return java.util.Set.of("active-choices-choice", "active-choices-cascade", "active-choices-raw-scalar")
                 .contains(getResponseMode());
+    }
+
+    public boolean isRawScalarResponse() {
+        return "active-choices-raw-scalar".equals(getResponseMode());
+    }
+
+    public List<RestRawLiteral> getRawIgnoredResponses() {
+        return rawIgnoredResponses == null ? List.of() : rawIgnoredResponses;
+    }
+
+    @DataBoundSetter
+    public void setRawIgnoredResponses(List<RestRawLiteral> values) {
+        rawIgnoredResponses = values == null ? List.of() : List.copyOf(values);
+    }
+
+    public List<RestRawLiteral> getRawTrailingChoices() {
+        return rawTrailingChoices == null ? List.of() : rawTrailingChoices;
+    }
+
+    @DataBoundSetter
+    public void setRawTrailingChoices(List<RestRawLiteral> values) {
+        rawTrailingChoices = values == null ? List.of() : List.copyOf(values);
+    }
+
+    public List<RestRawFailureChoice> getRawFailureChoices() {
+        return rawFailureChoices == null ? List.of() : rawFailureChoices;
+    }
+
+    @DataBoundSetter
+    public void setRawFailureChoices(List<RestRawFailureChoice> values) {
+        rawFailureChoices = values == null ? List.of() : List.copyOf(values);
     }
 
     @DataBoundSetter
@@ -172,7 +220,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
 
     @Override
     public List<Option> load(ProviderLoadContext context) {
-        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade")
+        if (!java.util.Set.of("mapped", "active-choices-choice", "active-choices-cascade", "active-choices-raw-scalar")
                 .contains(getResponseMode())) {
             throw new ProviderException(
                     io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
@@ -200,6 +248,9 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
             }
         }
         java.net.URI uri = profile.buildUri(relativePath, query);
+        if (isRawScalarResponse()) {
+            return loadRawScalar(profile, context, uri);
+        }
         RestProviderClient.Response response =
                 (client == null ? new RestProviderClient() : client).get(profile, context.request(), uri);
         String responseFormat = "auto".equals(getFormat()) ? response.format() : getFormat();
@@ -233,9 +284,73 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                 getId());
     }
 
+    private List<Option> loadRawScalar(ConnectionProfile profile, ProviderLoadContext context, java.net.URI uri) {
+        if (!"auto".equals(getFormat())) {
+            throw rawUnavailable("Whole-response mode requires automatic format selection.");
+        }
+        var keys = new java.util.HashSet<String>();
+        for (RestRawFailureChoice choice : getRawFailureChoices()) {
+            try {
+                RawScalarRestTransport.FailureKind.valueOf(choice.getKind());
+                if (choice.getValue() == null
+                        || choice.getStatus() != 0
+                                && (!"HTTP_STATUS".equals(choice.getKind())
+                                        || choice.getStatus() < 100
+                                        || choice.getStatus() > 599)
+                        || !keys.add(choice.getKind() + ":" + choice.getStatus())) {
+                    throw new IllegalArgumentException();
+                }
+            } catch (RuntimeException invalid) {
+                throw rawUnavailable("Whole-response failure choices are invalid or duplicated.");
+            }
+            if (choice.includesUri() && uri.getRawQuery() != null) {
+                throw rawUnavailable("URI-bearing failure choices require a query-free target.");
+            }
+        }
+        List<String> ignored = rawLiteralValues(getRawIgnoredResponses());
+        List<String> trailing = rawLiteralValues(getRawTrailingChoices());
+        RawScalarRestTransport.Result result = (rawClient == null
+                        ? new RawScalarRestTransport(new NetworkPolicy())
+                        : rawClient)
+                .get(profile, context.request(), uri);
+        if (result instanceof RawScalarRestTransport.Body body) {
+            return RawScalarChoiceAdapter.options(body.bytes(), ignored, trailing);
+        }
+        var failure = (RawScalarRestTransport.Failure) result;
+        // Exact HTTP status overrides a category-wide mapping, regardless of form row order.
+        RestRawFailureChoice match = getRawFailureChoices().stream()
+                .filter(choice -> choice.matches(failure) && choice.getStatus() != 0)
+                .findFirst()
+                .orElseGet(() -> getRawFailureChoices().stream()
+                        .filter(choice -> choice.matches(failure))
+                        .findFirst()
+                        .orElse(null));
+        if (match == null) {
+            throw rawUnavailable("Whole-response transport returned an unmapped failure.");
+        }
+        return RawScalarChoiceAdapter.options(
+                match.render(uri, failure.status()).getBytes(StandardCharsets.UTF_8), List.of(), trailing);
+    }
+
+    private ProviderException rawUnavailable(String message) {
+        return new ProviderException(
+                io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE, getId(), message);
+    }
+
+    private List<String> rawLiteralValues(List<RestRawLiteral> rows) {
+        List<String> values = new ArrayList<>();
+        for (RestRawLiteral row : rows) {
+            if (row == null || row.getValue() == null) {
+                throw rawUnavailable("Whole-response literal rows must contain strings.");
+            }
+            values.add(row.getValue());
+        }
+        return List.copyOf(values);
+    }
+
     @Override
     protected String providerFingerprint() {
-        return connectionProfileId
+        String structured = connectionProfileId
                 + '\u0000'
                 + relativePath
                 + '\u0000'
@@ -266,6 +381,16 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
                 + getDisabledReasonPath()
                 + '\u0000'
                 + getTagsPath();
+        if (!isRawScalarResponse()) return structured;
+        return structured
+                + "\u0000raw-scalar-v1\u0000"
+                + JSONArray.fromObject(rawLiteralValues(getRawIgnoredResponses()))
+                + '\u0000'
+                + JSONArray.fromObject(rawLiteralValues(getRawTrailingChoices()))
+                + '\u0000'
+                + JSONArray.fromObject(getRawFailureChoices().stream()
+                        .map(choice -> java.util.Arrays.asList(choice.getKind(), choice.getStatus(), choice.getValue()))
+                        .toList());
     }
 
     @Extension
@@ -273,7 +398,7 @@ public final class RestProviderDefinition extends SharedProviderDefinition imple
     public static final class DescriptorImpl extends Descriptor<SharedProviderDefinition> {
         @Override
         public String getDisplayName() {
-            return "Parameter Foundry REST JSON/XML Provider";
+            return "Parameter Foundry REST Provider";
         }
     }
 }

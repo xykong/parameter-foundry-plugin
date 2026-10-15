@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.CookieHandler;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +21,7 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 class RawScalarRestTransportTest {
     @Test
     void stalledTlsHandshakeRetainsNativeReadTimeoutClassification(JenkinsRule j) throws Exception {
-        try (var listener = new java.net.ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))) {
+        try (var listener = new java.net.ServerSocket(0, 1, OwnedHttpPeer.address())) {
             listener.setSoTimeout(5000);
             var worker = Executors.newSingleThreadExecutor();
             var accepted = worker.submit(() -> {
@@ -34,14 +33,15 @@ class RawScalarRestTransportTest {
                 }
             });
             try {
-                var profile = new ConnectionProfile("raw", "https://127.0.0.1:" + listener.getLocalPort() + "/");
+                var profile = new ConnectionProfile(
+                        "raw",
+                        "https://" + OwnedHttpPeer.address().getHostAddress() + ":" + listener.getLocalPort() + "/");
                 profile.setUseJenkinsProxy(false);
                 profile.setAllowPrivateAddresses(true);
                 profile.setReadTimeoutSeconds(1);
                 profile.setConnectTimeoutSeconds(3);
                 profile.setTotalTimeoutSeconds(5);
-                var transport = new RawScalarRestTransport(
-                        new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+                var transport = new RawScalarRestTransport(new NetworkPolicy());
                 var failure = assertInstanceOf(
                         RawScalarRestTransport.Failure.class,
                         transport.get(profile, request(j), profile.buildUri("stall", Map.of())));
@@ -86,7 +86,7 @@ class RawScalarRestTransportTest {
 
     @Test
     void authenticationCookiesAndTruncatedBodyMatchTheRestrictedContract(JenkinsRule j) throws Exception {
-        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var server = HttpServer.create(new InetSocketAddress(OwnedHttpPeer.address(), 0), 0);
         var leaked = new java.util.concurrent.atomic.AtomicBoolean();
         var callbacks = new AtomicInteger();
         server.createContext("/", exchange -> {
@@ -130,8 +130,7 @@ class RawScalarRestTransportTest {
             });
             var profile = profile(server);
             var request = request(j);
-            var transport = new RawScalarRestTransport(
-                    new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+            var transport = new RawScalarRestTransport(new NetworkPolicy());
             var auth = assertInstanceOf(
                     RawScalarRestTransport.Failure.class,
                     transport.get(profile, request, profile.buildUri("auth", Map.of())));
@@ -151,7 +150,7 @@ class RawScalarRestTransportTest {
 
     @Test
     void truncatedChunkedWireResponseCannotBecomeSuccessfulPartialBody(JenkinsRule j) throws Exception {
-        try (var listener = new java.net.ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))) {
+        try (var listener = new java.net.ServerSocket(0, 1, OwnedHttpPeer.address())) {
             var worker = Executors.newSingleThreadExecutor();
             try {
                 var served = worker.submit(() -> {
@@ -172,11 +171,12 @@ class RawScalarRestTransportTest {
                     }
                     return true;
                 });
-                var profile = new ConnectionProfile("raw", "http://127.0.0.1:" + listener.getLocalPort() + "/");
+                var profile = new ConnectionProfile(
+                        "raw",
+                        "http://" + OwnedHttpPeer.address().getHostAddress() + ":" + listener.getLocalPort() + "/");
                 profile.setUseJenkinsProxy(false);
                 profile.setAllowPrivateAddresses(true);
-                var transport = new RawScalarRestTransport(
-                        new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+                var transport = new RawScalarRestTransport(new NetworkPolicy());
                 var result = assertInstanceOf(
                         RawScalarRestTransport.Failure.class,
                         transport.get(profile, request(j), profile.buildUri("chunked", Map.of())));
@@ -238,7 +238,9 @@ class RawScalarRestTransportTest {
 
     private ConnectionProfile profile(HttpServer server) {
         var profile = new ConnectionProfile(
-                "raw", "http://127.0.0.1:" + server.getAddress().getPort() + "/");
+                "raw",
+                "http://" + OwnedHttpPeer.address().getHostAddress() + ":"
+                        + server.getAddress().getPort() + "/");
         profile.setUseJenkinsProxy(false);
         profile.setAllowPrivateAddresses(true);
         profile.setReadTimeoutSeconds(1);
@@ -249,7 +251,7 @@ class RawScalarRestTransportTest {
 
     @Test
     void preservesBodyAndSameUriRecoveryWithoutErrorBodyOrCredentialLeak(JenkinsRule j) throws Exception {
-        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var server = HttpServer.create(new InetSocketAddress(OwnedHttpPeer.address(), 0), 0);
         var requests = new AtomicInteger();
         var authorization = new java.util.concurrent.atomic.AtomicReference<String>();
         server.createContext("/", exchange -> {
@@ -266,8 +268,7 @@ class RawScalarRestTransportTest {
         try {
             var profile = profile(server);
             var request = request(j);
-            var transport = new RawScalarRestTransport(
-                    new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+            var transport = new RawScalarRestTransport(new NetworkPolicy());
             URI uri = profile.buildUri("same", Map.of());
             var failure = assertInstanceOf(RawScalarRestTransport.Failure.class, transport.get(profile, request, uri));
             assertEquals(RawScalarRestTransport.FailureKind.HTTP_STATUS, failure.kind());
@@ -287,7 +288,7 @@ class RawScalarRestTransportTest {
 
     @Test
     void rejectsProfileCookieAndNetworkPoliciesBeforeRequest(JenkinsRule j) throws Exception {
-        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var server = HttpServer.create(new InetSocketAddress(OwnedHttpPeer.address(), 0), 0);
         var requests = new AtomicInteger();
         server.createContext("/", exchange -> {
             requests.incrementAndGet();
@@ -299,8 +300,7 @@ class RawScalarRestTransportTest {
         try {
             var profile = profile(server);
             var request = request(j);
-            var transport = new RawScalarRestTransport(
-                    new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+            var transport = new RawScalarRestTransport(new NetworkPolicy());
             URI uri = profile.buildUri("same", Map.of());
             assertThrows(
                     ProviderException.class,
@@ -333,7 +333,7 @@ class RawScalarRestTransportTest {
 
     @Test
     void readTimeoutAndBudgetLimitsRemainDistinctFromSuccessfulResponses(JenkinsRule j) throws Exception {
-        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var server = HttpServer.create(new InetSocketAddress(OwnedHttpPeer.address(), 0), 0);
         var workers = Executors.newCachedThreadPool();
         server.setExecutor(workers);
         server.createContext("/", exchange -> {
@@ -367,8 +367,7 @@ class RawScalarRestTransportTest {
         try {
             var profile = profile(server);
             var request = request(j);
-            var transport = new RawScalarRestTransport(
-                    new NetworkPolicy(host -> List.of(InetAddress.getByName("203.0.113.10"))));
+            var transport = new RawScalarRestTransport(new NetworkPolicy());
             var timeout = assertInstanceOf(
                     RawScalarRestTransport.Failure.class,
                     transport.get(profile, request, profile.buildUri("slow", Map.of())));

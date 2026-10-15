@@ -17,3 +17,4 @@ pipeline-build-step:584.vdb_a_2cc3a_d07a_
 rebuild:338.va_0a_b_50e29397
 extended-choice-parameter:388.ve7b_d0b_920e10
 dark-theme:652.vea_da_dfea_e769
+apache-httpcomponents-client-5-api:5.6-191.vb_47e2b_41c698

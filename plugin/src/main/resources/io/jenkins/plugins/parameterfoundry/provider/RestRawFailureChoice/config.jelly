@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Transport outcome" field="kind">
+    <select name="_.kind" class="jenkins-select__input select">
+      <j:forEach var="kind" items="${['HTTP_STATUS','CONNECT_TIMEOUT','READ_TIMEOUT','CONNECTION_REFUSED','EARLY_CLOSE','PREMATURE_EOF']}">
+        <option value="${kind}" selected="${instance.kind == kind ? 'selected' : null}">${kind}</option>
+      </j:forEach>
+    </select>
+  </f:entry>
+  <f:entry title="HTTP status (0 for any)" field="status"><f:number min="0" max="599" /></f:entry>
+  <f:entry title="Choice value" field="value"><f:textarea /></f:entry>
+  <f:entry title=""><div align="right"><f:repeatableDeleteButton /></div></f:entry>
+</j:jelly>

@@ -29,7 +29,17 @@
       <option value="mapped" selected="${instance.responseMode == 'mapped' ? 'selected' : null}">Mapped JSON/XML</option>
       <option value="active-choices-choice" selected="${instance.responseMode == 'active-choices-choice' ? 'selected' : null}">Active Choices single JSON</option>
       <option value="active-choices-cascade" selected="${instance.responseMode == 'active-choices-cascade' ? 'selected' : null}">Active Choices reactive single JSON</option>
+      <option value="active-choices-raw-scalar" selected="${instance.responseMode == 'active-choices-raw-scalar' ? 'selected' : null}">Active Choices whole UTF-8 response</option>
     </select>
+  </f:entry>
+  <f:entry title="Ignored whole responses" field="rawIgnoredResponses">
+    <f:repeatableProperty field="rawIgnoredResponses" add="Add ignored response" header="Exact literal" />
+  </f:entry>
+  <f:entry title="Trailing raw choices" field="rawTrailingChoices">
+    <f:repeatableProperty field="rawTrailingChoices" add="Add trailing choice" header="Exact literal" />
+  </f:entry>
+  <f:entry title="Classified failure choices" field="rawFailureChoices">
+    <f:repeatableProperty field="rawFailureChoices" add="Add failure choice" header="Transport outcome" />
   </f:entry>
   <f:entry title="Root JSONPath/XPath" field="rootPath">
     <f:textbox />

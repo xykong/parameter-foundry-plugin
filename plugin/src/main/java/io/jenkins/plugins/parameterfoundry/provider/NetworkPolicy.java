@@ -20,6 +20,10 @@ final class NetworkPolicy {
     }
 
     void requireAllowed(URI uri, boolean allowPrivateAddresses) {
+        resolveAllowed(uri, allowPrivateAddresses);
+    }
+
+    List<InetAddress> resolveAllowed(URI uri, boolean allowPrivateAddresses) {
         if (uri == null
                 || uri.getHost() == null
                 || !java.util.Set.of("http", "https").contains(uri.getScheme())) {
@@ -30,7 +34,7 @@ final class NetworkPolicy {
         }
         List<InetAddress> addresses;
         try {
-            addresses = resolver.resolve(uri.getHost());
+            addresses = List.copyOf(resolver.resolve(uri.getHost()));
         } catch (UnknownHostException exception) {
             throw new ProviderException(
                     io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
@@ -51,6 +55,7 @@ final class NetworkPolicy {
                         "Provider target resolves to a prohibited address.");
             }
         }
+        return addresses;
     }
 
     private static boolean isAlwaysBlocked(InetAddress address) {

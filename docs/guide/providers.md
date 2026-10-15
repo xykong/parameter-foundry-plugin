@@ -146,6 +146,11 @@ compared side by side.
 
 ## REST source response modes
 
+For an entire text response used as a single literal choice, use
+[`active-choices-raw-scalar`](./raw-rest-responses.md). It has separate exact
+sentinel, trailing-choice and classified-failure settings, with a restricted
+credential-free transport. The JSON response modes below remain unchanged.
+
 The default `responseMode: 'mapped'` keeps JSONPath/XPath mapping. Two data-only
 modes support the reviewed Active Choices `json.data ?: json` idiom for
 `PT_SINGLE_SELECT` sources with `filterable: true`:

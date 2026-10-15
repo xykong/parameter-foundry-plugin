@@ -10,6 +10,7 @@ Start here if you are configuring or using the plugin:
 - [Saved parameter text in Pipeline](./guide/pipeline-parameter-text.md)
 - [Cookbook](./guide/examples.md)
 - [Providers](./guide/providers.md)
+- [Whole-response REST choices](./guide/raw-rest-responses.md)
 - [Migration](./guide/migration.md)
 - [Historical parameter values and development File reader](./guide/history-compatibility.md)
 - [Best practices](./guide/best-practices.md)
