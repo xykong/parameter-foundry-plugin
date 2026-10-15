@@ -24,6 +24,18 @@ final class NetworkPolicy {
     }
 
     List<InetAddress> resolveAllowed(URI uri, boolean allowPrivateAddresses) {
+        try {
+            return resolveCheckedAddresses(uri, allowPrivateAddresses);
+        } catch (UnknownHostException exception) {
+            throw new ProviderException(
+                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
+                    "network",
+                    "Provider target could not be resolved.");
+        }
+    }
+
+    /** Distinguishes resolver absence without converting validation or address refusals into data. */
+    List<InetAddress> resolveCheckedAddresses(URI uri, boolean allowPrivateAddresses) throws UnknownHostException {
         if (uri == null
                 || uri.getHost() == null
                 || !java.util.Set.of("http", "https").contains(uri.getScheme())) {
@@ -32,15 +44,7 @@ final class NetworkPolicy {
                     "network",
                     "Provider target is not a valid HTTP(S) URI.");
         }
-        List<InetAddress> addresses;
-        try {
-            addresses = List.copyOf(resolver.resolve(uri.getHost()));
-        } catch (UnknownHostException exception) {
-            throw new ProviderException(
-                    io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,
-                    "network",
-                    "Provider target could not be resolved.");
-        }
+        List<InetAddress> addresses = List.copyOf(resolver.resolve(uri.getHost()));
         if (addresses.isEmpty()) {
             throw new ProviderException(
                     io.jenkins.plugins.parameterfoundry.evaluation.ErrorCode.PROVIDER_UNAVAILABLE,

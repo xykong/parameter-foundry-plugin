@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.ScheduledFuture;
@@ -48,6 +49,7 @@ final class RawScalarRestTransport {
 
     enum FailureKind {
         HTTP_STATUS,
+        DNS_UNRESOLVED,
         CONNECT_TIMEOUT,
         READ_TIMEOUT,
         CONNECTION_REFUSED,
@@ -127,7 +129,6 @@ final class RawScalarRestTransport {
             throw unavailable(request, "Raw scalar target must not contain user information or a fragment.");
         }
         profile.validateResolvedUri(uri);
-        var addresses = networkPolicy.resolveAllowed(uri, profile.isAllowPrivateAddresses());
         if (profile.isUseJenkinsProxy()
                 || profile.isFollowRedirects()
                 || profile.getCredentialId() != null
@@ -138,11 +139,23 @@ final class RawScalarRestTransport {
         long remaining = Math.min(
                 TimeUnit.SECONDS.toNanos(profile.getTotalTimeoutSeconds()),
                 Duration.between(Instant.now(), request.deadline()).toNanos());
-        Budget budget = new Budget(System.nanoTime() + remaining);
+        long started = System.nanoTime();
+        Budget budget = new Budget(started + remaining);
+        budget.check(request);
+        java.util.List<java.net.InetAddress> addresses;
+        try {
+            addresses = networkPolicy.resolveCheckedAddresses(uri, profile.isAllowPrivateAddresses());
+        } catch (UnknownHostException unresolved) {
+            // No resolver diagnostic or exception text becomes a selectable value.
+            return budget.complete(new Failure(FailureKind.DNS_UNRESOLVED, 0), request);
+        }
         budget.check(request);
         HttpGet get = new HttpGet(uri);
-        ScheduledFuture<?> cancellation =
-                Timer.get().schedule(() -> budget.expire(get), remaining, TimeUnit.NANOSECONDS);
+        ScheduledFuture<?> cancellation = Timer.get()
+                .schedule(
+                        () -> budget.expire(get),
+                        Math.max(0L, remaining - (System.nanoTime() - started)),
+                        TimeUnit.NANOSECONDS);
         org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager manager = null;
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;

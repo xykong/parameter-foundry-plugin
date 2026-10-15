@@ -40,8 +40,8 @@ async def main():
     image = 'jenkins/jenkins:2.568.3-lts-jdk21'
     created_network = created_container = created_relay = False
     owned_ids = {}
-    def run(command, label):
-        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    def run(command, label, input_text=None):
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, input=input_text)
         (unit / (label + '.stdout')).write_text(result.stdout)
         (unit / (label + '.stderr')).write_text(result.stderr)
         if result.returncode: raise RuntimeError(label + ' failed; inspect ' + str(unit))
@@ -49,7 +49,7 @@ async def main():
     def peer(path, **values):
         url = 'http://127.0.0.1:18182/' + path
         if values: url += '?' + urllib.parse.urlencode(values)
-        command = ['docker', 'exec', name, 'curl', '-fsS']
+        command = ['docker', 'exec', owned_ids[name], 'curl', '-fsS']
         if path == 'control': command += ['-X', 'POST']
         return json.loads(run(command + [url], 'peer-' + str(time.time_ns())))
     try:
@@ -68,7 +68,7 @@ async def main():
             sock.bind(('127.0.0.1', 0)); port = sock.getsockname()[1]
         base = 'http://127.0.0.1:' + str(port)
         owned_ids[network] = run(['docker','network','create','--internal','--label','task=pf-raw-rest-ui',network], 'create-network'); created_network = True
-        owned_ids[name] = run(['docker','run','-d','--name',name,'--network',network,'--user','root','--cpus','2','--memory','4g','-e','JAVA_OPTS=-Djenkins.install.runSetupWizard=false','-e','PF_LAB_URL='+base+'/','-e','PF_LAB_HPI_SHA='+digest,'-v',str(home)+':/var/jenkins_home','-v',str(plugins)+':/usr/share/jenkins/ref/plugins:ro','-v',str(Path(__file__).with_name('raw-rest-provider-init.groovy'))+':/usr/share/jenkins/ref/init.groovy.d/01-raw.groovy:ro',image], 'start-controller'); created_container = True
+        owned_ids[name] = run(['docker','run','-d','--name',name,'--network',network,'--user','root','--cpus','2','--memory','4g','-e','JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Djava.security.properties=/opt/pf-lab/dns.security','-e','PF_LAB_URL='+base+'/','-e','PF_LAB_HPI_SHA='+digest,'-v',str(home)+':/var/jenkins_home','-v',str(plugins)+':/usr/share/jenkins/ref/plugins:ro','-v',str(Path(__file__).with_name('raw-rest-dns.security'))+':/opt/pf-lab/dns.security:ro','-v',str(Path(__file__).with_name('raw-rest-provider-init.groovy'))+':/usr/share/jenkins/ref/init.groovy.d/01-raw.groovy:ro',image], 'start-controller'); created_container = True
         # Internal Docker networks do not publish host ports on every engine.
         # Only the fixed reverse proxy has a bridge route; Jenkins stays internal.
         relay_config = unit/'relay.conf'
@@ -99,10 +99,11 @@ async def main():
             await context.route('**/*', protect)
             page = await context.new_page(); page.on('pageerror', lambda error: errors.append(str(error)))
             await page.goto(base+'/configure',wait_until='networkidle')
-            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==2
-            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*2
+            modes=page.locator('select[name="_.responseMode"]:visible'); assert await modes.count()==3
+            assert await modes.evaluate_all('(xs)=>xs.map(x=>x.value)')==['active-choices-raw-scalar']*3
             values=await page.locator('textarea[name="_.value"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')
-            assert 'null' in values and 'topic/stable' in values and 'HTTP {status}: {uri}' in values
+            assert 'null' in values and 'topic/stable' in values and 'HTTP {status}: {uri}' in values and 'DNS unavailable' in values
+            assert await page.locator('select[name="_.kind"]:visible').evaluate_all('(xs)=>xs.map(x=>x.value)')==['HTTP_STATUS','DNS_UNRESOLVED']
             await page.screenshot(path=str(unit/'configuration-desktop.png'),full_page=True)
             await page.get_by_role('button',name='Save',exact=True).click(); await page.wait_for_load_state('networkidle')
             async def read_form(job, expected, selected, state="ready"):
@@ -146,9 +147,18 @@ async def main():
             (unit/'keyboard.json').write_text(json.dumps(keyboard_values,indent=2))
             await page.screenshot(path=str(unit/'recovery-keyboard.png'),full_page=True)
             assert await select.input_value()=='topic/stable',keyboard_values
+            await read_form('raw-rest-dns',['DNS unavailable','topic/stable'],'DNS unavailable')
+            assert peer('native-default',job='raw-rest-dns')['value']=='DNS unavailable'
+            await page.screenshot(path=str(unit/'dns-unresolved-desktop.png'),full_page=True)
+            assert run(['docker','inspect','--format','{{.Id}}',name], 'dns-recovery-owner')==owned_ids[name]
+            peer_host=urllib.parse.urlsplit(metadata['peer']).hostname
+            run(['docker','exec','-i',owned_ids[name],'tee','-a','/etc/hosts'], 'restore-owned-dns',peer_host+' raw-rest-dns.invalid\n')
+            await read_form('raw-rest-dns',['topic/recovered\n','topic/stable'],'topic/recovered\n')
+            recovered=peer('native-default',job='raw-rest-dns');assert recovered['value']=='topic/recovered\n' and recovered['type']=='hudson.model.StringParameterValue'
+            await page.screenshot(path=str(unit/'dns-recovered-desktop.png'),full_page=True)
             assert not blocked and not errors,(blocked,errors)
-            stats=peer('stats'); assert stats['jobs']==2 and stats['builds']==0 and stats['queue']==0
-            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'formsSubmitted':0,'businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
+            stats=peer('stats'); assert stats['jobs']==3 and stats['builds']==0 and stats['queue']==0
+            result={'state':'RAW_REST_BROWSER_GATE_PASS','artifact':metadata,'browser':browser.version,'cases':results,'configurationSaved':True,'mappedErrorAndFallbackRecoveryPassed':True,'keyboardSelectionPassed':True,'buildFormsSubmitted':0,'declaredDnsAndSameProfileRecoveryPassed':True,'dnsFixtureCachePolicy':'Owned JVM positive/negative DNS TTL0; production unchanged','businessBuildsScheduled':0,'stats':stats,'dependencyReceipt':'dependency-receipt.json'}
             (unit/'result.json').write_text(json.dumps(result,indent=2)); print(json.dumps({'state':result['state'],'result':str(unit/'result.json'),'cases':len(results),'sha256':digest}))
             await browser.close()
     finally:

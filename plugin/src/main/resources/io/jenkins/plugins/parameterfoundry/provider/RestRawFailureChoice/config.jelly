@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <f:entry title="Transport outcome" field="kind">
     <select name="_.kind" class="jenkins-select__input select">
-      <j:forEach var="kind" items="${['HTTP_STATUS','CONNECT_TIMEOUT','READ_TIMEOUT','CONNECTION_REFUSED','EARLY_CLOSE','PREMATURE_EOF']}">
+      <j:forEach var="kind" items="${['HTTP_STATUS','DNS_UNRESOLVED','CONNECT_TIMEOUT','READ_TIMEOUT','CONNECTION_REFUSED','EARLY_CLOSE','PREMATURE_EOF']}">
         <option value="${kind}" selected="${instance.kind == kind ? 'selected' : null}">${kind}</option>
       </j:forEach>
     </select>

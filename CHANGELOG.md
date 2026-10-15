@@ -13,9 +13,13 @@ suffix marks a build that is deployed but not tagged.
 
 ### Added
 
+- Add an optional, explicitly declared choice for unresolved DNS in whole-response REST mode; resolver diagnostics and policy refusals remain private.
+
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed
+
+- Include DNS evaluation time in whole-response HTTP outcome budgets without promising hard DNS cancellation.
 
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.

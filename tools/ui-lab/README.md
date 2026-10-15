@@ -133,7 +133,7 @@ The gate copies and hashes the exact local Maven test dependency archives, check
 the loaded HPI hash and Jenkins 2.568.3 version, and uses a fresh internal Docker
 network. A fixed nginx reverse proxy exposes a random host port on localhost;
 the controller stays on the internal network, has zero executors, and creates
-two synthetic parameter-only Jobs. The cached `nginx:1.30.5-alpine` image must
+three synthetic parameter-only Jobs. The cached `nginx:1.30.5-alpine` image must
 already exist (the runner refuses to pull it). The mock service runs
 inside that same owned container at its non-loopback private address; network
 policy is not replaced or relaxed for loopback. No production configuration,
@@ -142,7 +142,14 @@ credentials or cookies are read.
 The browser checks configuration save/roundtrip, whole-body API values and
 source UI values at 1440 and 390 pixels, non-filterable dropdowns, explicit
 HTTP failure choices, configured fallback followed by recovery, and keyboard
-selection. It blocks build/rebuild POSTs and verifies no builds or queued tasks.
+selection. The DNS case additionally saves `DNS_UNRESOLVED`, checks its declared
+UI/native default, restores only the owned hostname in that same container’s
+`/etc/hosts`, and verifies recovery with the same Connection Profile. This gate
+requires the DNS declaration support added in 0.24. The fixture JVM alone uses
+`raw-rest-dns.security` with positive/negative DNS TTL zero so recovery is
+immediate; production JVM DNS caches are untouched. DNS/error/recovery/keyboard
+cases cover desktop only. It blocks build/rebuild POSTs and verifies no builds
+or queued tasks.
 Screenshots, archive hashes and JSON results stay in the ignored timestamped
 `tools/ui-lab/.cache/raw-rest-*` directory for inspection. Cleanup checks the
 original created resource IDs before attempting each removal, and records

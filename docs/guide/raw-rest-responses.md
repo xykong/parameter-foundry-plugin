@@ -39,18 +39,30 @@ the tail `topic/stable` yields only `topic/stable` for the exact sentinel, but
 ## Failure choices and fallback
 
 Failure choices are explicitly configured data. They never use an exception's
-message or an HTTP error body. Supported kinds are `HTTP_STATUS`,
+message or an HTTP error body. Supported kinds are `HTTP_STATUS`, `DNS_UNRESOLVED`,
 `CONNECT_TIMEOUT`, `READ_TIMEOUT`, `CONNECTION_REFUSED`, `EARLY_CLOSE`, and
 `PREMATURE_EOF`. For `HTTP_STATUS`, `status: 0` matches any non-success status;
 an exact 100–599 status overrides that generic row regardless of row order.
 Other kinds require status zero. Duplicate kind/status pairs are rejected.
 
 The value supports only the fixed tokens `{status}` and `{uri}`. For example,
-an explicitly reviewed HTTP row could use `HTTP {status}: {uri}`. URI-bearing
-rows expose the configured URL to parameter users, require a query-free target,
-and should only be used for public, non-secret URLs. There is no general template
-language. A mapped failure becomes an ordinary first source choice, followed by
+an explicitly reviewed HTTP row could use `HTTP {status}: {uri}`. Rows using
+`{uri}` interpolation expose the configured URL to parameter users,
+require a query-free target, and should only be used for public, non-secret URLs.
+This restriction is specific to `{uri}` interpolation. Administrator-declared
+literal text is displayed as written: review its disclosure to parameter users
+and never include credentials, sensitive query values or other secrets. A fixed
+URI literal is not permission to interpolate arbitrary query-bearing URLs.
+There is no general template language. A mapped failure becomes an ordinary first source choice, followed by
 the trailing values, and can therefore become the API default.
+
+`DNS_UNRESOLVED` classifies only a genuine `UnknownHostException` from the
+resolver. Its value is the declared literal, never the resolver's diagnostic.
+An empty address set, prohibited addresses and invalid configuration remain
+refusals. A late DNS outcome or interruption cannot become a selectable failure
+value. DNS cannot be forcibly interrupted, but its elapsed time counts against
+the raw transport's total outcome budget. Uncached evaluations retry normally;
+underlying JVM DNS caches retain their normal behavior.
 
 Unmapped outcomes, policy refusals, TLS verification failures and budget/size
 rejections fail the Provider. Existing `fallbackOptions` and `failurePolicy`

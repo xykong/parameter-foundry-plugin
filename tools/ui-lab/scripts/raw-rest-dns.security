@@ -1,0 +1,3 @@
+# Owned browser fixture only: observe its controlled /etc/hosts recovery.
+networkaddress.cache.ttl=0
+networkaddress.cache.negative.ttl=0

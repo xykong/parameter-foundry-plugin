@@ -1,0 +1,95 @@
+{
+  "state": "RAW_REST_BROWSER_GATE_PASS",
+  "artifact": {
+    "core": "2.568.3",
+    "version": "0.24.373-SNAPSHOT",
+    "sha256": "074f618874538792149d6e9d9f1258513822421e115d51e08434117dcce78501"
+  },
+  "browser": "153.0.8010.12",
+  "cases": [
+    {
+      "width": 1440,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 1440,
+      "case": 5,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 0,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 1,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 2,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 3,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 4,
+      "matched": true
+    },
+    {
+      "width": 390,
+      "case": 5,
+      "matched": true
+    }
+  ],
+  "configurationSaved": true,
+  "mappedErrorAndFallbackRecoveryPassed": true,
+  "keyboardSelectionPassed": true,
+  "buildFormsSubmitted": 0,
+  "declaredDnsAndSameProfileRecoveryPassed": true,
+  "dnsFixtureCachePolicy": "Owned JVM positive/negative DNS TTL0; production unchanged",
+  "businessBuildsScheduled": 0,
+  "stats": {
+    "requests": 29,
+    "jobs": 3,
+    "queue": 0,
+    "builds": 0
+  },
+  "verificationState": "COMPLETE_MAVEN_AND_EXACT_ARTIFACT_BROWSER_PASS",
+  "scope": "Six whole-body cases at1440/390; config/error/recovery/typeahead and DNS declaration/same-profile recovery are desktop-only.",
+  "cleanupErrors": [],
+  "fullVerification": {
+    "tests": 523,
+    "failures": 0,
+    "errors": 0,
+    "skips": 6,
+    "spotbugsIssues": 0,
+    "spotless": "PASS"
+  }
+}

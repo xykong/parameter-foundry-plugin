@@ -5,6 +5,19 @@
 交互式版本见 [`index.html`](./index.html)，版本和场景元数据见
 [`manifest.json`](./manifest.json)。
 
+## Declared DNS failures
+
+Draft `0.24.373-SNAPSHOT`: [browser evidence](../testing/results/raw-rest-dns-ui-lab.json).
+The desktop fixture preserves the Connection Profile while restoring only its
+owned DNS name. Its JVM DNS caches are disabled explicitly for the test;
+production DNS configuration is unchanged. Complete Maven verification passes
+523 tests with zero failures/errors and six skips; the exact full-build HPI
+passes the browser gate.
+
+[![Declared DNS error choice](images/parameter-foundry/raw-rest-dns-unresolved-desktop.png)](images/parameter-foundry/raw-rest-dns-unresolved-desktop.png)
+
+[![DNS restored with the same profile](images/parameter-foundry/raw-rest-dns-recovered-desktop.png)](images/parameter-foundry/raw-rest-dns-recovered-desktop.png)
+
 ## Whole-response REST choices
 
 Snapshot `0.23.371-SNAPSHOT`, Jenkins 2.568.3, Chromium 153. The
