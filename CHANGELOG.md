@@ -24,6 +24,12 @@ suffix marks a build that is deployed but not tagged.
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
 
+## 1.27.386 - 2026-10-18
+
+### Fixed
+
+- Accept historical delimited multiple-choice strings submitted by Rebuild, preserving native array elements and rejecting unknown values.
+
 ## 1.27.382 - 2026-10-18
 
 ### Changed

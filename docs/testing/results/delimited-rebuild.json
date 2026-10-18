@@ -1,0 +1,188 @@
+{
+  "state": "DELIMITED_REBUILD_BROWSER_PASS",
+  "artifactSha256": "178d6d3e07d32c42e4d241c8c5f0bda288ec18fd615374ce93e26c9ddf8326c8",
+  "loadedArtifact": {
+    "core": "2.568.3",
+    "version": "1.27.386",
+    "sha256": "178d6d3e07d32c42e4d241c8c5f0bda288ec18fd615374ce93e26c9ddf8326c8"
+  },
+  "pluginManifest": {
+    "commons-lang3-api.jpi": "aa0908e0002c23c329df1f5e36d2ea9af6dfbd7c7f71fcf413cc471f335c2052",
+    "echarts-api.jpi": "c4d290588e76f29f231b2b1df3714abf0d27eb0053013d359ff75d5e0661be2f",
+    "structs.jpi": "a0a5db44f2cb082a9ec6572c088340521f033fff8c351fc7eba9ef7f07dbbf8d",
+    "mina-sshd-api-common.jpi": "89a212ff6b4150327a0a06e95a2e85c0b5d00d44ce65800d7d0a5b223d67bddd",
+    "json-path-api.jpi": "c032db1c87e36a57246bce59837f399f8d5f4f53be3483689a69b5c3ac0a0125",
+    "apache-httpcomponents-client-4-api.jpi": "cea2f61cc72890b962fd4b767c31778c6cb30015b4a8758b4c26b62e51ca9533",
+    "bootstrap5-api.jpi": "6b1ebd8dc1c4107a71e7f552faea6ff3501304df90a53076fb4c44b7b76179c7",
+    "pipeline-model-extensions.jpi": "00fbf0938ef13f6aedaa0900ec4cd03fcc986e34b1820bf13f761c2f29831861",
+    "joda-time-api.jpi": "589fa0c76c395dcf98543ccc4200aaf5a1a904e368e1c532439f3a5c9c9825c9",
+    "mailer.jpi": "5426a66a3f879d25fcb4baff678a28422afbabff22cd6e4f0f998fc67a3dc3fa",
+    "apache-httpcomponents-client-5-api.jpi": "5d8cb6a38c3016b2c57994eb3cdf697f416d738c85499fe384661e34d7106f39",
+    "commons-text-api.jpi": "ae2abdf957694f4aa39b9ba0b539edabc384f3da277551879e34ffb22fb13764",
+    "jquery3-api.jpi": "92f36b5b605c37d1518e2bb2166eac729cb0a18e5a89a320e82d0691cdd76cab",
+    "instance-identity.jpi": "df2b3205a6177248f12b294650a60405f65ba2cd503ca9599b2dcb72c1de5018",
+    "workflow-api.jpi": "d287875b797c0a05a99cc14732c0cb80b395306923789c24ac5640e8fe870e82",
+    "workflow-job.jpi": "6742c1c37fbb775e9c3cc68ec4d81eb28eab4ad679954cc5900a94d58cad1edd",
+    "ssh-credentials.jpi": "1e80c754fffde097e0bb1ac436c44e377aca281eb1133a22deca05dd8453345a",
+    "jackson2-api.jpi": "0afbd6f93dd7fab3601904799b0f332150f812534b73b125d93736553251ea6c",
+    "parameter-foundry.jpi": "178d6d3e07d32c42e4d241c8c5f0bda288ec18fd615374ce93e26c9ddf8326c8",
+    "pipeline-stage-tags-metadata.jpi": "032f011fc50cb273b300d44fb6c2800e3dbdf0d78548b15e0f192ba7cc95d178",
+    "credentials.jpi": "ee158355eb7503a67edbce6d20b2349d6c9a37a15263f6be73b0d8ca5a09afae",
+    "prism-api.jpi": "93fd4ebb761d525863c3b08b5274c7e58b7f94c41846f47253d1969a12ed1cbb",
+    "workflow-scm-step.jpi": "8f35b68153ee8a671d01dcdc3d86dd47837bd2d5fcf9df8d674ff8aeecfba16a",
+    "matrix-project.jpi": "01f0fc13195e7d9a0fd3ee2d22c1eae29774050c0178d05e91e87c7954e9e263",
+    "pipeline-stage-step.jpi": "e4ed6438ff6073156bc4269d362129b34099a0da7f2abb279b2e39e7dc0a75ca",
+    "pipeline-build-step.jpi": "88df1792ac9018ade1993b6bfb6b782d5718f130076685a25692291a6511741f",
+    "antisamy-markup-formatter.jpi": "29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f",
+    "json-api.jpi": "9170a4c55cd949e57bf897057041886aaab3a1a59ba8a3a1842f094c683d4e2b",
+    "pipeline-input-step.jpi": "3476f0cfc8219f6c76aa291be233a3468503024ffedd770091fcc1101dd1f357",
+    "bouncycastle-api.jpi": "fb8cb2c1bc1c0a80b9e5862e1a1b48f3b8ec075ac2947cb4343b6dc9d3f8ea63",
+    "checks-api.jpi": "27e2728fcc5f1da82923e1b1cc65d14df075dc36f1e22de963432e3d8c0e537e",
+    "gson-api.jpi": "5a5f1559838750eac8951e4ad28fcad241c72c4c8430f1920b555bfac95065a7",
+    "variant.jpi": "12e214ea694469a4461b55881ecb4074ae5dfb04797dbc0dad390f6f4bc75aaf",
+    "plain-credentials.jpi": "b5e5e35cf93ad3b818a983916cbcdf3f7866699410a4df923e6a2968ecc3a448",
+    "configuration-as-code.jpi": "ffe390d3cae9e6e6dd0fc45547fc5b70013f62145c4a06643354da8191f3aa08",
+    "git-client.jpi": "69ab80e3bd51e2e4e676a18722c02c7b163eb11a758b52ecf179d58e1ca1738f",
+    "asm-api.jpi": "151dd04d0e8a0911484cccbb3087e189eab4bb1ceb5a8ec32db96cc1c9722f3a",
+    "woodstox-core-api.jpi": "61009aade6c0b0f59f87e6c90949a5a5936deea34e3ac750715f6c3dec47b794",
+    "workflow-basic-steps.jpi": "93449eb494658d065d097e8c54f707c98c9ce3e54da2fb98281b0a0487154eaf",
+    "ionicons-api.jpi": "95f3504375d628d887425ccdf32d5606a230261ee42dc683f13958d8e973ac3f",
+    "jakarta-xml-bind-api.jpi": "930d1e7bdc23a646d28973a138151fca714314b1ecba3e220415b9609da0a9e6",
+    "jaxb.jpi": "38ddf4cf5db61a591044130c2f7ccb2b7aa9abebc8fcd8a6953f8da550d002ed",
+    "font-awesome-api.jpi": "64f769361df546d878363e705a855171cb1e79bd85320f009c94138faf28b6bc",
+    "credentials-binding.jpi": "a30b0ae2f4d3e7488ce6929aed04e1e892100d88b53a9da765523de06c944e66",
+    "pipeline-model-definition.jpi": "9f4f62e0a13fefc9c5736a20ad5124af2a324357294fd8ea8d8f848b7c497f92",
+    "config-file-provider.jpi": "372e27216101e43e3085a2644d4739b9597e3be9d6275b4b892645827eb92e00",
+    "pipeline-groovy-lib.jpi": "b166264e0bf9badf21a5ed8bb1d1e37d29856506ad419c8d9be215c5c99c6395",
+    "token-macro.jpi": "ef98e47b467571e7968925ace1c40d1103baefe230f5d4cf44250769b7b6b42b",
+    "workflow-multibranch.jpi": "f0a9857e0b07c52cc54e427b6edca274612e111cab9416d2e3c3d76a83f00cfd",
+    "script-security.jpi": "83a2979b3025f6a7e30734e9b4e62f69d50c19b8a659a6fadef7242728029ff3",
+    "javax-activation-api.jpi": "e96e88c52edf07ba00fb45b26cc411a7a95fa3d4491aaa1a5d36637665880560",
+    "snakeyaml-api.jpi": "80edbeec15b9afbca18d000cf367d9e26456aa83100dcdd09ee0ed6a4b98a9c2",
+    "workflow-step-api.jpi": "eb514e15bfe6cfb97f75350cfbbbf2b0975cc19fd5509cac965d36cacd38e8a8",
+    "rebuild.jpi": "a3cccdaba225f072af3521cbf28322f562584dd330201335802f2b65a43a757b",
+    "mina-sshd-api-core.jpi": "720375c6ca20afb8b9afe394b8222e98940d258314b7eefdb4dc4fda3995a7d8",
+    "pipeline-model-api.jpi": "cdd72a69bf2863a1683b282febd0256d5d266111134c3803a8c4a051b6b4c133",
+    "plugin-util-api.jpi": "d0e687857a78a77d6e023844d5d4f06c3df37512a176cf4f646f0aea3a498e7e",
+    "workflow-cps.jpi": "4075ae30a4fd318403fb3107415b9d1792a1c4442b7165cf8a3cc086d0fb1fdc",
+    "jakarta-activation-api.jpi": "e62298341742f14b374045387ba641ad8a19376793c76bdafebb4a05b5099712",
+    "workflow-durable-task-step.jpi": "002a2bc349f365120474fefb8abdf0cf8edcf377751202fde7be65108287e721",
+    "branch-api.jpi": "fa9c246644e1b5011241a2e6daded05ac50e59f6b9941871a012b39efe9c8deb",
+    "cloudbees-folder.jpi": "643d41a1b3a9c590ec5a16b62c43a1073c02a9f694dadcb11ff6480fd4af1ddf",
+    "job-dsl.jpi": "4991233cade18498ae3dc9cac4c7a880e5b5ac6077e45e181b231ab2cd69975b",
+    "durable-task.jpi": "251551e5e91bc9c05f845bccc646d520d317e0d876ef04687effced09a33a7f3",
+    "jakarta-mail-api.jpi": "244735ea85a51332c079d235a5713e70d3810bea62332894002acc39914ce11b",
+    "junit.jpi": "39742d23231b156ffd5b536187ebb7114c4ee9664fab32558e8284debd810afe",
+    "caffeine-api.jpi": "93e218637e99ab794efe666387195af0f12b1bd7bef35c7e40e91ec0cf6c43ef",
+    "scm-api.jpi": "1336472987daa2fa912210aba00e1e37b739ce03f75c973a6794d1a0f55c0326",
+    "display-url-api.jpi": "07eeaae738b451bade4756900b48561c6c493a42c7ba07a45b22a2dce71ac0ca",
+    "workflow-support.jpi": "914ee717ab8c1d60d0d3ea49a1af11e4ea65c1e74c0b44dc3522f9a2fe5b2a8e"
+  },
+  "pageErrors": [],
+  "failedRequests": [],
+  "rebuildVersion": "344.v805899551b_13",
+  "cases": [
+    {
+      "role": "core",
+      "pageErrors": [],
+      "viewport": 1440,
+      "delimiter": ",",
+      "status": 302,
+      "savedValues": "alpha,beta,gamma",
+      "historyUnchanged": true
+    },
+    {
+      "role": "core",
+      "pageErrors": [],
+      "viewport": 1440,
+      "delimiter": "|",
+      "status": 302,
+      "savedValues": "alpha|beta|gamma",
+      "historyUnchanged": true
+    },
+    {
+      "role": "core",
+      "pageErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'replace')\n    at xmlEscape (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:37:14)\n    at Object.menuItem (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:173:17)\n    at http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:484:32\n    at Array.map (<anonymous>)\n    at Object.generateDropdownItems (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:471:9)\n    at utils.generateDropdown.trigger (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:713:31)\n    at onload (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:435:9)\n    at Object.onCreate (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:438:9)\n    at invokeHook (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:10022:48)\n    at createTippy (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:9937:3)"
+      ],
+      "viewport": 390,
+      "delimiter": ",",
+      "status": 302,
+      "savedValues": "alpha,beta,gamma",
+      "historyUnchanged": true
+    },
+    {
+      "role": "core",
+      "pageErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'replace')\n    at xmlEscape (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:37:14)\n    at Object.menuItem (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:173:17)\n    at http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:484:32\n    at Array.map (<anonymous>)\n    at Object.generateDropdownItems (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:471:9)\n    at utils.generateDropdown.trigger (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:713:31)\n    at onload (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:435:9)\n    at Object.onCreate (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:438:9)\n    at invokeHook (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:10022:48)\n    at createTippy (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:9937:3)"
+      ],
+      "viewport": 390,
+      "delimiter": "|",
+      "status": 302,
+      "savedValues": "alpha|beta|gamma",
+      "historyUnchanged": true
+    },
+    {
+      "role": "foundry",
+      "pageErrors": [],
+      "viewport": 1440,
+      "delimiter": ",",
+      "status": 302,
+      "savedValues": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "historyUnchanged": true
+    },
+    {
+      "role": "foundry",
+      "pageErrors": [],
+      "viewport": 1440,
+      "delimiter": "|",
+      "status": 302,
+      "savedValues": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "historyUnchanged": true
+    },
+    {
+      "role": "foundry",
+      "pageErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'replace')\n    at xmlEscape (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:37:14)\n    at Object.menuItem (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:173:17)\n    at http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:484:32\n    at Array.map (<anonymous>)\n    at Object.generateDropdownItems (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:471:9)\n    at utils.generateDropdown.trigger (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:713:31)\n    at onload (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:435:9)\n    at Object.onCreate (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:438:9)\n    at invokeHook (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:10022:48)\n    at createTippy (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:9937:3)"
+      ],
+      "viewport": 390,
+      "delimiter": ",",
+      "status": 302,
+      "savedValues": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "historyUnchanged": true
+    },
+    {
+      "role": "foundry",
+      "pageErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'replace')\n    at xmlEscape (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:37:14)\n    at Object.menuItem (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:173:17)\n    at http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:484:32\n    at Array.map (<anonymous>)\n    at Object.generateDropdownItems (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:471:9)\n    at utils.generateDropdown.trigger (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:713:31)\n    at onload (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:435:9)\n    at Object.onCreate (http://127.0.0.1:32796/static/4367ee9d/jsbundles/header.js:438:9)\n    at invokeHook (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:10022:48)\n    at createTippy (http://127.0.0.1:32796/static/4367ee9d/jsbundles/vendors.js:9937:3)"
+      ],
+      "viewport": 390,
+      "delimiter": "|",
+      "status": 302,
+      "savedValues": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "historyUnchanged": true
+    }
+  ],
+  "syntheticBuilds": 12,
+  "productionCalls": 0,
+  "cleanup": {
+    "containerId": "0159cc790569c59b9c2db734ec4e40346afe23e67369292c29d0422c02b3fd73",
+    "returncode": 0
+  }
+}

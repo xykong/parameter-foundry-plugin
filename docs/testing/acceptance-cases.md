@@ -29,6 +29,7 @@ the case, but production configuration is never committed here.
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
 | Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
 | Public-source fixture hygiene | N/A | N/A | N/A | N/A | N/A | Migration adapter tests and fixture validator | Synthetic data only; no deployment |
+| Delimited historical Rebuild (UP-AC-079) | Chromium 1440 passed | Chromium 390 passed; native Core page error matched control | Native historical textbox | Existing Core semantics | Existing fallback | 558 full tests passed; scalar/array/unknown regression | 12 synthetic builds; zero production builds |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
@@ -1288,3 +1289,32 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   synthetic key beside an allowlisted dependency pin.
 - Platform coverage: shared Java/Python behavior; no new browser or device
   interaction is introduced.
+
+
+## UP-AC-079: Historical delimited multiple-choice Rebuild
+
+- Reproduction: save a Core `StringParameterValue` containing `alpha,beta,gamma`
+  for a multiple-choice parameter with `standardApiInputMode: 'delimited'` and
+  delimiter `,`; open its historical Rebuild form and submit the unchanged value.
+- Expected: the submitted scalar is split using the configured literal delimiter,
+  validated option by option, and saved as the current multiple-choice value.
+  Native arrays retain individual element boundaries.
+- Previous behavior: the entire historical scalar was validated as one option
+  and rejected with HTTP 400 and `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.
+- Fix: split only strings for multiple delimited form JSON, after handling arrays;
+  reuse the existing literal-delimiter decoder and evaluation service.
+- Shared regression: `DelimitedRebuildCompatibilityTest` covers multiple, single,
+  empty, custom and regex-character delimiters, arrays, comma-containing array
+  elements, unknown options, and unchanged single/repeated modes. Configuration
+  validation still rejects ambiguous delimiter-containing option definitions.
+- Browser verification: `tools/ui-lab/scripts/check-delimited-rebuild.py` submits
+  neutral historical forms with comma and pipe delimiters at 1440px and 390px;
+  checks saved multiple values and unchanged historical strings. Production
+  business jobs must not be submitted for this verification.
+- Verification status: 558 full Maven tests passed with zero failures, errors or
+  skips; SpotBugs and Spotless passed. The exact 1.27.386 HPI passed four
+  candidate and four native-control browser submissions with Rebuild
+  344.v805899551b_13 on Jenkins 2.568.3. Mobile Core page-error stacks matched
+  the native control exactly; no new page errors or failed requests occurred.
+  All twelve synthetic builds passed; historical strings stayed unchanged.
+  See `results/delimited-rebuild.json`.

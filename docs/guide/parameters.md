@@ -347,3 +347,13 @@ StringParameterValue. Presentation does not affect the submitted value. The
 native reference history-copy behavior keeps its empty form field.
 
 Static Extended Choice multiple migrations may set `valueTransport: 'core-string'` to save an actual Jenkins `StringParameterValue`. Pipeline `params`, build API values and environment exports retain the source-compatible string. Form strings preserve order, spaces and empty tokens; CLI and repeated fields retain the original trimming and unavailable-value filtering rules. This avoids rewriting scripts that consume the old string directly. The default `typed` transport keeps multiple values as a list. Core string transport requires static `extended-choice` multiple compatibility with `delimited` environment export; Provider-backed choices keep typed transport.
+
+
+### Historical delimited values in Rebuild
+
+A historical string can be submitted by Rebuild to a current multiple-choice
+parameter using `standardApiInputMode: 'delimited'`. Foundry splits that scalar
+with the configured literal delimiter and validates each option. An empty string
+represents an empty selection. Native JSON arrays preserve their element
+boundaries; array elements are never split. Single-choice parameters and other
+input modes retain their existing behavior.

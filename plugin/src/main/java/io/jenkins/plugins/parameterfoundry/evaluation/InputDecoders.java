@@ -66,6 +66,11 @@ public final class InputDecoders {
             return DecodedInput.present(
                     raw instanceof String text ? splitDelimited(text, definition.getDelimiter()) : List.of());
         }
+        if (definition.isMultiple()
+                && "delimited".equals(definition.getStandardApiInputMode())
+                && raw instanceof String text) {
+            return DecodedInput.present(splitDelimited(text, definition.getDelimiter()));
+        }
         return DecodedInput.present(List.of(String.valueOf(raw)));
     }
 

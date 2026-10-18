@@ -172,3 +172,15 @@ remain part of that gate. The paired native-plugin migration fixture also
 checks real owned Git HTTP/credentials, captured Core forms and detached value
 binding; sanitized results and scope are indexed in
 [`git-default-list-native-ui-lab.json`](../../docs/testing/results/git-default-list-native-ui-lab.json).
+
+
+## Historical delimited Rebuild regression
+
+After building the HPI, provide a complete owned plugin cache via
+`PF_REBUILD_PLUGIN_CACHE` and run
+`uv run tools/ui-lab/scripts/check-delimited-rebuild.py`. It uses a dedicated
+container with synthetic jobs, Rebuild 344.v805899551b_13 and the exact local HPI.
+It submits four candidate and four native-control historical forms across
+desktop/mobile viewports and comma/pipe delimiters, verifies saved values,
+unchanged history and matching native page-error stacks, then removes its owned
+container by exact ID before marking the run passed. It never calls production.
