@@ -20,6 +20,12 @@ suffix marks a build that is deployed but not tagged.
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.
 
+## 1.27.382 - 2026-10-18
+
+### Changed
+
+- Publish the Parameter Foundry 1.27 release line after completing the production parameter migration and legacy plugin retirement.
+
 ## 0.27.381 - 2026-10-16
 
 ### Fixed
