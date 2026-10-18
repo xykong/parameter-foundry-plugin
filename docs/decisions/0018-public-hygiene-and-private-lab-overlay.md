@@ -92,13 +92,15 @@ private-lab-overlay/            (private, never published)
 | 2 | Sanitize the public tree and move the operational tooling and the dated records to the overlay | Done: 17 records, 7 result files, and 6 controller scripts moved out |
 | 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done in a private overlay |
 | 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | Done for the hook and the overlay scanner; the overlay also runs a daily scan |
-| 5 | Exclude private history from publication and re-scan every public object | Revalidated October 18: later private history contains deployment markers. Prepare a separate sanitized source snapshot; retain the existing history privately. |
+| 5 | Sanitize all repository history and re-scan every object | Completed October 18 with explicit authorization: rewrite every local ref, remove historical binaries, synchronize linked worktree indexes, and purge old objects. The original Git data is backed up outside this repository. |
 | 6 | Publish and keep the overlay as the internal archive | Open: the hosting request starts from the public repository and the Jenkins hosting team forks it into `jenkinsci` ([ADR 0019](./0019-release-publication-mechanism.md)) |
 
-The earlier history scan is not a guarantee for later commits or binary
-artifacts. Public-source preparation now requires a separate sanitized snapshot
-and a fresh object scan of that candidate. The existing private history is not
-suitable for public publication. See the [publication preparation workflow](../security/open-source-preparation.md).
+The earlier history scan was not a guarantee for later commits or binary
+artifacts. The current repository has now been sanitized in place, preserving
+commit ancestry, branch names, tag names, and the public maintainer identity.
+Rewritten commit and tag object IDs differ from the external private backup.
+Verification covers every stored Git object, not only objects reachable from
+branch tips. See the [publication preparation workflow](../security/open-source-preparation.md).
 
 ## Consequences
 

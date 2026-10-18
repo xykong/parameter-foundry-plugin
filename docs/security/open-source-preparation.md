@@ -21,6 +21,41 @@ boundary.
 Historical `dist/` paths and artifact digests in release records refer to archived
 binaries. They are not files distributed in the public source checkout.
 
+## Authorized In-Place History Cleanup
+
+When all history in the existing repository must be publishable, create a
+complete backup of its Git metadata outside the repository before rewriting.
+Obtain explicit authorization to rewrite commit and tag IDs. Preserve the
+approved public author and committer identity.
+
+Rewrite all local branches, remote-tracking references, annotated tag messages,
+file paths, and text blobs. Remove historical binary release archives rather
+than assuming text replacement can sanitize their contents. Inspect historical
+images independently. Keep replacement rules and scanner reports containing
+private identifiers outside the public repository.
+
+Linked worktree indexes can keep original blobs alive after the refs have been
+rewritten. Back up and check those worktrees for staged and unstaged edits
+before synchronizing them to their rewritten branches. Preserve any user edits
+outside the repository instead of discarding them.
+
+Expire reflogs, repack and prune obsolete objects, then enumerate the complete
+object database with `git cat-file --batch-all-objects`. Scan commit, tag, tree,
+and blob data and verify there are no remaining unreachable objects. Scanning
+only `git log --all` or `git rev-list --all` is insufficient for this check.
+Use `git fsck --full --strict` to verify repository integrity. Confirm that the
+current source is unchanged and that the expected branch and tag names remain.
+
+Remove remote connections during cleanup so a routine fetch cannot reintroduce
+old history. Publishing or replacing remote history remains a separately
+authorized operation. Existing clones and remote copies are not sanitized by a
+local rewrite.
+
+## Isolated Snapshot Alternative
+
+The following workflow is an alternative when preserving the repository's
+history is not required. It does not sanitize the original repository.
+
 ## Verification
 
 1. Export only the reviewed tracked files to a separate candidate directory.
