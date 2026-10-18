@@ -74,6 +74,8 @@ help.
 
 ## Security
 
+- [Preparing a public source repository](./security/open-source-preparation.md)
+
 - [Threat model](./security/threat-model.md)
 - [Companion plugin review checklist](./security/companion-review-checklist.md)
 - [October 9 file upload security review](./security/file-upload-review-2026-10-09.md)

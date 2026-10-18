@@ -111,7 +111,7 @@ class ActiveChoicesMigrationAdapterTest {
         source.setScript("if (BUILD_MODE == \"production\") {\n"
                 + "    return [\"\"]\n"
                 + "} else {\n"
-                + "    return [\"-Dsample-project_TRACY=1\", \"\"]\n"
+                + "    return [\"-DTRACE_FLAG=1\", \"\"]\n"
                 + "}");
 
         var plan = adapter.inspect(source);
@@ -119,7 +119,7 @@ class ActiveChoicesMigrationAdapterTest {
         assertEquals(MigrationClassification.B, plan.getClassification());
         String skeleton = plan.getTargetSkeleton();
         assertTrue(skeleton.contains("foundryMappingProvider"), skeleton);
-        assertTrue(skeleton.contains("[value: '-Dsample-project_TRACY=1']"), skeleton);
+        assertTrue(skeleton.contains("[value: '-DTRACE_FLAG=1']"), skeleton);
         assertTrue(
                 plan.getDecisions().stream().anyMatch(decision -> decision.contains("empty source option")),
                 plan.getDecisions().toString());

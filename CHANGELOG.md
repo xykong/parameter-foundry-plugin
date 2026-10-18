@@ -11,6 +11,10 @@ suffix marks a build that is deployed but not tagged.
 
 ## Unreleased
 
+### Changed
+
+- Replace deployment-specific migration examples with neutral synthetic fixtures and keep historical release binaries outside the public source checkout.
+
 ### Added
 
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
@@ -418,8 +422,8 @@ records; the release record lives in the maintainer's lab overlay
   `up-` browser styling prefix are unchanged, so historical verification
   records keep resolving.
 - Released artifacts and dated verification records keep the names they were
-  published and measured under. `dist/unified-parameters-0.3.233.hpi` stays the
-  reproducible `0.3.233` artifact.
+  published and measured under. Historical `dist/` artifacts are now retained
+  outside the public source repository.
 
 ## 0.3.233 - 2026-09-21
 

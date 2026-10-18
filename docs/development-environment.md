@@ -33,8 +33,9 @@ development environment.
 
 ## Releases
 
-Until hosting completes, a release is published by committing the built HPI
-into `dist/` and recording its digest in `CHANGELOG.md`. The public release path
+Until hosting completes, built HPIs and their digests are retained outside
+the public source repository. Historical `dist/` references identify archived
+release artifacts and do not refer to files included in the public checkout. The public release path
 is Jenkins continuous delivery to `repo.jenkins-ci.org`: the version format,
 the tag convention, and the steps that depend on hosting are recorded in
 [`ADR 0019`](./decisions/0019-release-publication-mechanism.md).
@@ -52,11 +53,8 @@ uses synthetic data. Generated artifacts are written to `docs/ui-gallery/`.
 
 ## Repository identity
 
-On September 12, 2026 the commit author and committer of every commit were
-rewritten from the previous shared identity to `xy.kong <xy.kong@gmail.com>` so
-the history carries the maintainer's own identity before any public hosting
-request. Commit SHAs therefore changed on that date, and any SHA recorded before
-it refers to the pre-rewrite history.
+The public history uses `xy.kong <xy.kong@gmail.com>` as the maintainer
+identity. Do not put access tokens or deployment credentials in commits.
 
 Set the identity locally when contributing to this repository:
 

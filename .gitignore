@@ -26,3 +26,6 @@ tools/e2e/.cache
 lab/
 *.lab.properties
 *.lab-profile.json
+
+# Release binaries are retained outside the public source repository.
+/dist/

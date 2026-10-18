@@ -108,11 +108,13 @@ workflow subsumes it.
 
 ### Artifact retention
 
-Once the first CD release exists, `dist/` stops receiving new HPIs. The files
-already there stay: they are the pinned artifacts of the releases that were
-deployed to the maintainer's controller before hosting, and ADR 0017 keeps
-their names. From then on the published artifact is the one in Artifactory and
-the lab overlay records which one the controller runs.
+For public-source preparation, historical `dist/` HPIs are retained in a
+private artifact archive and excluded from the public checkout. Old artifacts
+may embed deployment-specific identifiers even when current source is clean.
+Historical artifact paths and hashes in verification records identify those
+archived files; they do not promise availability in the public repository.
+New release binaries must be distributed separately from source control.
+After hosting, Artifactory is the authoritative public artifact source.
 
 ## Execution
 
@@ -124,12 +126,12 @@ the lab overlay records which one the controller runs.
 | 3 | Land the CD enablement change (`pom.xml`, `plugin/pom.xml`, `.mvn/maven.config`, `.github/workflows/cd.yaml`) through the pull request the hosting team reviews | Open: depends on phase 2 |
 | 4 | Request the CD flag in RPU (`cd: enabled: true`) and confirm the `MAVEN_USERNAME` and `MAVEN_TOKEN` secrets appear | Open: depends on phase 3 |
 | 5 | First CD release, update-center verification, and plugin-site categorization | Open: depends on phase 4 |
-| 6 | Stop `dist/` publication and let the lab overlay carry the deployment record | Open: depends on phase 5 |
+| 6 | Remove historical binaries from the public source tree and retain private deployment records | Prepared for public-source publication |
 
 Interim releases prepare `<revision>` using the next `master` commit count and
 record the release scope in `CHANGELOG.md`. Build and verify the exact HPI from
 the pinned parent commit plus the explicitly reviewed release metadata changes,
-then include that HPI in `dist/` in the same release commit as the metadata.
+then retain that HPI and its digest outside the public source repository.
 Record the actual build inputs and SCM markers; do not describe this artifact as
 built from the later commit that retains it. After committing, verify the commit
 count, version and artifact digest before creating the local release tag. A

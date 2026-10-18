@@ -51,7 +51,7 @@ repository's collaborator list, and publishing the plugin never grants anyone
 access to the environment data behind it.
 
 ```text
-private-lab-overlay/          (private, never published)
+private-lab-overlay/            (private, never published)
   fixtures/lab.properties       real values for the fixture keys
   fixtures/MAPPING.md           placeholder -> real value, for reviewers
   profiles/e2e-production.json  the data set the e2e harness replays
@@ -90,7 +90,7 @@ private-lab-overlay/          (private, never published)
 | 0 | Inventory the tree and the history for identifiers | Done: 122 hits in 19 files, each classified |
 | 1 | Introduce the fixture resolver, the bundled synthetic defaults, and the configuration contract | Done: `LabFixtures` plus `PF_LAB_FIXTURES`; the matrix test passes with synthetic and with real values |
 | 2 | Sanitize the public tree and move the operational tooling and the dated records to the overlay | Done: 17 records, 7 result files, and 6 controller scripts moved out |
-| 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done: `private-lab-overlay` |
+| 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done in a private overlay |
 | 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | Done for the hook and the overlay scanner; the overlay also runs a daily scan |
 | 5 | Purge the history and re-scan every object | Done: `git filter-repo --replace-text`, plus a path strip for a binary screenshot; a fresh clone of the remote scans clean over 4,846 objects |
 | 6 | Publish and keep the overlay as the internal archive | Open: the hosting request starts from the public repository and the Jenkins hosting team forks it into `jenkinsci` ([ADR 0019](./0019-release-publication-mechanism.md)) |

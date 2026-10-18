@@ -5,7 +5,7 @@
 | 决策项 | 结论 |
 |--------|------|
 | 文档状态 | 第二阶段完成：功能调研、产品目标和核心设计基线 |
-| 产品定位 | 面向 Jenkins 社区的通用现代参数插件，不是 sample-project 内部专用插件 |
+| 产品定位 | 面向 Jenkins 社区的通用现代参数插件，适用于公开的 Jenkins 部署 |
 | 正式名称 | `Parameter Foundry` |
 | Plugin short name | `parameter-foundry` |
 | 核心判断 | 现有插件各自解决了部分问题，但没有一个同时做到现代 UI、类型安全、API 一致、安全数据源和优雅 Pipeline DSL |

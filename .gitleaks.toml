@@ -1,0 +1,21 @@
+[extend]
+useDefault = true
+
+# Only these exact dependency-pin lines are false positives. Other content in
+# the same files must still be scanned, including new secret assignments.
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "Reviewed upstream Jenkins dependency version pins"
+condition = "AND"
+paths = [
+  '''(?:^|/)tools/e2e/plugins\.txt$''',
+  '''(?:^|/)tools/source-canary/run-source-canary\.py$''',
+  '''(?:^|/)tools/ui-lab/scripts/check-active-choices-(?:empty-options|single)\.py$''',
+]
+regexTarget = "line"
+regexes = [
+  '''^\s*["']?(?:snakeyaml-api:2\.5-149\.v72471e9c6371|ssh-credentials:372\.va_250881b_08cd|apache-httpcomponents-client-5-api:5\.6-191\.vb_47e2b_41c698)["']?,?\s*$''',
+  '''^\s*for name,\s*version in \[\('jquery3-api','3\.7\.1-594\.vb_3864f326cf0'\),\('antisamy-markup-formatter','173\.v680e3a_b_69ff3'\)\]:\s*$''',
+]

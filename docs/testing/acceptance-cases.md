@@ -28,6 +28,7 @@ the case, but production configuration is never committed here.
 | Historical download policy (UP-AC-065) | Endpoint integration pending | N/A at utility level | N/A | N/A | N/A | Harness Run/ACL/filter/cleanup | Neutral local build only |
 | Historical stash files (UP-AC-064) | N/A | N/A | N/A | N/A | N/A | Native archive/hostile format/cleanup | Secure local Linux filesystem; unsupported providers reject |
 | Historical file streams (UP-AC-063) | N/A | N/A | N/A | N/A | N/A | Unit stream/decoder contract | N/A |
+| Public-source fixture hygiene | N/A | N/A | N/A | N/A | N/A | Migration adapter tests and fixture validator | Synthetic data only; no deployment |
 | Migration operations | Required | N/A | N/A | N/A | N/A | Required | N/A |
 | Mixed file and reactive CLI (UP-AC-035) | N/A | N/A | N/A | N/A | N/A | Required | Controller and build retention |
 | Extended Choice compatibility (UP-AC-036) | Required | Existing renderer coverage | Existing renderer coverage | Existing renderer coverage | Repeated fields | Required | Build environment |
@@ -1267,3 +1268,23 @@ with a real socket/route lifecycle check on HPI 812f30c6.
 - Fix: uncached Git joins the live-source exception to negative caching. The limiter remains before cache inspection, in-flight coalescing is unchanged, and failures still follow the configured fallback policy.
 - Verification:21focused tests pass. Complete Maven verify passes557tests with0failures/0errors/2existing private-interface prerequisite skips,SpotBugs0 andSpotlessPASS. Exact complete-build HPI passes16real HTTP/browser failure-to-recovery cycles (401/404/500/malformed,all-branch/excluded-release contracts,two viewports),32observed error/recovered UI pairs,16recovered UI parity checks and96captured/omitted/empty form value/Env pairs. Each cycle makes2fresh advertisements without runtime clear or Provider configuration changes; Foundry recovery occurs1,865–2,216ms after the last failure, inside the prior5second negative-cache interval. [Sanitized evidence](./results/git-uncached-recovery-ui-lab.json). Separate failure-option UI/submission differences remain unresolved; this case does not establish full List Git Branches migration equivalence.
 - Platform coverage: Jenkins2.568.3/Java21 with Chromium153 at1440x1000/390x844; no business source, production calls or builds. Each of64snapshots locates exactly one actual Build button by role/name and verifies disabledfalse without clicking. This preserves the current literal-input failure control behavior; it does not approve manual exception-option equivalence. Recovery uses normal page reload, not a private UI function. Screenshots inspected; physical devices and assistive technology remain unverified.
+
+
+## Public-Source Preparation Regression
+
+- Reproduction: inspect the conditional-cascade adapter fixture and the
+  organization-branch migration fixture, then run
+  `python3 tools/migration/validate-fixtures.py` and `mvn -B -ntp verify`.
+- Expected: synthetic compiler flags and source-mode names exercise the same
+  adapter classification and option behavior without identifying a private
+  deployment. Unknown modes remain unsupported pending review.
+- Previous behavior: fixtures and localized migration guidance named a private
+  deployment's conventions.
+- Fix: use a neutral trace flag and a synthetic organization-branch fixture;
+  move historical binary artifacts out of the public tree.
+- Verification: fixture validator passes for eight fixtures and fourteen source
+  families; `mvn -B -ntp verify` passes with 557 tests, zero failures, errors,
+  or skips, and zero SpotBugs findings. The scanner negative control detects a
+  synthetic key beside an allowlisted dependency pin.
+- Platform coverage: shared Java/Python behavior; no new browser or device
+  interaction is introduced.
