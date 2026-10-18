@@ -92,11 +92,13 @@ private-lab-overlay/            (private, never published)
 | 2 | Sanitize the public tree and move the operational tooling and the dated records to the overlay | Done: 17 records, 7 result files, and 6 controller scripts moved out |
 | 3 | Stand up the overlay with real values, the mapping, the denylist, and the acceptance records | Done in a private overlay |
 | 4 | Enforce: pre-push hook, overlay scan, and the public generic rules | Done for the hook and the overlay scanner; the overlay also runs a daily scan |
-| 5 | Purge the history and re-scan every object | Done: `git filter-repo --replace-text`, plus a path strip for a binary screenshot; a fresh clone of the remote scans clean over 4,846 objects |
+| 5 | Exclude private history from publication and re-scan every public object | Revalidated October 18: later private history contains deployment markers. Prepare a separate sanitized source snapshot; retain the existing history privately. |
 | 6 | Publish and keep the overlay as the internal archive | Open: the hosting request starts from the public repository and the Jenkins hosting team forks it into `jenkinsci` ([ADR 0019](./0019-release-publication-mechanism.md)) |
 
-Phases 0 to 5 are complete. Publication is the remaining step and depends on a
-decision outside this repository.
+The earlier history scan is not a guarantee for later commits or binary
+artifacts. Public-source preparation now requires a separate sanitized snapshot
+and a fresh object scan of that candidate. The existing private history is not
+suitable for public publication. See the [publication preparation workflow](../security/open-source-preparation.md).
 
 ## Consequences
 
