@@ -97,3 +97,39 @@ gitleaks git /path/to/public-candidate --redact --log-opts='--all' \
 
 When findings are resolved, rescan the exact candidate that will be pushed.
 Source preparation does not create a new production plugin release.
+
+## October 27, 2026 History Review
+
+The follow-up history review removed the operational records, result files,
+and controller scripts previously moved to the private overlay from every
+local branch and tag. Historical fixture labels were generalized. A screenshot
+containing an environment address and its gallery reference were removed from
+history rather than editing the pixels of real-browser evidence.
+
+The rewrite preserved all 386 existing commits, including commits made empty
+by the removal, and all branch and tag names. This retains the commit-count
+positions of existing releases. Both linked worktrees were synchronized before
+expiring reflogs and pruning obsolete Git objects. The current source, tests,
+and build scripts were compared with the external backup and are unchanged.
+
+Verification enumerated every stored Git object, including commit and tag
+metadata and historical file paths. The private identifier scan found no
+matches or unreachable objects. All 233 remaining historical PNG blobs were
+checked with English and Chinese OCR and contained no text or EXIF metadata.
+OCR remains an aid rather than a guarantee that all visible text is recognized.
+Gitleaks findings were individually reviewed: the 39 reported values are
+plugin archive SHA-256 digests in the delimited Rebuild test report, not
+credentials. Scanner reports, replacement rules, backups, and commit mappings
+remain outside the public repository.
+
+The follow-up `mvn -B -ntp verify` completed successfully with 558 tests,
+zero failures, zero errors, and eight prerequisite skips on macOS. Six skips
+require a filesystem providing `SecureDirectoryStream`; two require two owned
+private interface addresses. Migration fixture validation passed for eight
+fixtures covering 14 source families. These skips are not recorded as passes.
+
+A remote rewrite must use explicit expected object IDs for branch and tag
+updates, and verify the resulting remote references. Rewriting Git references
+does not erase cached commits, pull-request references, Actions logs or
+artifacts, or other clones. Those surfaces require a separate review before
+changing repository visibility.
