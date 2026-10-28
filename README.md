@@ -1,158 +1,213 @@
 # Parameter Foundry
 
-## Introduction
+**Typed choices, reactive forms, file uploads, and migration tools for Jenkins.**
 
-Parameter Foundry is a community-oriented Jenkins plugin project that aims to
-provide one secure, typed, extensible parameter model across the Jenkins UI,
-Pipeline, REST API, CLI, webhooks, upstream builds, remote triggers, and
-Rebuild.
+Parameter Foundry brings parameter configuration, validation, and value handling
+into one plugin. Build searchable lists and selection matrices, resolve options
+from governed backends, collect structured input, and deliver uploaded files to
+builds. Use the same definitions from Jenkins forms, Pipeline, REST, and CLI,
+with explicit compatibility modes when an existing Job must keep its legacy
+string behavior.
 
-The current development branch implements the roadmap through the `2.0`
-foundation: static and governed dynamic choices, reactive dependencies and
-Provider snapshots, typed Foundry Forms, migration execution and rollback,
-trusted companion extension contracts, reference Renderer and sandboxed Script
-Provider companions, built-in workspace/Base64/stash file parameters, source migration
-boundaries, and retirement reporting.
-Static Extended Choice migrations include an explicit transport compatibility
-mode for legacy CLI, repeated REST fields and form JSON submissions.
-Multiple-choice browser forms preserve declared option order for legacy environment export;
-explicit API inputs retain the caller’s order.
-The next snapshot also accepts empty static option lists in this multiple-choice
-compatibility mode, preserving literal defaults and the source configuration's
-empty-list CLI behavior through `legacyEmptyOptionsOmitCli`.
-Identical duplicate options in legacy lists and checkboxes keep separate selection
-states and repeated submitted values; canonical values remain a set.
-Literal defaults, single selection and custom-delimiter behavior still require
-the per-Job checks documented in the [migration boundaries](./docs/guide/migration.md#boundaries).
-Git branch migrations have a separate literal-input compatibility mode with
-independent dropdown selection and API/CLI defaults.
-Git Providers with `cacheTtlSeconds: 0` retry on the next request after a failure,
-while retaining request limits and declared fallback behavior.
-Git Providers also support `sortOrder: none` for unsorted legacy ref categories;
-verify full versus short ref values and actual dropdown order for each migration.
-Git `NONE` selection keeps multi-row lists unselected while preserving the separate
-API default; explicitly configured searchable Git lists also retain their row count.
-Git `DEFAULT` also leaves these lists unselected when no visible option matches its
-literal default, including after filtering.
-Version `0.14.320` adds [`foundryParameterText`](./docs/guide/pipeline-parameter-text.md)
-for Pipeline consumers that need saved legacy parameter strings without environment
-overrides or reconstruction from canonical lists.
-The step also accepts an explicit `fallbackIfMissing` literal for builds without
-an accessible saved value; it does not evaluate parameter defaults or Providers.
-Version `0.8.296` retains exact static multiple-choice defaults
-through `legacyDefaultLiteral`, literal form input and editable historical Rebuild
-values and static single transport compatibility. Source/browser verification
-is recorded in the testing guide. Empty-token transport preserves the characterized
-source contract; per-Job and exact-release gates still apply.
-Unreleased multiple Active Choices string transport preserves raw CLI/form values,
-independent API defaults and Core string history. Explicit source regex/no-filter and retain-valid refresh policies are under
-verification. HTML reference migration retains a separate gate; see the
-[parameter reference](./docs/guide/parameters.md).
-Version `0.9.299` adds an explicit unflagged Active Choices
-single transport path and configured-node order. Use
-[the observed source contract](./docs/research/active-choices-single-transport-contract.md)
-as a migration gate. Version `0.9.301` aligns configured-node
-empty-name filtering with source `String.trim()` semantics, preserving Unicode
-whitespace and the original name text.
-Version `0.10.304` migration previews select this compatibility mode for eligible literal
-single choices and preserve their descriptions and distinct UI/API defaults.
-Inline empty options remain visible and submit empty strings in this mode; ordinary
-choice modes continue to reject empty options.
-Versions follow `<major>.<minor>.<commit-count>`, where the last field is the
-number of commits on `master`; see [`CHANGELOG.md`](./CHANGELOG.md) for released
-changes and `AGENTS.md` for the release rules.
+[Getting started](docs/guide/getting-started.md) ·
+[Feature overview](docs/guide/features.md) ·
+[Parameter reference](docs/guide/parameters.md) ·
+[Examples](docs/guide/examples.md) ·
+[Changelog](CHANGELOG.md)
 
-Product and technical design documents are under [`docs/`](./docs/).
-The reproducible competitor UI benchmark is under
-[`tools/ui-lab/`](./tools/ui-lab/), with generated results in
-[`docs/ui-gallery/`](./docs/ui-gallery/).
+## Project status
 
-## Documentation
+The source repository is public. The current tagged version is **1.27.386**;
+Jenkins requires **2.528.3 or newer**. Jenkins community hosting and official
+update-center distribution are still pending. There are currently no downloadable
+GitHub Release assets; build the plugin from source using the instructions below.
+Historical release entries describe development and deployment milestones, not
+availability through the Jenkins plugin manager.
 
-New to the plugin? Start with the user guide:
+The main parameter, Provider, file-upload, and migration capabilities are
+implemented. Source-plugin compatibility is deliberately scoped: compare the
+actual Job, callers, consumers, and retained build history before retiring a
+plugin. The opt-in **File Parameters history reader remains a development
+capability**, separate from the built-in Foundry file parameters.
 
-| I want to | Read |
+## What you can build
+
+| Capability | What it provides |
 |---|---|
-| Create my first parameter | [docs/guide/getting-started.md](./docs/guide/getting-started.md) |
-| Look up a field, default, or transport | [docs/guide/parameters.md](./docs/guide/parameters.md) |
-| Copy a working configuration | [docs/guide/examples.md](./docs/guide/examples.md) |
-| Upload and consume a file | [docs/guide/file-parameters.md](./docs/guide/file-parameters.md) |
-| Connect a backend | [docs/guide/providers.md](./docs/guide/providers.md) |
-| Use a whole HTTP response as one choice | [docs/guide/raw-rest-responses.md](./docs/guide/raw-rest-responses.md) |
-| Move off another parameter plugin | [docs/guide/migration.md](./docs/guide/migration.md) |
-| Fix an error | [docs/guide/troubleshooting.md](./docs/guide/troubleshooting.md) |
+| Single and multiple choices | Dropdowns, searchable selectors, lists, radio buttons, checkboxes, selected-value chips, defaults, bounds, disabled options, and validated custom single values |
+| Selection matrices | Inline or Provider-backed rows and columns, selectable cells, per-row rules, row/column shortcuts, select-all, invert, and clear |
+| Dynamic and reactive options | Global or Folder-scoped Providers, dependency-driven refresh, snapshots, caching, explicit fallbacks, and health diagnostics |
+| Backend integrations | Static lists, Jenkins nodes/labels, dependency mappings, matrix composition, managed configuration, REST, Git refs, and reviewed catalog scripts |
+| Typed forms | Twelve field types, nested objects/arrays, validation, sections, grids, tabs, conditional layouts, map/JSON output, and controlled environment export |
+| Literal reference content | Sanitized HTML notices with an independent string value; no source script execution |
+| File uploads | Workspace, Base64, or stash delivery, configurable limits, Pipeline wrappers, build-owned retention, downloads, and Rebuild reuse |
+| Automation | Declarative/Scripted Pipeline, Job DSL, JCasC, standard Jenkins REST/CLI, a typed JSON API, and downstream builds |
+| Legacy compatibility | Explicit Active Choices, Extended Choice, and List Git Branches transports; independent UI/API defaults; preserved legacy strings and editable Rebuild values |
+| Migration and retirement | Inventory, classified previews, generated snippets, reviewed apply/clone, atomic per-Job batches, rollback, A/B evidence, read-only simulation, and retirement reports |
 
-Every configuration field also documents itself inside Jenkins through a help
-popup, and [`llms.txt`](./llms.txt) is the machine-readable entry point for AI
-assistants. Released changes are listed in [`CHANGELOG.md`](./CHANGELOG.md); the
-internal design set lives under [`docs/`](./docs/README.md).
+See the [complete feature overview](docs/guide/features.md) for configuration
+symbols, supported sources, security controls, and capability boundaries.
 
-## Development
+![Parameter Foundry parameter form](docs/ui-gallery/images/parameter-foundry/light.png)
 
-Requirements:
+Screenshots come from isolated Jenkins instances running the plugin with
+synthetic fixtures. Browse the [real-plugin UI gallery](docs/ui-gallery/README.md)
+for forms, file uploads, migration tools, and desktop/mobile examples.
 
-- JDK 21 for the build; the plugin emits Java 17 bytecode
-- Maven 3.9+
-- Docker and Google Chrome for the UI Lab
+## Build and install
 
-Run the complete verification in the pinned JDK 21 container:
+Build requirements are **JDK 21** and **Maven 3.9+**. The plugin produces Java 17
+bytecode; use a Java runtime supported by your Jenkins version.
+
+```bash
+git clone https://github.com/xykong/parameter-foundry-plugin.git
+cd parameter-foundry-plugin
+mvn -B -ntp verify
+```
+
+The package is `plugin/target/parameter-foundry.hpi`. Upload it through
+**Manage Jenkins → Plugins → Advanced settings → Deploy Plugin**, install any
+required dependencies, and restart Jenkins when requested. The deliverable is a
+single HPI containing the first-party capabilities; it still uses standard Jenkins
+plugin dependencies. The optional Job DSL integration requires Job DSL, and the
+Rebuild workflow requires the Rebuild plugin.
+
+For a repeatable build using the pinned JDK 21 container:
 
 ```bash
 make verify-container
 ```
 
-Run a local Jenkins development instance:
+Then follow [Getting started](docs/guide/getting-started.md) to configure a Job.
+Use `git checkout parameter-foundry-1.27.386` before building if you need the tagged
+source rather than the current development branch.
 
-```bash
-make run
+## A Pipeline example
+
+```groovy
+pipeline {
+  agent any
+  parameters {
+    foundryChoice(
+      name: 'CHANNEL',
+      choices: [[value: 'staging', label: 'Staging'],
+                [value: 'production', label: 'Production']],
+      renderer: 'radio',
+      defaultMode: 'explicit',
+      defaultValue: 'staging'
+    )
+    foundryChoice(
+      name: 'TARGETS',
+      selectionMode: 'multiple',
+      choices: [[value: 'web'], [value: 'android'], [value: 'ios']],
+      renderer: 'checkbox',
+      selectedDisplay: 'chips',
+      defaultMode: 'explicit',
+      defaultValues: ['web'],
+      minSelections: 1,
+      environmentExport: 'json'
+    )
+  }
+  stages {
+    stage('Inspect request') {
+      steps {
+        echo "Channel: ${params.CHANNEL}"
+        echo "Targets: ${params.TARGETS.join(', ')}"
+      }
+    }
+  }
+}
 ```
 
-Regenerate the competitor UI Gallery:
+For dynamic options, define a Provider in **Manage Jenkins → System → Parameter
+Foundry** or a Folder, then reference its `providerId`. Add `dependsOn` when its
+options depend on other parameters. See [Providers](docs/guide/providers.md).
+
+For file input, use `foundryFile` and
+[`withFoundryFileParameter`](docs/guide/file-parameters.md). For structured
+input, use [`foundryForm`](docs/guide/parameters.md#foundryform).
+
+## Values and compatibility
+
+Ordinary single choices produce a string or `null`; multiple choices produce a
+sorted canonical list; forms produce a map or JSON string. Environment export
+is configured separately. Binary uploads use multipart transport and are not
+accepted by the typed JSON API.
+
+Compatibility modes preserve selected source behaviors rather than forcing all
+legacy values into this ordinary model. Active Choices and Git compatibility can
+retain Core strings; static Extended Choice multiple parameters can opt into
+`valueTransport: 'core-string'`. Use
+[`foundryParameterText`](docs/guide/pipeline-parameter-text.md) when Pipeline needs
+the saved legacy literal without environment overrides or list reconstruction.
+
+Migration previews never execute source scripts. Jenkinsfile-declared parameters
+must be changed in their generating source. Successful migration of current
+configuration does not establish that a source plugin can safely be uninstalled;
+review [migration](docs/guide/migration.md) and
+[historical values](docs/guide/history-compatibility.md) first.
+
+## Security and governance
+
+- Shared server-side evaluation validates parameter input before scheduling.
+- Connection Profiles govern network destinations, credentials, paths, queries,
+  timeouts, redirects, and response limits. Provider resolution is budgeted.
+- Job-supplied scripts do not execute in the parameter core. The bundled script
+  companion uses reviewed catalog entries and Jenkins Script Security.
+- Reference HTML is sanitized. File destinations and upload sizes are validated;
+  arbitrary controller paths are not accepted as input.
+- Whole-response REST modes retain TLS verification and require explicit,
+  finite declarations for special failure choices and redirect destinations.
+
+See [the threat model](docs/security/threat-model.md) and
+[best practices](docs/guide/best-practices.md). Do not put credentials, private
+service addresses, or real Job XML into public issue reports.
+
+## Documentation
+
+| Task | Guide |
+|---|---|
+| Understand the complete capability set | [Feature overview](docs/guide/features.md) |
+| Configure a first parameter | [Getting started](docs/guide/getting-started.md) |
+| Look up fields, defaults, or transports | [Parameter reference](docs/guide/parameters.md) |
+| Copy configurations | [Cookbook](docs/guide/examples.md) |
+| Connect a backend or build a cascade | [Providers](docs/guide/providers.md) |
+| Use entire HTTP responses as choices | [Whole-response REST](docs/guide/raw-rest-responses.md) |
+| Upload and consume files | [File parameters](docs/guide/file-parameters.md) |
+| Read exact saved strings in Pipeline | [Saved parameter text](docs/guide/pipeline-parameter-text.md) |
+| Replace older plugins safely | [Migration](docs/guide/migration.md) · [History compatibility](docs/guide/history-compatibility.md) |
+| Diagnose a problem | [Troubleshooting](docs/guide/troubleshooting.md) |
+
+Every Jenkins configuration field includes inline help. The
+[user guide](docs/guide/README.md) is the user entry point,
+[docs/README.md](docs/README.md) indexes contributor and design material, and
+[llms.txt](llms.txt) provides a concise index for AI assistants.
+
+## Development and contributions
 
 ```bash
-make gallery
+make run                 # local Jenkins development instance
+make verify              # Maven tests and configured quality checks
+make migration-fixtures  # validate migration fixtures
+make e2e                 # real-browser Foundry checks
+make source-canary       # source-plugin compatibility checks
+make pct                 # Plugin Compatibility Tester
+make gallery             # regenerate the real-plugin UI gallery
 ```
 
-Run the real-browser Parameter Foundry E2E suite:
+Browser/container workflows have additional prerequisites; see
+[Development environment](docs/development-environment.md),
+[UI Lab](tools/ui-lab/README.md), and
+[acceptance cases](docs/testing/acceptance-cases.md). Platform-dependent tests may
+skip when their required filesystem or network capabilities are unavailable;
+report those skips separately from passing tests.
 
-```bash
-make e2e
-```
+Use [GitHub Issues](https://github.com/xykong/parameter-foundry-plugin/issues)
+for bugs and feature requests while Jenkins community hosting is pending. Include
+the plugin/Jenkins versions, input transport, a synthetic reproduction, and
+expected versus actual behavior. Contributions should include relevant checks
+and update the guides, inline help, and acceptance coverage when behavior changes.
 
-## Issues
+## License
 
-Report issues and enhancements in the [Jenkins issue tracker](https://issues.jenkins.io/).
-
-## Contributing
-
-Refer to the Jenkins project
-[contribution guidelines](https://github.com/jenkinsci/.github/blob/master/CONTRIBUTING.md).
-
-## LICENSE
-
-Licensed under MIT, see [LICENSE](LICENSE.md)
-
-Version `0.12.314` adds reactive Active Choices single transports using a governed Provider with an explicit literal
-API default and dependency-bound snapshots. Whole-response REST choices support finite
-administrator-declared TLS rejection keys while retaining default certificate validation;
-an explicit `rawStatusPolicy` can also preserve reviewed nonredirect response bodies
-without changing the default HTTP failure mappings. Separately reviewed finite
-redirect destinations can opt in to same-origin following with a shared deadline
-and final-request failure selectors;
-see [whole-response REST choices](docs/guide/raw-rest-responses.md).
-REST Providers offer data-only ordinary/cascade
-JSON response modes with source-derived UI/API metadata and per-parameter minimum filter
-length (`activeChoicesFilterLength`, default 1); see the [Provider guide](./docs/guide/providers.md#rest-source-response-modes). Real-browser and input parity remain separate
-[per-Job gates](./docs/research/active-choices-reactive-rest-contract.md).
-
-Version `0.13.316` fixes reviewed data-only Active Choices mappings: they use a plain dropdown and reset to the new list default on dependency changes, while keeping an independent literal API default. See [reactive Providers](./docs/guide/providers.md#reactive-providers).
-
-Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves positive configured row counts. Legacy zero-row sizing needs separate UI verification.
-
-Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
-
-History retirement controls introduced in 0.21.349 are described in the [historical parameter guide](docs/guide/history-compatibility.md); production activation requires source-specific retirement checks. Unreleased File history controls and their remaining workflow gates are documented there as well.
-
-Static Extended Choice multiple migrations may set `valueTransport: 'core-string'` to save an actual Jenkins `StringParameterValue`. Pipeline `params`, build API values and environment exports retain the source-compatible string. Form strings preserve order, spaces and empty tokens; CLI and repeated fields retain the original trimming and unavailable-value filtering rules. This avoids rewriting scripts that consume the old string directly. The default `typed` transport keeps multiple values as a list. Core string transport requires static `extended-choice` multiple compatibility with `delimited` environment export; Provider-backed choices keep typed transport.
-
-Historical delimited multiple-choice strings submitted by Rebuild are split with the configured delimiter and validated individually; native arrays retain element boundaries. See the [parameter guide](docs/guide/parameters.md#historical-delimited-values-in-rebuild).
+[MIT](LICENSE.md).

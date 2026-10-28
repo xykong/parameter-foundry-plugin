@@ -13,6 +13,7 @@ suffix marks a build that is deployed but not tagged.
 
 ### Changed
 
+- Refresh the public README, feature overview, user-guide navigation, and AI index to describe the current 1.27 capability set, installation path, release status, and compatibility boundaries.
 - Replace deployment-specific migration examples with neutral synthetic fixtures and keep historical release binaries outside the public source checkout.
 
 ### Added

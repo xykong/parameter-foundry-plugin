@@ -5,6 +5,9 @@ back. It takes about five minutes.
 
 ## Before you start
 
+Jenkins update-center publication is pending. Build and install the HPI using
+the [repository instructions](../../README.md#build-and-install) first.
+
 - Jenkins `2.528.3` or newer.
 - The `parameter-foundry` plugin installed and enabled
   (**Manage Jenkins → Plugins → Installed plugins**).
@@ -28,7 +31,8 @@ back. It takes about five minutes.
 
 5. Select **Save**.
 
-The same definition is available in Pipeline and Job DSL:
+The same definition is available in Pipeline and Job DSL, using their respective
+configuration syntax:
 
 ```groovy
 // Declarative Pipeline
@@ -79,7 +83,7 @@ job('deploy') {
 2. Choose renderer `Checkbox group` and **Selected value display → Chips**.
 3. Set **Default mode → Explicit values** and give one value per line.
 
-The value is now an unordered list, canonicalised by sorting machine values, so
+In ordinary typed mode, the value is now an unordered list, canonicalised by sorting machine values, so
 `ios,android` and `android,ios` always record the same build value. Environment
 export for multiple selection defaults to a comma-separated list; switch
 **Environment export** to `json` if downstream code prefers a JSON array.
@@ -106,9 +110,9 @@ policies.
 | Build page / build record | The canonical value with its selection mode |
 | Pipeline | `params.NAME` — a string, a list, or a map depending on the parameter |
 | Environment | Configured export variable(s); secret form fields are never exported |
-| CLI | `build` with a JSON array for multiple selection |
+| CLI | `build` with a JSON array for ordinary multiple selection; explicit compatibility modes have source-specific decoding |
 | REST | `buildWithParameters` plus the typed API at `parameter-foundry/api/v1/…` |
-| Rebuild | The historical value is offered again |
+| Rebuild (requires the Rebuild plugin) | Supported historical values are offered again and validated against the current definition |
 
 ## Next steps
 

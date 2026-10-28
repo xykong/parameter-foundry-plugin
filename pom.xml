@@ -15,7 +15,7 @@
   <packaging>pom</packaging>
 
   <name>Parameter Foundry Reactor</name>
-  <description>Parameter Foundry core plugin and migration adapters.</description>
+  <description>Typed choices, reactive forms, file uploads, and migration tools for Jenkins.</description>
   <url>https://github.com/xykong/parameter-foundry-plugin</url>
 
   <licenses>

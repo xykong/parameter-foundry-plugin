@@ -47,10 +47,11 @@ has to be stated before an equivalent can be generated.
 | Extended Choice custom delimiter | `standardApiInputMode` / `environmentExport` |
 | Extended Choice static multiple-selection transports | `standardApiInputMode: 'extended-choice'`, submitted export and canonical duplicate deduplication |
 | Active Choices choice | Provider plus `foundryChoice` |
-| Active Choices reactive choice/reference | `dependsOn`, or a read-only form field |
+| Active Choices reactive choice | Governed Provider with `dependsOn` |
+| Active Choices literal reference | `foundryReference`; dynamic references require reviewed redesign |
 | Active Choices Groovy list/map | Inline, REST, managed config, or Script Provider |
 | Active Choices `:selected` / `:disabled` | Option defaults and disabled metadata |
-| Active Choices formatted HTML | Structured content or a reviewed renderer; raw HTML is not carried over |
+| Active Choices formatted HTML | Sanitized literal reference content when eligible; otherwise structured content or reviewed redesign |
 | List Git Branches | Built-in Git refs Provider behind a Connection Profile; `standardApiInputMode: list-git-branches` preserves literal inputs, with `gitSelectionMode` separate from API/CLI defaults |
 | HTML parameters | `foundryForm` sections, grids, and conditional layouts |
 | JSON Editor / JSON parameter | `foundryForm` typed schema |
@@ -64,7 +65,7 @@ Extended Choice multiple-choice browser controls preserve declared option order 
 submitted environment export. Explicit API values keep caller order; canonical values
 remain the sorted set.
 
-The next snapshot permits an empty Inline option list in static multiple-choice
+Static multiple-choice migration supports an empty inline option list in
 Extended Choice compatibility mode. The UI has no selectable options. Omitted CLI
 input and comma-only input use the literal default. Set `legacyEmptyOptionsOmitCli: true`
 for missing or blank source option configuration: explicit input, including an
@@ -107,7 +108,7 @@ Review generating source and fallback behavior before applying.
   [observed source contract](../research/extended-choice-static-transport-contract.md).
 - Source scripts, markup, repository URLs, and credentials are never copied into
   the generated target.
-- In the unreleased update, List Git Branches transport mode also copies readable
+- List Git Branches transport mode copies readable
   historical Core string subclasses into editable Rebuild defaults. Nonempty text
   remains literal; empty form input keeps the source fallback to the current Job
   default. Sensitive historical values are excluded from these choice copies.

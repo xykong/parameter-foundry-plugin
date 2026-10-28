@@ -1,23 +1,28 @@
 # Parameter reference
 
-Two public parameter types form the whole user-facing surface:
+The public parameter definitions cover selection, structured input, presentation,
+and binary uploads:
 
 | Symbol | Purpose |
 |---|---|
 | `foundryChoice` | Select one value, several values, or cells of a two-dimensional table |
 | `foundryReference` | Sanitized literal HTML presentation with an independent string value |
 | `foundryForm` | Typed, structured input validated as one JSON object |
+| `foundryFile` | Upload with workspace, Base64, or stash delivery |
+| `foundryBase64File` / `foundryStashedFile` | Compatible dedicated file definitions |
 
-Both extend the Jenkins `ParameterDefinition` and expose their configuration
-through `@DataBoundConstructor`/`@DataBoundSetter`, so they work identically in
-the UI, Pipeline, Job DSL, and JCasC.
+These definitions extend Jenkins `ParameterDefinition` and expose data-bound
+configuration. Use the appropriate UI, Pipeline, Job DSL, or JCasC syntax;
+transport and value shapes differ by type and compatibility mode. See the
+[feature overview](./features.md) for the complete capability map.
 
 ## Naming rules
 
 - Parameter names must be non-empty and must not be
   `__parameter_foundry_presence` (reserved for the presence marker).
-- Option values must be unique, non-empty, and must not contain control
-  characters.
+- Ordinary option values must be unique, non-empty, and free of control
+  characters. Explicit compatibility modes below define limited empty-value
+  and identical-duplicate exceptions.
 - Provider, profile, and layout IDs use letters, digits, dot, underscore, or
   hyphen and start with a letter or digit.
 
@@ -45,7 +50,14 @@ the UI, Pipeline, Job DSL, and JCasC.
 | `required` | boolean | `false` | Reject an empty value |
 | `minSelections` / `maxSelections` | integer / integer | `0` / `-1` | Multiple selection; `-1` means unlimited |
 | `duplicatePolicy` | `reject`, `deduplicate` | `reject` | Multiple selection |
-| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice`, `list-git-branches` | `repeated` | Transport decoding; Extended Choice mode requires static choices; List Git Branches mode requires a Provider-backed single choice without dependencies |
+| `standardApiInputMode` | `repeated`, `json-array`, `delimited`, `extended-choice`, `active-choices`, `list-git-branches` | `repeated` | Transport decoding; Extended Choice mode requires static choices; List Git Branches mode requires a Provider-backed single choice without dependencies |
+| `valueTransport` | `typed`, `core-string` | `typed` | Core string storage is limited to static Extended Choice multiple compatibility with delimited export |
+| `visibleItemCount` | 0–1000 | `0` | Automatic or explicit list row count; display only |
+| `gitSelectionMode` | `default`, `top`, `none` | `default` | Source-compatible UI selection independent of Git API defaults |
+| `legacyEmptyOptionsOmitCli` | boolean | `false` | Empty static Extended Choice multiple lists: preserve source CLI omission for missing/blank source options |
+| `activeChoicesFilterLength` | integer ≥ 1 | `1` | Minimum source-style filter length |
+| `activeChoicesFilterMode` | `auto`, `none`, `regex` | `auto` | Reviewed source filtering policy |
+| `activeChoicesRefreshMode` | `default`, `retain-valid` | `default` | Reviewed dependency-refresh selection policy |
 | `delimiter` | text | `,` | Used by `delimited` input and export |
 | `allowCustomValue` | boolean | `false` | Single selection: accept a value outside the option list |
 | `customValuePattern` | regex | empty | Full-match rule for custom values |
@@ -105,7 +117,7 @@ silently empty.
 
 | Mode | Single | Multiple |
 |---|---|---|
-| `string` | the value, omitted when `null` | not applicable |
+| `string` | the value, omitted when `null` | Active Choices compatibility only; ordinary multiple choices use delimited/JSON export |
 | `delimited` | not applicable | values joined by `delimiter` |
 | `json` | not applicable | JSON array |
 | `none` | nothing exported | nothing exported |
@@ -124,7 +136,7 @@ the original controls. Explicit API inputs keep the caller’s order.
 | `buildWithParameters` | `repeated` | `repeated`, `json-array`, `delimited`, or `extended-choice` per `standardApiInputMode` |
 | Jenkins CLI | one argument | JSON array or configured delimiter; compatibility mode follows the source comma-split contract |
 | Typed API (`api/v1/build`, `api/v1/validate`) | JSON string | JSON array |
-| Pipeline `build` step | `foundryChoice` value | `foundryChoice` value with a list |
+| Pipeline `build` step | `FoundryChoiceParameterValue` with a scalar | `FoundryChoiceParameterValue` with a list |
 
 `extended-choice` supports a subset of the source plugin's static multi-select transports.
 Standard requests accept repeated fields, trim each value and omit values outside
@@ -200,7 +212,7 @@ typed input. Typed null still clears a selection; ordinary modes reject empty op
 Ordinary and typed explicit input
 stay strict; typed omission shares the API default. Per-Job source/consumer, exact-release and retirement gates still apply.
 
-The unreleased multiple transport also supports `selectionMode: multiple` with
+Active Choices multiple transport supports `selectionMode: multiple` with
 `standardApiInputMode: active-choices` and `environmentExport: string`. Standard
 CLI/form input and saved values remain Core strings; they are not converted into
 ordinary Foundry lists. For an unselected source multi-select, use UI

@@ -68,6 +68,8 @@ the same — check the *Selection mode* if the value shape itself changed.
 
 ## Reporting a problem
 
-Record reproduction steps, expected and actual behaviour, and the verification
-you ran. The repository keeps these in
+Open a [GitHub issue](https://github.com/xykong/parameter-foundry-plugin/issues)
+with the plugin and Jenkins versions, input transport, synthetic reproduction
+steps, expected and actual behaviour, and the verification you ran. Remove
+credentials, real Job XML, private addresses, and uploaded business files. The repository keeps these in
 [`../testing/acceptance-cases.md`](../testing/acceptance-cases.md).

@@ -1,12 +1,19 @@
 # Parameter Foundry Documentation
 
+The public source repository targets Jenkins 2.528.3 or newer. Start with the
+user guide for current behavior; dated research and milestone reports retain
+their original scope. Official Jenkins hosting and update-center publication
+are pending; see the [repository README](../README.md).
+
 ## User guide
 
 Start here if you are configuring or using the plugin:
 
 - [User guide index](./guide/README.md)
+- [Complete feature overview](./guide/features.md)
 - [Getting started](./guide/getting-started.md)
 - [Parameter reference](./guide/parameters.md)
+- [File parameters](./guide/file-parameters.md)
 - [Saved parameter text in Pipeline](./guide/pipeline-parameter-text.md)
 - [Cookbook](./guide/examples.md)
 - [Providers](./guide/providers.md)
@@ -63,7 +70,6 @@ help.
 - [0020: Built-in file parameters](./decisions/0020-built-in-file-parameters.md)
 - [0021: Source-specific history readers](./decisions/0021-source-specific-history-readers.md)
 
-- [File upload user guide](./guide/file-parameters.md)
 
 ## Architecture
 
@@ -85,6 +91,8 @@ help.
 - [Migration design fixtures](./migration/README.md)
 
 ## Testing
+
+- [Acceptance-case index, platform coverage, and known issues](./testing/acceptance-cases.md)
 
 - [October 10 literal Active Choices preview verification](./testing/literal-active-preview-verification-2026-10-10.md)
 - [October 10 Active Choices single compatibility verification](./testing/active-choices-single-verification-2026-10-10.md)

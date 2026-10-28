@@ -1,59 +1,54 @@
 # Parameter Foundry — User Guide
 
-This guide is for people who **use** the plugin: configuring parameters in a Job,
-reading values in a build, driving it from Pipeline, CLI, or REST, and migrating
-away from older parameter plugins.
+Configure Jenkins parameters, consume their values, integrate governed data
+sources, and migrate existing Jobs with explicit compatibility checks.
 
-If you want the internal design instead, start at
-[`../product/product-spec.md`](../product/product-spec.md),
-[`../architecture/core-architecture.md`](../architecture/core-architecture.md),
-and [`../decisions/`](../decisions/).
+The source repository is public. Jenkins community hosting and update-center
+publication are pending; see [build and installation instructions](../../README.md#build-and-install).
+The current tagged version is `1.27.386`, with Jenkins `2.528.3` as its baseline.
 
 ## Start here
 
 | Goal | Read |
 |---|---|
+| Explore all implemented capabilities and their boundaries | [Feature overview](./features.md) |
 | Create your first parameter | [Getting started](./getting-started.md) |
-| Look up every field and its default | [Parameter reference](./parameters.md) |
-| Copy a working example | [Cookbook](./examples.md) |
+| Look up fields, defaults, and transports | [Parameter reference](./parameters.md) |
+| Copy a working configuration | [Cookbook](./examples.md) |
 | Upload and consume a file | [File parameters](./file-parameters.md) |
-| Preserve legacy string predicates in Pipeline | [Saved parameter text](./pipeline-parameter-text.md) |
-| Connect a backend (REST, source JSON modes, Git, script, managed config) | [Providers](./providers.md) |
-| Preserve a whole HTTP response and declare finite DNS/TLS error choices | [Whole-response REST choices](./raw-rest-responses.md) |
-| Move off Active Choices, Extended Choice, Git branches | [Migration](./migration.md) |
-| Understand retired Git/Extended Choice history and File history development controls | [Historical parameter values](./history-compatibility.md) |
-| Decide how to model a real Job | [Best practices](./best-practices.md) |
-| Understand what the plugin is and is not | [Design goals](./design-goals.md) |
-| Fix an error you just hit | [Troubleshooting](./troubleshooting.md) |
+| Read exact saved strings in Pipeline | [Saved parameter text](./pipeline-parameter-text.md) |
+| Use REST, Git, nodes, mappings, matrices, managed config, or scripts | [Providers](./providers.md) |
+| Preserve a whole HTTP response as a choice | [Whole-response REST choices](./raw-rest-responses.md) |
+| Migrate from another parameter plugin | [Migration](./migration.md) |
+| Review historical values before retiring a source plugin | [History compatibility](./history-compatibility.md) |
+| Choose safe defaults and scalable models | [Best practices](./best-practices.md) |
+| Understand scope and non-goals | [Design goals](./design-goals.md) |
+| Diagnose an error | [Troubleshooting](./troubleshooting.md) |
 
-## One minute summary
+## Choose an entry point
 
-- Choice and structured input entry points: **`foundryChoice`** for value selection
-  (single, multiple, or a two-dimensional table) and **`foundryForm`** for typed
-  structured input.
-- Binary upload entry point: **`foundryFile`** (workspace, Base64 or stash),
-  compatible **`foundryBase64File`**, **`foundryStashedFile`**
-  and **`withFoundryFileParameter`**, using Jenkins multipart transport.
-- The same definition behaves the same way in the browser, CLI, REST, Pipeline,
-  Rebuild, and downstream builds, because every entry point calls one server-side
-  evaluation service.
-- Options come from an inline list or from a **Provider** (static, managed
-  configuration, REST, sandboxed script, Git refs). Provider-backed parameters
-  bind a build to the option set the user actually saw.
-- Values are canonical: single selection is a string or `null`, multiple selection
-  is an unordered, sorted list, and a form is a typed map or JSON object.
-- The core plugin never executes arbitrary Groovy, JavaScript, HTML, or reads
-  arbitrary controller paths. Script and custom rendering capabilities live
-  behind reviewed, declared contracts.
+- **`foundryChoice`**: select one value, multiple values, or matrix cells, using
+  inline options or a shared Provider. `dependsOn` declares reactive inputs.
+- **`foundryForm`**: collect related typed fields with validation and layouts.
+- **`foundryReference`**: display sanitized literal HTML with a separate string value.
+- **`foundryFile`**: upload a file for workspace, Base64, or stash delivery.
+  `foundryBase64File` and `foundryStashedFile` remain supported.
+- **`withFoundryFileParameter`** and **`foundryParameterText`**: consume files or
+  supported saved literal strings in Pipeline.
 
-## Configuration help inside Jenkins
+Ordinary choices use canonical strings/lists and forms use maps/JSON. Legacy
+compatibility modes deliberately retain selected source string/default behavior.
+Environment export is configured separately, and file bytes have their own
+multipart transport. Consult the relevant guide before assuming all input
+surfaces accept the same shape.
 
-Every field in the configuration UI has a help popup; this guide expands on the
-same material. If you are unsure what a field does while configuring a Job, open
-the `?` next to it.
+## Help and support
 
-## For AI assistants
+Every configuration field has a `?` help popup inside Jenkins. For bugs and
+feature requests, use [GitHub Issues](https://github.com/xykong/parameter-foundry-plugin/issues)
+with synthetic examples, versions, and reproduction steps.
 
-- Machine-readable index: [`/llms.txt`](../../llms.txt) at the repository root.
-- Requirements and planned tests: [`../testing/requirements.yaml`](../testing/requirements.yaml).
-- Acceptance cases and known issues: [`../testing/acceptance-cases.md`](../testing/acceptance-cases.md).
+Contributors can start at the [documentation index](../README.md),
+[core architecture](../architecture/core-architecture.md), and
+[acceptance cases](../testing/acceptance-cases.md).
+AI assistants should start with [llms.txt](../../llms.txt).

@@ -10,9 +10,14 @@ of a list copied into every Job.
 | Global | **Manage Jenkins → System → Parameter Foundry** | Every Job |
 | Folder | Folder → **Configure → Parameter Foundry** | That Folder's Jobs, and nested Folders when *Available to nested Folders* is set |
 
+Provider snippets on this page describe global/Folder configuration objects;
+they are not standalone Pipeline steps.
+
 Parameters reference a Provider by **Shared Provider ID**. Provider-backed
 parameters resolve options at form load, bind the build to that option set
-through a snapshot, and reject values that are no longer valid.
+through a snapshot where required by the transport, and validate ordinary
+submissions against those options. Explicit legacy literal-input modes have
+different membership/default rules; see [input decoding](./parameters.md#input-decoding).
 
 ## Provider types
 
@@ -75,6 +80,8 @@ foundryChoice(
 | Cell value template | Cell value from `{row}`, `{rowLabel}`, `{column}`, and `{columnLabel}`; the default is `{row}@{column}` |
 | Cell label template | Cell caption; empty means "row caption / column caption" |
 | Row axis label | Caption of the row axis, shown in the table corner |
+| Column axis label | Caption above the table |
+| Cells per row | `any`, `at-most-one`, or `exactly-one`; server-validated before scheduling |
 
 A long selected-value list collapses itself: above twelve chips the list is replaced by a
 `Show selected (n)` toggle, and an expanded list scrolls inside a bounded box, so a filled table
@@ -86,8 +93,6 @@ every cell of that line, click it again to clear the line, and use **Select all*
 `exactly-one` a row keeps a single cell, so a row shortcut fills the row's rank and
 the toolbar re-applies the rank after inverting instead of producing a selection
 that cannot be submitted.
-| Column axis label | Caption above the table, so the columns read as the values of another parameter |
-| Cells per row | `any`, `at-most-one`, or `exactly-one`; the server rejects a violation before the build is scheduled |
 
 Because a cell value is an ordinary option value, the Pipeline sees the selected
 cells as a list and can act on both coordinates:

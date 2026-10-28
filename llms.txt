@@ -1,197 +1,131 @@
-# Parameter Foundry (Jenkins plugin)
+# Parameter Foundry
 
-> Jenkins plugin that provides one parameter model for choices and typed input
-> across the UI, Pipeline, REST, CLI, Rebuild, and downstream builds. Values are
-> canonical, providers are governed, and the core never executes Job-supplied
-> code.
+> Jenkins plugin for typed choices, reactive forms, file uploads, governed
+> Providers, and reviewed migration from legacy parameter plugins.
 
 Repository: https://github.com/xykong/parameter-foundry-plugin
-Plugin short name: `parameter-foundry`
-Current symbols: `foundryChoice`, `foundryForm`, `foundryFile`, `foundryBase64File`, `foundryStashedFile`, `withFoundryFileParameter`, `foundryParameterText`
+Plugin short name: parameter-foundry
+Current tagged version: 1.27.386
+Jenkins baseline: 2.528.3; build: JDK 21 and Maven 3.9+; bytecode: Java 17.
+Status: public source repository; Jenkins community hosting and update-center
+publication pending. No GitHub Release assets are currently provided. Build
+plugin/target/parameter-foundry.hpi from source. Do not claim plugin-manager
+availability or that historical development release notes imply public binaries.
 
-## Start here
+## User documentation
 
-- [User guide index](docs/guide/README.md): who the guide is for and where to go next
-- [Getting started](docs/guide/getting-started.md): five-minute walkthrough
-- [Parameter reference](docs/guide/parameters.md): every field, default, and transport
-- [Saved parameter text](docs/guide/pipeline-parameter-text.md): current-build legacy raw strings, explicit missing-value fallbacks, security filtering and unsupported historical values
-- [File parameters](docs/guide/file-parameters.md): bounded workspace/Base64/stash upload, Pipeline wrappers and migration
-- [Cookbook](docs/guide/examples.md): copy-pasteable configurations
-- [Providers](docs/guide/providers.md): static, managed config, REST, script, Git refs
-- [Whole-response REST choices](docs/guide/raw-rest-responses.md): exact UTF-8 literals, trailing choices, explicit DNS/TLS failure declarations and uncached recovery; `rawStatusPolicy` defaults to `http-status`; opt-in `native-nonredirect-body` reads only 304/306/308 and 302 without Location as bodies, does not enable redirects; separate `rawRedirectTargets` plus Profile opt-in permit finite same-origin destinations under one budget, with `matchUri` failure selectors and an explicit `REDIRECT_LIMIT` mapping; `foundryRawLiteral` and `foundryRawFailureChoice` configure raw response data; TLS keys are finite admin declarations, never a verification bypass or automatic failure-reason classification
-- Git `sortOrder: none` preserves unsorted List Git Branches category order through Java HashSet iteration; full-ref values and combined-category grouping require separate verification.
-- Uncached Git ref Providers (`cacheTtlSeconds: 0`) do not reuse the generic five-second failure cooldown. Each subsequent lookup retries through existing request budgets and in-flight sharing; explicit fallback policy remains unchanged. Error-text option equivalence is a separate migration gate.
-- Git `gitSelectionMode: none` leaves multi-row list renderers and explicitly sized searchable lists unselected. In `default` mode these lists also remain unselected when no exact/containing default match exists, including after filtering; dropdown and unconfigured searchable first-option behavior is unchanged. API defaults remain independent.
-- [Migration](docs/guide/migration.md): moving off Active Choices, Extended Choice, List Git Branches, and others
-- [Best practices](docs/guide/best-practices.md): modelling, defaults, security, scale
-- [Design goals](docs/guide/design-goals.md): principles, scope, non-goals
-- [Troubleshooting](docs/guide/troubleshooting.md): stable error codes and common situations
-- [Changelog](CHANGELOG.md): released changes per version
+- [README](README.md): product overview, installation, Pipeline example, support
+- [User guide](docs/guide/README.md): task-oriented navigation
+- [Feature overview](docs/guide/features.md): complete capability inventory and boundaries
+- [Getting started](docs/guide/getting-started.md): UI and Pipeline walkthrough
+- [Parameter reference](docs/guide/parameters.md): fields, defaults, renderers, transports
+- [Cookbook](docs/guide/examples.md): examples with configuration context
+- [Providers](docs/guide/providers.md): all source types, Connection Profiles, runtime policies
+- [Whole-response REST](docs/guide/raw-rest-responses.md): exact response literals and explicit failure/redirect policies
+- [File parameters](docs/guide/file-parameters.md): modes, limits, wrappers, retention, Rebuild
+- [Saved parameter text](docs/guide/pipeline-parameter-text.md): exact saved strings and fallbackIfMissing
+- [Migration](docs/guide/migration.md): source mapping, decisions, apply, verification, retirement
+- [History compatibility](docs/guide/history-compatibility.md): restart-bound readers and File history development gates
+- [Best practices](docs/guide/best-practices.md): modeling, defaults, scale, security
+- [Design goals](docs/guide/design-goals.md): principles and non-goals
+- [Troubleshooting](docs/guide/troubleshooting.md): diagnostics and stable error codes
+- [Changelog](CHANGELOG.md): version history and scope notes; dated entries retain their original context
 
-## Core concepts
+## Public configuration symbols
 
-- `foundryChoice` with `selectionMode: single` returns a string or `null`.
-- `foundryChoice` with `selectionMode: multiple` returns an unordered list sorted by machine value.
-- `renderer: table` makes the matrix cells the selectable values; missing cells are unavailable and
-  disabled cells stay unselectable.
-- `foundryForm` returns a typed map or JSON object built from its field schema.
-- Options come from inline `choices` or from a Provider referenced by `providerId`; `dependsOn`
-  makes the parameter reactive.
-- Providers resolve through Connection Profiles that declare base URL, credentials, path and query
-  allow-lists, timeouts, and response size bounds.
-- Provider types: `foundryStaticProvider`, `foundryManagedConfigProvider`, `foundryRestProvider`,
-  `foundryGitRefProvider`, `foundryScriptProvider` (reviewed companion engine), and
-  `foundryMappingProvider` for a dependency value → option list mapping with a default list; the
-  mapping executes nothing.
-- Environment export: `string` or `none` for single selection, `delimited`, `json`, or `none` for
-  multiple selection, `json` or `none` plus per-field variables for forms.
-- Static multiple choices can use `standardApiInputMode: extended-choice` for source-compatible
-  repeated REST fields, comma-split CLI and delimited form JSON. Pair it with submitted export
-  order and duplicate deduplication; repeated supported values remain in the exported string.
-  Extended Choice list/checkbox browser forms submit in declared option order; explicit API
-  inputs retain their caller order, and canonical values remain sorted.
-  The next snapshot permits empty static multiple-choice option lists in this mode:
-  omitted CLI input preserves the literal default. Set legacyEmptyOptionsOmitCli for
-  missing/blank source options so explicit input returns no parameter; comma-only configured
-  options leave this flag off and explicit input returns an existing empty-string parameter.
-  Comma-only CLI input follows the omitted-input default path.
-  Identical duplicate Inline options are supported for legacy list/checkbox multiple selection
-  with selectedDisplay none, duplicatePolicy deduplicate and custom values disabled.
-  Each displayed entry has independent selection; repeated submitted values retain declared order.
-  Ordinary modes and conflicting duplicate metadata still reject duplicate options.
-  Version 0.7.288 has known gaps for literal/blank defaults, unlisted form values,
-  single selection and custom delimiters. Do not infer full parity from adapter
-  classification; see [source contract](docs/research/extended-choice-static-transport-contract.md).
-  Version 0.8.296 adds `legacyDefaultLiteral` for exact
-  omitted-input environment defaults and distinguishes no ParameterValue from an
-  explicit empty selection. Canonical values remain lists; explicit typed arrays
-  stay strict. Form strings remain literal and arrays join without filtering the
-  exported string; Rebuild keeps an editable historical literal. Compatibility
-  requires submitted order and delimited/disabled export. Static single compatibility is implemented and passes characterized source/browser gates.
-  Single CLI/standard fields filter and join into a scalar; form literals remain raw,
-  and API defaults are independent of UI defaults. Explicit typed strings stay strict.
-  `legacyEmptyChoiceAllowed` preserves source empty CLI/standard token separators;
-  no empty option is added to the UI/canonical list. Ordinary and typed input stay
-  strict. Candidate verification passes 365 tests, 9,792 source factory cases and
-  22 browser checks; exact release and per-Job source/consumer/history gates remain.
-- Unreleased Git history fix: `standardApiInputMode: list-git-branches` copies readable historical StringParameterValue subclasses into transient editable Rebuild defaults, preserving literal text and current Job defaults. Empty form submission retains the source fallback; sensitive values are excluded. This adds no source-class deserializer or uninstall approval.
-- Provider-backed single choices without dependencies can use `standardApiInputMode: list-git-branches`: literal unlisted revisions remain accepted, explicit inputs/defaults do not fetch Git, and supplied snapshots retain binding/expiry validation. `gitSelectionMode` preserves dropdown selection independently of API/CLI defaults.
-- Typed API: `…/parameter-foundry/api/v1/{schema,resolve,validate,build,providers/health,import/preview}`.
-- Errors carry stable codes such as `PARAMETER_FOUNDRY_UNKNOWN_VALUE`.
-- Migration CLI: `parameter-foundry-migration` scans the controller, previews a
-  Job with its decisions and exact diff, and applies one atomic batch per Job;
-  `parameter-foundry-migration-verify` stores the before/after A/B evidence on
-  the migration record.
-- A parameter that the Job's Pipeline declares is reported as blocked: the
-  Jenkinsfile has to change, because Declarative re-applies the declared
-  parameters at every build and would revert a configuration migration.
-- Read-only replacement simulation: `…/parameter-foundry-replacement-simulation/report`
-  compares every production Job's recorded values and environment exports with
-  the simulated foundry control and reports `EQUIVALENT`, `MISMATCH`,
-  `NEEDS_PROVIDER`, `MANUAL_REDESIGN`, `UNVERIFIED`, or `BLOCKED` per parameter.
-- The migration page, the retirement dashboard, and every adapter reason,
-  decision, fact, and verification case ship in English, Chinese, Japanese, and
-  Korean.
+Parameter definitions: foundryChoice, foundryForm, foundryReference, foundryFile,
+foundryBase64File, foundryStashedFile.
+Pipeline helpers: withFoundryFileParameter, foundryParameterText.
+Providers: foundryStaticProvider, foundryNodeProvider, foundryMappingProvider,
+foundryMatrixProvider, foundryManagedConfigProvider, foundryRestProvider,
+foundryGitRefProvider, foundryScriptProvider.
+Supporting configuration: foundryOption, foundryFormField, foundryFormLayout,
+foundryConnectionProfile, foundryProfileHeader, foundryRestQuery, foundryTransform,
+foundryMappingCase, foundryScriptCatalogEntry, foundryRawLiteral,
+foundryRawFailureChoice. Global/Folder configuration uses parameterFoundry.
+These are contextual configuration symbols, not interchangeable Pipeline steps.
+Job DSL closures differ from Pipeline named-argument definitions.
 
-## Conventions for generated content
+## Value and transport rules
 
-- Prefer Provider-backed parameters over copied option lists.
-- Keep machine values stable; change labels, not values.
-- Use `defaultMode: none` unless a default is genuinely safe.
-- Validate via `api/v1/validate` before scheduling when building tooling.
+- Ordinary single choice: string or null. Ordinary multiple choice: canonical
+  sorted list. Form: map or JSON string. Labels do not determine machine identity.
+- Multiple-choice environment export can preserve submitted order independently
+  of canonical values. Explicit legacy modes can use Core string storage.
+- Active Choices single/multiple compatibility preserves source strings and
+  independent UI/API defaults. Filtering and dependency-refresh policies are
+  explicit. Typed explicit submissions retain their defined membership checks.
+- Static Extended Choice compatibility preserves reviewed literal defaults,
+  empty options/tokens, duplicate entries and export order. valueTransport:
+  core-string requires static multiple extended-choice mode with delimited export.
+- List Git Branches mode accepts literal revisions independently of the advisory
+  option listing. UI selection and API defaults are separate. cacheTtlSeconds: 0
+  retries Git failures on the next request; sortOrder: none has no stable-order
+  guarantee across runtimes.
+- foundryReference sanitizes literal HTML; it does not execute dynamic scripts.
+- foundryParameterText reads current-build saved strings, not overridden env,
+  reconstructed lists, defaults, or Provider results. Sensitive/file values are excluded.
+- Typed JSON endpoints under each Job's parameter-foundry/api/v1/ are schema,
+  resolve, validate, build, providers/health, and import/preview. Binary definitions
+  require standard multipart/file transports rather than this JSON API.
+- Rebuild delimited scalar strings are split by the configured literal delimiter;
+  native array elements retain their boundaries. Current validation still applies.
 
-## Boundaries
+## Providers and security
 
-- The core plugin never executes Job-supplied Groovy, JavaScript, HTML, or reads controller file
-  paths. Scripting and custom rendering live behind reviewed companion contracts.
-- Foundry file parameters ship in the single HPI without File Parameters dependencies.
-  Rejected HTTP/CLI uploads and cancelled queue items release pending data immediately;
-  crash recovery protects active uploads and admitted queue/build ownership.
-  `foundryFile` selects workspace, base64 or stash delivery.
-  maxUploadBytes=0 inherits 1 MiB decoded bytes for Base64 or 100 MiB for workspace/stash;
-  positive limits override defaults and are enforced for UI/API/CLI, downstream delivery and Rebuild.
-  Workspace mode automatically places files in Freestyle and uses withFoundryFileParameter in Pipeline;
-  it preserves Core relative destinations and original filename environment keys.
-  UI/REST multipart and CLI share bounded ingestion. Typed JSON rejects binary definitions.
-  Source file migrations are class B; wrappers change to withFoundryFileParameter,
-  ordinary unstash keeps its name, and binary lifecycle needs manual verification.
-  Keep source plugins until historical and generated references are retired.
+- Inline choices or a global/Folder Provider supply options. dependsOn declares
+  reactive inputs; snapshots bind supported submissions to definitions/dependencies.
+- Connection Profiles control destinations, credential IDs, path/query allowlists,
+  timeouts and sizes. Runtime includes caching, fallback policies and request budgets.
+- REST mapped and reviewed Active Choices JSON modes are data-only. Whole-response
+  REST has a separate restricted credential-free transport, exact literals, finite
+  DNS/TLS failure declarations, and separately opted-in same-origin redirect targets.
+  TLS validation is never bypassed; status policy alone does not follow redirects.
+- Core evaluation does not execute Job-supplied scripts or read arbitrary controller
+  paths. The bundled sandbox-groovy engine uses reviewed catalog entries through
+  Script Security. Reference HTML is sanitized, not arbitrary executable markup.
 
-## Internal references (for contributors and reviewers)
+## File delivery
 
+- foundryFile: workspace (default), base64, or stash. Dedicated older symbols remain.
+- maxUploadBytes: 0 inherits 1 MiB decoded Base64 or 100 MiB workspace/stash;
+  positive values override the limit. Infrastructure and environment limits also apply.
+- Freestyle places workspace files automatically; Pipeline uses
+  withFoundryFileParameter in an allocated workspace. Base64/stash wrapper binds a
+  temporary path; workspace mode preserves original-filename environment semantics.
+- Rejected/cancelled uploads are cleaned up; retained content follows build lifecycle.
+  Rebuild can reuse retained Foundry uploads; mode changes need replacement bytes.
+- Legacy file migration requires wrapper/producer/history review. Base64 is unsuitable
+  for secrets. Job read permissions govern uploaded-file access.
+
+## Migration and history
+
+- 14 source families: Extended Choice, Active Choices, List Git Branches, Custom
+  Checkbox, Editable Choice, Extensible Choice, HTML Parameters, JSON Editor,
+  JSON Parameter, Multiselect, REST List, Validating String, File Parameters, Core File.
+- CLI: parameter-foundry-migration and parameter-foundry-migration-verify.
+  Preview classification/decisions, per-Job atomic apply, rollback, A/B evidence,
+  read-only replacement simulation, and retirement reporting have distinct roles.
+- Jenkinsfile-declared parameters and multibranch generators need source edits.
+  Adapter classification alone is not proof of source or historical workflow parity.
+- legacyGitHistoryEnabled and legacyExtendedChoiceHistoryEnabled default false,
+  require a full restart, source absence, integrity, and class-ownership acceptance.
+- File history remains a development capability: legacyFileHistoryEnabled defaults
+  false; legacyFileHistoryMaxBytes defaults 100 MiB. Completed local values/passive
+  metadata only; no pending upload, active wrapper, remote-storage or uninstall guarantee.
+
+## Contributor references
+
+- [Documentation index](docs/README.md)
+- [Development environment](docs/development-environment.md)
+- [Acceptance cases](docs/testing/acceptance-cases.md)
 - [Requirements manifest](docs/testing/requirements.yaml)
-- [Acceptance cases and known issues](docs/testing/acceptance-cases.md)
-- [Product specification](docs/product/product-spec.md)
 - [Core architecture](docs/architecture/core-architecture.md)
+- [Product specification](docs/product/product-spec.md)
 - [Architecture decisions](docs/decisions/)
-- [Production verification records](docs/testing/)
+- [Threat model](docs/security/threat-model.md)
+- [Public-source preparation](docs/security/open-source-preparation.md)
 
-- Version 0.9.299: single `standardApiInputMode: active-choices` preserves
-  unflagged source string transports and Core StringParameterValue history/queue/env aliases.
-  `activeChoicesApiDefaultMode: first|literal` and `activeChoicesApiDefaultLiteral`
-  separate omitted API defaults from radio/dropdown UI defaults. Ordinary/typed explicit
-  values stay strict; supplied snapshots remain validated. No source scripts execute.
-  Node Provider `source: configured-nodes` preserves built-in-first configured order,
-  including offline/zero-executor nodes. Existing nodes/labels modes retain behavior.
-  Exact 0.9.299 release gates pass; per-Job migration gates remain; see UP-AC-043.
-
-- Version 0.9.301 fixes configured-node empty-name filtering to match
-  Java `String.trim()` source semantics; it preserves Unicode whitespace and
-  original leading/trailing spaces. UP-AC-044 shared-resolution and exact release browser gates pass; full regression passes 375 tests. Per-Job migration and retirement gates remain.
-
-- Literal Active Choices preview targets use the single compatibility mode only
-  for unflagged, unfiltered choices without dependencies or cached
-  defaults. Preserve descriptions, first API defaults and dropdown/radio UI
-  defaults. Snapshot UP-AC-045 passes 378 regression tests, 44/44 adapter factory cases,
-  real-browser defaults and description snippet round-trip. It is not deployed;
-  per-Job, exact release and retirement gates remain.
-
-- Version 0.10.304 single active-choices mode supports one empty inline option,
-  preserving its position, empty-string submission and typed empty vs null.
-  UP-AC-046 passes 380 Harness tests, 132/132 source cases, six browser pairs,
-  twelve empty-string form builds and editable Core history. The exact release artifact passes the same gates; per-Job acceptance remains.
-
-- Reactive single `active-choices` compatibility requires a Provider and `activeChoicesApiDefaultMode: literal`;
-  omitted input uses the configured fallback string, explicit legacy strings do not resolve options,
-  and optional snapshots bind dependencies. Typed explicit input stays strict. This transport feature
-  does not establish generic REST response or real-browser source parity.
-
-- REST `responseMode` defaults to `mapped`; `active-choices-choice` and
-  `active-choices-cascade` interpret reviewed JSON data-or-root single dropdown
-  responses without executing Groovy. They preserve source metadata and separate
-  ordinary API defaults (including marked comma joins/raw first keys) from UI
-  selection. Cascades retain independent literal API defaults. Mapping paths and
-  transforms do not apply. Configure a governed Connection Profile, source
-  fallback options and live caching policy; per-Job/browser/form and retirement
-  verification remain required. See the Providers guide.
-
-- Reviewed single REST source filters preserve per-parameter activeChoicesFilterLength (default 1); copy source filterLength when migrating. Short nonempty filters retain the previous list; clearing rebuilds it.
-
-- Reviewed Active Choices single Mapping Providers reset UI selection on dependency changes; renderer select has no source regex filter. Literal API defaults are independent; option resolution requires declared dependencies. Ordinary mapping Providers retain valid selections.
-
-Choice list renderers accept `visibleItemCount` (0 for automatic sizing, 1–1000 for an explicit row count). It affects display height only, applies with and without JavaScript, and does not limit options or selections. Extended Choice multiple-list migration preserves positive configured row counts. Legacy zero-row sizing needs separate UI verification.
-
-- Unreleased Active Choices multiple transport uses `standardApiInputMode: active-choices`, `selectionMode: multiple`, and `environmentExport: string`. Standard callers preserve Core strings; typed explicit arrays retain membership validation. UI empty selection and API first/literal defaults are independent. Non-empty option values are required; filtering, refresh and formatted HTML need separate source/browser verification.
-
-- Reviewed Active Choices UI policies: `activeChoicesFilterMode` auto/none/regex and `activeChoicesRefreshMode` default/retain-valid. Defaults retain existing behavior. Regex uses source lowercase/minimum-length rules; successful multiple filtering clears selection. Policy changes invalidate snapshots and must survive configuration/snippet/Rebuild copies. HTML reference migration remains separate.
-
-Literal presentation references use `foundryReference`; see [parameter types](docs/guide/parameters.md).
-
-- Source-specific history readers introduced in 0.21.349: `legacyGitHistoryEnabled` and `legacyExtendedChoiceHistoryEnabled` independently default false and take effect only after full restart. Each requires source absence, its own immutable resource integrity and class ownership. Initial Core targets 2.528.3/2.568.3; Beta/internal API exception is method-local and checker remains enabled. Status conflicts invalidate acceptance; hot native reinstall unsupported. Extended Choice covers historical strings after current native definitions/generators are migrated; preserve JSON-file consumers separately. Source definitions/Replay and file history are independent gates. See [history guide](docs/guide/history-compatibility.md). Isolated product tests do not approve production activation or source removal.
-
-- Unreleased File history development: `legacyFileHistoryEnabled` defaults false,
-  `legacyFileHistoryMaxBytes` defaults 100 MiB; both require full restart. A fixed
-  isolated bundle supplies completed Base64/local stash shapes and passive graph
-  metadata only. Four class owners and descriptor/Symbol discovery precede ACTIVE;
-  every binary open checks live acceptance. Job.READ plus Core-filtered Run value
-  identity precedes download. No upload definitions, native Delete, pending tmpFile
-  reader or remote fallback. Active wrappers, pending uploads, Rebuild/Replay,
-  producer migration and exact-HPI both-Core/HTTP/browser validation remain gates.
-  Keep native source installed until full workflow fidelity is proved. See
-  [history guide](docs/guide/history-compatibility.md).
-
-Static Extended Choice multiple migrations may set `valueTransport: 'core-string'` to save an actual Jenkins `StringParameterValue`. Pipeline `params`, build API values and environment exports retain the source-compatible string. Form strings preserve order, spaces and empty tokens; CLI and repeated fields retain the original trimming and unavailable-value filtering rules. This avoids rewriting scripts that consume the old string directly. The default `typed` transport keeps multiple values as a list. Core string transport requires static `extended-choice` multiple compatibility with `delimited` environment export; Provider-backed choices keep typed transport.
-
-- [Public-source preparation and history isolation](docs/security/open-source-preparation.md)
-
-Historical Rebuild scalar strings for multiple choices in delimited mode are split with the configured literal delimiter and validated individually; native arrays are never split. See UP-AC-079 in docs/testing/acceptance-cases.md.
+Use current code and user guides for implemented behavior. Older roadmap stage
+labels and dated verification reports describe their own scope, not present-day
+release availability. Keep examples synthetic and never publish private fixtures.

@@ -56,9 +56,9 @@ uses synthetic data. Generated artifacts are written to `docs/ui-gallery/`.
 The public history uses `xy.kong <xy.kong@gmail.com>` as the maintainer
 identity. Do not put access tokens or deployment credentials in commits.
 
-Set the identity locally when contributing to this repository:
+Contributors should use their own public identity. Configure it locally if needed:
 
 ```bash
-git config user.name "xy.kong"
-git config user.email "xy.kong@gmail.com"
+git config user.name "Your Name"
+git config user.email "you@example.com"
 ```

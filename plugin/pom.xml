@@ -13,8 +13,8 @@
   <packaging>hpi</packaging>
 
   <name>Parameter Foundry</name>
-  <description>One parameter model for every Jenkins entry point.</description>
-  <url>https://github.com/jenkinsci/parameter-foundry-plugin</url>
+  <description>Typed choices, reactive forms, file uploads, and migration tools for Jenkins.</description>
+  <url>https://github.com/xykong/parameter-foundry-plugin</url>
 
   <dependencies>
     <dependency>
