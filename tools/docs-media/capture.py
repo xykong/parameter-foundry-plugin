@@ -41,7 +41,7 @@ async def main():
         await frame('05-invert',0)
         await matrix.locator('thead th button',has_text='staging').first.click()
         await matrix.screenshot(path=OUTPUT/'matrix.png')
-        metadata={'source':'isolated synthetic Jenkins UI Lab','job':'parameter-foundry-provider-e2e', 'frames':frames, 'hpi_sha256':hashlib.sha256((ROOT/'plugin/target/parameter-foundry.hpi').read_bytes()).hexdigest()}
+        metadata={'source':'isolated synthetic Jenkins UI Lab','job':'parameter-foundry-provider-e2e', 'frames':frames, 'hpi_sha256':hashlib.sha256((ROOT/'target/parameter-foundry.hpi').read_bytes()).hexdigest()}
         (RAW/'capture.json').write_text(json.dumps(metadata,indent=2)+'\n')
         await page.goto('http://127.0.0.1:18081/job/parameter-foundry-form-e2e/build?delay=0sec', wait_until='networkidle')
         form = page.locator('[data-parameter-name="DEPLOYMENT"]')

@@ -147,13 +147,13 @@ async def main():
   else:raise RuntimeError('UNO fixture initialization failed; controller log retained')
   jar=ROOT/'uno-single-contract-cli.jar'
   with urllib.request.urlopen(lab.BASE_URL+'/jnlpJars/jenkins-cli.jar') as response:jar.write_bytes(response.read())
-  with zipfile.ZipFile(PUBLIC/'plugin/target/parameter-foundry.hpi') as archive:
+  with zipfile.ZipFile(PUBLIC/'target/parameter-foundry.hpi') as archive:
    manifest=archive.read('META-INF/MANIFEST.MF').decode();lines=[]
    for line in manifest.splitlines():
     if line.startswith(' ') and lines:lines[-1]+=line[1:]
     else:lines.append(line)
    expected_version=next(line.split(': ',1)[1] for line in lines if line.startswith('Plugin-Version: '))
-  expected_sha=hashlib.sha256((PUBLIC/'plugin/target/parameter-foundry.hpi').read_bytes()).hexdigest()
+  expected_sha=hashlib.sha256((PUBLIC/'target/parameter-foundry.hpi').read_bytes()).hexdigest()
   verified_factories=FACTORIES.replace('def j=Jenkins.get();def rows=[]', 'def j=Jenkins.get();assert j.pluginManager.getPlugin(\'parameter-foundry\').version=='+json.dumps(expected_version)+';assert java.security.MessageDigest.getInstance(\'SHA-256\').digest(j.pluginManager.getPlugin(\'parameter-foundry\').archive.bytes).encodeHex().toString()=='+json.dumps(expected_sha)+';def rows=[]')
   result=subprocess.run(['docker','run','--rm','-i','--network','host','-v',str(jar)+':/work/cli.jar:ro','maven:3.9.11-eclipse-temurin-21','java','-jar','/work/cli.jar','-s',lab.BASE_URL,'-webSocket','groovy','='],input=verified_factories.encode(),capture_output=True)
   (ROOT/'uno-single-contract-factories-stderr.log').write_bytes(result.stderr)

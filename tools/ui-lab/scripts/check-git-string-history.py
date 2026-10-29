@@ -76,7 +76,7 @@ async def main():
         assert not list(lab.PLUGINS_DIR.glob("*.jpi")), "Use a fresh history plugin directory"
         for source in args.dependency_dir.glob("*.jpi"):
             shutil.copy2(source, lab.PLUGINS_DIR / source.name)
-        shutil.copy2(ROOT / "plugin/target/parameter-foundry.hpi", lab.PLUGINS_DIR / "parameter-foundry.jpi")
+        shutil.copy2(ROOT / "target/parameter-foundry.hpi", lab.PLUGINS_DIR / "parameter-foundry.jpi")
     else:
         lab.prepare_plugins()
     shutil.copy2(args.legacy_hpi, lab.PLUGINS_DIR / "list-git-branches-parameter.jpi")

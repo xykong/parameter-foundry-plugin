@@ -7,6 +7,8 @@ are pending; see the [repository README](../README.md).
 
 ## User guide
 
+- [Installation and prerequisites](./guide/installation.md)
+
 Start here if you are configuring or using the plugin:
 
 - [User guide index](./guide/README.md)

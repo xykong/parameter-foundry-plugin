@@ -23,7 +23,7 @@ class RequirementManifestTest {
 
     @Test
     void manifestIsUniquePlannedAndMappedToImplementationStatus() throws IOException {
-        Path repository = Path.of("..").toAbsolutePath().normalize();
+        Path repository = Path.of(".").toAbsolutePath().normalize();
         Path manifest = repository.resolve("docs/testing/requirements.yaml");
         Path releaseOneStatus = repository.resolve("docs/testing/1.0-implementation-status.md");
         Path releaseOneOneStatus = repository.resolve("docs/testing/1.1-implementation-status.md");

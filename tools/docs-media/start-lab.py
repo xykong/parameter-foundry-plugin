@@ -21,7 +21,7 @@ lab.PLUGINS_DIR = ROOT / "tools/e2e/.cache/docs-media-plugins"
 lab.PLUGINS_DIR.mkdir(exist_ok=True)
 for plugin in source_plugins.glob("*.jpi"):
     shutil.copy2(plugin, lab.PLUGINS_DIR / plugin.name)
-shutil.copy2(ROOT / "plugin/target/parameter-foundry.hpi", lab.PLUGINS_DIR / "parameter-foundry.jpi")
+shutil.copy2(ROOT / "target/parameter-foundry.hpi", lab.PLUGINS_DIR / "parameter-foundry.jpi")
 # The older fixture separates registry rows with a bare backslash; normalize
 # those separators to escaped newlines only in this dedicated generated seed.
 original_render = lab.render_init_groovy

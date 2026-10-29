@@ -201,7 +201,7 @@ def free_port() -> int:
 
 
 def artifact_paths() -> list[Path]:
-    return [ROOT / "plugin" / "target" / "parameter-foundry.hpi"]
+    return [ROOT / "target" / "parameter-foundry.hpi"]
 
 
 def build_artifacts() -> None:

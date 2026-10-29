@@ -122,7 +122,7 @@ to the ignored `.cache/active-choices-mapping` directory.
 After a complete `mvn -B -ntp verify`, run:
 
 ```bash
-uv run tools/ui-lab/scripts/check-raw-rest-provider.py --hpi plugin/target/parameter-foundry.hpi
+uv run tools/ui-lab/scripts/check-raw-rest-provider.py --hpi target/parameter-foundry.hpi
 ```
 
 This gate pins Playwright 1.63.0. If its Chromium archive is absent, install it

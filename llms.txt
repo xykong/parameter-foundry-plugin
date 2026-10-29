@@ -10,10 +10,12 @@ Development: 1.28.999999-SNAPSHOT, Jenkins 2.555.3; build/runtime target: Java 2
 Tagged 1.27.386: Jenkins 2.528.3, Java 17 bytecode. Build with Maven 3.9+.
 Status: public source repository; Jenkins community hosting and update-center
 publication pending. No GitHub Release assets are currently provided. Build
-plugin/target/parameter-foundry.hpi from source. Do not claim plugin-manager
+target/parameter-foundry.hpi from source. Do not claim plugin-manager
 availability or that historical development release notes imply public binaries.
 
 ## User documentation
+
+- [Installation and prerequisites](docs/guide/installation.md)
 
 - [README](README.md): product overview, installation, Pipeline example, support
 - [User guide](docs/guide/README.md): task-oriented navigation

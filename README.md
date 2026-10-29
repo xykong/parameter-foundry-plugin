@@ -21,13 +21,13 @@ string behavior.
 
 ## Project status
 
-The source repository is public. The current tagged version is **1.27.386**;
-that tag supports Jenkins **2.528.3 or newer**. The development branch is
-preparing the **1.28** line with a Jenkins **2.555.3** baseline for official hosting. Jenkins community hosting and official
-update-center distribution are still pending ([hosting request #5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412)). There are currently no downloadable
-GitHub Release assets; build the plugin from source using the instructions below.
-Historical release entries describe development and deployment milestones, not
-availability through the Jenkins plugin manager.
+The source repository is public. The latest tag is **1.27.386**, while the
+**1.28** development line prepares official Jenkins hosting. Community hosting
+and update-center distribution remain pending
+([hosting request #5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412)).
+See [installation and prerequisites](docs/guide/installation.md) for the supported
+runtime, source-build workflow, and the distinction between tagged and development
+versions. Historical release entries do not imply availability through the plugin manager.
 
 The main parameter, Provider, file-upload, and migration capabilities are
 implemented. Source-plugin compatibility is deliberately scoped: compare the
@@ -84,30 +84,13 @@ for forms, file uploads, migration tools, and desktop/mobile examples.
 
 ## Build and install
 
-Build requirements are **JDK 21** and **Maven 3.9+**. The development branch targets Java 21; use a Java runtime supported by your Jenkins version.
-
-```bash
-git clone https://github.com/xykong/parameter-foundry-plugin.git
-cd parameter-foundry-plugin
-mvn -B -ntp verify
-```
-
-The package is `plugin/target/parameter-foundry.hpi`. Upload it through
-**Manage Jenkins → Plugins → Advanced settings → Deploy Plugin**, install any
-required dependencies, and restart Jenkins when requested. The deliverable is a
-single HPI containing the first-party capabilities; it still uses standard Jenkins
-plugin dependencies. The optional Job DSL integration requires Job DSL, and the
-Rebuild workflow requires the Rebuild plugin.
-
-For a repeatable build using the pinned JDK 21 container:
-
-```bash
-make verify-container
-```
-
+Start with the [installation guide](docs/guide/installation.md), which covers
+prerequisites, building a chosen version, dependencies, and local deployment.
 Then follow [Getting started](docs/guide/getting-started.md) to configure a Job.
-Use `git checkout parameter-foundry-1.27.386` before building if you need the tagged
-source rather than the current development branch.
+
+Contributors can use `make verify` for local validation or `make verify-container`
+for the pinned build environment. The [development guide](docs/development-environment.md)
+is the maintained reference for toolchain versions and build commands.
 
 ## A Pipeline example
 

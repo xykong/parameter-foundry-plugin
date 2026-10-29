@@ -10,6 +10,8 @@ The current tagged version is `1.27.386` (Jenkins `2.528.3`). Development on
 
 ## Start here
 
+- [Installation and prerequisites](./installation.md)
+
 | Goal | Read |
 |---|---|
 | Explore all implemented capabilities and their boundaries | [Feature overview](./features.md) |

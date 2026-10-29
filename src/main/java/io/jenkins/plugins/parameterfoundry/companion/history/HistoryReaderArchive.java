@@ -2,7 +2,6 @@ package io.jenkins.plugins.parameterfoundry.companion.history;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
@@ -89,17 +88,22 @@ final class HistoryReaderArchive {
         URL resource = HistoryReaderArchive.class.getResource("/" + name);
         URL origin =
                 HistoryReaderArchive.class.getProtectionDomain().getCodeSource().getLocation();
-        if (resource == null) throw new IOException("History reader resource is missing");
-        if (!"file".equals(origin.getProtocol())) throw new IOException("History reader code origin is not local");
-        if ("jar".equals(resource.getProtocol())) {
-            var connection = (JarURLConnection) resource.openConnection();
-            if (!connection.getJarFileURL().toExternalForm().equals(origin.toExternalForm())) {
-                throw new IOException("History reader resource has a different code origin");
-            }
-        } else if (!resource.toExternalForm().equals(new URL(origin, name).toExternalForm())) {
-            throw new IOException("History reader resource has a different code origin");
-        }
+        verifyOwnedResource(resource, origin, name);
         return resource;
+    }
+
+    /** Check local archive and entry identity before opening any resource stream. */
+    static void verifyOwnedResource(URL resource, URL origin, String name) throws IOException {
+        if (resource == null) throw new IOException("History reader resource is missing");
+        if (origin == null || !"file".equals(origin.getProtocol())) {
+            throw new IOException("History reader code origin is not local");
+        }
+        String expected = "jar".equals(resource.getProtocol())
+                ? "jar:" + origin.toExternalForm() + "!/" + name
+                : new URL(origin, name).toExternalForm();
+        if (!resource.toExternalForm().equals(expected)) {
+            throw new IOException("History reader resource has a different code origin or entry");
+        }
     }
 
     static void verify(byte[] bytes, String expected) throws IOException {

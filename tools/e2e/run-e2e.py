@@ -41,7 +41,7 @@ PROVIDER_BUILD_URL = (
 FORM_BUILD_URL = BASE_URL + "/job/parameter-foundry-form-e2e/build?delay=0sec"
 OPTION_COUNT = 10_000
 MAX_RENDERED_OPTIONS = 200
-FIXTURE_DEFAULTS = ROOT / "plugin" / "src" / "test" / "resources" / "lab-fixtures.properties"
+FIXTURE_DEFAULTS = ROOT / "src" / "test" / "resources" / "lab-fixtures.properties"
 RENDERED_INIT = CACHE_DIR / "init-rendered.groovy"
 
 
@@ -142,7 +142,7 @@ def prepare_plugins() -> None:
         ]
     )
     shutil.copy2(
-        ROOT / "plugin" / "target" / "parameter-foundry.hpi",
+        ROOT / "target" / "parameter-foundry.hpi",
         PLUGINS_DIR / "parameter-foundry.jpi",
     )
 

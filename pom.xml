@@ -199,32 +199,7 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
-    <directory>${project.basedir}/plugin/target</directory>
-    <resources>
-      <resource>
-        <directory>${project.basedir}/plugin/src/main/resources</directory>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>${project.basedir}/plugin/src/test/resources</directory>
-      </testResource>
-    </testResources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <workingDirectory>${project.basedir}/plugin</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jenkins-ci.tools</groupId>
-        <artifactId>maven-hpi-plugin</artifactId>
-        <configuration>
-          <warSourceDirectory>${project.basedir}/plugin/src/main/webapp</warSourceDirectory>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -239,12 +214,12 @@
               <target>
                 <delete dir="${project.build.directory}/history-classes" />
                 <mkdir dir="${project.build.directory}/history-classes" />
-                <javac destdir="${project.build.directory}/history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/plugin/src/history/java" target="17">
+                <javac destdir="${project.build.directory}/history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/src/history/java" target="17">
                   <classpath refid="maven.compile.classpath" />
                   <compilerarg value="-proc:none" />
                 </javac>
                 <copy todir="${project.build.directory}/history-classes">
-                  <fileset dir="${project.basedir}/plugin/src/history/resources" />
+                  <fileset dir="${project.basedir}/src/history/resources" />
                 </copy>
                 <mkdir dir="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history" />
                 <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" includes="com/syhuang/**">
@@ -263,13 +238,13 @@
                 <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" fileext=".sha256" />
                 <delete dir="${project.build.directory}/file-history-classes" />
                 <mkdir dir="${project.build.directory}/file-history-classes" />
-                <javac destdir="${project.build.directory}/file-history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/plugin/src/file-history/java" target="17">
+                <javac destdir="${project.build.directory}/file-history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/src/file-history/java" target="17">
                   <classpath refid="maven.compile.classpath" />
                   <compilerarg value="-parameters" />
                   <compilerarg value="-proc:full" />
                 </javac>
                 <copy todir="${project.build.directory}/file-history-classes">
-                  <fileset dir="${project.basedir}/plugin/src/file-history/resources" />
+                  <fileset dir="${project.basedir}/src/file-history/resources" />
                 </copy>
                 <jar basedir="${project.build.directory}/file-history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar">
                   <manifest>
@@ -285,7 +260,5 @@
         </executions>
       </plugin>
     </plugins>
-    <sourceDirectory>${project.basedir}/plugin/src/main/java</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/plugin/src/test/java</testSourceDirectory>
   </build>
 </project>

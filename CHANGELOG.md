@@ -13,6 +13,8 @@ suffix marks a build that is deployed but not tagged.
 
 ### Changed
 
+- Standardize the single-plugin source/build layout and centralize installation prerequisites in a dedicated guide; retain the required structs API dependency.
+
 - Prepare official hosting with a Jenkins 2.555.3 / Java 21 baseline, a root HPI build, updated managed dependencies, and manually triggered continuous delivery.
 
 - Add an illustrated README and feature guide with real matrix interaction, typed-form and migration screenshots, architecture diagrams, and reproducible media provenance.

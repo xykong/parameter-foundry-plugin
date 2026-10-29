@@ -73,7 +73,7 @@ async def main():
     cached = Path(os.environ.get("PF_REBUILD_PLUGIN_CACHE", PUBLIC / "tools/e2e/.cache/plugins"))
     assert cached.is_dir(), "Prepare the normal E2E plugin cache first."
     shutil.copytree(cached, lab.PLUGINS_DIR, dirs_exist_ok=True)
-    artifact = PUBLIC / "plugin/target/parameter-foundry.hpi"
+    artifact = PUBLIC / "target/parameter-foundry.hpi"
     shutil.copy2(artifact, lab.PLUGINS_DIR / "parameter-foundry.jpi")
     candidate_sha = hashlib.sha256((lab.PLUGINS_DIR / "parameter-foundry.jpi").read_bytes()).hexdigest()
     rebuild = lab.PLUGINS_DIR / "rebuild.jpi"

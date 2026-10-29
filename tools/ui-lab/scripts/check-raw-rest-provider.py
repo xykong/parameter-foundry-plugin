@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[3]
 async def main():
     args = argparse.ArgumentParser()
     args.add_argument('--hpi', type=Path, required=True)
-    args.add_argument('--dependencies', type=Path, default=ROOT/'plugin/target/test-classes/test-dependencies')
+    args.add_argument('--dependencies', type=Path, default=ROOT/'target/test-classes/test-dependencies')
     options = args.parse_args()
     artifact = options.hpi.resolve(strict=True)
     digest = hashlib.sha256(artifact.read_bytes()).hexdigest()

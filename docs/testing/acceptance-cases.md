@@ -11,6 +11,7 @@ the case, but production configuration is never committed here.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Documentation matrix capture (DOC-MEDIA-001) | Chromium 1160×780: submitted values asserted | GitHub rendering review separate | Not covered by this capture | Static image and text alternatives; no assistive certification | Existing UI coverage | Generated submitted-value counts only | No build submitted |
 | Hosting build consolidation (HOSTING-001) | Existing Harness suite required | Unchanged product UI | Unchanged | Unchanged | Unchanged | Root HPI build and official hosting precheck required | Linux/Windows CI after hosting |
+| Standard layout and local resource identity (HOSTING-002) | Existing Harness suite required | No UI behavior change | Unchanged | Unchanged | Unchanged | Root build, exact local-origin/entry tests, official checker | Platform CI separate |
 | Shared functional cases | Required | Required | Required | Required | Required | Required | Required |
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
@@ -1362,3 +1363,23 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   bundles plus their digests. The official checker passed against public commit `77ceedd` with no Required
   findings. The final BOM verification also passed all 558 tests with no skips.
   Platform CI remains a separate post-hosting gate.
+
+### HOSTING-002: Standard Maven layout and exact local resource identity
+
+- Reproduction: run `mvn -B -ntp verify` from the root; run the official hosting
+  checker against the pushed commit. `HistoryReaderArchiveTest` covers packaged
+  resources, exploded local resources, and rejection of remote origins, different
+  local archives, wrong entries, and missing resources.
+- Expected: ordinary source/resources are under `src/`, build output is `target/`,
+  tooling resolves the same fixture inputs, and the required structs API usage is
+  visible to the checker without removing the dependency. Installation remains
+  documented in a dedicated guide linked from the README.
+- Original behavior: the checker searched only `src/main/`, missing real structs
+  API usage in the old module directory; local archive URL parsing looked like an
+  outbound HTTP connection to its source heuristic.
+- Fix: adopt standard source/output directories; validate exact local archive and
+  entry identity before opening streams, without creating a URL connection for
+  metadata inspection. Keep all dependency and integrity checks.
+- Verification: complete `mvn -B -ntp verify` passed 559 tests with zero
+  failures/errors/skips. HPI resources and three isolated history bundles
+  verified at the standard output path; remote hosting checker pending push.

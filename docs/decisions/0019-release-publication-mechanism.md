@@ -170,3 +170,12 @@ The existing README installation instructions remain useful until update-center
 publication; the hosting checker's removal suggestion is conditional on hosting.
 
 Hosting request [#5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412) was submitted on October 29 with GitHub and Jenkins community user `xykong`. The official local checker passed with no Required findings. The conditional `structs` recommendation is inapplicable because the implementation uses `SymbolLookup`; source-build instructions remain until official distribution is available. The final BOM is `7237.v5071b_f4589f1`. Both complete Maven verification runs passed 558 tests with zero failures, errors, or skips on macOS/JDK 25. Hosting acceptance, organization invitation, CI, release permissions, and the first official release remain pending.
+
+## Standard layout follow-up
+
+The single HPI now uses Maven's standard `src/` and `target/` directories. This
+supersedes the temporary path-preserving root POM arrangement above. The official
+checker recognizes actual structs usage under the standard source root; the
+explicit dependency remains because runtime SymbolLookup is required. Current
+installation details live in the user guide. Earlier tags and dated artifact
+records retain their historical paths.

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
@@ -14,6 +16,32 @@ import org.junit.jupiter.api.io.TempDir;
 class HistoryReaderArchiveTest {
     @TempDir
     Path temporary;
+
+    @Test
+    void resourceOwnershipAcceptsOnlyTheLocalOriginAndExactEntry() throws Exception {
+        URL origin = temporary.resolve("plugin with spaces.jar").toUri().toURL();
+        String entry = HistoryReaderArchive.RESOURCE;
+        URL owned = URI.create("jar:" + origin.toExternalForm() + "!/" + entry).toURL();
+        assertDoesNotThrow(() -> HistoryReaderArchive.verifyOwnedResource(owned, origin, entry));
+        URL exploded = temporary.toUri().toURL();
+        assertDoesNotThrow(() -> HistoryReaderArchive.verifyOwnedResource(new URL(exploded, entry), exploded, entry));
+        for (String invalid : new String[] {
+            "jar:https://example.invalid/plugin.jar!/" + entry,
+            "jar:" + origin.toExternalForm() + "!/different-entry.jar",
+            "jar:" + temporary.resolve("other.jar").toUri() + "!/" + entry,
+            "https://example.invalid/" + entry
+        }) {
+            assertThrows(
+                    IOException.class,
+                    () -> HistoryReaderArchive.verifyOwnedResource(
+                            URI.create(invalid).toURL(), origin, entry));
+        }
+        assertThrows(IOException.class, () -> HistoryReaderArchive.verifyOwnedResource(null, origin, entry));
+        assertThrows(
+                IOException.class,
+                () -> HistoryReaderArchive.verifyOwnedResource(
+                        owned, URI.create("https://example.invalid/plugin.jar").toURL(), entry));
+    }
 
     @Test
     void concurrentFamiliesCanCreateTheFreshManagedDirectory() throws Exception {

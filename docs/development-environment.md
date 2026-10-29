@@ -63,7 +63,6 @@ git config user.name "Your Name"
 git config user.email "you@example.com"
 ```
 
-The root POM builds the single HPI directly. Source remains in `plugin/src/`,
-outputs remain in `plugin/target/`, and Harness tests retain `plugin/` as their
-working directory. The historical reactor parent and module POM are no longer
+The root POM builds the single HPI directly. Source remains in `src/`,
+outputs are in `target/`, and Harness tests run at the repository root. The historical reactor parent and module POM are no longer
 needed. CD is manual-only and restricted to the future `jenkinsci` repository.
