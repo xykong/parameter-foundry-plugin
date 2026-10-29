@@ -7,8 +7,8 @@
 The visuals below combine real Jenkins captures with explicitly labeled conceptual
 diagrams. Click an image to inspect it at full resolution. [Sources and reproduction](../media/README.md).
 
-This page inventories the implemented public surface in the current `1.27`
-source line. It separates ordinary parameter behavior, explicit legacy
+This page inventories the implemented public surface from the `1.27`
+source line, retained in the `1.28` hosting preparation. It separates ordinary parameter behavior, explicit legacy
 compatibility, and opt-in history readers. Field-level details remain in the
 linked guides and Jenkins inline help.
 

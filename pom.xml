@@ -5,18 +5,18 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>6.2138.v03274d462c13</version>
+    <version>6.2236.v12dd4c483242</version>
     <relativePath />
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>parameter-foundry-parent</artifactId>
-  <version>${revision}${changelist}</version>
-  <packaging>pom</packaging>
+  <artifactId>parameter-foundry</artifactId>
+  <version>${revision}.${changelist}</version>
+  <packaging>hpi</packaging>
 
-  <name>Parameter Foundry Reactor</name>
+  <name>Parameter Foundry</name>
   <description>Typed choices, reactive forms, file uploads, and migration tools for Jenkins.</description>
-  <url>https://github.com/xykong/parameter-foundry-plugin</url>
+  <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <licenses>
     <license>
@@ -24,18 +24,6 @@
       <url>https://opensource.org/license/mit/</url>
     </license>
   </licenses>
-
-  <developers>
-    <developer>
-      <id>xy.kong</id>
-      <name>xy.kong</name>
-      <email>xy.kong@gmail.com</email>
-    </developer>
-  </developers>
-
-  <modules>
-    <module>plugin</module>
-  </modules>
 
   <scm>
     <connection>scm:git:https://github.com/${gitHubRepo}</connection>
@@ -45,23 +33,21 @@
   </scm>
 
   <properties>
-    <revision>1.27.386</revision>
-    <changelist />
+    <revision>1.28</revision>
+    <changelist>999999-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    <jenkins.baseline>2.528</jenkins.baseline>
+    <maven.compiler.release>21</maven.compiler.release>
+    <jenkins.baseline>2.555</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>xykong/parameter-foundry-plugin</gitHubRepo>
 
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
     <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
+    <banObsoleteDependencyOverrides.skip>false</banObsoleteDependencyOverrides.skip>
+    <ban-deprecated-stapler.skip>false</ban-deprecated-stapler.skip>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
 
-    <config-file-provider.version>1006.vc7366c201f57</config-file-provider.version>
-    <job-dsl.version>3732.v9a_c49a_61a_313</job-dsl.version>
-    <pipeline-model-definition.version>2.2293.v6e7193cec599</pipeline-model-definition.version>
-    <rebuild.version>338.va_0a_b_50e29397</rebuild.version>
-    <git-client.version>6.6.1</git-client.version>
   </properties>
 
   <dependencyManagement>
@@ -69,12 +55,142 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>6237.v4da_61a_4a_19e5</version>
+        <version>6607.v3ed3d8ddfed8</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>apache-httpcomponents-client-5-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>snakeyaml-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>config-file-provider</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>credentials</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>git-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>job-dsl</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>script-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>2.4.21</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kohsuke</groupId>
+      <artifactId>access-modifier-suppressions</artifactId>
+      <version>${access-modifier-checker.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sonyericsson.hudson.plugins.rebuild</groupId>
+      <artifactId>rebuild</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.configuration-as-code</groupId>
+      <artifactId>test-harness</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-build-step</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-input-step</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-basic-steps</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-multibranch</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-definition</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-extensions</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-stage-tags-metadata</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <repositories>
     <repository>
@@ -89,4 +205,94 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
+  <build>
+    <directory>${project.basedir}/plugin/target</directory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/plugin/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/plugin/src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <workingDirectory>${project.basedir}/plugin</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <configuration>
+          <warSourceDirectory>${project.basedir}/plugin/src/main/webapp</warSourceDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>isolate-legacy-history-readers</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <target>
+                <delete dir="${project.build.directory}/history-classes" />
+                <mkdir dir="${project.build.directory}/history-classes" />
+                <javac destdir="${project.build.directory}/history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/plugin/src/history/java" target="17">
+                  <classpath refid="maven.compile.classpath" />
+                  <compilerarg value="-proc:none" />
+                </javac>
+                <copy todir="${project.build.directory}/history-classes">
+                  <fileset dir="${project.basedir}/plugin/src/history/resources" />
+                </copy>
+                <mkdir dir="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history" />
+                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" includes="com/syhuang/**">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-git-values.jar" fileext=".sha256" />
+                <jar basedir="${project.build.directory}/history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" includes="com/cwctravel/**">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-extended-choice-values.jar" fileext=".sha256" />
+                <delete dir="${project.build.directory}/file-history-classes" />
+                <mkdir dir="${project.build.directory}/file-history-classes" />
+                <javac destdir="${project.build.directory}/file-history-classes" encoding="UTF-8" includeantruntime="false" source="17" srcdir="${project.basedir}/plugin/src/file-history/java" target="17">
+                  <classpath refid="maven.compile.classpath" />
+                  <compilerarg value="-parameters" />
+                  <compilerarg value="-proc:full" />
+                </javac>
+                <copy todir="${project.build.directory}/file-history-classes">
+                  <fileset dir="${project.basedir}/plugin/src/file-history/resources" />
+                </copy>
+                <jar basedir="${project.build.directory}/file-history-classes" destfile="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar">
+                  <manifest>
+                    <attribute name="Short-Name" value="parameter-foundry" />
+                    <attribute name="Plugin-Version" value="${project.version}" />
+                    <attribute name="Created-By" value="Parameter Foundry" />
+                  </manifest>
+                </jar>
+                <checksum algorithm="SHA-256" file="${project.build.outputDirectory}/io/jenkins/plugins/parameterfoundry/companion/history/legacy-file-values.jar" fileext=".sha256" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <sourceDirectory>${project.basedir}/plugin/src/main/java</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/plugin/src/test/java</testSourceDirectory>
+  </build>
 </project>

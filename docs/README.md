@@ -1,6 +1,6 @@
 # Parameter Foundry Documentation
 
-The public source repository targets Jenkins 2.528.3 or newer. Start with the
+The public source repository development branch targets Jenkins 2.555.3 or newer. Start with the
 user guide for current behavior; dated research and milestone reports retain
 their original scope. Official Jenkins hosting and update-center publication
 are pending; see the [repository README](../README.md).

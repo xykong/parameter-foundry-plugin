@@ -132,8 +132,9 @@ class RestProviderClientTest {
 
         ConnectionProfile prohibited = new ConnectionProfile("prohibited", "http://127.0.0.1/api/");
         prohibited.setAllowedPathPrefixes(List.of("/api/"));
-        assertThrows(ProviderException.class, () -> new RestProviderClient()
-                .get(prohibited, request, prohibited.buildUri("options", Map.of())));
+        assertThrows(
+                ProviderException.class,
+                () -> new RestProviderClient().get(prohibited, request, prohibited.buildUri("options", Map.of())));
         assertEquals(1, proxyRequests.get());
     }
 }

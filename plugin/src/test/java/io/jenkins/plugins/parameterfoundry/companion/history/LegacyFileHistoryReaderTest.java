@@ -66,10 +66,12 @@ class LegacyFileHistoryReaderTest {
             "StashedFileParameterValue",
             "FileParameterWrapper"
         }) {
-            assertThrows(ClassNotFoundException.class, () -> jenkins.jenkins
-                    .getPluginManager()
-                    .uberClassLoader
-                    .loadClass("io.jenkins.plugins.file_parameters." + type));
+            assertThrows(
+                    ClassNotFoundException.class,
+                    () -> jenkins.jenkins
+                            .getPluginManager()
+                            .uberClassLoader
+                            .loadClass("io.jenkins.plugins.file_parameters." + type));
         }
         assertThrows(IOException.class, LegacyFileHistoryReader::maximumFileBytes);
         configuration.setLegacyFileHistoryEnabled(true);

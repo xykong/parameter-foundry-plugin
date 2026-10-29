@@ -37,10 +37,9 @@ release, and ADR 0017 pins the names of artifacts that were already published.
 ### Publication path
 
 Parameter Foundry is published as a Jenkins community plugin: artifacts go to
-`repo.jenkins-ci.org` and the update center distributes them. The private
-`xykong/parameter-foundry-plugin` repository and the committed `dist/` HPIs are
-the interim channel until hosting completes; they are not the public
-distribution.
+`repo.jenkins-ci.org` and the update center distributes them. The public `xykong/parameter-foundry-plugin` repository is the pre-hosting
+source channel. Historical HPI archives are private and outside Git; official
+update-center distribution has not started.
 
 ### Release automation
 
@@ -150,3 +149,22 @@ when the first Jenkins CD release replaces local HPI distribution.
   requires.
 - Release timing stays explicit: the maintainer triggers the workflow after
   the CHANGELOG, the acceptance evidence, and the lab record are in place.
+
+## October 29 hosting preparation update
+
+The official local Hosting Checker now requires Jenkins 2.555.3, plugin parent
+6.2236.v12dd4c483242, and the current 2.555 BOM. The development release line
+therefore moves to 1.28 with Java 21 and `1.28.999999-SNAPSHOT`; old release tags
+retain their original prerequisites.
+
+The former single-module reactor is consolidated into a root HPI POM with the
+actual artifact ID `parameter-foundry`. Source and artifact paths remain
+`plugin/src/` and `plugin/target/`; the child POM is removed. This supersedes the
+older two-POM arrangement above and exposes real dependencies to the hosting
+checker. The BOM remains necessary for those dependencies.
+
+The CD workflow is derived from the Jenkins template, uses only manual dispatch,
+and is guarded to run in the `jenkinsci` organization. Adding it does not publish
+a release or imply that hosting or release permissions have been granted.
+The existing README installation instructions remain useful until update-center
+publication; the hosting checker's removal suggestion is conditional on hosting.

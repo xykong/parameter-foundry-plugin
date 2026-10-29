@@ -8,7 +8,7 @@ back. It takes about five minutes.
 Jenkins update-center publication is pending. Build and install the HPI using
 the [repository instructions](../../README.md#build-and-install) first.
 
-- Jenkins `2.528.3` or newer.
+- Jenkins `2.555.3` or newer for the development branch; tag `1.27.386` supports `2.528.3`.
 - The `parameter-foundry` plugin installed and enabled
   (**Manage Jenkins → Plugins → Installed plugins**).
 - Permission to configure a Job (`Job/CONFIGURE`) and to build it (`Job/BUILD`).

@@ -493,8 +493,9 @@ class RawScalarTlsFailureTest {
             unknown.setFingerprint("0".repeat(64));
             provider.setRawFailureChoices(List.of(unknown));
             var located = ProviderRegistry.findProvider(job, "tls").orElseThrow();
-            assertThrows(ProviderException.class, () -> ProviderRuntime.get()
-                    .resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder"));
+            assertThrows(
+                    ProviderException.class,
+                    () -> ProviderRuntime.get().resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder"));
             assertNull(definition.getDefaultParameterValue());
             var health = ProviderRuntime.get().health("jenkins", "tls").orElseThrow();
             assertFalse(health.healthy());

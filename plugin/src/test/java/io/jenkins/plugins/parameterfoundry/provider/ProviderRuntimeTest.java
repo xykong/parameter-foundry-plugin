@@ -270,8 +270,10 @@ class ProviderRuntimeTest {
         ProviderRegistry.LocatedProvider located =
                 new ProviderRegistry.LocatedProvider(provider, ProviderScope.GLOBAL, "jenkins");
 
-        ProviderException exception = assertThrows(ProviderException.class, () -> runtime(new ProviderRateLimiter())
-                .resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder"));
+        ProviderException exception = assertThrows(
+                ProviderException.class,
+                () -> runtime(new ProviderRateLimiter())
+                        .resolve(job, located, ProviderOperation.RESOLVE, Map.of(), "builder"));
 
         assertTrue(exception.getMessage().contains("Transform step 0"));
     }

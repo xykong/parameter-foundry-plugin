@@ -27,10 +27,12 @@ public final class Digests {
 
     public static String dependencies(Map<String, String> values) {
         StringBuilder encoded = new StringBuilder();
-        values.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> encoded.append(entry.getKey())
-                .append('\u0000')
-                .append(entry.getValue())
-                .append('\u0001'));
+        values.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> encoded.append(entry.getKey())
+                        .append('\u0000')
+                        .append(entry.getValue())
+                        .append('\u0001'));
         return sha256(encoded.toString());
     }
 

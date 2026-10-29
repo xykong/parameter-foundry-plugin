@@ -10,6 +10,7 @@ the case, but production configuration is never committed here.
 | Case group | Desktop browser | Mobile viewport | Keyboard | Screen reader | No JavaScript | CLI/API | Jenkins agent |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Documentation matrix capture (DOC-MEDIA-001) | Chromium 1160×780: submitted values asserted | GitHub rendering review separate | Not covered by this capture | Static image and text alternatives; no assistive certification | Existing UI coverage | Generated submitted-value counts only | No build submitted |
+| Hosting build consolidation (HOSTING-001) | Existing Harness suite required | Unchanged product UI | Unchanged | Unchanged | Unchanged | Root HPI build and official hosting precheck required | Linux/Windows CI after hosting |
 | Shared functional cases | Required | Required | Required | Required | Required | Required | Required |
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
@@ -1338,3 +1339,25 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   keyboard, screen-reader, browser-source-parity, or mobile product certification.
   Documentation layout is reviewed separately on GitHub in desktop/mobile and
   light/dark presentations.
+
+## Hosting build acceptance
+
+### HOSTING-001: Root HPI and official hosting prerequisites
+
+- Reproduction: run `mvn -B -ntp verify` at the repository root, inspect
+  `plugin/target/parameter-foundry.hpi`, and run the official RPU hosting checker
+  against the pushed repository with its actual maintainer identities.
+- Expected: root artifact is `io.jenkins.plugins:parameter-foundry`, packaging HPI;
+  resource and isolated-history bundles remain in the artifact; Harness tests keep
+  their established working directory; manual CD cannot publish from the personal
+  repository or on ordinary pushes.
+- Original behavior: the reactor-root artifact, old baseline, and missing CD
+  settings triggered Required hosting findings.
+- Fix: root HPI with explicit source/resource/output paths, updated baseline and
+  BOM, and official template-based CD configuration restricted to manual dispatch
+  in the Jenkins organization.
+- Verification: `mvn -B -ntp verify` passed on macOS/JDK 25 with 558 tests,
+  zero failures/errors/skips, SpotBugs and formatting checks. HPI resource
+  inspection confirmed config/JavaScript assets and all three isolated history
+  bundles plus their digests. Official checker rerun is pending the public push.
+  Platform CI remains a separate post-hosting gate.

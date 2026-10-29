@@ -22,7 +22,8 @@ string behavior.
 ## Project status
 
 The source repository is public. The current tagged version is **1.27.386**;
-Jenkins requires **2.528.3 or newer**. Jenkins community hosting and official
+that tag supports Jenkins **2.528.3 or newer**. The development branch is
+preparing the **1.28** line with a Jenkins **2.555.3** baseline for official hosting. Jenkins community hosting and official
 update-center distribution are still pending. There are currently no downloadable
 GitHub Release assets; build the plugin from source using the instructions below.
 Historical release entries describe development and deployment milestones, not
@@ -83,8 +84,7 @@ for forms, file uploads, migration tools, and desktop/mobile examples.
 
 ## Build and install
 
-Build requirements are **JDK 21** and **Maven 3.9+**. The plugin produces Java 17
-bytecode; use a Java runtime supported by your Jenkins version.
+Build requirements are **JDK 21** and **Maven 3.9+**. The development branch targets Java 21; use a Java runtime supported by your Jenkins version.
 
 ```bash
 git clone https://github.com/xykong/parameter-foundry-plugin.git

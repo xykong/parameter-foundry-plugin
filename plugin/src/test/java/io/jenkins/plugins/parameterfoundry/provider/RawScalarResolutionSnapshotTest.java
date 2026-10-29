@@ -68,8 +68,9 @@ class RawScalarResolutionSnapshotTest {
         assertEquals(0, calls.get());
         assertThrows(IllegalArgumentException.class, () -> good.setStatus(404));
         assertThrows(IllegalArgumentException.class, () -> good.setFingerprint("*"));
-        assertThrows(IllegalArgumentException.class, () -> new RestRawFailureChoice("READ_TIMEOUT", "fixed")
-                .setFingerprint("a".repeat(64)));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new RestRawFailureChoice("READ_TIMEOUT", "fixed").setFingerprint("a".repeat(64)));
     }
 
     @Test

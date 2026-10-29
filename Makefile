@@ -20,7 +20,7 @@ format:
 	mvn -B -ntp spotless:apply
 
 run:
-	mvn -B -ntp -pl plugin hpi:run
+	mvn -B -ntp hpi:run
 
 e2e:
 	uv run tools/e2e/run-e2e.py

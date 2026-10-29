@@ -5,7 +5,8 @@ sources, and migrate existing Jobs with explicit compatibility checks.
 
 The source repository is public. Jenkins community hosting and update-center
 publication are pending; see [build and installation instructions](../../README.md#build-and-install).
-The current tagged version is `1.27.386`, with Jenkins `2.528.3` as its baseline.
+The current tagged version is `1.27.386` (Jenkins `2.528.3`). Development on
+`1.28` targets Jenkins `2.555.3` for official hosting.
 
 ## Start here
 

@@ -106,8 +106,9 @@ class RawScalarDnsFailureTest {
             throw new UnknownHostException("private-resolver-diagnostic");
         };
         var p = profile(18080);
-        var legacy = assertThrows(ProviderException.class, () -> new NetworkPolicy(resolver)
-                .resolveAllowed(p.buildUri("value", Map.of()), true));
+        var legacy = assertThrows(
+                ProviderException.class,
+                () -> new NetworkPolicy(resolver).resolveAllowed(p.buildUri("value", Map.of()), true));
         assertEquals("Provider target could not be resolved.", legacy.getMessage());
         assertNull(legacy.getCause());
         var provider = provider(resolver);

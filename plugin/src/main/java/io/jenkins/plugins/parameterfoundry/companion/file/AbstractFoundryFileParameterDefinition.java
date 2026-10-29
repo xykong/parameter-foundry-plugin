@@ -96,10 +96,11 @@ public abstract class AbstractFoundryFileParameterDefinition extends ParameterDe
     @Override
     public ParameterValue createValue(StaplerRequest2 req, JSONObject jo) {
         validateConfiguration();
-        boolean input = req.getAncestors().stream().anyMatch(a -> a.getObject()
-                .getClass()
-                .getName()
-                .equals("org.jenkinsci.plugins.workflow.support.steps.input.InputStepExecution"));
+        boolean input = req.getAncestors().stream()
+                .anyMatch(a -> a.getObject()
+                        .getClass()
+                        .getName()
+                        .equals("org.jenkinsci.plugins.workflow.support.steps.input.InputStepExecution"));
         if (input && valueType() != FoundryBase64FileParameterValue.class) {
             throw new Failure("Only Base64 file delivery supports Pipeline input uploads.");
         }
