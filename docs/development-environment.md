@@ -9,7 +9,7 @@ The repository was generated on August 28, 2026 with the Jenkins
 |-----------|----------|
 | Jenkins plugin parent | `6.2236.v12dd4c483242` |
 | Jenkins core baseline | `2.555.3` |
-| Jenkins BOM | `6607.v3ed3d8ddfed8` |
+| Jenkins BOM | `7237.v5071b_f4589f1` |
 | Java bytecode target | 21 |
 | Build runtime | JDK 21 |
 | Maven | 3.9+ |
