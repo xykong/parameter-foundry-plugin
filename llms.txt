@@ -16,7 +16,8 @@ availability or that historical development release notes imply public binaries.
 
 - [README](README.md): product overview, installation, Pipeline example, support
 - [User guide](docs/guide/README.md): task-oriented navigation
-- [Feature overview](docs/guide/features.md): complete capability inventory and boundaries
+- [Feature overview](docs/guide/features.md): illustrated capability inventory, real interaction GIF, and boundaries
+- [Media provenance](docs/media/README.md): actual UI captures versus concept artwork, static alternatives, and reproducible capture scripts
 - [Getting started](docs/guide/getting-started.md): UI and Pipeline walkthrough
 - [Parameter reference](docs/guide/parameters.md): fields, defaults, renderers, transports
 - [Cookbook](docs/guide/examples.md): examples with configuration context

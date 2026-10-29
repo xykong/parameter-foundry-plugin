@@ -44,6 +44,7 @@ help.
 - [Extended Choice static transport contract and remaining gaps](./research/extended-choice-static-transport-contract.md)
 - [Naming and brand evaluation](./research/naming-and-brand-evaluation.md)
 - [Real Jenkins UI Gallery](./ui-gallery/README.md)
+- [Documentation visual assets and reproduction](./media/README.md)
 
 ## Decisions
 

@@ -1,5 +1,9 @@
 # Parameter Foundry
 
+![Parameter Foundry — Shape the input. Define the build.](docs/media/hero.png)
+
+<p align="center"><strong>Typed by design · Reactive by configuration · Migrated with evidence</strong></p>
+
 **Typed choices, reactive forms, file uploads, and migration tools for Jenkins.**
 
 Parameter Foundry brings parameter configuration, validation, and value handling
@@ -48,7 +52,30 @@ capability**, separate from the built-in Foundry file parameters.
 See the [complete feature overview](docs/guide/features.md) for configuration
 symbols, supported sources, security controls, and capability boundaries.
 
-![Parameter Foundry parameter form](docs/ui-gallery/images/parameter-foundry/light.png)
+### See a matrix become a build input
+
+![Real Jenkins matrix interaction: clear, select the staging column, combine a row, select all, then invert.](docs/media/matrix-demo.gif)
+
+Five captured states from the real plugin: **0 → 5 → 7 → 15 → 0 selected cells**.
+Column shortcuts and bulk actions update the submitted value, not just the display.
+[Static alternative](docs/media/matrix.png) · [Capture provenance](docs/media/README.md)
+
+<details>
+<summary>Explore the real interface: choices and typed forms</summary>
+
+![Search, custom choice and disabled radio options in Jenkins](docs/media/choices.png)
+
+![Typed deployment form with conditional settings](docs/media/typed-form.png)
+
+</details>
+
+### Follow the value, not just the widget
+
+![Inputs flow through type-specific decoding and shared validation to a build; governed Providers supply options.](docs/media/evaluation-flow.svg)
+
+[Transport contracts](docs/guide/parameters.md#input-decoding) explain where ordinary
+typed values and explicit legacy strings differ. File bytes use their own bounded
+upload lifecycle.
 
 Screenshots come from isolated Jenkins instances running the plugin with
 synthetic fixtures. Browse the [real-plugin UI gallery](docs/ui-gallery/README.md)

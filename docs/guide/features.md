@@ -1,5 +1,12 @@
 # Feature overview
 
+![Parameter Foundry — typed inputs, reactive options, reviewed migration](../media/hero.png)
+
+**Explore the interface. Follow the value. Review the evidence.**
+
+The visuals below combine real Jenkins captures with explicitly labeled conceptual
+diagrams. Click an image to inspect it at full resolution. [Sources and reproduction](../media/README.md).
+
 This page inventories the implemented public surface in the current `1.27`
 source line. It separates ordinary parameter behavior, explicit legacy
 compatibility, and opt-in history readers. Field-level details remain in the
@@ -27,6 +34,11 @@ and [saved parameter text](./pipeline-parameter-text.md).
 
 ## Choices, matrices, and presentation
 
+![Searchable choices, a custom value control, disabled radio options, and multiple selection](../media/choices.png)
+
+*Actual Jenkins controls, cropped from the synthetic UI Lab. Disabled options and
+selection constraints are enforced on the server as well as in the browser.*
+
 - Single selection: dropdown, searchable selector, list, or radio group.
 - Multiple selection: list, checkbox group, or table, with optional selected-value
   chips and bounded display of long selections.
@@ -49,6 +61,12 @@ Reference content is literal sanitized HTML. Dynamic reference scripts and
 arbitrary custom HTML widgets are not silently migrated into that capability.
 
 ## Shared Providers
+
+![Provider-backed selection matrix responding to real bulk operations](../media/matrix-demo.gif)
+
+*A shared row/column model becomes selectable build values. This real interaction
+sequence selects a column, combines a row, selects all, then inverts.
+[Static matrix](../media/matrix.png) · [Provider configuration](./providers.md).*
 
 Providers live in global or Folder configuration, with explicit nested-Folder
 visibility. A parameter references a Provider by ID; `dependsOn` supplies its
@@ -101,6 +119,11 @@ See [Whole-response REST choices](./raw-rest-responses.md).
 
 ## Structured forms
 
+![Real typed form with a service name, replica count, and revealed advanced settings](../media/typed-form.png)
+
+*The advanced panel appears after its controlling checkbox is enabled. The capture
+script verifies that the replica count is stored as an integer.*
+
 Forms support `string`, `text`, `integer`, `decimal`, `boolean`, `choice`,
 `multi-choice`, `date`, `time`, `content`, `object`, and `array` fields.
 `foundryFormField` defines fields; `foundryFormLayout` defines sections, grids,
@@ -113,6 +136,11 @@ excluded from environment export. Whole-form JSON export and per-field variables
 are configurable; hiding a layout is presentation, not an authorization rule.
 
 ## File delivery and lifecycle
+
+![File upload controls with configured upload limits and retained-file guidance](../media/file-delivery.png)
+
+*Real upload controls from the file-delivery acceptance scenario. The displayed
+limits are fixture-specific overrides; consult the defaults below.*
 
 Workspace delivery places the upload at a validated workspace-relative path.
 Freestyle places it before build steps; Pipeline uses the wrapper in an allocated
@@ -133,6 +161,11 @@ transports. File content is not unpacked or executed by the plugin.
 See [File parameters](./file-parameters.md) for permissions and retention limits.
 
 ## Automation and value contracts
+
+![Conceptual flow from inputs through evaluation and governed Providers to build values](../media/evaluation-flow.svg)
+
+*Architecture illustration. Each entry point uses the selected transport contract;
+the diagram does not imply identical input shapes for all types.*
 
 Configuration is available through Jenkins UI, Pipeline, optional Job DSL, and
 JCasC. Provider definitions belong to global/Folder configuration, not arbitrary
@@ -167,6 +200,13 @@ source contracts linked from [Migration](./migration.md).
 
 ## Migration and plugin retirement
 
+![Real migration preview with classification, decisions, generated definition, and verification cases](../media/migration-preview.png)
+
+*An archived synthetic migration preview illustrates the review workflow; it is
+not a recommendation to copy this generated definition for an unrelated Job.*
+
+![Inspect, apply, compare, and review history before retirement](../media/migration-flow.svg)
+
 Adapters cover 14 source families: Extended Choice, Active Choices, List Git
 Branches, Custom Checkbox, Editable Choice, Extensible Choice, HTML Parameters,
 JSON Editor, JSON Parameter, Multiselect, REST List, Validating String,
@@ -184,6 +224,11 @@ must change at their source, multibranch/generated configuration needs separate
 review, and binary lifecycle parity requires manual verification.
 
 ## History readers and extension boundaries
+
+![Real source-plugin retirement dashboard showing remaining dependencies](../media/retirement.png)
+
+*The retirement report makes remaining references visible. A clean configuration
+scan alone does not certify historical workflow compatibility.*
 
 Git and Extended Choice historical string readers are independently opt-in,
 restart-bound, and subject to source absence, archive integrity, and class-owner

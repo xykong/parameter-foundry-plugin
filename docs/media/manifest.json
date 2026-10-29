@@ -1,0 +1,85 @@
+{
+  "created": "2026-10-29",
+  "capture": {
+    "source": "isolated synthetic Jenkins UI Lab",
+    "job": "parameter-foundry-provider-e2e",
+    "frames": [
+      {
+        "file": "01-clear.png",
+        "selected": 0,
+        "hold_ms": 1800
+      },
+      {
+        "file": "02-column.png",
+        "selected": 5,
+        "hold_ms": 1800
+      },
+      {
+        "file": "03-row.png",
+        "selected": 7,
+        "hold_ms": 1800
+      },
+      {
+        "file": "04-all.png",
+        "selected": 15,
+        "hold_ms": 1800
+      },
+      {
+        "file": "05-invert.png",
+        "selected": 0,
+        "hold_ms": 1800
+      }
+    ],
+    "hpi_sha256": "861fef60092444f5e1dd888f19d0a016044dd17e81fb78a306020cd009da7d0f"
+  },
+  "concept_art": {
+    "model": "GPT Image 2.5 Flare",
+    "prompt": "Create a premium developer-tool editorial hero banner, landscape 1536x1024. Theme: Parameter Foundry, typed inputs precisely assembled into a dependable build. Obsidian navy background, subtle etched grid, restrained electric cyan and warm amber accents. On the RIGHT TWO THIRDS, a stunning physically plausible isometric arrangement of translucent glass tiles and brushed dark titanium modules, aligned into a 3 by 3 selection matrix; a few cyan-lit selected tiles, narrow flowing data channels converging into a luminous amber central cube. Beautiful architectural product visualization, disciplined negative space, exquisite lighting, crisp edges, no clutter, no spaceships, no humanoids, no gaming imagery. LEFT THIRD mostly quiet dark navy for editorial typography to be added separately. NO TEXT, NO LETTERS, NO LOGOS, NO WATERMARKS, NO UI SCREENSHOTS. Conceptual artwork only. A sophisticated software engineering publication, precise rather than flashy."
+  },
+  "assets": {
+    "choices.png": {
+      "bytes": 57164,
+      "sha256": "8784de7f29f6babb250fb6a1fce0804e276d3f839afb20e44b07d753d3a7c1f0"
+    },
+    "evaluation-flow.svg": {
+      "bytes": 2675,
+      "sha256": "14756603c8897b66fa0d822f1265d0795955e3be921811739522e1bda52c41bf"
+    },
+    "file-delivery.png": {
+      "bytes": 56921,
+      "sha256": "e4c56bd15ded5ac1e29bf3f192b74bde819df21ab11b1da518a1091043cb77fc"
+    },
+    "foundry-art.webp": {
+      "bytes": 65362,
+      "sha256": "3bde03091b926840735c0741eaa1bccdecb70d5457c706e94b752c19f50b5079"
+    },
+    "hero.png": {
+      "bytes": 580207,
+      "sha256": "e6522a01287ba9d59dbd6eb1eeed31abf5e7b984e135c4f2b24c37e56ef156fe"
+    },
+    "matrix-demo.gif": {
+      "bytes": 131865,
+      "sha256": "d4cf8b45c2635589b9dbe5e72f974fda67caf98c80bcaadae69a343fe36d5896"
+    },
+    "matrix.png": {
+      "bytes": 39052,
+      "sha256": "122ee4a80ebb3f4c242d8145a3f7df213fed4a369ba85a4aabf79aed7c9a64d4"
+    },
+    "migration-flow.svg": {
+      "bytes": 1758,
+      "sha256": "061a6ba14afbab09c345d2b950e89c58e078848ecdf81693e87ce5d0f8a72266"
+    },
+    "migration-preview.png": {
+      "bytes": 130739,
+      "sha256": "1505289782a665d5cd0631c33df9afdcdc800f3fa664b4df573bf941d06f9b38"
+    },
+    "retirement.png": {
+      "bytes": 156364,
+      "sha256": "43088045dcaf5b1047b6dd76aba4178ae32e84af07e86dd974004657923c576f"
+    },
+    "typed-form.png": {
+      "bytes": 32563,
+      "sha256": "ceec69871349f89f78cf7124e7032f9a3f90076259b643a9d63c8718e0a8bf96"
+    }
+  }
+}

@@ -9,6 +9,7 @@ the case, but production configuration is never committed here.
 
 | Case group | Desktop browser | Mobile viewport | Keyboard | Screen reader | No JavaScript | CLI/API | Jenkins agent |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| Documentation matrix capture (DOC-MEDIA-001) | Chromium 1160×780: submitted values asserted | GitHub rendering review separate | Not covered by this capture | Static image and text alternatives; no assistive certification | Existing UI coverage | Generated submitted-value counts only | No build submitted |
 | Shared functional cases | Required | Required | Required | Required | Required | Required | Required |
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
@@ -1318,3 +1319,22 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   the native control exactly; no new page errors or failed requests occurred.
   All twelve synthetic builds passed; historical strings stayed unchanged.
   See `results/delimited-rebuild.json`.
+
+## Documentation media acceptance
+
+### DOC-MEDIA-001: Genuine matrix states in the public documentation
+
+- Reproduction: start the synthetic controller with `tools/docs-media/start-lab.py`,
+  then run `tools/docs-media/capture.py` and `tools/docs-media/animate.sh`.
+- Expected: Clear all yields 0 values; select staging column yields 5; adding the
+  first row yields 7; Select all yields 15; Invert yields 0. Captures must show
+  the actual controls and state, with no fabricated options or intermediate frames.
+- Actual: all five generated-value counts asserted successfully in Chromium at
+  1160×780 on Jenkins 2.568.2 with the 1.27.386 HPI. The form capture separately
+  verifies that replicas remain an integer after input. No build is submitted.
+- Implementation: dedicated documentation controller and repeatable element
+  capture; GIF holds actual states for two seconds and provides a static alternative.
+- Verification: capture assertions passed on 2026-10-29. This case is not full
+  keyboard, screen-reader, browser-source-parity, or mobile product certification.
+  Documentation layout is reviewed separately on GitHub in desktop/mobile and
+  light/dark presentations.
