@@ -13,6 +13,8 @@ suffix marks a build that is deployed but not tagged.
 
 ### Changed
 
+- Add an illustrated README and feature guide with real matrix interaction, typed-form and migration screenshots, architecture diagrams, and reproducible media provenance.
+
 - Refresh the public README, feature overview, user-guide navigation, and AI index to describe the current 1.27 capability set, installation path, release status, and compatibility boundaries.
 - Replace deployment-specific migration examples with neutral synthetic fixtures and keep historical release binaries outside the public source checkout.
 

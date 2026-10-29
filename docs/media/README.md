@@ -53,6 +53,8 @@ Keep raw captures, generation responses, full recordings, and review screenshots
 in ignored caches or outside the repository. Only final compact assets belong
 here. `manifest.json` provides integrity hashes and the concept-art prompt.
 
+See the [completed verification record](verification.md) for checks and limitations.
+
 ## Review criteria
 
 - Inspect the actual GitHub README and feature page at desktop and mobile widths,
