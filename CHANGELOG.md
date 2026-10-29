@@ -13,6 +13,8 @@ suffix marks a build that is deployed but not tagged.
 
 ### Changed
 
+- Use Jenkins-native credential selection with permission-aware listing and parent-owned deletion controls for repeatable configuration items.
+
 - Standardize the single-plugin source/build layout and centralize installation prerequisites in a dedicated guide; retain the required structs API dependency.
 
 - Prepare official hosting with a Jenkins 2.555.3 / Java 21 baseline, a root HPI build, updated managed dependencies, and manually triggered continuous delivery.
@@ -27,6 +29,8 @@ suffix marks a build that is deployed but not tagged.
 - Add an opt-in, restart-bound reader for completed native Base64/Stashed File history, with a separate history byte limit and administrative status.
 
 ### Fixed
+
+- Persist deletion of the final global Provider, Connection Profile, or script catalog entry when saving System configuration.
 
 - Preserve literal Extended Choice option descriptions as labels during migration, and require governed conversion for dynamic description sources.
 - Clarify that Rebuild can reuse retained Foundry uploads, while older file types and delivery mode changes require a replacement.

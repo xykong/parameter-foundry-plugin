@@ -10,7 +10,4 @@
            description="When set, the canonical dependency value replaces the fixed value.">
     <f:textbox />
   </f:entry>
-  <f:entry title="">
-    <div align="right"><f:repeatableDeleteButton /></div>
-  </f:entry>
 </j:jelly>

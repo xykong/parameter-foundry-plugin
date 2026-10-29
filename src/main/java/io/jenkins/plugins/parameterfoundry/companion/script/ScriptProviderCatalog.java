@@ -61,7 +61,12 @@ public final class ScriptProviderCatalog extends GlobalConfiguration {
     public boolean configure(StaplerRequest2 request, net.sf.json.JSONObject json)
             throws hudson.model.Descriptor.FormException {
         Jenkins.get().checkPermission(ScriptProviderPermissions.CONFIGURE);
-        return super.configure(request, json);
+        // The full configuration form omits the field after deleting its last entry.
+        if (!json.containsKey("entries")) json.element("entries", new net.sf.json.JSONArray());
+        json.remove("catalogFormSubmitted");
+        request.bindJSON(this, json);
+        save();
+        return true;
     }
 
     @Override

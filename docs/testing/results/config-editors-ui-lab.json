@@ -1,0 +1,19 @@
+{
+  "state": "CONFIG_EDITORS_PASS",
+  "jenkins": "2.580.1",
+  "browser": "156.0.8078.4",
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "hpi_sha256": "0af114ed0d08283e9bcae3ccc760200200dc41782746c85e10c2490fde0c9a70",
+  "credential_selection_saved": true,
+  "nested_header_deleted_parent_preserved": true,
+  "option_deletion_saved": true,
+  "profile_deletion_saved": true,
+  "empty_global_providers_saved": true,
+  "empty_script_catalog_saved": true,
+  "folder_credential_selection_saved": true,
+  "folder_profile_deletion_saved": true,
+  "business_builds": 0
+}

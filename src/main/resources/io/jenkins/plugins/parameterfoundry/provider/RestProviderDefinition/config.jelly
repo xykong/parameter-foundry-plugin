@@ -15,7 +15,9 @@
   <f:entry title="Query parameters" field="queryParameters">
     <f:repeatableProperty field="queryParameters"
                           add="Add query parameter"
-                          header="Query parameter" />
+                          header="Query parameter">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Format" field="format">
     <select name="_.format" class="jenkins-select__input select">
@@ -39,16 +41,24 @@
     </select>
   </f:entry>
   <f:entry title="Reviewed raw redirect targets" field="rawRedirectTargets">
-    <f:repeatableProperty field="rawRedirectTargets" add="Add exact destination" header="Complete reviewed URI" />
+    <f:repeatableProperty field="rawRedirectTargets" add="Add exact destination" header="Complete reviewed URI">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Ignored whole responses" field="rawIgnoredResponses">
-    <f:repeatableProperty field="rawIgnoredResponses" add="Add ignored response" header="Exact literal" />
+    <f:repeatableProperty field="rawIgnoredResponses" add="Add ignored response" header="Exact literal">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Trailing raw choices" field="rawTrailingChoices">
-    <f:repeatableProperty field="rawTrailingChoices" add="Add trailing choice" header="Exact literal" />
+    <f:repeatableProperty field="rawTrailingChoices" add="Add trailing choice" header="Exact literal">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Classified failure choices" field="rawFailureChoices">
-    <f:repeatableProperty field="rawFailureChoices" add="Add failure choice" header="Transport outcome" />
+    <f:repeatableProperty field="rawFailureChoices" add="Add failure choice" header="Transport outcome">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Root JSONPath/XPath" field="rootPath">
     <f:textbox />
@@ -78,10 +88,14 @@
     <f:checkbox />
   </f:entry>
   <f:entry title="Transforms" field="transforms">
-    <f:repeatableProperty field="transforms" add="Add transform" header="Transform" />
+    <f:repeatableProperty field="transforms" add="Add transform" header="Transform">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Fallback options" field="fallbackOptions">
-    <f:repeatableProperty field="fallbackOptions" add="Add fallback option" header="Option" />
+    <f:repeatableProperty field="fallbackOptions" add="Add fallback option" header="Option">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
     <f:number min="0" max="86400" />

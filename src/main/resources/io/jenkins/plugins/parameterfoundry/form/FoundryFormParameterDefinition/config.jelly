@@ -4,10 +4,14 @@
     <f:textbox name="parameter.name" value="${instance.name}" />
   </f:entry>
   <f:entry title="Fields" field="fields">
-    <f:repeatableProperty field="fields" add="Add field" header="Typed field" />
+    <f:repeatableProperty field="fields" add="Add field" header="Typed field">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Layouts" field="layouts">
-    <f:repeatableProperty field="layouts" add="Add layout" header="Layout" />
+    <f:repeatableProperty field="layouts" add="Add layout" header="Layout">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Pipeline output" field="outputMode">
     <select class="jenkins-select__input" name="parameter.outputMode">

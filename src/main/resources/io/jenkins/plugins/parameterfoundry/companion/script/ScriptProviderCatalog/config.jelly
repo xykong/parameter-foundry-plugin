@@ -1,9 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <input type="hidden" name="_.catalogFormSubmitted" value="true" />
   <f:section title="Parameter Foundry Sandboxed Script Provider">
     <f:entry title="Catalog entries"
              description="Only sandboxed, administrator-managed scripts may be referenced by catalog:id.">
-      <f:repeatableProperty field="entries" add="Add catalog entry" header="Catalog entry" />
+      <f:repeatableProperty field="entries" add="Add catalog entry" header="Catalog entry">
+        <f:entry><f:repeatableDeleteButton /></f:entry>
+      </f:repeatableProperty>
     </f:entry>
   </f:section>
 </j:jelly>

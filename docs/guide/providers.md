@@ -224,7 +224,7 @@ the only place a base URL, credential, and allow-list are declared.
 | Field | Meaning |
 |---|---|
 | Base URL | Absolute `http`/`https` base; requests must stay on that authority and path |
-| Credential | Username/password sent as HTTP Basic to that host |
+| Credential | Select a compatible username/password credential for the host; only authorized configuration users can enumerate the current scope. Saved unavailable IDs are retained. |
 | Allowed path prefixes | Paths the Provider may call; the default is `/` |
 | Allowed query parameters | Query names the Provider may send |
 | Allow private addresses | Permit private ranges; loopback, link-local, and cloud metadata stay blocked |

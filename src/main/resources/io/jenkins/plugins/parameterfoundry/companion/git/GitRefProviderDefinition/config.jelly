@@ -42,10 +42,14 @@
     <f:checkbox />
   </f:entry>
   <f:entry title="Transforms" field="transforms">
-    <f:repeatableProperty field="transforms" add="Add transform" header="Transform" />
+    <f:repeatableProperty field="transforms" add="Add transform" header="Transform">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Fallback options" field="fallbackOptions">
-    <f:repeatableProperty field="fallbackOptions" add="Add fallback option" header="Option" />
+    <f:repeatableProperty field="fallbackOptions" add="Add fallback option" header="Option">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
     <f:number min="0" max="86400" />

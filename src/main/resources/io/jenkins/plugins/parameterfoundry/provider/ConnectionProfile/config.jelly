@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
   <f:entry title="Profile ID" field="id">
     <f:textbox />
   </f:entry>
@@ -15,11 +15,13 @@
   <f:entry title="Allowed query parameter names" field="allowedQueryParametersText">
     <f:textarea />
   </f:entry>
-  <f:entry title="Credential ID" field="credentialId">
-    <f:textbox />
+  <f:entry title="Credential" field="credentialId">
+    <c:select />
   </f:entry>
   <f:entry title="Fixed non-secret headers" field="headers">
-    <f:repeatableProperty field="headers" add="Add header" header="Header" />
+    <f:repeatableProperty field="headers" add="Add header" header="Header">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Available to nested Folders" field="usableByChildren">
     <f:checkbox />

@@ -21,9 +21,4 @@
   <f:entry title="Disabled reason" field="disabledReason">
     <f:textbox />
   </f:entry>
-  <f:entry title="">
-    <div align="right">
-      <f:repeatableDeleteButton />
-    </div>
-  </f:entry>
 </j:jelly>

@@ -168,6 +168,10 @@ public final class ParameterFoundryGlobalConfiguration extends GlobalConfigurati
 
     @Override
     public boolean configure(StaplerRequest2 request, JSONObject json) throws Descriptor.FormException {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        // Empty repeatables are omitted by the complete System configuration form.
+        if (!json.containsKey("providers")) json.element("providers", new net.sf.json.JSONArray());
+        if (!json.containsKey("connectionProfiles")) json.element("connectionProfiles", new net.sf.json.JSONArray());
         request.bindJSON(this, json);
         save();
         return true;

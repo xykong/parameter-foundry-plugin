@@ -13,10 +13,14 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Options for every other value" field="defaultOptions">
-    <f:repeatableProperty field="defaultOptions" add="Add option" header="Option" />
+    <f:repeatableProperty field="defaultOptions" add="Add option" header="Option">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Cases" field="cases">
-    <f:repeatableProperty field="cases" add="Add case" header="Dependency value" />
+    <f:repeatableProperty field="cases" add="Add case" header="Dependency value">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Cache TTL seconds" field="cacheTtlSeconds">
     <f:number min="0" max="86400" />

@@ -8,6 +8,8 @@
   <f:entry title="Connection Profiles" field="connectionProfiles">
     <f:repeatableProperty field="connectionProfiles"
                           add="Add Connection Profile"
-                          header="Connection Profile" />
+                          header="Connection Profile">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
 </j:jelly>

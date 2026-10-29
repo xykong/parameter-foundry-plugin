@@ -19,5 +19,4 @@
       The browser editor intentionally avoids an unbounded recursive form.
     </div>
   </f:entry>
-  <f:entry title=""><div align="right"><f:repeatableDeleteButton /></div></f:entry>
 </j:jelly>

@@ -11,5 +11,4 @@
   <f:entry title="TLS rejection fingerprint" field="fingerprint"><f:textbox /></f:entry>
   <f:entry title="Match actual request URI" field="matchUri"><f:textbox /></f:entry>
   <f:entry title="Choice value" field="value"><f:textarea /></f:entry>
-  <f:entry title=""><div align="right"><f:repeatableDeleteButton /></div></f:entry>
 </j:jelly>

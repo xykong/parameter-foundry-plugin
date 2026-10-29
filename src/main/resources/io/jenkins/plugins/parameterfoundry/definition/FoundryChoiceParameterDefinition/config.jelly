@@ -30,7 +30,9 @@
   </f:entry>
   <f:entry title="Choices" field="choices">
     <div class="up-option-editor">
-      <f:repeatableProperty field="choices" add="Add option" header="Option" />
+      <f:repeatableProperty field="choices" add="Add option" header="Option">
+        <f:entry><f:repeatableDeleteButton /></f:entry>
+      </f:repeatableProperty>
     </div>
   </f:entry>
   <f:entry title="Import YAML or JSON" field="importSource">

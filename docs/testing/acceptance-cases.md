@@ -12,6 +12,7 @@ the case, but production configuration is never committed here.
 | Documentation matrix capture (DOC-MEDIA-001) | Chromium 1160×780: submitted values asserted | GitHub rendering review separate | Not covered by this capture | Static image and text alternatives; no assistive certification | Existing UI coverage | Generated submitted-value counts only | No build submitted |
 | Hosting build consolidation (HOSTING-001) | Existing Harness suite required | Unchanged product UI | Unchanged | Unchanged | Unchanged | Root HPI build and official hosting precheck required | Linux/Windows CI after hosting |
 | Standard layout and local resource identity (HOSTING-002) | Existing Harness suite required | No UI behavior change | Unchanged | Unchanged | Unchanged | Root build, exact local-origin/entry tests, official checker | Platform CI separate |
+| Configuration editors (HOSTING-003) | Harness + isolated Chromium required | No product parameter control changes | Standard Jenkins controls | No new certification | Native form fields | Credential enumeration permissions | No build submitted |
 | Shared functional cases | Required | Required | Required | Required | Required | Required | Required |
 | Layout and localization | Required | Required | Required | Required | N/A | N/A | N/A |
 | Provider/reactive | Required | Required | Required | Required | N/A | Required | Required |
@@ -1383,3 +1384,22 @@ with a real socket/route lifecycle check on HPI 812f30c6.
 - Verification: complete `mvn -B -ntp verify` passed 559 tests with zero
   failures/errors/skips. HPI resources and three isolated history bundles
   verified at the standard output path; remote hosting checker pending push.
+
+### HOSTING-003: Repeatable deletion and governed credential selection
+
+- Reproduction: run `ConnectionProfileCredentialsTest` and the configuration
+  Harness suite, then `uv run tools/ui-lab/scripts/check-config-editors.py` against
+  the freshly built HPI. Use only the disposable synthetic controller.
+- Expected: each repeated item has one parent-owned delete action; deleting a
+  child preserves its parent. The credential picker lists compatible credentials
+  for authorized configuration users, preserves saved unavailable IDs, and does
+  not enumerate credentials for unauthorized global or item callers.
+- Original behavior: nested object templates carried deprecated delete buttons,
+  and Connection Profiles used a plain text credential-ID input.
+- Fix: move delete controls into each repeatableProperty body and use the
+  credentials plugin selector with permission/context/domain-aware enumeration.
+- Verification: Chromium on Jenkins 2.580.1 passed credential select/save/reload,
+  nested header and option deletion, final global Profile/Provider/catalog deletion,
+  and Folder credential selection plus final Profile deletion. See
+  [browser result](results/config-editors-ui-lab.json). Complete `mvn -B -ntp verify` passed 561 tests with zero failures/errors and
+  two dual-private-interface prerequisite skips after the empty-list correction.

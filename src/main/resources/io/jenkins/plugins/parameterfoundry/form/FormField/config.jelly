@@ -24,7 +24,9 @@
   <f:entry title="Maximum items" field="maxItems"><f:number min="-1" /></f:entry>
   <f:entry title="Array item type" field="itemType"><f:textbox /></f:entry>
   <f:entry title="Choices" field="choices">
-    <f:repeatableProperty field="choices" add="Add choice" header="Choice" />
+    <f:repeatableProperty field="choices" add="Add choice" header="Choice">
+      <f:entry><f:repeatableDeleteButton /></f:entry>
+    </f:repeatableProperty>
   </f:entry>
   <f:entry title="Nested fields">
     <div class="jenkins-alert jenkins-alert-info">
@@ -35,5 +37,4 @@
   <f:entry title="Environment variable" field="environmentVariable">
     <f:textbox />
   </f:entry>
-  <f:entry title=""><div align="right"><f:repeatableDeleteButton /></div></f:entry>
 </j:jelly>

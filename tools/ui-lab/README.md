@@ -184,3 +184,12 @@ It submits four candidate and four native-control historical forms across
 desktop/mobile viewports and comma/pipe delimiters, verifies saved values,
 unchanged history and matching native page-error stacks, then removes its owned
 container by exact ID before marking the run passed. It never calls production.
+
+## Configuration editor gate
+
+After building the HPI with `mvn -B -ntp verify`, run
+`uv run tools/ui-lab/scripts/check-config-editors.py`. It uses the resolved test
+plugins in a disposable localhost Jenkins 2.580.1 controller. The gate checks
+credential selection persistence, child deletion without parent loss, final
+global Provider/Profile/catalog deletion, and Folder Profile save/delete. No
+business builds are submitted. Evidence is kept in `.cache/config-editors-*`.

@@ -1,8 +1,16 @@
 package io.jenkins.plugins.parameterfoundry.provider;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
+import hudson.security.ACL;
+import hudson.util.ListBoxModel;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
@@ -11,9 +19,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import jenkins.model.Jenkins;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionProfile>
         implements Serializable, Cloneable {
@@ -377,6 +388,27 @@ public final class ConnectionProfile extends AbstractDescribableImpl<ConnectionP
     @Extension
     @Symbol("foundryConnectionProfile")
     public static final class DescriptorImpl extends Descriptor<ConnectionProfile> {
+        public ListBoxModel doFillCredentialIdItems(
+                @AncestorInPath Item context, @QueryParameter String credentialId, @QueryParameter String baseUrl) {
+            var result = new StandardListBoxModel();
+            if (context == null) {
+                if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) return result.includeCurrentValue(credentialId);
+            } else if (!context.hasPermission(Item.CONFIGURE) || !context.hasPermission(CredentialsProvider.USE_ITEM)) {
+                return result.includeCurrentValue(credentialId);
+            }
+            var requirements = URIRequirementBuilder.fromUri(baseUrl == null ? "" : baseUrl)
+                    .build();
+            result.includeEmptyValue();
+            if (context instanceof ItemGroup<?> group) {
+                result.includeAs(ACL.SYSTEM2, group, StandardUsernamePasswordCredentials.class, requirements);
+            } else if (context != null) {
+                result.includeAs(ACL.SYSTEM2, context, StandardUsernamePasswordCredentials.class, requirements);
+            } else {
+                result.includeAs(ACL.SYSTEM2, Jenkins.get(), StandardUsernamePasswordCredentials.class, requirements);
+            }
+            return result.includeCurrentValue(credentialId);
+        }
+
         @Override
         public String getDisplayName() {
             return "Parameter Foundry Connection Profile";
