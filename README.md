@@ -24,7 +24,7 @@ string behavior.
 The source repository is public. The current tagged version is **1.27.386**;
 that tag supports Jenkins **2.528.3 or newer**. The development branch is
 preparing the **1.28** line with a Jenkins **2.555.3** baseline for official hosting. Jenkins community hosting and official
-update-center distribution are still pending. There are currently no downloadable
+update-center distribution are still pending ([hosting request #5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412)). There are currently no downloadable
 GitHub Release assets; build the plugin from source using the instructions below.
 Historical release entries describe development and deployment milestones, not
 availability through the Jenkins plugin manager.

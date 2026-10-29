@@ -120,7 +120,7 @@ After hosting, Artifactory is the authoritative public artifact source.
 | Phase | Work | Status |
 |-------|------|--------|
 | 0 | Decide the mechanism and remove the archetype's Release Drafter configuration, workflow, and stale draft | Done |
-| 1 | Publish the sanitized repository and file the hosting request in `jenkins-infra/repository-permissions-updater` | Open: needs the public push and the maintainer's Jenkins community account |
+| 1 | Publish the sanitized repository and file the hosting request in `jenkins-infra/repository-permissions-updater` | Submitted October 29: [hosting request #5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412); local official checks passed on 77ceedd; awaiting Hosting Team review |
 | 2 | Accept the `jenkinsci` fork, remove the personal repository, and get a green ci.jenkins.io build | Open: depends on phase 1 |
 | 3 | Land the CD enablement change (`pom.xml`, `plugin/pom.xml`, `.mvn/maven.config`, `.github/workflows/cd.yaml`) through the pull request the hosting team reviews | Open: depends on phase 2 |
 | 4 | Request the CD flag in RPU (`cd: enabled: true`) and confirm the `MAVEN_USERNAME` and `MAVEN_TOKEN` secrets appear | Open: depends on phase 3 |
@@ -168,3 +168,5 @@ and is guarded to run in the `jenkinsci` organization. Adding it does not publis
 a release or imply that hosting or release permissions have been granted.
 The existing README installation instructions remain useful until update-center
 publication; the hosting checker's removal suggestion is conditional on hosting.
+
+Hosting request [#5412](https://github.com/jenkins-infra/repository-permissions-updater/issues/5412) was submitted on October 29 with GitHub and Jenkins community user `xykong`. The official local checker passed with no Required findings. The conditional `structs` recommendation is inapplicable because the implementation uses `SymbolLookup`; source-build instructions remain until official distribution is available. The final BOM is `7237.v5071b_f4589f1`. Both complete Maven verification runs passed 558 tests with zero failures, errors, or skips on macOS/JDK 25. Hosting acceptance, organization invitation, CI, release permissions, and the first official release remain pending.

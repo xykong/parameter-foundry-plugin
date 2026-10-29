@@ -1359,5 +1359,6 @@ with a real socket/route lifecycle check on HPI 812f30c6.
 - Verification: `mvn -B -ntp verify` passed on macOS/JDK 25 with 558 tests,
   zero failures/errors/skips, SpotBugs and formatting checks. HPI resource
   inspection confirmed config/JavaScript assets and all three isolated history
-  bundles plus their digests. Official checker rerun is pending the public push.
+  bundles plus their digests. The official checker passed against public commit `77ceedd` with no Required
+  findings. The final BOM verification also passed all 558 tests with no skips.
   Platform CI remains a separate post-hosting gate.
