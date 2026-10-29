@@ -1383,7 +1383,9 @@ with a real socket/route lifecycle check on HPI 812f30c6.
   metadata inspection. Keep all dependency and integrity checks.
 - Verification: complete `mvn -B -ntp verify` passed 559 tests with zero
   failures/errors/skips. HPI resources and three isolated history bundles
-  verified at the standard output path; remote hosting checker pending push.
+  verified at the standard output path. Official hosting checks on `4bf3386`
+  completed with zero Required/Warning/Info findings; see
+  [checker result](results/hosting-check-zero-findings.json).
 
 ### HOSTING-003: Repeatable deletion and governed credential selection
 

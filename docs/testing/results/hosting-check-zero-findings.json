@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-29",
+  "repository": "https://github.com/xykong/parameter-foundry-plugin",
+  "checkedCommit": "4bf3386378d5a64857c6960ad4c013333c9fc6d0",
+  "checkerRepository": "https://github.com/jenkins-infra/repository-permissions-updater",
+  "checkerCommit": "84c6de2390972f1a6592ef0372e4d9e272780d1b",
+  "checkerModified": false,
+  "exitCode": 0,
+  "required": 0,
+  "warnings": 0,
+  "info": 0,
+  "maven": {
+    "tests": 561,
+    "failures": 0,
+    "errors": 0,
+    "skips": 2,
+    "skipReason": "Two owned private interfaces unavailable for DNS/TLS fallback fixtures"
+  },
+  "browserResult": "config-editors-ui-lab.json"
+}
